@@ -1,4 +1,7 @@
 .env
+.venv/
+venv/
+aaditpanse/
 agent_log.json
 __pycache__/
 *.pyc
