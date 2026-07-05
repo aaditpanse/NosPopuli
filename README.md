@@ -4,7 +4,7 @@
 
 A civic intelligence platform that makes American law accessible to every citizen regardless of legal background, education, or political affiliation. The law affects everyone but is practically readable by almost no one. NosPopuli fixes that.
 
-Live at: **nospopuli-production.up.railway.app**
+Live at: **[nospopuli.org](https://nospopuli.org)**
 
 ---
 
@@ -228,7 +228,7 @@ Rate limiting: slowapi (20/min search, 30/min bill, 10/min feed)
                               emails active subscribers; run via POST /watcher/run
                               or standalone `python event_watcher.py`
   civic_resolver.py           Zip code → state → senators + representative + terms
-                              Uses pgeocode + legislators-current.json
+                              Uses pgeocode + legislators-current.json + zip3_to_state.json
   ingest_bills.py             6-stage bill embedding pipeline (offline)
                               Discovery → Metadata → Text → Chunking → Embedding → Index
                               VoyageAI voyage-law-2 + Supabase pgvector
@@ -248,7 +248,7 @@ Rate limiting: slowapi (20/min search, 30/min bill, 10/min feed)
                               state-personalized)
     gmail.py                  Gmail send + threaded reply ingestion
 
-  /Frontend
+  /frontend
     index.html                Main app
                               - Sticky command bar with Federal/State picker
                               - Personalized feed (Front Page / Briefing /
@@ -278,16 +278,18 @@ Rate limiting: slowapi (20/min search, 30/min bill, 10/min feed)
       monitor.js              Monitor page logic
 
   /data
-    legislators-current.json  All current US members (1.4MB)
+    legislators-current.json  All current US members (1.5MB)
                               Source: unitedstates/congress-legislators
+    zip3_to_state.json        3-digit ZIP prefix → state (used by civic_resolver)
+    known_elections.json      Curated election entries (admin UI)
 
   (no on-disk DB)             Postgres on Supabase — user subscriptions, drafts, sent mail,
                               disk_cache, known_elections, replies
-  STYLEGUIDE.md               Complete design system reference
+  Styleguide.md               Complete design system reference
   Procfile                    Railway: uvicorn api:app --host 0.0.0.0 --port $PORT
   nixpacks.toml               Railway build configuration
   requirements.txt            Python dependencies
-  .gitignore                  Excludes: .env, agent_log.json, search_log.json,
+  .gitignore                  Excludes: .env, .venv, agent_log.json, search_log.json,
                               flags.json, __pycache__, .DS_Store
 ```
 
@@ -496,7 +498,7 @@ Cache prefix is namespaced (`search:v1:`) so future shape changes can bump the v
 
 ## Design System
 
-Full reference in `STYLEGUIDE.md`. Key principles:
+Full reference in `Styleguide.md`. Key principles:
 
 - Newspaper editorial aesthetic — aged paper, ink, serif typography
 - **Never** use border-radius, box-shadow, or purple/blue/green
@@ -525,7 +527,7 @@ Low-confidence queries are logged to `search_log.json` for Analyst review.
 
 ## Currently Running
 
-https://nospopuli-production.up.railway.app/
+https://nospopuli.org
 
 ## Running Locally
 
@@ -557,7 +559,7 @@ WATCHER_SECRET=...                # protects POST /watcher/run
 # Optional — only needed if running ingest_bills.py
 SUPABASE_URL=your_url
 SUPABASE_KEY=your_key
-VOYAGEAI_API_KEY=your_key
+VOYAGE_API_KEY=your_key
 
 # Run
 uvicorn api:app --reload
@@ -723,7 +725,7 @@ SELF-IMPROVEMENT PIPELINE
 
 DEPLOYMENT
 ✓ Railway auto-deploy from GitHub
-→ Custom domain
+✓ Custom domain (nospopuli.org)
 → CDN for frontend assets
 ```
 
