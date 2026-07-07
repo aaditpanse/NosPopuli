@@ -23,7 +23,7 @@ A unified search bar accepts plain English questions and routes them intelligent
 
 The search bar carries a **Federal / State jurisdiction toggle**. The state side is a scrollable picker chip — hover to expand, scroll-wheel through 50 states, type a letter to jump to the first matching state. Federal queries hit Congress.gov + GovInfo; state queries hit OpenStates with the chosen state's current session.
 
-Every bill detail page includes:
+Every bill detail page streams in section-by-section — each part renders the moment it's ready rather than waiting on the slowest — and includes:
 - Plain English explanation **personalized to the user's state and interests**
 - Legislative timeline showing exactly how it moved through Congress
 - House and Senate chamber visualizations — every member's vote as a colored dot in a semicircle, hover for name/party/vote
@@ -78,10 +78,16 @@ Search agent          GovInfo API → full text search (BILLS or PLAW collection
 Result Validator      Haiku → scores each result 0–10 for query relevance
                       Drops results scoring below 5 (4 in full-history mode)
       ↓
-[These run simultaneously per bill]
+[Per bill: /bill and /law stream each section as NDJSON the instant it's
+ ready — independent producers run concurrently (asyncio.as_completed),
+ so no section waits on the slowest]
 Bill fetcher          Congress.gov API → raw bill data (TTL-cached)
-Translator agent      Haiku → plain English, personalized to user's state + interests
-Historian agent       Congress.gov actions → legislative timeline
+Translator agent      Split: Haiku core (plain English, personalized to user's
+                      state + interests) streams first; a Sonnet web-search
+                      "Background" that resolves referenced statutes/programs
+                      streams in behind it, capped at 100s
+Historian agent       Congress.gov actions → legislative timeline (Haiku,
+                      cached by a hash of the bill's actions)
 Vote parser           Scans actions for roll call numbers (House + Senate)
 Vote fetcher          House: Congress.gov v3 (118th+) or clerk.house.gov XML
                       Senate: senate.gov XML feed
@@ -159,7 +165,8 @@ Analyst               Reads search + agent logs, generates plain English report
 Backend:      Python, FastAPI, uvicorn
 AI:           Anthropic API
               · Haiku — query expansion, validation, translation (~98% of calls)
-              · Sonnet — optional polling/news web search for elections
+              · Sonnet — web search: bill "Background" reference resolution
+                and optional election polling/news
 Data:         Congress.gov API — bills, members, votes, committees, laws
               GovInfo API — full text search (BILLS + PLAW collections)
               OpenStates v3 API — state legislation + state legislators (all 50)
@@ -188,6 +195,8 @@ Rate limiting: slowapi (20/min search, 30/min bill, 10/min feed)
 ```
 /NosPopuli
   api.py                      FastAPI app — all endpoints, dispatcher pattern
+                              /bill + /law stream detail as NDJSON via a shared
+                              section generator (_bill_detail_stream)
   router_agent.py             Intent classification, confidence scoring,
                               presidential term handling, known bill lookup
   query_expander_agent.py     Keyword expansion to legislative vocabulary
@@ -205,9 +214,12 @@ Rate limiting: slowapi (20/min search, 30/min bill, 10/min feed)
                               Filters results below threshold before display
   bill_fetcher.py             Congress.gov bill and public law fetching
                               TTLCache: 1hr bill, 30min actions, 2hr text
-  translator_agent.py         Plain English translation, personalized by
-                              user state and interests (STATE_CONTEXT table)
-  historian_agent.py          Legislative timeline generation
+  translator_agent.py         Plain English translation, personalized by user
+                              state and interests (STATE_CONTEXT table). Split
+                              into translate_bill_core (fast Haiku) and
+                              resolve_bill_background (slow Sonnet web search)
+  historian_agent.py          Legislative timeline generation (Haiku, cached
+                              by a hash of the bill's actions)
   vote_parser_agent.py        Roll call number extraction from bill actions
   vote_fetcher_agent.py       House + Senate vote data (multiple sources)
   vote_mapper_agent.py        Federal semicircle seat position math
@@ -303,9 +315,11 @@ POST /search                  Unified search — routes to legislation, member,
                               committee, named-entity, or law handlers.
                               Returns confidence + ambiguity_reason + cached flag.
                               Accepts {"fresh": true} to bypass search cache.
-POST /bill                    Full bill processing (translation, timeline, votes)
+POST /bill                    Streams bill detail as NDJSON section-by-section
+                              (translation, timeline, votes, sponsors, …)
                               Accepts optional user_context for personalization
-POST /law                     Public law lookup by congress + law number
+POST /law                     Streams public-law detail as NDJSON (same
+                              generator as /bill), by congress + law number
 POST /state/search            State legislation search via OpenStates
                               Requires state_code; filters enacted bills only
 POST /state/bill              Full state bill detail + translation
