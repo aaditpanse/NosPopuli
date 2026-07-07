@@ -24,6 +24,12 @@ POPULAR_NAMES = {
     # Education
     "title ix":                {"congress": 92,  "type": "s",  "number": 659,  "title": "Education Amendments of 1972"},
     "title 9":                 {"congress": 92,  "type": "s",  "number": 659,  "title": "Education Amendments of 1972"},
+    # FERPA — the "Buckley Amendment," enacted as part of the Education
+    # Amendments of 1974 (Pub. L. 93-380, H.R. 69, 93rd Congress).
+    "ferpa":                   {"congress": 93,  "type": "hr", "number": 69,   "title": "Education Amendments of 1974 (FERPA)"},
+    "ferpa of 1974":           {"congress": 93,  "type": "hr", "number": 69,   "title": "Education Amendments of 1974 (FERPA)"},
+    "family educational rights and privacy act": {"congress": 93, "type": "hr", "number": 69, "title": "Education Amendments of 1974 (FERPA)"},
+    "buckley amendment":       {"congress": 93,  "type": "hr", "number": 69,   "title": "Education Amendments of 1974 (FERPA)"},
     # Civil Rights Act of 1964 titles
     "title vi":                {"congress": 88,  "type": "hr", "number": 7152, "title": "Civil Rights Act of 1964"},
     "title vii":               {"congress": 88,  "type": "hr", "number": 7152, "title": "Civil Rights Act of 1964"},
