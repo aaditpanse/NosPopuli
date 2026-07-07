@@ -117,6 +117,11 @@ def _sonnet_batch_resolve(terms: list, client) -> dict:
             max_tokens=2000,
             tools=[{"type": "web_search_20260209", "name": "web_search"}],
             messages=[{"role": "user", "content": prompt}],
+            # Safety cap: successful web searches finish in ~75s, but a runaway
+            # can otherwise hold the request (and the open /bill stream) for
+            # minutes. On timeout this raises and we fall through to no
+            # Background — strictly no worse than an empty result.
+            timeout=100.0,
         )
     except Exception as e:
         print(f"[REF RESOLVER] Sonnet error: {e}")

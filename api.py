@@ -11,7 +11,7 @@ import json
 import re
 import secrets
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 from typing import Optional
 from vote_parser_agent import parse_vote_references
@@ -43,7 +43,7 @@ from router_agent import route_query, extract_president_congress, fast_route, fa
 from search_agent import search_bills, search_summaries
 from title_search_agent import search_by_title
 from bill_fetcher import fetch_bill
-from translator_agent import translate_bill, translate_state_bill
+from translator_agent import translate_bill, translate_state_bill, translate_bill_core, resolve_bill_background
 from historian_agent import (
     fetch_bill_actions,
     fetch_related_bills as historian_fetch_related_bills,
@@ -1329,217 +1329,241 @@ async def search(request: Request, body: SearchRequest):
         raise HTTPException(status_code=500, detail="Search failed. Please try again.")
 
 
+# Headers that opt a StreamingResponse out of gzip + proxy buffering, so the
+# instant `meta` line reaches the client immediately. GZipMiddleware buffers a
+# stream's small early chunks until it accumulates enough bytes, which would
+# defeat progressive delivery for every gzip-capable client (i.e. all browsers).
+# Declaring an explicit Content-Encoding makes GZipMiddleware pass the stream
+# through untouched; the extra headers stop intermediary proxies buffering too.
+STREAM_HEADERS = {
+    "Content-Encoding": "identity",
+    "Cache-Control": "no-cache, no-transform",
+    "X-Accel-Buffering": "no",
+}
+
+
+def _bill_detail_stream(bill_data, meta_extra, user_context, *, log_kind, noun="bill"):
+    """Shared NDJSON section generator behind both /bill and /law.
+
+    Each line is one {"section": ...} object. Sections are computed by
+    independent producers and flushed the instant each is ready
+    (asyncio.as_completed), so the fast pieces (meta, sponsors, text, votes)
+    never wait on the slow Haiku/Sonnet calls, and the vote pipeline and
+    timeline no longer sit behind the translation. `meta_extra` carries the
+    endpoint-specific identity fields (type/number vs law_number) merged into
+    the meta section. Identifiers for the internal fetches are derived from the
+    bill record, so a Public Law resolves to its underlying bill transparently.
+    """
+    loop = asyncio.get_event_loop()
+
+    bill = bill_data.get("bill", {}) or {}
+    congress = bill.get("congress")
+    bill_type = (bill.get("type") or "").lower()
+    number = int(bill.get("number") or 0)
+    bill_title = bill.get("title", "")
+    laws = bill.get("laws") or []
+    became_law = laws[0] if laws else None
+    sponsors = [
+        {
+            "name": s.get("fullName", ""),
+            "first_name": s.get("firstName", ""),
+            "last_name": s.get("lastName", ""),
+            "party": s.get("party", ""),
+            "state": s.get("state", ""),
+            "bioguide_id": s.get("bioguideId", ""),
+            "is_by_request": s.get("isByRequest", "N") == "Y",
+        }
+        for s in (bill.get("sponsors") or [])
+    ]
+
+    def ex(fn, *args):
+        return loop.run_in_executor(None, fn, *args)
+
+    async def stream():
+        # Shared upstream tasks — kicked off once, awaited by whichever
+        # sections need them. Actions feed both the timeline and the votes;
+        # bill text feeds both the full-text section and the translation.
+        text_task    = asyncio.ensure_future(ex(fetch_bill_text, congress, bill_type, number))
+        actions_task = asyncio.ensure_future(ex(fetch_bill_actions, congress, bill_type, number))
+        cospon_task  = asyncio.ensure_future(ex(fetch_cosponsors, congress, bill_type, number))
+        related_task = asyncio.ensure_future(ex(fetch_related_bills, congress, bill_type, number))
+        amend_task   = asyncio.ensure_future(ex(fetch_amendments, congress, bill_type, number))
+        reports_task = asyncio.ensure_future(ex(fetch_committee_reports_for_bill, bill))
+
+        # Translation is split: the fast Haiku core (~3s) and the slow Sonnet
+        # web-search Background (~75s) stream as separate sections so the
+        # plain-English explanation isn't held hostage by the reference lookup.
+        async def _translate_core():
+            txt = await text_task
+            translation, refs = await ex(
+                translate_bill_core, bill_data, get_client(), user_context, txt
+            )
+            return (translation or f"Translation unavailable for this {noun}.", refs or [])
+        translate_core_task = asyncio.ensure_future(_translate_core())
+
+        async def sec_meta():
+            return {
+                "section": "meta",
+                "title": bill_title, "sponsors": sponsors, "became_law": became_law,
+                **meta_extra,
+            }
+
+        async def sec_text():
+            txt = await text_task
+            return {"section": "bill_text", "bill_text": txt or None}
+
+        async def sec_sponsors():
+            cos = await cospon_task
+            return {"section": "sponsors", "sponsors": sponsors, "cosponsors": cos or []}
+
+        async def sec_translation():
+            translation, refs = await translate_core_task
+            return {
+                "section": "translation",
+                "translation": translation,
+                "became_law": became_law,
+                "has_background": bool(refs),
+            }
+
+        async def sec_background():
+            _translation, refs = await translate_core_task
+            bg = await ex(resolve_bill_background, bill_data, refs, get_client())
+            return {"section": "background", "background": bg or ""}
+
+        async def sec_timeline():
+            actions = await actions_task or []
+            timeline = await ex(summarize_history, actions, get_client()) \
+                or f"Timeline unavailable for this {noun}."
+            return {
+                "section": "timeline",
+                "timeline": timeline,
+                "timeline_events": structure_history(actions),
+            }
+
+        async def sec_votes():
+            actions = await actions_task or []
+            vote_refs = await ex(parse_vote_references, actions) or {}
+            house_raw, senate_raw = await asyncio.gather(
+                ex(fetch_house_votes, vote_refs.get("house")),
+                ex(fetch_senate_votes, vote_refs.get("senate")),
+            )
+            return {
+                "section": "votes",
+                "votes": {
+                    "house": map_house_votes(house_raw),
+                    "senate": map_senate_votes(senate_raw),
+                },
+            }
+
+        async def sec_connections():
+            # "amends" is parsed from the translation text, so this waits on the
+            # translation core (not the slow Background) plus the related fetches.
+            (translation, _refs), related, amendments, reports = await asyncio.gather(
+                translate_core_task, related_task, amend_task, reports_task
+            )
+            connections = _build_connections(
+                related or {}, amendments or [], bill_title, translation, reports or []
+            )
+            return {"section": "connections", "connections": connections}
+
+        producers = [
+            asyncio.ensure_future(sec_meta()),
+            asyncio.ensure_future(sec_text()),
+            asyncio.ensure_future(sec_sponsors()),
+            asyncio.ensure_future(sec_translation()),
+            asyncio.ensure_future(sec_background()),
+            asyncio.ensure_future(sec_timeline()),
+            asyncio.ensure_future(sec_votes()),
+            asyncio.ensure_future(sec_connections()),
+        ]
+
+        for fut in asyncio.as_completed(producers):
+            try:
+                payload = await fut
+                yield json.dumps(payload) + "\n"
+            except Exception as e:
+                print(f"[API] {noun} section error {bill_type}{number}: {e}")
+
+        # Logging runs inside the generator (after content), so a logging/DB
+        # hiccup must not break the stream before the `done` marker.
+        try:
+            if log_kind == "bill":
+                log_bill_opened(bill_id=f"{bill_type}{number}", title=bill_title, from_query="")
+            log_action(
+                agent_name="api",
+                action=f"get_{log_kind}",
+                input_data=dict(meta_extra),
+                output_data={"status": "complete"},
+            )
+        except Exception as e:
+            print(f"[API] {noun} logging error {bill_type}{number}: {e}")
+
+        yield json.dumps({"section": "done"}) + "\n"
+
+    return stream
+
+
 @app.post("/bill")
 @limiter.limit("30/minute")
 async def get_bill(request: Request, body: BillRequest):
-    try:
-        loop = asyncio.get_event_loop()
+    """Streams bill detail as NDJSON — see _bill_detail_stream."""
+    loop = asyncio.get_event_loop()
 
-        bill_data = await loop.run_in_executor(
-            None, fetch_bill, body.congress, body.bill_type, body.number
-        )
+    # Base fetch is awaited up front so a genuinely missing bill still 404s
+    # (once the stream body starts, the status code is already committed).
+    bill_data = await loop.run_in_executor(
+        None, fetch_bill, body.congress, body.bill_type, body.number
+    )
+    if not bill_data:
+        raise HTTPException(status_code=404, detail="Bill not found or unavailable.")
 
-        if not bill_data:
-            raise HTTPException(
-                status_code=404, detail="Bill not found or unavailable."
-            )
-
-        bill_text, related, amendments, cosponsors, committee_reports = await asyncio.gather(
-            loop.run_in_executor(None, fetch_bill_text, body.congress, body.bill_type, body.number),
-            loop.run_in_executor(None, fetch_related_bills, body.congress, body.bill_type, body.number),
-            loop.run_in_executor(None, fetch_amendments, body.congress, body.bill_type, body.number),
-            loop.run_in_executor(None, fetch_cosponsors, body.congress, body.bill_type, body.number),
-            loop.run_in_executor(None, fetch_committee_reports_for_bill, bill_data.get("bill") or {}),
-        )
-
-        translation, actions = await asyncio.gather(
-            loop.run_in_executor(
-                None,
-                translate_bill,
-                bill_data,
-                get_client(),
-                body.user_context,
-                bill_text,
-            ),
-            loop.run_in_executor(
-                None, fetch_bill_actions, body.congress, body.bill_type, body.number
-            ),
-        )
-
-        translation = translation or "Translation unavailable for this bill."
-        actions = actions or []
-
-        timeline, vote_refs = await asyncio.gather(
-            loop.run_in_executor(None, summarize_history, actions, get_client()),
-            loop.run_in_executor(None, parse_vote_references, actions),
-        )
-
-        timeline = timeline or "Timeline unavailable for this bill."
-        vote_refs = vote_refs or {}
-
-        house_raw, senate_raw = await asyncio.gather(
-            loop.run_in_executor(None, fetch_house_votes, vote_refs.get("house")),
-            loop.run_in_executor(None, fetch_senate_votes, vote_refs.get("senate")),
-        )
-
-        house_mapped = map_house_votes(house_raw)
-        senate_mapped = map_senate_votes(senate_raw)
-
-        bill_title = bill_data.get("bill", {}).get("title", "")
-        connections = _build_connections(related or {}, amendments or [], bill_title, translation, committee_reports or [])
-
-        log_action(
-            agent_name="api",
-            action="get_bill",
-            input_data={
-                "congress": body.congress,
-                "type": body.bill_type,
-                "number": body.number,
-            },
-            output_data={"status": "complete"},
-        )
-
-        log_bill_opened(
-            bill_id=f"{body.bill_type}{body.number}",
-            title=bill_title,
-            from_query="",
-        )
-
-        laws = bill_data.get("bill", {}).get("laws") or []
-        became_law = laws[0] if laws else None
-
-        raw_sponsors = bill_data.get("bill", {}).get("sponsors") or []
-        sponsors = [
-            {
-                "name": s.get("fullName", ""),
-                "first_name": s.get("firstName", ""),
-                "last_name": s.get("lastName", ""),
-                "party": s.get("party", ""),
-                "state": s.get("state", ""),
-                "bioguide_id": s.get("bioguideId", ""),
-                "is_by_request": s.get("isByRequest", "N") == "Y",
-            }
-            for s in raw_sponsors
-        ]
-
-        return {
-            "congress": body.congress,
-            "type": body.bill_type,
-            "number": body.number,
-            "title": bill_title,
-            "translation": translation,
-            "timeline": timeline,
-            "timeline_events": structure_history(actions),
-            "votes": {"house": house_mapped, "senate": senate_mapped},
-            "bill_text": bill_text or None,
-            "connections": connections,
-            "became_law": became_law,
-            "sponsors": sponsors,
-            "cosponsors": cosponsors or [],
-        }
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        print(f"[API] Error processing bill {body.bill_type}{body.number}: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to process bill. Please try again."
-        )
+    meta_extra = {"congress": body.congress, "type": body.bill_type, "number": body.number}
+    stream = _bill_detail_stream(bill_data, meta_extra, body.user_context, log_kind="bill", noun="bill")
+    return StreamingResponse(stream(), media_type="application/x-ndjson", headers=STREAM_HEADERS)
 
 
 @app.post("/law")
 @limiter.limit("30/minute")
 async def get_law(request: Request, body: LawRequest):
-    try:
-        loop = asyncio.get_event_loop()
+    """Streams law detail as NDJSON, using the same generator as /bill.
 
-        bill_data = await loop.run_in_executor(
-            None, fetch_law, body.congress, body.law_number
-        )
+    A Public Law resolves to its underlying bill, so the shared generator
+    handles everything once fetch_law hands back the bill record.
+    """
+    loop = asyncio.get_event_loop()
 
-        if not bill_data:
-            return {
-                "congress": body.congress,
-                "law_number": body.law_number,
+    bill_data = await loop.run_in_executor(
+        None, fetch_law, body.congress, body.law_number
+    )
+
+    if not bill_data:
+        # Recently enacted laws may not be indexed on Congress.gov yet. Stream a
+        # friendly placeholder so the detail page still renders cleanly rather
+        # than erroring.
+        async def notfound():
+            yield json.dumps({
+                "section": "meta",
+                "title": f"Public Law {body.congress}-{body.law_number}",
+                "congress": body.congress, "law_number": body.law_number,
+                "sponsors": [], "became_law": None,
+            }) + "\n"
+            yield json.dumps({
+                "section": "translation",
                 "translation": "This law was recently enacted and its full details are not yet available in Congress.gov. Check back soon.",
+                "became_law": None, "has_background": False,
+            }) + "\n"
+            yield json.dumps({
+                "section": "timeline",
                 "timeline": "Timeline unavailable — law not yet indexed.",
-                "votes": {"house": None, "senate": None},
-            }
+                "timeline_events": [],
+            }) + "\n"
+            yield json.dumps({"section": "done"}) + "\n"
 
-        bill = bill_data.get("bill", {})
-        bill_congress = bill.get("congress", body.congress)
-        bill_type = bill.get("type", "").lower()
-        bill_number = int(bill.get("number", 0))
+        return StreamingResponse(notfound(), media_type="application/x-ndjson", headers=STREAM_HEADERS)
 
-        bill_text, related, amendments, committee_reports = await asyncio.gather(
-            loop.run_in_executor(None, fetch_bill_text, bill_congress, bill_type, bill_number),
-            loop.run_in_executor(None, fetch_related_bills, bill_congress, bill_type, bill_number),
-            loop.run_in_executor(None, fetch_amendments, bill_congress, bill_type, bill_number),
-            loop.run_in_executor(None, fetch_committee_reports_for_bill, bill),
-        )
-
-        translation, actions = await asyncio.gather(
-            loop.run_in_executor(
-                None,
-                translate_bill,
-                bill_data,
-                get_client(),
-                body.user_context,
-                bill_text,
-            ),
-            loop.run_in_executor(
-                None, fetch_bill_actions, bill_congress, bill_type, bill_number
-            ),
-        )
-
-        translation = translation or "Translation unavailable for this law."
-        actions = actions or []
-
-        timeline, vote_refs = await asyncio.gather(
-            loop.run_in_executor(None, summarize_history, actions, get_client()),
-            loop.run_in_executor(None, parse_vote_references, actions),
-        )
-
-        timeline = timeline or "Timeline unavailable for this law."
-        vote_refs = vote_refs or {}
-
-        house_raw, senate_raw = await asyncio.gather(
-            loop.run_in_executor(None, fetch_house_votes, vote_refs.get("house")),
-            loop.run_in_executor(None, fetch_senate_votes, vote_refs.get("senate")),
-        )
-
-        house_mapped = map_house_votes(house_raw)
-        senate_mapped = map_senate_votes(senate_raw)
-
-        bill_title = bill_data.get("bill", {}).get("title", "")
-        connections = _build_connections(related or {}, amendments or [], bill_title, translation, committee_reports or [])
-
-        log_action(
-            agent_name="api",
-            action="get_law",
-            input_data={"congress": body.congress, "law_number": body.law_number},
-            output_data={"status": "complete"},
-        )
-
-        return {
-            "congress": body.congress,
-            "law_number": body.law_number,
-            "title": bill_title,
-            "translation": translation,
-            "timeline": timeline,
-            "timeline_events": structure_history(actions),
-            "votes": {"house": house_mapped, "senate": senate_mapped},
-            "bill_text": bill_text or None,
-            "connections": connections,
-        }
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        print(f"[API] Error processing law {body.congress} pub {body.law_number}: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to process law. Please try again."
-        )
+    meta_extra = {"congress": body.congress, "law_number": body.law_number}
+    stream = _bill_detail_stream(bill_data, meta_extra, body.user_context, log_kind="law", noun="law")
+    return StreamingResponse(stream(), media_type="application/x-ndjson", headers=STREAM_HEADERS)
 
 
 @app.post("/state/search")

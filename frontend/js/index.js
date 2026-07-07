@@ -577,6 +577,10 @@ function renderExplanation(markdown, becameLaw) {
 }
 
 let _currentBill = null;
+// Bumped on every openDetail call. A stream whose token is no longer current
+// has been superseded by a newer open, so its (possibly very late) sections
+// must not render over the newer bill's page.
+let _detailToken = 0;
 
 function renderFullText(text) {
   const section = document.getElementById('full-text-section');
@@ -772,7 +776,78 @@ function renderVotes(votes, isStateBill = false) {
 }
 
 // ── Bill detail ──
+// Reveal the detail shell once the first section is in hand, and drop
+// lightweight placeholders into the two always-visible AI sections so they
+// don't look broken while their Haiku calls are still in flight. Idempotent.
+function _revealDetail(title) {
+  document.getElementById('detail-loading').style.display = 'none';
+  document.getElementById('detail-content').style.display = 'block';
+  document.getElementById('detail-bill-title').textContent = title;
+  const exp = document.getElementById('detail-explanation');
+  if (exp) exp.innerHTML = '<div class="section-loading">Translating to plain English…</div>';
+  const tl = document.getElementById('detail-timeline');
+  if (tl) tl.innerHTML = '<div class="section-loading">Building legislative timeline…</div>';
+  const bg = document.getElementById('detail-background');
+  if (bg) { bg.innerHTML = ''; bg.style.display = 'none'; }
+  // Hide the conditionally-rendered sections up front. Streaming only calls a
+  // section's render fn when that section arrives, so a section the new stream
+  // never emits (a producer erroring, or the /law not-indexed path) would
+  // otherwise leave the PREVIOUS bill's sponsors/text/votes/connections visible.
+  ['sponsors-section', 'full-text-section', 'connections-section', 'votes-section'].forEach(id => {
+    const s = document.getElementById(id);
+    if (s) s.style.display = 'none';
+  });
+  // Drop any enacted-law banner / expand button left over from a prior bill —
+  // they're siblings of #detail-explanation, so resetting its innerHTML above
+  // doesn't remove them.
+  document.querySelectorAll('.became-law-banner, .explanation-expand-btn').forEach(n => n.remove());
+}
+
+function _setBillContext(billId, bill, title, translation) {
+  if (typeof setCurrentBillContext === 'function') {
+    setCurrentBillContext({
+      bill_id:      billId,
+      bill_title:   title,
+      bill_summary: translation || '',
+      latest_action: bill.latest_action || '',
+      _reopen: { type: 'federal', congress: bill.congress, billType: bill.type, number: bill.number, title },
+    });
+  }
+}
+
+// Background is the resolved-references block appended under the explanation.
+// It arrives well after the core translation (it's a slow web search) and often
+// comes back empty, so it renders into its own container only when it actually
+// has content — otherwise the section stays hidden.
+function renderBackground(bg) {
+  const el = document.getElementById('detail-background');
+  if (!el) return;
+  if (bg && bg.trim()) {
+    el.innerHTML = renderMarkdown(bg);
+    el.style.display = 'block';
+  } else {
+    el.innerHTML = '';
+    el.style.display = 'none';
+  }
+}
+
+function _showDetailError(bill) {
+  document.getElementById('detail-loading').innerHTML = `
+    <div class="empty-state">
+      <p>This couldn't be loaded right now.</p>
+      <p style="margin-top:0.5rem">The data may be temporarily unavailable.</p>
+      <button class="pill"
+        style="margin-top:1rem"
+        onclick="openDetail(${JSON.stringify(bill).replace(/"/g, '&quot;')})">
+        Try again
+      </button>
+    </div>`;
+  document.getElementById('detail-loading').style.display = 'block';
+  document.getElementById('detail-content').style.display = 'none';
+}
+
 async function openDetail(bill) {
+  const myToken = ++_detailToken;
   bill = {
     ...bill,
     congress: parseInt(bill.congress) || bill.congress,
@@ -792,74 +867,113 @@ async function openDetail(bill) {
   document.getElementById('detail-content').style.display = 'none';
   document.getElementById('votes-section').style.display = 'none';
 
-  const steps = ['lstep-1', 'lstep-2', 'lstep-3', 'lstep-4'];
-  steps.forEach((id, i) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.classList.remove('visible', 'done');
-    setTimeout(() => el.classList.add('visible'), i * 700);
-  });
-
   showPage('page-detail');
 
+  // Authoritative title from Congress.gov overrides whatever title the search
+  // result carried. GovInfo indexes vehicle-bill print versions under different
+  // titles than a bill's canonical name, so a "SAVE Act" hit might land on a
+  // bill whose current text is unrelated — Congress.gov is the truth.
+  let authoritativeTitle = bill.title || billId;
+
   try {
+    // Both bills (/bill) and enacted laws (/law) stream section-by-section as
+    // NDJSON — a Public Law resolves to its underlying bill server-side.
     const endpoint = bill.is_law ? '/law' : '/bill';
-    const body = bill.is_law
-      ? { congress: bill.congress, law_number: bill.law_number }
+    const reqBody = bill.is_law
+      ? { congress: bill.congress, law_number: bill.law_number, user_context: getPrefs() }
       : { congress: parseInt(bill.congress), bill_type: bill.type, number: parseInt(bill.number), user_context: getPrefs() };
 
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+      body: JSON.stringify(reqBody)
     });
+    if (!response.ok || !response.body) throw new Error(`Error: ${response.status}`);
 
-    if (!response.ok) throw new Error(`Error: ${response.status}`);
-    const data = await response.json();
-    steps.forEach(id => document.getElementById(id).classList.add('done'));
+    let revealed = false;
+    let translationText = '';
+    const ensureRevealed = () => {
+      if (!revealed) { _revealDetail(authoritativeTitle); revealed = true; }
+    };
 
-    setTimeout(() => {
-      document.getElementById('detail-loading').style.display = 'none';
-      // Authoritative title from Congress.gov overrides whatever title the
-      // search result carried. GovInfo indexes vehicle-bill print versions
-      // under different titles than the bill's current canonical name, so
-      // a search hit for "SAVE Act" might land on a bill whose actual
-      // current text is something unrelated — Congress.gov is the truth.
-      const authoritativeTitle = data.title || bill.title || billId;
-      document.getElementById('detail-bill-title').textContent = authoritativeTitle;
-      renderExplanation(data.translation || '', data.became_law);
-      renderSponsors(data.sponsors || [], data.cosponsors || []);
-      renderTimeline(data.timeline_events, data.timeline);
-      renderVotes(data.votes);
-      renderFullText(data.bill_text);
-      renderConnections(data.connections);
-      document.getElementById('detail-content').style.display = 'block';
-      if (typeof setCurrentBillContext === 'function') {
-        setCurrentBillContext({
-          bill_id:      billId,
-          bill_title:   authoritativeTitle,
-          bill_summary: data.translation || '',
-          latest_action: bill.latest_action || '',
-          _reopen: { type: 'federal', congress: bill.congress, billType: bill.type, number: bill.number, title: authoritativeTitle },
-        });
+    const handleSection = (msg) => {
+      // A newer openDetail has superseded this stream — drop its sections so
+      // they can't paint over the current bill.
+      if (myToken !== _detailToken) return;
+      switch (msg.section) {
+        case 'meta':
+          authoritativeTitle = msg.title || authoritativeTitle;
+          ensureRevealed();
+          document.getElementById('detail-bill-title').textContent = authoritativeTitle;
+          // Notify button needs only the bill id — wire it up immediately
+          // rather than waiting on the (slow) Background section.
+          _initNotifyBtn(billId, bill.congress, bill.type, bill.number, null);
+          break;
+        case 'translation':
+          ensureRevealed();
+          translationText = msg.translation || '';
+          renderExplanation(translationText, msg.became_law);
+          _setBillContext(billId, bill, authoritativeTitle, translationText);
+          break;
+        case 'background':
+          // Bonus context that resolves late (a slow web search) and often
+          // comes back empty. Render only when it has content — no persistent
+          // placeholder, since the explanation already reads fine alone.
+          renderBackground(msg.background || '');
+          break;
+        case 'sponsors':
+          ensureRevealed();
+          renderSponsors(msg.sponsors || [], msg.cosponsors || []);
+          break;
+        case 'timeline':
+          ensureRevealed();
+          renderTimeline(msg.timeline_events, msg.timeline);
+          break;
+        case 'votes':
+          ensureRevealed();
+          renderVotes(msg.votes);
+          break;
+        case 'bill_text':
+          ensureRevealed();
+          renderFullText(msg.bill_text);
+          break;
+        case 'connections':
+          ensureRevealed();
+          renderConnections(msg.connections);
+          break;
+        case 'done':
+          break;
       }
-      _initNotifyBtn(billId, bill.congress, bill.type, bill.number, null);
-    }, 400);
+    };
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      // Superseded by a newer open — stop consuming this stream and let it go.
+      if (myToken !== _detailToken) { try { await reader.cancel(); } catch (e) {} return; }
+      buffer += decoder.decode(value, { stream: true });
+      let nl;
+      while ((nl = buffer.indexOf('\n')) >= 0) {
+        const line = buffer.slice(0, nl).trim();
+        buffer = buffer.slice(nl + 1);
+        if (!line) continue;
+        try { handleSection(JSON.parse(line)); }
+        catch (e) { console.error('bad stream line', e, line); }
+      }
+    }
+    const tail = buffer.trim();
+    if (tail) { try { handleSection(JSON.parse(tail)); } catch (e) {} }
+
+    // Notify button + context are wired during the stream (meta/translation).
+    // Just guarantee the shell is revealed if the stream produced nothing —
+    // unless a newer open has already taken over the detail page.
+    if (myToken === _detailToken) ensureRevealed();
 
   } catch (err) {
-    document.getElementById('detail-loading').innerHTML = `
-      <div class="empty-state">
-        <p>This couldn't be loaded right now.</p>
-        <p style="margin-top:0.5rem">The data may be temporarily unavailable.</p>
-        <button class="pill"
-          style="margin-top:1rem"
-          onclick="openDetail(${JSON.stringify(bill).replace(/"/g, '&quot;')})">
-          Try again
-        </button>
-      </div>`;
-    document.getElementById('detail-loading').style.display = 'block';
-    document.getElementById('detail-content').style.display = 'none';
-    btn.disabled = false;
+    _showDetailError(bill);
   }
 }
 

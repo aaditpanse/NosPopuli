@@ -205,32 +205,48 @@ def _format_background(resolutions: dict) -> str:
 
 
 def translate_bill(bill_data, client, user_context=None, bill_text=None):
+    """Full translation: core plain-English explanation + resolved Background.
+
+    Convenience wrapper that returns the assembled result in one shot. The
+    streaming /bill and /law endpoints don't use this — they call
+    translate_bill_core and resolve_bill_background separately so the fast core
+    can render in ~3s while the slow Background (a Sonnet web search) streams in
+    behind it. Retained for any caller that wants the blocking, combined form.
+    """
+    translation, unknown_refs = translate_bill_core(
+        bill_data, client, user_context, bill_text
+    )
+    bg = resolve_bill_background(bill_data, unknown_refs, client)
+    return _assemble(translation, bg)
+
+
+def translate_bill_core(bill_data, client, user_context=None, bill_text=None):
+    """Fast half: the Haiku plain-English explanation only.
+
+    Returns (translation_markdown, unknown_refs). Does NOT resolve references
+    — that's the slow Sonnet web search, handled separately by
+    resolve_bill_background. Hits the translation cache row when warm.
+    """
     bill = bill_data["bill"]
 
     congress = bill.get("congress")
     bill_type = (bill.get("type") or "").lower()
     bill_number = bill.get("number")
 
-    # Two-tier cache. Translation core and the Background section live in
-    # SEPARATE cache rows so bumping one prefix does not force the other to
-    # regenerate. Bumping BILLS-vN re-runs Haiku but never Sonnet. Bumping
-    # bg:vN re-runs the resolver (which still hits per-term cache for most
-    # terms, so Sonnet only fires for genuinely new ones).
+    # Translation core and the Background section live in SEPARATE cache rows
+    # so bumping one prefix does not force the other to regenerate.
     cached_payload = _get_cached(congress, bill_type, bill_number)
     cached_translation, cached_refs = _parse_cache_payload(cached_payload)
-    cached_bg = _get_cached_bg(congress, bill_type, bill_number)
 
-    if cached_translation and cached_bg is not None:
+    if cached_translation:
         log_action(
             agent_name="translator",
-            action="translate_bill_cached",
+            action="translate_bill_core_cached",
             input_data={"congress": congress, "type": bill_type, "number": bill_number},
-            output_data={"source": "cache_full"},
+            output_data={"source": "cache_translation"},
         )
-        return _assemble(cached_translation, cached_bg)
+        return cached_translation, (cached_refs or [])
 
-    # Need to regenerate at least one side. We translate when missing; we
-    # rebuild Background from cached refs when its row is missing.
     title = bill.get("title", "Unknown")
     sponsors = bill.get("sponsors", [{}])
     sponsor = sponsors[0].get("fullName", "Unknown") if sponsors else "Unknown"
@@ -290,45 +306,23 @@ qualifies. Do NOT write "the bill does not explain X" in the translation body �
 listed terms will be covered separately in a Background section.
 """
 
-    # Decide whether to call Haiku at all. Cached translation + missing BG
-    # is the common case after a bg:vN bump — we already have refs from the
-    # cached payload and can rebuild Background without re-translating.
-    if cached_translation:
-        translation = cached_translation
-        unknown_refs = cached_refs or []
-        translation_source = "cache_translation"
-    else:
-        message = client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=1500,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        raw = message.content[0].text.strip()
-        translation, unknown_refs = _parse_translation_json(raw)
-        # Persist translation + refs as JSON so a future bg:vN bump can
-        # regenerate Background without re-running Haiku.
-        _store_cached(
-            congress, bill_type, bill_number,
-            json.dumps({"translation": translation, "unknown_refs": unknown_refs}),
-        )
-        translation_source = "haiku"
-
-    bg = cached_bg
-    if bg is None:
-        if unknown_refs:
-            try:
-                resolutions = resolve_references(unknown_refs, client)
-            except Exception as e:
-                print(f"[TRANSLATOR] Reference resolver error: {e}")
-                resolutions = {}
-            bg = _format_background(resolutions) if resolutions else ""
-        else:
-            bg = ""
-        _store_cached_bg(congress, bill_type, bill_number, bg)
+    message = client.messages.create(
+        model="claude-haiku-4-5-20251001",
+        max_tokens=1500,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    raw = message.content[0].text.strip()
+    translation, unknown_refs = _parse_translation_json(raw)
+    # Persist translation + refs as JSON so a future bg:vN bump can
+    # regenerate Background without re-running Haiku.
+    _store_cached(
+        congress, bill_type, bill_number,
+        json.dumps({"translation": translation, "unknown_refs": unknown_refs}),
+    )
 
     log_action(
         agent_name="translator",
-        action="translate_bill",
+        action="translate_bill_core",
         input_data={
             "congress": congress,
             "type": bill_type,
@@ -337,12 +331,41 @@ listed terms will be covered separately in a Background section.
         },
         output_data={
             "translation_preview": translation[:100],
-            "translation_source": translation_source,
-            "bg_source": "cache" if cached_bg is not None else ("resolver" if unknown_refs else "none"),
+            "translation_source": "haiku",
         },
     )
 
-    return _assemble(translation, bg)
+    return translation, unknown_refs
+
+
+def resolve_bill_background(bill_data, unknown_refs, client):
+    """Slow half: resolve referenced programs/statutes into a Background block.
+
+    This is the ~75s Sonnet web search. Returns Background markdown (or '' when
+    there's nothing to resolve). Hits the Background cache row when warm, so
+    repeat opens are instant.
+    """
+    bill = bill_data["bill"]
+    congress = bill.get("congress")
+    bill_type = (bill.get("type") or "").lower()
+    bill_number = bill.get("number")
+
+    cached_bg = _get_cached_bg(congress, bill_type, bill_number)
+    if cached_bg is not None:
+        return cached_bg
+
+    if unknown_refs:
+        try:
+            resolutions = resolve_references(unknown_refs, client)
+        except Exception as e:
+            print(f"[TRANSLATOR] Reference resolver error: {e}")
+            resolutions = {}
+        bg = _format_background(resolutions) if resolutions else ""
+    else:
+        bg = ""
+
+    _store_cached_bg(congress, bill_type, bill_number, bg)
+    return bg
 
 
 def _assemble(translation: str, bg: str) -> str:

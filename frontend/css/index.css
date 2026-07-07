@@ -1553,6 +1553,25 @@ body {
 .loading-step.done { color: var(--accent); }
 .elections-loading { text-align: center; padding: 3rem 0; }
 
+/* Resolved-references block, streamed in under the plain-English explanation
+   after the core translation has already rendered. */
+.detail-background {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+}
+
+/* Per-section placeholder shown while a streamed section (translation,
+   timeline) is still resolving on the server. */
+.section-loading {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  padding: 0.5rem 0;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
 /* ══════════════════════════════════════════════════════════ */
 /* ── BILL DETAIL                                          ── */
 /* ══════════════════════════════════════════════════════════ */

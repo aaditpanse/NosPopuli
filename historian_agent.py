@@ -1,13 +1,29 @@
 import requests
 import os
+import json
+import hashlib
 from dotenv import load_dotenv
 from cachetools import TTLCache, cached
 from threading import RLock
 from documentor_agent import log_action
+from correspondence.db import get_disk_cache, set_disk_cache
 
 load_dotenv()
 
 CONGRESS_API_KEY = os.getenv("CONGRESS_API_KEY")
+
+# The prose timeline is a Haiku call that's stable for a given set of actions.
+# Key the cache on a hash of the actions themselves so it auto-invalidates the
+# moment the bill takes a new action, with no TTL guesswork.
+_HISTORY_CACHE_TTL_SECONDS = 30 * 24 * 3600  # 30 days
+
+
+def _history_cache_key(actions):
+    payload = json.dumps(
+        [(a.get("actionDate"), a.get("text")) for a in actions],
+        sort_keys=True,
+    )
+    return "hist:v1:" + hashlib.sha1(payload.encode()).hexdigest()
 
 _session = requests.Session()
 _actions_cache = TTLCache(maxsize=256, ttl=1800)
@@ -93,7 +109,15 @@ def summarize_history(actions, client):
     
     if not actions:
         return "No action history available."
-    
+
+    cache_key = _history_cache_key(actions)
+    try:
+        cached_summary = get_disk_cache(cache_key, _HISTORY_CACHE_TTL_SECONDS)
+        if cached_summary:
+            return cached_summary
+    except Exception as e:
+        print(f"[HISTORIAN] Timeline cache read error: {e}")
+
     action_text = "\n".join([
         f"{a['actionDate']}: {a['text']}"
         for a in actions
@@ -120,14 +144,19 @@ def summarize_history(actions, client):
     )
     
     summary = message.content[0].text
-    
+
+    try:
+        set_disk_cache(cache_key, summary)
+    except Exception as e:
+        print(f"[HISTORIAN] Timeline cache write error: {e}")
+
     log_action(
         agent_name="historian",
         action="summarize_history",
         input_data={"action_count": len(actions)},
         output_data={"preview": summary[:100]}
     )
-    
+
     return summary
 
 def make_event_title(text):
