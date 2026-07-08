@@ -77,8 +77,10 @@ from correspondence.db import (
     list_known_elections as db_list_known_elections,
     add_known_election as db_add_known_election,
     delete_known_election as db_delete_known_election,
+    get_bill_lobbying as db_get_bill_lobbying,
 )
 from elections_agent import fetch_elections, fetch_election_detail, fetch_election_polling
+from lda_client import search_entities as lda_search_entities, get_entity_profile as lda_get_entity_profile
 
 # Quiet uvicorn access logs for the high-frequency SSE monitor stream — it
 # fires on every event and otherwise drowns out actually-useful request lines.
@@ -1427,8 +1429,8 @@ def _bill_detail_stream(bill_data, meta_extra, user_context, *, log_kind, noun="
 
         async def sec_background():
             _translation, refs = await translate_core_task
-            bg = await ex(resolve_bill_background, bill_data, refs, get_client())
-            return {"section": "background", "background": bg or ""}
+            items = await ex(resolve_bill_background, bill_data, refs, get_client())
+            return {"section": "background", "items": items or []}
 
         async def sec_timeline():
             actions = await actions_task or []
@@ -1466,6 +1468,21 @@ def _bill_detail_stream(bill_data, meta_extra, user_context, *, log_kind, noun="
             )
             return {"section": "connections", "connections": connections}
 
+        async def sec_lobbying():
+            # "Who's pushing this" — entities recorded lobbying this bill, from
+            # the reverse index (a fast local DB query).
+            try:
+                rows = await ex(db_get_bill_lobbying, congress, bill_type, number, 12)
+            except Exception as e:
+                print(f"[API] bill lobbying lookup error {bill_type}{number}: {e}")
+                rows = []
+            entities = [
+                {"name": r["entity_name"], "kind": r["entity_kind"],
+                 "mentions": r["mentions"], "spend": r["entity_spend"]}
+                for r in (rows or [])
+            ]
+            return {"section": "lobbying", "entities": entities}
+
         producers = [
             asyncio.ensure_future(sec_meta()),
             asyncio.ensure_future(sec_text()),
@@ -1475,6 +1492,7 @@ def _bill_detail_stream(bill_data, meta_extra, user_context, *, log_kind, noun="
             asyncio.ensure_future(sec_timeline()),
             asyncio.ensure_future(sec_votes()),
             asyncio.ensure_future(sec_connections()),
+            asyncio.ensure_future(sec_lobbying()),
         ]
 
         for fut in asyncio.as_completed(producers):
@@ -1781,6 +1799,37 @@ async def elections_endpoint(request: Request, zip: Optional[str] = None, state:
 @app.get("/elections")
 async def elections_page():
     return FileResponse("frontend/elections.html")
+
+
+@app.get("/lobbying/search")
+@limiter.limit("30/minute")
+async def lobbying_search(request: Request, q: str = ""):
+    """Search lobbying registrants (firms) and clients by name (Senate LDA)."""
+    loop = asyncio.get_event_loop()
+    try:
+        results = await loop.run_in_executor(None, lda_search_entities, q)
+        return {"results": results}
+    except Exception as e:
+        print(f"[API] Lobbying search error: {e}")
+        raise HTTPException(status_code=502, detail="Lobbying data source unavailable.")
+
+
+@app.get("/lobbying/entity")
+@limiter.limit("30/minute")
+async def lobbying_entity(request: Request, kind: str, name: str):
+    """Aggregated lobbying profile for one entity — spend, issues, lobbyists,
+    counterparties, and bills lobbied (Senate LDA)."""
+    if kind not in ("client", "registrant"):
+        raise HTTPException(status_code=400, detail="kind must be 'client' or 'registrant'.")
+    loop = asyncio.get_event_loop()
+    try:
+        profile = await loop.run_in_executor(None, lda_get_entity_profile, kind, name)
+    except Exception as e:
+        print(f"[API] Lobbying entity error: {e}")
+        raise HTTPException(status_code=502, detail="Lobbying data source unavailable.")
+    if profile is None:
+        raise HTTPException(status_code=404, detail="Entity not found.")
+    return profile
 
 
 @app.get("/api/elections/{election_id}")

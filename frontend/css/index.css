@@ -1553,13 +1553,142 @@ body {
 .loading-step.done { color: var(--accent); }
 .elections-loading { text-align: center; padding: 3rem 0; }
 
+/* ══════════════════════════════════════════════════════════ */
+/* ── LOBBYING (newspaper design, ported from the test UI)  ── */
+/* ══════════════════════════════════════════════════════════ */
+/* Reuses shared chrome — page-header, page-kicker, page-title, page-deck,
+   bill-header, bill-id-row, bill-id, bill-cong, bill-title, lede-stage,
+   lede-actions, btn-ghost, bill-section, bill-section-label — and defines only
+   the lobbying-specific pieces below. */
+
+.corr-summary { display: flex; gap: 1.75rem; margin-top: 1rem; flex-wrap: wrap;
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.05em; color: var(--muted); }
+.corr-stat strong { color: var(--ink); font-weight: 500; font-size: 0.85rem; }
+
+.bill-deck { font-family: 'Source Serif 4', Georgia, serif; font-size: 1.1rem; font-style: italic;
+  line-height: 1.55; color: var(--ink); max-width: 760px; margin-bottom: 0.9rem; }
+.bill-meta-row { font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; letter-spacing: 0.06em;
+  color: var(--muted); display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; margin-bottom: 1.1rem; }
+.bill-meta-row .dot { opacity: 0.5; }
+.stage-passed { color: var(--ink); }
+
+/* Search toolbar */
+.lobby-toolbar { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1rem; }
+.lobby-search { width: 100%; box-sizing: border-box; padding: 0.85rem 1.1rem; border: 1.5px solid var(--ink);
+  background: white; font-family: 'Source Serif 4', Georgia, serif; font-size: 1rem; font-weight: 300; outline: none; color: var(--ink); }
+.lobby-search::placeholder { color: var(--muted); font-style: italic; }
+.lobby-examples { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.lobby-pill { padding: 0.4rem 0.9rem; background: white; border: 1px solid var(--rule); font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); cursor: pointer;
+  text-decoration: none; transition: background 0.12s, color 0.12s, border-color 0.12s; }
+.lobby-pill:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+.lobby-loading { text-align: center; padding: 2.5rem 0; }
+.lobby-error, .lobby-empty { padding: 1.5rem 0; color: var(--muted); }
+.lobby-empty-note { color: var(--muted); font-size: 0.85rem; }
+
+/* Results table */
+.lobby-table { display: grid; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink);
+  font-family: 'Source Serif 4', Georgia, serif; font-size: 0.9rem; margin-bottom: 0.5rem; }
+.lobby-table.lobby-results { grid-template-columns: 0.5fr 2.4fr 1fr 1.1fr; }
+.lobby-thead { display: contents; font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.lobby-thead > span { padding: 0.55rem 0.6rem; border-bottom: 1px solid var(--rule); background: rgba(0,0,0,0.02); font-weight: 500; }
+.lobby-trow { display: contents; cursor: pointer; }
+.lobby-trow > span { padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--rule); display: flex; align-items: center; transition: background 0.1s; }
+.lobby-trow:hover > span { background: var(--aged); }
+.lobby-trow:last-child > span { border-bottom: none; }
+.lobby-rank { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--muted); font-weight: 600; }
+.lobby-entity strong { font-weight: 600; color: var(--ink); }
+.lobby-sector { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.lobby-loc { font-size: 0.82rem; color: var(--ink); }
+
+/* Entity kind badge */
+.lobby-kind-tag { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+  letter-spacing: 0.08em; text-transform: uppercase; padding: 0.15rem 0.45rem; }
+.lobby-kind-client { background: #e8e0cc; color: #6b5a1a; }
+.lobby-kind-registrant { background: #efd9d5; color: var(--accent); }
+
+/* Spend-over-time trend chart */
+.poll-trend-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0.8rem; }
+.poll-trend-title { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; color: var(--ink); }
+.poll-trend-key { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 0.4rem; }
+.trend-dot { width: 0.55rem; height: 0.55rem; display: inline-block; background: var(--accent); }
+.poll-trend-chart { display: grid; gap: 0.45rem; height: 160px; align-items: end; border-bottom: 1px solid var(--ink); padding: 0 0.2rem; }
+.trend-col { display: flex; flex-direction: column; align-items: stretch; height: 100%; justify-content: flex-end; }
+.trend-bar { background: var(--accent); width: 100%; min-height: 4px; }
+.trend-x { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); text-align: center; margin-top: 0.4rem; }
+.trend-val { font-family: 'IBM Plex Mono', monospace; font-size: 0.56rem; color: var(--muted); text-align: center; margin-bottom: 0.25rem; }
+.poll-trend-note { font-family: 'Source Serif 4', Georgia, serif; font-size: 0.88rem; line-height: 1.55; color: var(--muted); font-style: italic; margin-top: 0.9rem; }
+
+/* Two-up cards: issues + counterparties */
+.lobby-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 720px) { .lobby-grid { grid-template-columns: 1fr; } }
+.lobby-card { border: 1px solid var(--rule); padding: 1rem 1.1rem; background: rgba(255,255,255,0.4); }
+.lobby-card-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; color: var(--ink); margin-bottom: 0.7rem; }
+.lobby-card-rows { display: grid; gap: 0.5rem; }
+.lobby-card-row { display: grid; grid-template-columns: minmax(0,1fr) 5rem 4.5rem; align-items: center; gap: 0.6rem;
+  font-family: 'Source Serif 4', Georgia, serif; font-size: 0.85rem; color: var(--ink); padding: 0.15rem 0; }
+.lobby-card-row > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lobby-card-row > span:last-child { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--accent); text-align: right; }
+.lobby-bar { height: 0.5rem; background: var(--rule); }
+.lobby-fill { height: 100%; background: var(--ink); }
+
+/* Bills lobbied — clickable rows */
+.lobby-bills-list { border-top: 1px solid var(--rule); }
+.lobby-bill-row { display: grid; grid-template-columns: 6rem 1fr auto; align-items: center; gap: 0.8rem;
+  padding: 0.6rem 0.3rem; border-bottom: 1px solid var(--rule); cursor: pointer; transition: background 0.1s; }
+.lobby-bill-row:hover { background: var(--aged); }
+.lobby-bill-id { font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: var(--accent); font-size: 0.85rem; }
+.lobby-bill-note { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: var(--muted); text-align: right; white-space: nowrap; }
+
+/* Lobbyists */
+.lobby-people { display: flex; flex-wrap: wrap; gap: 0.4rem 0.75rem; font-family: 'Source Serif 4', Georgia, serif; }
+.lobby-person { font-size: 0.9rem; color: var(--ink); }
+.lobby-person:not(:last-child)::after { content: '·'; margin-left: 0.75rem; color: var(--rule); }
+
+.poll-summary { font-family: 'Source Serif 4', Georgia, serif; font-size: 0.88rem; font-style: italic; color: var(--muted);
+  margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid var(--rule); line-height: 1.5; }
+
+/* "Who's pushing this" panel on the bill detail page */
+.pushing-row { display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  padding: 0.6rem 0.3rem; border-bottom: 1px solid var(--rule); cursor: pointer; transition: background 0.1s; }
+.pushing-row:hover { background: var(--aged); }
+.pushing-name { font-family: 'Source Serif 4', Georgia, serif; font-size: 0.95rem; color: var(--ink); }
+.pushing-kind { font-family: 'IBM Plex Mono', monospace; font-size: 0.56rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted); border: 1px solid var(--rule); padding: 0.05rem 0.35rem; margin-left: 0.5rem; }
+.pushing-meta { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--accent); white-space: nowrap; text-align: right; }
+.pushing-note { font-family: 'Source Serif 4', Georgia, serif; font-size: 0.82rem; font-style: italic; color: var(--muted); margin-top: 0.75rem; line-height: 1.5; }
+
 /* Resolved-references block, streamed in under the plain-English explanation
    after the core translation has already rendered. */
 .detail-background {
-  margin-top: 1.25rem;
-  padding-top: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.1rem;
   border-top: 1px solid var(--rule);
 }
+.bg-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 1rem;
+}
+.bg-item { padding: 0.85rem 0; border-bottom: 1px solid var(--rule); }
+.bg-item:first-of-type { padding-top: 0; }
+.bg-item:last-child { border-bottom: none; padding-bottom: 0; }
+.bg-term {
+  font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.02rem;
+  color: var(--ink); margin-bottom: 0.3rem;
+}
+.bg-summary {
+  font-family: 'Source Serif 4', Georgia, serif; font-size: 0.92rem;
+  line-height: 1.55; color: #2a2a2a;
+}
+.bg-source {
+  display: inline-block; margin-top: 0.45rem; font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.64rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent;
+}
+.bg-source:hover { border-bottom-color: var(--accent); }
 
 /* Per-section placeholder shown while a streamed section (translation,
    timeline) is still resolving on the server. */

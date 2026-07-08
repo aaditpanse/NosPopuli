@@ -480,6 +480,38 @@ function _reportCard(r) {
     </div>`;
 }
 
+// "Who's pushing this" — entities that named this bill in their lobbying
+// filings (from the reverse index). Empty payload → keep the section hidden.
+function renderLobbying(entities) {
+  const section = document.getElementById('lobbying-section');
+  const body = document.getElementById('lobbying-body');
+  if (!section || !body) return;
+  entities = entities || [];
+  if (!entities.length) { section.style.display = 'none'; return; }
+
+  const money = (n) => {
+    n = Number(n) || 0;
+    if (n >= 1e9) return '$' + (n / 1e9).toFixed(2).replace(/\.00$/, '') + 'B';
+    if (n >= 1e6) return '$' + (n / 1e6).toFixed(2).replace(/\.00$/, '') + 'M';
+    if (n >= 1e3) return '$' + Math.round(n / 1e3) + 'K';
+    return '$' + Math.round(n);
+  };
+
+  body.innerHTML = entities.map(e => {
+    const kind = e.kind === 'registrant' ? 'firm' : 'client';
+    const nameArg = JSON.stringify(e.name).replace(/"/g, '&quot;');
+    const filings = e.mentions ? `${e.mentions} filing${e.mentions > 1 ? 's' : ''}` : '';
+    const spend = e.spend ? `${money(e.spend)} total lobbying` : '';
+    const meta = [filings, spend].filter(Boolean).join(' · ');
+    return `<div class="pushing-row" onclick="openLobbyFromBill('${e.kind}', ${nameArg})">
+      <span class="pushing-name">${escapeHtml(e.name)}<span class="pushing-kind">${kind}</span></span>
+      <span class="pushing-meta">${escapeHtml(meta)}</span>
+    </div>`;
+  }).join('') +
+  `<p class="pushing-note">Organizations that named this bill in their Senate LDA lobbying filings, ranked by frequency. Spend is the entity's total reported lobbying, not bill-specific. Click any to see its full profile.</p>`;
+  section.style.display = 'block';
+}
+
 function renderConnections(conn) {
   const section = document.getElementById('connections-section');
 
@@ -793,7 +825,7 @@ function _revealDetail(title) {
   // section's render fn when that section arrives, so a section the new stream
   // never emits (a producer erroring, or the /law not-indexed path) would
   // otherwise leave the PREVIOUS bill's sponsors/text/votes/connections visible.
-  ['sponsors-section', 'full-text-section', 'connections-section', 'votes-section'].forEach(id => {
+  ['sponsors-section', 'full-text-section', 'connections-section', 'votes-section', 'lobbying-section'].forEach(id => {
     const s = document.getElementById(id);
     if (s) s.style.display = 'none';
   });
@@ -815,20 +847,28 @@ function _setBillContext(billId, bill, title, translation) {
   }
 }
 
-// Background is the resolved-references block appended under the explanation.
-// It arrives well after the core translation (it's a slow web search) and often
-// comes back empty, so it renders into its own container only when it actually
-// has content — otherwise the section stays hidden.
-function renderBackground(bg) {
+// Background is the resolved-references block under the explanation — a list of
+// {term, summary, source} items. It arrives late (a slow web search) and is
+// often empty, so it renders only when it has content; otherwise stays hidden.
+function renderBackground(items) {
   const el = document.getElementById('detail-background');
   if (!el) return;
-  if (bg && bg.trim()) {
-    el.innerHTML = renderMarkdown(bg);
-    el.style.display = 'block';
-  } else {
-    el.innerHTML = '';
-    el.style.display = 'none';
-  }
+  items = Array.isArray(items) ? items : [];
+  if (!items.length) { el.innerHTML = ''; el.style.display = 'none'; return; }
+
+  el.innerHTML =
+    '<div class="bg-label">Background — terms this bill references</div>' +
+    items.map(it => {
+      const src = /^https?:\/\//i.test(it.source || '')
+        ? `<a class="bg-source" href="${escapeHtml(it.source)}" target="_blank" rel="noopener">Source ↗</a>`
+        : '';
+      return `<div class="bg-item">
+        <div class="bg-term">${escapeHtml(it.term || '')}</div>
+        <div class="bg-summary">${escapeHtml(it.summary || '')}</div>
+        ${src}
+      </div>`;
+    }).join('');
+  el.style.display = 'block';
 }
 
 function _showDetailError(bill) {
@@ -919,7 +959,7 @@ async function openDetail(bill) {
           // Bonus context that resolves late (a slow web search) and often
           // comes back empty. Render only when it has content — no persistent
           // placeholder, since the explanation already reads fine alone.
-          renderBackground(msg.background || '');
+          renderBackground(msg.items || []);
           break;
         case 'sponsors':
           ensureRevealed();
@@ -940,6 +980,10 @@ async function openDetail(bill) {
         case 'connections':
           ensureRevealed();
           renderConnections(msg.connections);
+          break;
+        case 'lobbying':
+          ensureRevealed();
+          renderLobbying(msg.entities);
           break;
         case 'done':
           break;

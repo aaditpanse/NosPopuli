@@ -6,7 +6,7 @@
   <title>NosPopuli — Law for the People</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/index.css?v=stream">
+  <link rel="stylesheet" href="/static/css/index.css?v=push2">
 </head>
 <body>
 
@@ -37,6 +37,7 @@
 <nav class="top-nav">
   <a class="nav-link top-nav-btn" href="#" onclick="goHome();return false">Front Page</a>
   <a class="nav-link top-nav-btn" href="#" onclick="showPage('page-elections');loadElections();return false">Elections</a>
+  <a class="nav-link top-nav-btn" href="#" onclick="showPage('page-lobbying');loadLobbying();return false">Lobbying</a>
   <a class="nav-link top-nav-btn" href="#" onclick="showPage('page-notifications');loadNotificationsPage();return false">My Notifications</a>
 </nav>
 
@@ -267,6 +268,11 @@
       </div>
     </div>
 
+    <div class="bill-section" id="lobbying-section" style="display:none">
+      <div class="bill-section-label">Who's pushing this</div>
+      <div id="lobbying-body"></div>
+    </div>
+
     <div class="bill-section" id="votes-section" style="display:none">
       <div class="bill-section-label">Recorded Votes</div>
       <div class="chambers-grid" id="chambers-grid"></div>
@@ -430,6 +436,45 @@
 </div>
 
 <!-- ══════════════════════════════════════════════ -->
+<!-- ── LOBBYING PAGE                            ── -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page" id="page-lobbying">
+  <a class="back-link" href="#" onclick="goHome();return false">← Back to Front Page</a>
+  <header class="page-header">
+    <div class="page-kicker">Money in Politics</div>
+    <h1 class="page-title">Lobbying</h1>
+    <p class="page-deck">Search any company, union, or lobbying firm to see what they spend, what they lobby on, who they hire, and which bills they push — the public record, laid side-by-side.</p>
+    <div class="corr-summary">
+      <div class="corr-stat">Source: <strong>Senate LDA filings</strong></div>
+      <div class="corr-stat"><strong>Federal</strong> lobbying disclosures</div>
+      <div class="corr-stat">Updated <strong>quarterly</strong></div>
+    </div>
+  </header>
+
+  <section class="bill-section">
+    <div class="lobby-toolbar">
+      <input type="text" id="lobby-search-input" class="lobby-search" autocomplete="off"
+             placeholder="Search 14,000+ entities — try 'Lockheed', 'Pfizer', 'AFL-CIO', 'Google'…"
+             oninput="lobbyOnInput()" onkeydown="if(event.key==='Enter')lobbySearchNow()"/>
+      <div class="lobby-examples" id="lobby-examples">
+        <span>Try</span>
+        <a class="lobby-pill" href="#" onclick="lobbyExample('Lockheed Martin Corporation');return false">Lockheed Martin</a>
+        <a class="lobby-pill" href="#" onclick="lobbyExample('Pfizer Inc.');return false">Pfizer</a>
+        <a class="lobby-pill" href="#" onclick="lobbyExample('Meta Platforms');return false">Meta</a>
+        <a class="lobby-pill" href="#" onclick="lobbyExample('American Petroleum Institute');return false">American Petroleum Institute</a>
+      </div>
+    </div>
+  </section>
+
+  <div id="lobby-loading" class="lobby-loading" style="display:none">
+    <div class="loading-spinner">Searching LDA filings…</div>
+  </div>
+  <div id="lobby-error" class="lobby-error" style="display:none"></div>
+  <div id="lobby-results"></div>
+  <div id="lobby-profile" style="display:none"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
 <!-- ── NOTIFICATIONS PAGE                       ── -->
 <!-- ══════════════════════════════════════════════ -->
 <div class="page" id="page-notifications">
@@ -568,7 +613,8 @@
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
   });
 </script>
-<script defer src="/static/js/index.js?v=3"></script>
+<script defer src="/static/js/index.js?v=5"></script>
 <script defer src="/static/js/correspondence.js?v=2"></script>
+<script defer src="/static/js/lobbying.js?v=5"></script>
 </body>
 </html>
