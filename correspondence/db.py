@@ -136,6 +136,20 @@ def init_db():
                 active BOOLEAN DEFAULT TRUE,
                 UNIQUE(email, bill_id)
             );
+
+            CREATE TABLE IF NOT EXISTS lobbying_bill_mentions (
+                congress     INTEGER NOT NULL,
+                bill_type    TEXT NOT NULL,
+                bill_number  INTEGER NOT NULL,
+                entity_name  TEXT NOT NULL,
+                entity_kind  TEXT NOT NULL,
+                mentions     INTEGER NOT NULL DEFAULT 0,
+                entity_spend DOUBLE PRECISION NOT NULL DEFAULT 0,
+                updated_at   DOUBLE PRECISION NOT NULL,
+                PRIMARY KEY (congress, bill_type, bill_number, entity_name, entity_kind)
+            );
+            CREATE INDEX IF NOT EXISTS idx_lbm_bill
+                ON lobbying_bill_mentions (congress, bill_type, bill_number);
         """)
     _bootstrap_known_elections_from_file()
 
@@ -497,6 +511,59 @@ def clear_disk_cache(prefix=None):
         else:
             cur.execute("DELETE FROM disk_cache")
         return cur.rowcount
+
+
+def record_bill_mentions(rows):
+    """Upsert (bill → entity) lobbying mentions. Each row is a dict with
+    congress, bill_type, bill_number, entity_name, entity_kind, mentions,
+    entity_spend. Powers the per-bill 'Who's pushing this' panel; populated
+    lazily as entity profiles are viewed."""
+    if not rows:
+        return
+    import time
+    now = time.time()
+    with _cursor() as cur:
+        for r in rows:
+            cur.execute(
+                """
+                INSERT INTO lobbying_bill_mentions
+                    (congress, bill_type, bill_number, entity_name, entity_kind,
+                     mentions, entity_spend, updated_at)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+                ON CONFLICT (congress, bill_type, bill_number, entity_name, entity_kind)
+                DO UPDATE SET mentions=excluded.mentions,
+                              entity_spend=excluded.entity_spend,
+                              updated_at=excluded.updated_at
+                """,
+                (
+                    int(r["congress"]), str(r["bill_type"]).lower(), int(r["bill_number"]),
+                    r["entity_name"], r["entity_kind"],
+                    int(r.get("mentions") or 0), float(r.get("entity_spend") or 0), now,
+                ),
+            )
+
+
+def get_bill_lobbying(congress, bill_type, bill_number, limit=12):
+    """Return entities recorded lobbying a bill, ranked by mention intensity then
+    entity size. Rows for the same entity under both filing roles (client +
+    registrant) are merged into one, keeping the role with the most mentions for
+    the click-through. Each row: entity_name, entity_kind, mentions, entity_spend."""
+    with _cursor() as cur:
+        cur.execute(
+            """
+            SELECT entity_name,
+                   (array_agg(entity_kind ORDER BY mentions DESC))[1] AS entity_kind,
+                   SUM(mentions) AS mentions,
+                   MAX(entity_spend) AS entity_spend
+            FROM lobbying_bill_mentions
+            WHERE congress=%s AND bill_type=%s AND bill_number=%s
+            GROUP BY entity_name
+            ORDER BY mentions DESC, entity_spend DESC
+            LIMIT %s
+            """,
+            (int(congress), str(bill_type).lower(), int(bill_number), int(limit)),
+        )
+        return cur.fetchall()
 
 
 def get_replies(corr_id):
