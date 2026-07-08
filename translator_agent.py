@@ -1,6 +1,7 @@
 import anthropic
 import json
 import os
+import hashlib
 from supabase import create_client
 from dotenv import load_dotenv
 from documentor_agent import log_action
@@ -15,12 +16,34 @@ supabase = create_client(
     os.getenv("SUPABASE_API_KEY")
 )
 
-def _cache_key(congress, bill_type, bill_number):
-    # v3 prefix forces re-translation after the enacted-status fix. Old v2
-    # rows could claim a not-yet-signed bill was law because the prompt
-    # didn't have an authoritative is_law signal. Lazy invalidation on next
-    # view; old v2 rows linger unused.
-    return f"BILLS-v3-{congress}{bill_type}{bill_number}"
+def _cache_key(congress, bill_type, bill_number, fingerprint=None):
+    # v3 prefix forced re-translation after the enacted-status fix. The
+    # fingerprint suffix is what keeps a cached translation honest as the bill
+    # moves: the prompt bakes in "Latest Action" + the bill text, so a
+    # translation cached at "introduced / in committee" would otherwise keep
+    # describing that stage long after the bill passed a chamber, got amended,
+    # or became law. When the bill's state changes the fingerprint changes, the
+    # key misses, and we re-translate. Fingerprint-less form kept for callers
+    # that don't have the bill record handy.
+    base = f"BILLS-v3-{congress}{bill_type}{bill_number}"
+    return f"{base}-{fingerprint}" if fingerprint else base
+
+
+def _bill_fingerprint(bill):
+    """Short hash of the bill's mutable state — the pieces the translation
+    actually depends on. Changes whenever the bill moves through Congress, so
+    the translation cache regenerates instead of serving a stale current-status.
+    updateDateIncludingText is bumped by Congress.gov on any change (including
+    text substitutions); latest action + enacted status are belt-and-suspenders.
+    """
+    la = bill.get("latestAction") or {}
+    parts = [
+        str(bill.get("updateDateIncludingText") or bill.get("updateDate") or ""),
+        str(la.get("actionDate") or ""),
+        str(la.get("text") or ""),
+        "law" if bill.get("laws") else "bill",
+    ]
+    return hashlib.sha1("|".join(parts).encode()).hexdigest()[:12]
 
 
 _BG_CACHE_PREFIX = "bg:v1:"
@@ -48,9 +71,9 @@ def _store_cached_bg(congress, bill_type, bill_number, bg_markdown):
     except Exception as e:
         print(f"[TRANSLATOR] BG cache write error: {e}")
 
-def _get_cached(congress, bill_type, bill_number):
+def _get_cached(congress, bill_type, bill_number, fingerprint=None):
     try:
-        package_id = _cache_key(congress, bill_type, bill_number)
+        package_id = _cache_key(congress, bill_type, bill_number, fingerprint)
         result = supabase.table("bill_translations") \
             .select("translation") \
             .eq("package_id", package_id) \
@@ -63,9 +86,9 @@ def _get_cached(congress, bill_type, bill_number):
         print(f"[TRANSLATOR] Cache read error: {e}")
         return None
 
-def _store_cached(congress, bill_type, bill_number, translation):
+def _store_cached(congress, bill_type, bill_number, translation, fingerprint=None):
     try:
-        package_id = _cache_key(congress, bill_type, bill_number)
+        package_id = _cache_key(congress, bill_type, bill_number, fingerprint)
         print(f"[TRANSLATOR] Attempting cache write: {package_id}")
         result = supabase.table("bill_translations").upsert({
             "package_id": package_id,
@@ -77,6 +100,18 @@ def _store_cached(congress, bill_type, bill_number, translation):
             "state_code": None,
         }).execute()
         print(f"[TRANSLATOR] Cache write result: {result.data}")
+        # Prune superseded rows for this bill — older fingerprints and the old
+        # fingerprint-less v3 row — so the table keeps exactly one current row
+        # per bill instead of one per historical state.
+        if fingerprint:
+            supabase.table("bill_translations") \
+                .delete() \
+                .eq("congress", int(congress)) \
+                .eq("bill_type", str(bill_type)) \
+                .eq("bill_number", int(bill_number)) \
+                .eq("jurisdiction", "federal") \
+                .neq("package_id", package_id) \
+                .execute()
     except Exception as e:
         print(f"[TRANSLATOR] Cache write error: {e}")
 
@@ -232,10 +267,14 @@ def translate_bill_core(bill_data, client, user_context=None, bill_text=None):
     congress = bill.get("congress")
     bill_type = (bill.get("type") or "").lower()
     bill_number = bill.get("number")
+    # Fingerprint the bill's current state so the cache invalidates when the
+    # bill moves through Congress (new action, amended text, enacted) instead
+    # of freezing the translation at whatever stage it was first viewed.
+    fingerprint = _bill_fingerprint(bill)
 
     # Translation core and the Background section live in SEPARATE cache rows
     # so bumping one prefix does not force the other to regenerate.
-    cached_payload = _get_cached(congress, bill_type, bill_number)
+    cached_payload = _get_cached(congress, bill_type, bill_number, fingerprint)
     cached_translation, cached_refs = _parse_cache_payload(cached_payload)
 
     if cached_translation:
@@ -318,6 +357,7 @@ listed terms will be covered separately in a Background section.
     _store_cached(
         congress, bill_type, bill_number,
         json.dumps({"translation": translation, "unknown_refs": unknown_refs}),
+        fingerprint,
     )
 
     log_action(
