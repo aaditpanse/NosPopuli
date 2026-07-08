@@ -22,6 +22,7 @@ worse than today's behavior.
 
 import hashlib
 import json
+import re
 
 from correspondence.db import get_disk_cache, set_disk_cache
 from documentor_agent import log_action
@@ -130,12 +131,20 @@ def _sonnet_batch_resolve(terms: list, client) -> dict:
     raw = "".join(
         getattr(b, "text", "") for b in msg.content if getattr(b, "type", "") == "text"
     ).strip()
-    # Sonnet sometimes wraps in ```json … ``` despite the instruction.
+    # Sonnet (esp. with web search) frequently prefaces the JSON with prose
+    # ("Now I have enough information…") and/or wraps it in a ```json fence.
+    # Strip a fence, then fall back to extracting the outermost {...} object;
+    # strict=False tolerates literal newlines inside string values.
     if raw.startswith("```"):
-        raw = raw.strip("`").lstrip("json").strip()
+        raw = re.sub(r"^```[a-zA-Z]*\s*", "", raw)
+        raw = re.sub(r"\s*```$", "", raw).strip()
+    if not raw.startswith("{"):
+        start, end = raw.find("{"), raw.rfind("}")
+        if start != -1 and end > start:
+            raw = raw[start:end + 1]
 
     try:
-        parsed = json.loads(raw)
+        parsed = json.loads(raw, strict=False)
     except json.JSONDecodeError as e:
         print(f"[REF RESOLVER] JSON parse failed: {e} — body: {raw[:200]!r}")
         return {}

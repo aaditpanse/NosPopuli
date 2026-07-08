@@ -1,6 +1,7 @@
 import anthropic
 import json
 import os
+import re
 import hashlib
 from supabase import create_client
 from dotenv import load_dotenv
@@ -46,7 +47,7 @@ def _bill_fingerprint(bill):
     return hashlib.sha1("|".join(parts).encode()).hexdigest()[:12]
 
 
-_BG_CACHE_PREFIX = "bg:v1:"
+_BG_CACHE_PREFIX = "bg:v2:"   # v2: structured [{term,summary,source}] not markdown
 _BG_CACHE_TTL_SECONDS = 60 * 24 * 3600  # 60 days — Background references are
                                         # nearly always stable concepts (FHA,
                                         # HUD, Section 230). The per-term
@@ -207,35 +208,83 @@ Explain in these four sections:
     return translation
 
 
+def _looks_like_raw_json(text):
+    """True if a stored translation is actually unparsed JSON scaffolding —
+    the poison a fence/parse failure used to write into the cache."""
+    t = (text or "").lstrip()
+    return t.startswith("```json") or t.startswith('{"translation"') or t.startswith('{ "translation"')
+
+
 def _parse_translation_json(raw: str):
     """Parse Haiku's JSON output. Returns (translation_markdown, unknown_refs).
 
-    Fail-open: malformed JSON falls back to using the raw text as the
-    translation and an empty unknown_refs list. The user still gets the
-    explanation; we just skip the Background section."""
-    body = raw
+    Robust to the two ways Haiku breaks the "return only JSON" instruction:
+    wrapping the object in a ```json fence, and emitting literal (unescaped)
+    newlines inside the translation string — which strict JSON rejects. Never
+    surfaces the raw JSON scaffolding to the user; fails open to readable text.
+    """
+    body = (raw or "").strip()
+
+    # Strip a leading/trailing markdown code fence (```json … ``` or ``` … ```).
     if body.startswith("```"):
-        body = body.strip("`").lstrip("json").strip()
+        body = re.sub(r"^```[a-zA-Z]*\s*", "", body)
+        body = re.sub(r"\s*```$", "", body).strip()
+
+    # Primary parse. strict=False tolerates literal newlines/tabs inside string
+    # values — the most common reason the model's JSON is technically invalid.
     try:
-        parsed = json.loads(body)
-        translation = (parsed.get("translation") or "").strip()
-        unknown_refs = parsed.get("unknown_refs") or []
-        if not isinstance(unknown_refs, list):
-            unknown_refs = []
-        unknown_refs = [str(t).strip() for t in unknown_refs if str(t).strip()]
-        if not translation:
-            return raw, []
-        return translation, unknown_refs
+        parsed = json.loads(body, strict=False)
+        if isinstance(parsed, dict):
+            translation = (parsed.get("translation") or "").strip()
+            refs = parsed.get("unknown_refs") or []
+            if not isinstance(refs, list):
+                refs = []
+            refs = [str(t).strip() for t in refs if str(t).strip()]
+            if translation:
+                return translation, refs
     except json.JSONDecodeError:
-        # Treat the whole response as the translation — better than nothing.
-        return raw, []
+        pass
+
+    # Fallback: extract the translation field by hand, then json-unescape it.
+    m = re.search(r'"translation"\s*:\s*"(.*?)"\s*(?:,\s*"unknown_refs"|}\s*$)', body, re.DOTALL)
+    if m:
+        try:
+            translation = json.loads('"' + m.group(1) + '"', strict=False)
+        except json.JSONDecodeError:
+            translation = m.group(1).replace('\\n', '\n').replace('\\"', '"').replace('\\t', '\t')
+        if translation.strip():
+            return translation.strip(), []
+
+    # Last resort: if it's still JSON we couldn't salvage, return blank (the
+    # caller shows an "unavailable" message) rather than raw braces; otherwise
+    # treat the whole response as plain-text markdown.
+    if body.startswith("{"):
+        return "", []
+    return body, []
 
 
-def _format_background(resolutions: dict) -> str:
-    """Render the Background section appended after the four-part explanation."""
+def _split_source(body):
+    """Split a resolved reference body ("summary … Source: <url>") into
+    (summary, source_url). Source is optional."""
+    body = (body or "").strip()
+    idx = body.rfind("Source:")
+    if idx != -1:
+        summary = body[:idx].strip()
+        rest = body[idx + len("Source:"):].strip()
+        source = rest.split()[0] if rest else ""
+        return summary, source
+    return body, ""
+
+
+def _format_background(items) -> str:
+    """Render structured Background items back into markdown (used only by the
+    one-shot translate_bill assembler; the streaming path renders them directly)."""
+    if not items:
+        return ""
     lines = ["## Background"]
-    for term, body in resolutions.items():
-        lines.append(f"**{term}** — {body}")
+    for it in items:
+        src = f" Source: {it['source']}" if it.get("source") else ""
+        lines.append(f"**{it['term']}** — {it['summary']}{src}")
     return "\n\n".join(lines)
 
 
@@ -251,8 +300,8 @@ def translate_bill(bill_data, client, user_context=None, bill_text=None):
     translation, unknown_refs = translate_bill_core(
         bill_data, client, user_context, bill_text
     )
-    bg = resolve_bill_background(bill_data, unknown_refs, client)
-    return _assemble(translation, bg)
+    items = resolve_bill_background(bill_data, unknown_refs, client)
+    return _assemble(translation, _format_background(items))
 
 
 def translate_bill_core(bill_data, client, user_context=None, bill_text=None):
@@ -277,7 +326,9 @@ def translate_bill_core(bill_data, client, user_context=None, bill_text=None):
     cached_payload = _get_cached(congress, bill_type, bill_number, fingerprint)
     cached_translation, cached_refs = _parse_cache_payload(cached_payload)
 
-    if cached_translation:
+    # Ignore poisoned rows (raw JSON scaffolding written by an old parse
+    # failure) so they self-heal by re-translating with the fixed parser.
+    if cached_translation and not _looks_like_raw_json(cached_translation):
         log_action(
             agent_name="translator",
             action="translate_bill_core_cached",
@@ -379,11 +430,11 @@ listed terms will be covered separately in a Background section.
 
 
 def resolve_bill_background(bill_data, unknown_refs, client):
-    """Slow half: resolve referenced programs/statutes into a Background block.
+    """Slow half: resolve referenced programs/statutes into Background items.
 
-    This is the ~75s Sonnet web search. Returns Background markdown (or '' when
-    there's nothing to resolve). Hits the Background cache row when warm, so
-    repeat opens are instant.
+    This is the ~75s Sonnet web search. Returns a list of
+    {term, summary, source} dicts (empty when there's nothing to resolve). Hits
+    the Background cache row when warm, so repeat opens are instant.
     """
     bill = bill_data["bill"]
     congress = bill.get("congress")
@@ -394,18 +445,26 @@ def resolve_bill_background(bill_data, unknown_refs, client):
     if cached_bg is not None:
         return cached_bg
 
+    items = []
+    resolution_failed = False
     if unknown_refs:
         try:
             resolutions = resolve_references(unknown_refs, client)
         except Exception as e:
             print(f"[TRANSLATOR] Reference resolver error: {e}")
             resolutions = {}
-        bg = _format_background(resolutions) if resolutions else ""
-    else:
-        bg = ""
+        for term, body in resolutions.items():
+            summary, source = _split_source(body)
+            if summary:
+                items.append({"term": term, "summary": summary, "source": source})
+        # Had references but resolved nothing → treat as a transient failure
+        # (e.g. a Sonnet parse error) and don't cache the empty result, so the
+        # next view retries instead of freezing an empty Background for 60 days.
+        resolution_failed = not items
 
-    _store_cached_bg(congress, bill_type, bill_number, bg)
-    return bg
+    if not resolution_failed:
+        _store_cached_bg(congress, bill_type, bill_number, items)
+    return items
 
 
 def _assemble(translation: str, bg: str) -> str:
