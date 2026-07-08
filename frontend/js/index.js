@@ -2290,28 +2290,69 @@ function _switchToFederalAndSearch() {
 }
 
 async function openStateBill(bill) {
+  const myToken = ++_detailToken;
   previousPage = document.querySelector('.page.active').id;
   _currentBill = { ...bill, is_state_bill: true };
 
-  const _stateLabel = stateNameFromCode(bill.state) || bill.state || '';
-  document.getElementById('detail-bill-id').textContent = `${bill.identifier}${_stateLabel ? ` · ${_stateLabel}` : ''}`;
+  const stateLabel = stateNameFromCode(bill.state) || bill.state || '';
+  const billId = `${bill.identifier}${stateLabel ? ` · ${stateLabel}` : ''}`;
+  document.getElementById('detail-bill-id').textContent = billId;
   document.getElementById('detail-bill-title').textContent = bill.title || bill.identifier;
   document.getElementById('detail-loading').style.display = 'block';
   document.getElementById('detail-content').style.display = 'none';
-  // Hide federal-only sections — OpenStates doesn't carry the same shape of
-  // sponsor/cosponsor data and the federal panel must NOT leak from a prior
-  // bill detail view.
-  renderSponsors([], []);
-
-  const steps = ['lstep-1', 'lstep-2', 'lstep-3', 'lstep-4'];
-  steps.forEach((id, i) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.classList.remove('visible', 'done');
-    setTimeout(() => el.classList.add('visible'), i * 700);
-  });
-
+  document.getElementById('votes-section').style.display = 'none';
   showPage('page-detail');
+
+  let revealed = false;
+  const ensureRevealed = () => {
+    if (revealed) return;
+    _revealDetail(bill.title || bill.identifier);
+    // OpenStates has no cosponsor/connections/lobbying data — keep those
+    // federal-only sections hidden and free of any prior bill's content.
+    renderSponsors([], []);
+    renderConnections(null);
+    revealed = true;
+  };
+
+  const handleSection = (msg) => {
+    if (myToken !== _detailToken) return;
+    switch (msg.section) {
+      case 'meta':
+        ensureRevealed();
+        // Enrich _currentBill so renderFullText can deep-link to the state's
+        // own bill page when no text is available.
+        _currentBill = { ..._currentBill, openstates_url: msg.openstates_url || _currentBill.openstates_url, sources: msg.sources || [] };
+        _initNotifyBtn(billId, null, null, null, bill.ocd_id);
+        break;
+      case 'translation':
+        ensureRevealed();
+        renderExplanation(msg.translation || '');
+        if (typeof setCurrentBillContext === 'function') {
+          setCurrentBillContext({
+            bill_id:      billId,
+            bill_title:   bill.title || bill.identifier,
+            bill_summary: msg.translation || '',
+            latest_action: bill.latest_action || '',
+            _reopen: { type: 'state', ocd_id: bill.ocd_id, identifier: bill.identifier, title: bill.title, state: bill.state },
+          });
+        }
+        break;
+      case 'timeline':
+        ensureRevealed();
+        renderTimeline(msg.timeline_events, msg.timeline);
+        break;
+      case 'votes':
+        ensureRevealed();
+        renderVotes(msg.votes, true);
+        break;
+      case 'bill_text':
+        ensureRevealed();
+        renderFullText(msg.bill_text);
+        break;
+      case 'done':
+        break;
+    }
+  };
 
   try {
     const response = await fetch('/state/bill', {
@@ -2319,46 +2360,36 @@ async function openStateBill(bill) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ocd_id: bill.ocd_id, state_code: bill.state })
     });
-    if (!response.ok) throw new Error(`Error: ${response.status}`);
-    const data = await response.json();
+    if (!response.ok || !response.body) throw new Error(`Error: ${response.status}`);
 
-    steps.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.classList.add('done');
-    });
-
-    setTimeout(() => {
-      document.getElementById('detail-loading').style.display = 'none';
-      // Enrich _currentBill with detail-response data so renderFullText can
-      // deep-link to the state's own bill page when no text is available.
-      _currentBill = {
-        ..._currentBill,
-        openstates_url: data.openstates_url || _currentBill.openstates_url,
-        sources: data.sources || [],
-      };
-      renderExplanation(data.translation || '');
-      renderTimeline(data.timeline_events, data.timeline);
-      renderVotes(data.votes, true);
-      renderFullText(data.bill_text);
-      renderConnections(null);
-      document.getElementById('detail-content').style.display = 'block';
-      if (typeof setCurrentBillContext === 'function') {
-        setCurrentBillContext({
-          bill_id:      `${bill.identifier} · ${bill.state || ''}`,
-          bill_title:   bill.title || bill.identifier,
-          bill_summary: data.translation || '',
-          latest_action: bill.latest_action || '',
-          _reopen: { type: 'state', ocd_id: bill.ocd_id, identifier: bill.identifier, title: bill.title, state: bill.state },
-        });
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (myToken !== _detailToken) { try { await reader.cancel(); } catch (e) {} return; }
+      buffer += decoder.decode(value, { stream: true });
+      let nl;
+      while ((nl = buffer.indexOf('\n')) >= 0) {
+        const line = buffer.slice(0, nl).trim();
+        buffer = buffer.slice(nl + 1);
+        if (!line) continue;
+        try { handleSection(JSON.parse(line)); }
+        catch (e) { console.error('bad state stream line', e, line); }
       }
-      _initNotifyBtn(`${bill.identifier} · ${bill.state || ''}`, null, null, null, bill.ocd_id);
-    }, 400);
+    }
+    const tail = buffer.trim();
+    if (tail) { try { handleSection(JSON.parse(tail)); } catch (e) {} }
+    if (myToken === _detailToken) ensureRevealed();
 
   } catch (err) {
     document.getElementById('detail-loading').innerHTML = `
       <div class="empty-state">
         <p>This bill couldn't be loaded right now.</p>
       </div>`;
+    document.getElementById('detail-loading').style.display = 'block';
+    document.getElementById('detail-content').style.display = 'none';
   }
 }
 

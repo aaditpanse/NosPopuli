@@ -9,6 +9,7 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 import json
 import re
+import hashlib
 import secrets
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, StreamingResponse
@@ -1632,83 +1633,116 @@ async def state_search(request: Request, body: StateSearchRequest):
         raise HTTPException(status_code=500, detail="State search failed.")
 
 
+def _state_bill_fingerprint(bill_data):
+    """Short hash of a state bill's mutable state, so the translation cache
+    invalidates when the bill moves through the legislature."""
+    parts = [
+        str(bill_data.get("latest_action_date") or ""),
+        str(bill_data.get("latest_action_description") or ""),
+        str(bill_data.get("updated_at") or ""),
+    ]
+    return hashlib.sha1("|".join(parts).encode()).hexdigest()[:12]
+
+
+def _state_bill_stream(bill_data, state_code, ocd_id):
+    """NDJSON section generator for /state/bill, mirroring the federal stream.
+    The instant pieces (meta, votes, timeline, sponsors) come straight from the
+    fetched bill; only the text fetch and Haiku translation are deferred, and
+    they stream in as they resolve instead of blocking the whole page."""
+    loop = asyncio.get_event_loop()
+
+    def ex(fn, *args):
+        return loop.run_in_executor(None, fn, *args)
+
+    identifier = bill_data.get("identifier", "")
+    title = bill_data.get("title", "")
+    sources = [
+        {"url": s.get("url"), "note": s.get("note") or ""}
+        for s in (bill_data.get("sources") or []) if s.get("url")
+    ]
+    sponsors = [
+        {"name": s.get("name", ""), "party": "", "state": state_code}
+        for s in (bill_data.get("sponsorships") or []) if s.get("primary")
+    ]
+    fingerprint = _state_bill_fingerprint(bill_data)
+    synthetic_bill_data = {
+        "bill": {
+            "congress": None, "type": state_code, "number": identifier, "title": title,
+            "sponsors": [{"fullName": s["name"]} for s in sponsors],
+            "latestAction": {"text": bill_data.get("latest_action_description", "")},
+            "policyArea": {"name": ""},
+        }
+    }
+
+    async def stream():
+        text_task = asyncio.ensure_future(ex(fetch_state_bill_text, bill_data))
+
+        async def sec_meta():
+            return {
+                "section": "meta", "identifier": identifier, "title": title,
+                "state_code": state_code, "is_state_bill": True,
+                "openstates_url": bill_data.get("openstates_url") or None,
+                "sources": sources, "sponsors": sponsors,
+            }
+
+        async def sec_votes():
+            votes_raw = bill_data.get("votes", [])
+            return {"section": "votes", "votes": {
+                "house": map_state_votes(votes_raw, state_code, "lower"),
+                "senate": map_state_votes(votes_raw, state_code, "upper"),
+            }}
+
+        async def sec_timeline():
+            return {"section": "timeline", "timeline": "",
+                    "timeline_events": structure_state_actions(bill_data)}
+
+        async def sec_text():
+            txt = await text_task
+            return {"section": "bill_text", "bill_text": txt or None}
+
+        async def sec_translation():
+            txt = await text_task
+            tr = await ex(translate_state_bill, synthetic_bill_data, txt, get_client(), fingerprint)
+            return {"section": "translation", "translation": tr or "Translation unavailable for this bill."}
+
+        producers = [
+            asyncio.ensure_future(sec_meta()),
+            asyncio.ensure_future(sec_votes()),
+            asyncio.ensure_future(sec_timeline()),
+            asyncio.ensure_future(sec_text()),
+            asyncio.ensure_future(sec_translation()),
+        ]
+        for fut in asyncio.as_completed(producers):
+            try:
+                yield json.dumps(await fut) + "\n"
+            except Exception as e:
+                print(f"[API] state bill section error {ocd_id}: {e}")
+
+        try:
+            log_action(
+                agent_name="api", action="get_state_bill",
+                input_data={"ocd_id": ocd_id, "state": state_code},
+                output_data={"status": "complete"},
+            )
+        except Exception as e:
+            print(f"[API] state bill logging error {ocd_id}: {e}")
+        yield json.dumps({"section": "done"}) + "\n"
+
+    return stream
+
+
 @app.post("/state/bill")
 @limiter.limit("30/minute")
 async def get_state_bill(request: Request, body: StateBillRequest):
-    try:
-        loop = asyncio.get_event_loop()
+    """Streams state bill detail as NDJSON — parity with the federal /bill."""
+    loop = asyncio.get_event_loop()
 
-        bill_data = await loop.run_in_executor(None, fetch_state_bill, body.ocd_id)
+    bill_data = await loop.run_in_executor(None, fetch_state_bill, body.ocd_id)
+    if not bill_data:
+        raise HTTPException(status_code=404, detail="State bill not found.")
 
-        if not bill_data:
-            raise HTTPException(status_code=404, detail="State bill not found.")
-
-        bill_text  = await loop.run_in_executor(None, fetch_state_bill_text, bill_data)
-        votes_raw  = bill_data.get("votes", [])
-        house_vote  = map_state_votes(votes_raw, body.state_code, "lower")
-        senate_vote = map_state_votes(votes_raw, body.state_code, "upper")
-
-        synthetic_bill_data = {
-            "bill": {
-                "congress": None,
-                "type": body.state_code,
-                "number": bill_data.get("identifier", ""),
-                "title": bill_data.get("title", ""),
-                "sponsors": [
-                    {"fullName": s.get("name", "")}
-                    for s in bill_data.get("sponsorships", [])
-                    if s.get("primary")
-                ],
-                "latestAction": {
-                    "text": bill_data.get("latest_action_description", "")
-                },
-                "policyArea": {"name": ""},
-            }
-        }
-
-        translation = await loop.run_in_executor(
-            None, translate_state_bill, synthetic_bill_data, bill_text, get_client()
-        )
-
-        timeline_events = structure_state_actions(bill_data)
-
-        log_action(
-            agent_name="api",
-            action="get_state_bill",
-            input_data={"ocd_id": body.ocd_id, "state": body.state_code},
-            output_data={"status": "complete"},
-        )
-
-        # Surface OpenStates' source links so the frontend can deep-link to the
-        # state's own bill page (where the authoritative text lives) instead of
-        # forcing the user through openstates.org first.
-        raw_sources = bill_data.get("sources") or []
-        sources = [
-            {"url": s.get("url"), "note": s.get("note") or ""}
-            for s in raw_sources
-            if s.get("url")
-        ]
-
-        return {
-            "ocd_id": body.ocd_id,
-            "state_code": body.state_code,
-            "identifier": bill_data.get("identifier", ""),
-            "title": bill_data.get("title", ""),
-            "translation": translation,
-            "timeline": "",
-            "timeline_events": timeline_events,
-            "votes": {"house": house_vote, "senate": senate_vote},
-            "is_state_bill": True,
-            "bill_text": bill_text or None,
-            "openstates_url": bill_data.get("openstates_url") or None,
-            "sources": sources,
-        }
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        print(f"[API] State bill error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to load state bill.")
+    stream = _state_bill_stream(bill_data, body.state_code, body.ocd_id)
+    return StreamingResponse(stream(), media_type="application/x-ndjson", headers=STREAM_HEADERS)
 
 
 @app.post("/state/member/search")

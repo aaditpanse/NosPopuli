@@ -147,10 +147,11 @@ def _store_cached_by_key(key, translation, jurisdiction='federal', state_code=No
         print(f"[TRANSLATOR] Cache write error: {e}")
 
 
-def translate_state_bill(bill_data, bill_text, client):
+def translate_state_bill(bill_data, bill_text, client, fingerprint=None):
     """
     Translate a state bill. Uses actual bill text if available,
-    falls back to metadata only.
+    falls back to metadata only. `fingerprint` invalidates the cache when the
+    bill moves through the legislature (same self-healing as federal bills).
     """
     bill = bill_data.get("bill", {})
 
@@ -162,6 +163,8 @@ def translate_state_bill(bill_data, bill_text, client):
     status = (bill.get("latestAction") or {}).get("text", "Unknown")
 
     cache_key = f"STATE-{state_code}-{identifier}"
+    if fingerprint:
+        cache_key = f"{cache_key}-{fingerprint}"
     cached = _get_cached_by_key(cache_key)
     if cached:
         return cached
