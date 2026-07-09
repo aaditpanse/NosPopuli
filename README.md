@@ -38,6 +38,30 @@ The home **front page** has three additional surfaces:
 
 ---
 
+## The Real Goal — From API Wrapper to Self-Building Pipelines
+
+Currently NosPopuli behaves like a multi-API wrapper — Congress.gov, GovInfo, LegiScan, Google Civic, and the Senate LDA all flow in, get translated and cross-referenced, and render as clean civic pages. That's the funnel. It is not the destination.
+
+The trouble with wrapping APIs is that you only reach the places where someone *else* already did the aggregation work. Federal legislation is charted (Congress.gov). State legislation is charted (LegiScan — ~50 hand-built per-state pipelines, normalized into one schema and maintained for over a decade). But the map ends there. **Local and municipal government — city councils, county boards, school districts, the layer of government that touches people most directly — has no aggregator, because the per-source maintenance never scaled.** Thousands of jurisdictions, each with its own portal, format, and quirks; no team is large enough to keep tens of thousands of scrapers alive by hand. So no one has, and the most local layer of American democracy remains the least legible.
+
+NosPopuli's data-aggregation goal is to remove that ceiling by **automating the creation and maintenance of the pipelines themselves.** An LLM-driven system that, given a source, synthesizes its own extractor, validates the output, and repairs itself when the source changes — so coverage is bounded by what is *verifiable*, not by what is *maintainable*. Where that works, the API dependency falls away and the uncharted layer of government becomes reachable for the first time. The APIs stay for the charted domains (state → LegiScan, federal → Congress.gov); the built-in-house effort points squarely at the gap no one serves.
+
+**The honest hard part is not scraping — it is trust.** An LLM can read a page and write an extractor; that part is nearly solved. What it cannot do for free is *know when the data is wrong*. The dangerous failure is not a crash — it is silent semantic drift: a vote column shifts one over, a date format flips, "nay" gets read as "yea," and the pipeline confidently emits internally-consistent, externally-false data. Structural checks alone never catch that. The only cures are per-source oracles — a second independent source to reconcile against, or periodic human spot-checks. For an accountability tool, being loud about the line between *ingested* and *certified* is not a footnote; it is the product.
+
+So the build sequence is deliberate — **make the system first, prove it in the lab, do not deploy, then research how to make it trustworthy:**
+
+1. **Build the system with its own meter.** Version one ships alongside its measurement instrument — a planted-error injector, a golden set of hand-verified records, and a cross-source reconciler. That harness is not the deployment layer; it is how "is this good?" becomes a number instead of a feeling.
+2. **Prototype where truth is checkable.** Start on a single source that has a *second* independent source (a Legistar city that also publishes its own minutes), so the oracle is real from day one. Prove the loop catches corruption you deliberately plant before trusting anything it produces.
+3. **Then push toward the frontier and turn the dials:**
+   - **Onboarding cost** — human-minutes to add a new source cold
+   - **Recovery rate** — % of source changes auto-repaired with zero human touch
+   - **Oracle precision / recall** — catches planted corruption without crying wolf
+   - **Certifiable coverage** — fraction of ingested records provable via a second source
+
+This is the line between a very good wrapper and civic infrastructure that did not exist before. The wrapper is how NosPopuli earns its first users. This is how it stops being replaceable.
+
+---
+
 ## Architecture
 
 NosPopuli is a multi-agent AI system. Each agent has one job. They communicate through a structured pipeline coordinated by a dispatcher.
