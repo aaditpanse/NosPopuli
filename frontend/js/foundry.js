@@ -245,6 +245,12 @@ async function runSearch(query) {
   const start = await fetch("/api/foundry/onboard", {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name: query }) });
+  if (!start.ok) {
+    const err = await start.json().catch(() => ({}));
+    log.innerHTML = `<div class="jl-head">Pipeline: ${esc(query)}</div>`
+      + esc(err.detail || `request failed (${start.status})`);
+    return;
+  }
   const { job_id } = await start.json();
   const timer = setInterval(async () => {
     const job = await (await fetch(`/api/foundry/onboard/${job_id}`)).json();

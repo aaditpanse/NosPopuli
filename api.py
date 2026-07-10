@@ -2281,7 +2281,17 @@ class _FoundryOnboardBody(BaseModel):
 
 
 @app.post("/api/foundry/onboard")
-async def foundry_onboard(body: _FoundryOnboardBody):
+async def foundry_onboard(body: _FoundryOnboardBody, request: Request):
+    # Onboarding spends real LLM dollars (discovery agent + synthesis), so on
+    # a public deployment it stays off unless explicitly enabled. Localhost
+    # lab use needs no setup.
+    local = request.client and request.client.host in ("127.0.0.1", "::1")
+    if not local and os.environ.get("FOUNDRY_ONBOARD") != "on":
+        raise HTTPException(
+            status_code=403,
+            detail="foundry onboarding is disabled on this deployment — the "
+                   "ledger is read-only here (set FOUNDRY_ONBOARD=on to allow "
+                   "search-triggered pipeline runs)")
     job_id = _uuid.uuid4().hex[:12]
     _FOUNDRY_JOBS[job_id] = {"status": "running", "log": [], "result": None,
                              "progress": {"pct": 0, "stage": "queued"}}
