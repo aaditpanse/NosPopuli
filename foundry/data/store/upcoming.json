@@ -1,0 +1,132 @@
+{
+ "la-primegov": {
+  "upcoming": [
+   {
+    "date": "2026-07-14",
+    "time": "08:45 AM",
+    "body": "Arts, Parks, Libraries, and Community Enrichment Committee"
+   },
+   {
+    "date": "2026-07-14",
+    "time": "02:00 PM",
+    "body": "Planning and Land Use Management Committee"
+   },
+   {
+    "date": "2026-07-15",
+    "time": "02:00 PM",
+    "body": "Budget and Finance Committee"
+   }
+  ],
+  "next": {
+   "date": "2026-07-14",
+   "time": "08:45 AM",
+   "body": "Arts, Parks, Libraries, and Community Enrichment Committee"
+  },
+  "checked": "2026-07-10",
+  "derived_by": "claude-haiku-4-5",
+  "note": "machine-derived schedule lookup; advisory, never certified"
+ },
+ "loudoun-bos": {
+  "upcoming": [
+   {
+    "date": "2026-07-14",
+    "time": "18:00",
+    "body": "Finance/Government Operations and Economic Development Committee"
+   },
+   {
+    "date": "2026-07-22",
+    "time": "16:00",
+    "body": "Transportation and Land Use Committee"
+   }
+  ],
+  "next": {
+   "date": "2026-07-14",
+   "time": "18:00",
+   "body": "Finance/Government Operations and Economic Development Committee"
+  },
+  "checked": "2026-07-10",
+  "derived_by": "claude-haiku-4-5",
+  "note": "machine-derived schedule lookup; advisory, never certified"
+ },
+ "pittsburgh-legistar": {
+  "upcoming": [
+   {
+    "date": "2026-07-15",
+    "time": "10:00 AM",
+    "body": "Standing Committees"
+   },
+   {
+    "date": "2026-07-22",
+    "time": "1:30 PM",
+    "body": "Post Agenda"
+   },
+   {
+    "date": "2026-07-28",
+    "time": "1:30 PM",
+    "body": "Committee on Hearings and Policy"
+   }
+  ],
+  "next": {
+   "date": "2026-07-15",
+   "time": "10:00 AM",
+   "body": "Standing Committees"
+  },
+  "checked": "2026-07-10",
+  "derived_by": "claude-haiku-4-5",
+  "note": "machine-derived schedule lookup; advisory, never certified"
+ },
+ "princewilliam-bos": {
+  "upcoming": [
+   {
+    "date": "2026-07-14",
+    "time": "14:00",
+    "body": "Board of County Supervisors Meeting - Work Session"
+   },
+   {
+    "date": "2026-07-21",
+    "time": "14:00",
+    "body": "Board of County Supervisors Meeting"
+   }
+  ],
+  "next": {
+   "date": "2026-07-14",
+   "time": "14:00",
+   "body": "Board of County Supervisors Meeting - Work Session"
+  },
+  "checked": "2026-07-10",
+  "derived_by": "claude-haiku-4-5",
+  "note": "machine-derived schedule lookup; advisory, never certified"
+ },
+ "fairfax-bos": {
+  "upcoming": [
+   {
+    "date": "2026-07-14",
+    "time": "09:30",
+    "body": "Board of Supervisors Meeting"
+   },
+   {
+    "date": "2026-08-25",
+    "time": "09:30",
+    "body": "Board of Supervisors Meeting"
+   },
+   {
+    "date": "2026-09-15",
+    "time": "09:30",
+    "body": "Board of Supervisors Meeting"
+   },
+   {
+    "date": "2026-09-29",
+    "time": "09:30",
+    "body": "Board of Supervisors Meeting"
+   }
+  ],
+  "next": {
+   "date": "2026-07-14",
+   "time": "09:30",
+   "body": "Board of Supervisors Meeting"
+  },
+  "checked": "2026-07-10",
+  "derived_by": "claude-haiku-4-5",
+  "note": "machine-derived schedule lookup; advisory, never certified"
+ }
+}

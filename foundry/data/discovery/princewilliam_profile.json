@@ -1,0 +1,132 @@
+{
+ "jurisdiction": "Prince William County, Virginia \u2014 Board of County Supervisors",
+ "primary_source": {
+  "system": "Granicus",
+  "tenant": "pwcgov",
+  "base_urls": [
+   "https://pwcgov.granicus.com/ViewPublisher.php?view_id=23",
+   "https://pwcgov.granicus.com/ViewPublisherRSS.php?view_id=23&mode=agendas",
+   "https://pwcgov.granicus.com/ViewPublisherRSS.php?view_id=23&mode=minutes",
+   "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx"
+  ],
+  "rung": "hidden-json",
+  "meeting_bodies_in_votelog": [
+   {
+    "name": "Board of County Supervisors",
+    "id": 1
+   },
+   {
+    "name": "Board Joint Interjurisdictional",
+    "id": 41
+   },
+   {
+    "name": "Prince William Channel VOD (media-only)",
+    "id": 6
+   }
+  ],
+  "how_to_enumerate_meetings": "GET https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1&pageindex=N \u2014 returns JSON array VoteLogMeetings with clip_id, date, AgendaLink, MinutesLink, and a Votes array. Also: RSS feed at ViewPublisherRSS.php?view_id=23&mode=agendas enumerates all meetings with clip_id GUIDs. HTML archive at ViewPublisher.php?view_id=23 lists meetings by year with Agenda/Briefs/Video columns.",
+  "sample_document_urls": [
+   "https://pwcgov.granicus.com/AgendaViewer.php?view_id=23&clip_id=3856  (agenda, Jun 23 2026)",
+   "https://pwcgov.granicus.com/MinutesViewer.php?view_id=23&clip_id=3856  (briefs/minutes, Jun 23 2026)",
+   "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1&pageindex=1  (VoteLog JSON)"
+  ],
+  "era_covered": "Current through at least July 7 2026; archive depth not fully probed but ViewPublisher shows multiple year-tabs going back into prior years"
+ },
+ "second_source": {
+  "exists": true,
+  "system": "Granicus MinutesViewer HTML ('Briefs') \u2014 an independently rendered action-minutes document separate from the VoteLog JSON",
+  "urls": [
+   "https://pwcgov.granicus.com/MinutesViewer.php?view_id=23&clip_id=3856"
+  ],
+  "what_it_affirms": "The MinutesViewer HTML for each meeting lists every agenda item with its outcome (APPROVED / DEFERRED / DENIED), mover (1:), seconder (2:), aggregate result (Unanimous / roll-call), absentees, and assigned Resolution/Ordinance number \u2014 independently formatted from the VoteLog JSON. Verified for Jun 23 2026 meeting: item 3.A shows 'APPROVED: Approve the Minutes of May 19, 2026 1: Bailey 2: Boddye / Unanimous / ABSENT FROM MEETING: Vega Res. No. 26-378'. NOTE: A Laserfiche WebLink portal also exists at https://lfportal.pwcgov.org/weblink but requires browser cookies/session auth and could not be verified for content. A legacy eservice.pwcgov.org/documents/bocs/agendas/ path serving resolution PDFs was found in search results (e.g. /2022/0405/4-A.pdf) but returned HTTP 500 on direct directory access \u2014 likely a partially deprecated document store."
+ },
+ "votes_located": "PRIMARY \u2014 Granicus VoteLog JSON API: GET https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1&pageindex=1 returns structured per-item, per-attendee votes. Verified example from Jul 7 2026 meeting (clip_id 3859): {\\\"AgendaItemText\\\":\\\"4.A) Approve the Minutes of June 2, 2026\\\", \\\"MotionText\\\":\\\"Motion to Approve Moved by Supervisor Stewart, seconded by Supervisor Boddye.\\\", \\\"VoteResult\\\":\\\"Pass\\\", \\\"VoteDetails\\\":[{\\\"Attendee\\\":{\\\"Name\\\":\\\"Chair Jefferson\\\"},\\\"Vote\\\":\\\"yes\\\"}, {\\\"Attendee\\\":{\\\"Name\\\":\\\"Supervisor Vega\\\"},\\\"Vote\\\":\\\"abstain\\\"}, ...]}. Vote types enumerated by getformdata: Yes, No, Abstain, Absent, Recuse. SECONDARY \u2014 MinutesViewer HTML for same meetings confirms aggregate outcome and resolution number in human-readable form (e.g. '1: Bailey 2: Boddye / Unanimous / ABSENT FROM MEETING: Vega Res. No. 26-378').",
+ "systems_surveyed": [
+  {
+   "system": "Legistar API (slug: princeWilliam)",
+   "url": "https://webapi.legistar.com/v1/princeWilliam/bodies",
+   "status": "HTTP 500 \u2014 not a tenant",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "Legistar API (slug: pwc)",
+   "url": "https://webapi.legistar.com/v1/pwc/bodies",
+   "status": "HTTP 500 \u2014 not a tenant",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "PrimeGov (slug: princeWilliam)",
+   "url": "https://princeWilliam.primegov.com/api/v2/PublicPortal/ListArchivedMeetings?year=2025",
+   "status": "DNS not found \u2014 not a tenant",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "PrimeGov (slug: pwc)",
+   "url": "https://pwc.primegov.com/api/v2/PublicPortal/ListArchivedMeetings?year=2025",
+   "status": "DNS not found \u2014 not a tenant",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "CivicPlus AgendaCenter",
+   "url": "https://www.pwcva.gov/AgendaCenter",
+   "status": "HTTP 403 Forbidden \u2014 not used",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "pwcva.gov BOCS official page",
+   "url": "https://www.pwcva.gov/department/board-county-supervisors",
+   "status": "HTTP 200 \u2014 live; links confirmed to Granicus (view_id=23) for agendas, briefs, video RSS",
+   "era_covered": "Current"
+  },
+  {
+   "system": "Granicus ViewPublisher (view_id=23)",
+   "url": "https://pwcgov.granicus.com/ViewPublisher.php?view_id=23",
+   "status": "HTTP 200 \u2014 live, shows upcoming + archived meetings by year with VoteLog tab",
+   "era_covered": "Current through at least 2026; multi-year archive visible"
+  },
+  {
+   "system": "Granicus Agenda RSS",
+   "url": "https://pwcgov.granicus.com/ViewPublisherRSS.php?view_id=23&mode=agendas",
+   "status": "HTTP 200 \u2014 live XML feed, most recent item Jul 14 2026 Work Session",
+   "era_covered": "Current"
+  },
+  {
+   "system": "Granicus MinutesViewer (Briefs)",
+   "url": "https://pwcgov.granicus.com/MinutesViewer.php?view_id=23&clip_id=3856",
+   "status": "HTTP 200 \u2014 live; verified action minutes with votes for Jun 23 2026",
+   "era_covered": "Current"
+  },
+  {
+   "system": "Granicus VoteLog API \u2014 getformdata",
+   "url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=getformdata&viewId=23",
+   "status": "HTTP 200 JSON \u2014 returns meeting bodies (BoCS id=1, Joint id=41) and vote types (Yes/No/Abstain/Absent/Recuse)",
+   "era_covered": "Current"
+  },
+  {
+   "system": "Granicus VoteLog API \u2014 search",
+   "url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1&pageindex=1",
+   "status": "HTTP 200 JSON \u2014 returns VoteLogMeetings array with full per-item per-attendee vote detail; verified Jul 7 2026",
+   "era_covered": "Current"
+  },
+  {
+   "system": "Laserfiche WebLink",
+   "url": "https://lfportal.pwcgov.org/weblink",
+   "status": "HTTP 200 but requires browser cookies/session auth \u2014 content not accessible to automated fetch",
+   "era_covered": "Unknown"
+  },
+  {
+   "system": "eservice.pwcgov.org legacy document store",
+   "url": "https://eservice.pwcgov.org/documents/bocs/agendas/",
+   "status": "HTTP 500 on directory; individual PDFs confirmed in web search (e.g. /2022/0405/4-A.pdf) \u2014 appears partially deprecated",
+   "era_covered": "At least 2022; current status unclear"
+  }
+ ],
+ "access_constraints": "All Granicus endpoints are publicly accessible with no authentication required. The VoteLog JSON API (votelog.ashx) responds without any API key. The Laserfiche WebLink portal (lfportal.pwcgov.org) is publicly reachable but requires a browser session cookie to render content. The AgendaViewer SSL certificate had a hostname mismatch (granicus_production_attachments.s3.amazonaws.com) causing SSL errors on direct PDF attachment fetches \u2014 the HTML viewer pages themselves are accessible. No rate limiting or CAPTCHA observed on Granicus.",
+ "open_questions": [
+  "How far back does the Granicus archive extend? The ViewPublisher shows multi-year tabs but the oldest year was not enumerated within budget.",
+  "The Laserfiche WebLink portal (lfportal.pwcgov.org/weblink) may contain an independent minutes/resolution archive \u2014 its content and era coverage could not be verified due to cookie-auth requirement.",
+  "The legacy eservice.pwcgov.org document path served resolution PDFs in at least 2022 \u2014 it is unclear whether this path is still maintained or fully deprecated, and whether it covers pre-Granicus records.",
+  "The 'Board Joint Interjurisdictional' body (id=41) appeared recently in the VoteLog form data \u2014 its meeting history depth and scope are unverified.",
+  "Does the VoteLog search endpoint support date-range filtering? The JS source suggests it does but parameters were not fully enumerated."
+ ]
+}

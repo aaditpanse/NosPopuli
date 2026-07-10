@@ -1,0 +1,8569 @@
+{
+ "meetings": [
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "meeting",
+   "meeting_id": "la-primegov-18334",
+   "body": "City Council",
+   "date": "2026-06-10",
+   "title": "City Council Meeting",
+   "attendance": {
+    "Blumenfield": "present",
+    "Harris-Dawson": "present",
+    "Hernandez": "present",
+    "Hutt": "present",
+    "Jurado": "present",
+    "Lee": "present",
+    "McOsker": "present",
+    "Nazarian": "present",
+    "Padilla": "present",
+    "Price Jr.": "present",
+    "Rodriguez": "present",
+    "Yaroslavsky": "present",
+    "Park": "absent",
+    "Raman": "absent",
+    "Soto-Martinez": "absent"
+   },
+   "source_url": "https://lacity.primegov.com/Public/CompiledDocument/83502",
+   "minutes_url": "https://lacity.primegov.com/Public/CompiledDocument/83502"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "meeting",
+   "meeting_id": "la-primegov-18364",
+   "body": "City Council",
+   "date": "2026-06-16",
+   "title": "City Council Meeting",
+   "attendance": {
+    "Blumenfield": "present",
+    "Harris-Dawson": "present",
+    "Hernandez": "present",
+    "Hutt": "present",
+    "Jurado": "present",
+    "Lee": "present",
+    "McOsker": "present",
+    "Nazarian": "present",
+    "Padilla": "present",
+    "Park": "present",
+    "Price Jr.": "present",
+    "Rodriguez": "present",
+    "Yaroslavsky": "present",
+    "Raman": "absent",
+    "Soto-Martinez": "absent"
+   },
+   "source_url": "https://lacity.primegov.com/Public/CompiledDocument/83615",
+   "minutes_url": "https://lacity.primegov.com/Public/CompiledDocument/83615"
+  }
+ ],
+ "agenda_items": [
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-1",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "12-1894-S2",
+   "title": "GOVERNMENT OPERATIONS COMMITTEE REPORT relative to proposed 9th Amended and Restated Contract No. C-117048 with CenturyLink Communications, LLC dba Lumen Technologies Group.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-2",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "26-0644",
+   "title": "GOVERNMENT OPERATIONS COMMITTEE REPORT relative to non-financial transfer of jurisdiction of the City-owned property located at 4285 Huntington Drive South, Los Angeles 90032, Assessor Parcel Numbers (APN) 5209-030-901, -902, and -900 from the Bureau of Engineering (BOE) to the Department of Recreation and Parks (RAP). Recommendations for Council action, pursuant to Motion (Jurado \u2013 McOsker):",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-3",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "26-0791",
+   "title": "GOVERNMENT OPERATIONS COMMITTEE REPORT relative to allowing Social Equity Individual Applicants to sell ownership interests to any individual or entity in connection with commercial Cannabis activity.",
+   "action": "ATTACHED",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-4",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "15-1207-S9",
+   "title": "CD 14 GOVERNMENT OPERATIONS COMMITTEE REPORT relative to authorizing the General Services Department (GSD) to negotiate and execute a lease agreement with PSP Investment Group, LLC. for Bureau of Engineering (BOE) office space located at 1100 South Flower Street, Suite 2200 in connection with the Los Angeles Convention Center (LACC) Expansion and Modernization Project.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-5",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "26-0707",
+   "title": "TRANSPORTATION COMMITTEE REPORT relative to an agreement with American Traffic Solutions, Inc., dba Verra Mobility, for the operation and management of the automated speed safety camera system.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-6",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "14-1318-S1",
+   "title": "TRANSPORTATION COMMITTEE REPORT and ORDINANCE FIRST CONSIDERATION relative to delegating Department of Transportation (DOT) authority to install and remove temporary traffic control devices to the Los Angeles County Metropolitan Transportation Authority (Metro).",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-7",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "23-1200-S20",
+   "title": "AD HOC COMMITTEE ON MEASURE UNITED TO HOUSE LOS ANGELES (ULA) REPORT relative to the reappointment of Leilani Reed to the House LA Citizens Oversight Committee for the term ending June 30, 2031.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-8",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "24-1200-S54",
+   "title": "AD HOC COMMITTEE ON MEASURE UNITED TO HOUSE LOS ANGELES (ULA) REPORT relative to the reappointment of Zella Knight to the House LA Citizens Oversight Committee for the term ending June 30, 2031.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-9",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "26-0785",
+   "title": "CIVIL RIGHTS, EQUITY, IMMIGRATION, AGING, AND DISABILITY COMMITTEE REPORT relative to the appointment of Abigail Marquez as permanent General Manager of the Community Investment Department",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-10",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "26-0554",
+   "title": "CD 8 MITIGATED NEGATIVE DECLARATION, MITIGATION MEASURES, MITIGATION MONITORING PROGRAM PURSUANT TO CALIFORNIA ENVIRONMENTAL QUALITY ACT (CEQA) GUIDELINES SECTION 15074(b), and RELATED CEQA FINDINGS; COMMUNICATIONS FROM THE LOS ANGELES CITY PLANNING COMMISSION (LACPC) and DEPARTMENT OF CITY PLANNING, and APPEALS filed by 1) Supporters Alliance for Environmental Responsibility (SAFER) (Representative: Victoria Yundt, Lozeau Drury LLP); and 2) CREED LA (Representative: Aidan P. Marshall), from the determination of the LACPC in in: 1) Approving, pursuant to Section 12.24 U.15 of the Los Angeles Municipal Code (LAMC), a Conditional Use to allow a motion picture studio with incidental uses, including outdoor sets in the C2 Zone; 2) Approving, pursuant to LAMC Section 12.24 W.1, a Main Conditional Use Permit to allow the sale and dispensing of a full line of alcohol for on-site consumption for up to four establishments including two restaurants, an outdoor plaza and campus events from 7:00 a.m. to 2:00 a.m. daily; 3) Approving, pursuant to LAMC Section 12.24 W.18, a Main Conditional Use Permit to allow dancing and live entertainment at four on-site locations including two restaurants, an outdoor plaza and campus events; 4) Approving, pursuant to LAMC Section 11.5.7, a Project Permit",
+   "action": "ATTACHED",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-11",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "26-1200-S20",
+   "title": "CIVIL RIGHTS, EQUITY, IMMIGRATION AGING AND DISABILITY COMMITTEE REPORT relative to the appointment of Alexa Vaughn to the Disabled Access Appeals Commission.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-12",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "26-0614",
+   "title": "BUDGET AND FINANCE COMMITTEE REPORT relative to a sole- source contract with Data Trace Information Services LLC for access to an online database of title and land records, and related information services.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-13",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "24-0509",
+   "title": "CD 11 CATEGORICAL EXEMPTION, COMMUNICATION FROM THE CITY ENGINEER and RESOLUTION TO VACATE relative to vacating a portion of Reseda Boulevard approximately 698 feet to 955 feet northeast of Sunset Boulevard, VAC-E1401442.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-14",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "26-0011-S12",
+   "title": "CD 10 MOTION (HUTT - JURADO) relative to funding for the Taylor Lanae Jackson dedication plaque project in Council District 10.",
+   "action": "Adopted Item Substitute Motion (Hutt \u2013 McOsker) - SEE ATTACHED",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-15",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "26-4118-S6",
+   "title": "CD 6 RESOLUTION (PADILLA - RODRIGUEZ) relative to designating a location in Council District Six for enforcement against sitting, lying,",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-16",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "26-0827",
+   "title": "CD 14 MOTION (JURADO - BLUMENFIELD) and RESOLUTION relative to issuing one or more series of bond in any aggregate principal amount not to exceed $9,000,000 (Obligations) to finance and/or refinance the acquisition, rehabilitation, improvement, renovation, furnishing and equipping of the 41-unit affordable multifamily housing development known as The Lincoln Hotel Apartments (Project) located at 549 Ceres Avenue in Council District 14.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-17",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "26-0826",
+   "title": "CD 3 MOTION (BLUMENFIELD - LEE) relative to fund for overtime for CARE+ Enhanced Services in Council District Three (CD3).",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-18",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "20-1096-S1",
+   "title": "CD 6 MOTION (PADILLA - RODRIGUEZ) and RESOLUTION relative to issuing Multifamily Housing Revenue Bonds, in an amount not to exceed $12,137,000 to finance the new construction of the 46-unit multifamily housing development known as Oatsie\u2019s Place (Project) located at 16015 Sherman Way in Council District Six (CD 6).",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-19",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "26-0831",
+   "title": "CD 1 MOTION (HERNANDEZ - HARRIS-DAWSON) relative to funding for coordinating enhanced arts and culture programming at MacArthur Park starting September 1, 2026 through June 30, 2027 as part of *JOURNAL CORRECTION several efforts to improve the park.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-20",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "26-0829",
+   "title": "CD 10 MOTION (HUTT - HERNANDEZ) relative to funding for the Recreation and Parks Fund to support FIFA World Cup Community Celebration events in Council District 10.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-21",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "26-0830",
+   "title": "CD 1 MOTION (HERNANDEZ - HUTT) relative to funding several community beautification efforts of the Korean Youth and Community *JOURNAL CORRECTION Center in Council District One (CD 1).",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-22",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "26-0815",
+   "title": "MOTION (PRICE - McOSKER) relative to providing supplemental City services for the FIFA World Cup 26 Fan Festival.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-23",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "26-0002-S25",
+   "title": "CONSIDERATION OF RESOLUTION (BLUMENFIELD - LEE, ET AL.) relative to establishing the City's position on proposed 2026-27 May Revision Budget Trailer Bill Language regarding the Intrastate Funding Formula Modernization and Implementation Authority for the California Department of Aging (CDA).",
+   "action": "Adopted Item Forthwith",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-24",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "25-0002-S107",
+   "title": "CONSIDERATION OF RESOLUTION (BLUMENFIELD, MCOSKER - PADILLA) relative to establishing the City's position on Senate Bill (SB) 758 (Umberg), which would prohibit the sale of nitrous oxide at retail locations other than grocery stores or general retail merchandise stores with a grocery department.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-25",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "26-0661",
+   "title": "BUDGET AND FINANCE COMMITTEE REPORT relative to a legal services agreement with Theodora Oringher PC to provide legal services associated with the case entitled Green v. Chevron Corp., et al., Los Angeles Superior Court (LASC) Case No. 25STCV38633.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-26",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "26-0754",
+   "title": "COMMUNICATION FROM DEPARTMENT OF CULTURAL AFFAIRS relative to the National Endowment for the Arts (NEA) \u201cSpirit of Sports\u201d Chair\u2019s Extraordinary Action grant application and award for the 2026 Federation Internationale de Football Association (FIFA) World Cup arts programming.",
+   "action": "Adopted Item - SEE ATTACHED",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-27",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "25-0002-S103",
+   "title": "RULES, ELECTIONS AND INTERGOVERNMENTAL RELATIONS COMMITTEE REPORT and RESOLUTION relative to establishing the City\u2019s position on Senate Bill (SB) 966 (Gonzalez), which would protect existing worker safety protections and preserve safety standards for communities in Los Angeles where refineries operate.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-28",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "25-0002-S95",
+   "title": "RULES, ELECTIONS AND INTERGOVERNMENTAL RELATIONS COMMITTEE REPORT and RESOLUTION relative to establishing the City\u2019s position on any legislative and/or administrative actions that would advance the commitments of the Paris Declaration on Fast- Track Cities: Ending the HIV Epidemic.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18334-29",
+   "meeting_id": "la-primegov-18334",
+   "file_number": "25-0002-S93",
+   "title": "RULES, ELECTIONS AND INTERGOVERNMENTAL RELATIONS COMMITTEE REPORT and RESOLUTION relative to establishing the City\u2019s position on Assembly Bill (AB) 2319 (Schultz), which would protect and incentivize post-production jobs in the City.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-1",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0008-S10",
+   "title": "CD 15 TRANSPORTATION COMMITTEE REPORT relative to establishing oversize vehicle parking restrictions along certain street segments of Graham Avenue, Monitor Avenue, Maie Avenue, and East 111th Street, in Council District Fifteen (CD 15).",
+   "action": "Adopted Item to Continue to June 30, 2026",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-2",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "25-1200-S14",
+   "title": "GOVERNMENT OPERATIONS COMMITTEE REPORT relative to the reappointment of Adam Bierman to the Cannabis Regulation Commission (CRC) for the term ending June 30, 2030.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-3",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "19-1397-S1",
+   "title": "CD 4 STATUTORY EXEMPTION and GOVERNMENT OPERATIONS COMMITTEE REPORT relative to the funding allocation, lease, and continued use for a period of up to three years for the A Bridge Housing (ABH)/Low Barrier Navigation Center (LBNC) located at 3061 West Riverside Drive in Council District Four (CD 4).",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-4",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "24-0590",
+   "title": "HOUSING AND HOMELESSNESS COMMITTEE REPORT relative to the status of Project Homekey sites from Rounds one, two, and three.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-5",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "23-1022-S30",
+   "title": "HOUSING AND HOMELESSNESS COMMITTEE REPORT relative to Alliance Settlement Agreement progress as of December 31, 2025.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-6",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "17-0090-S34",
+   "title": "CD 14 HOUSING AND HOMELESSNESS COMMITTEE REPORT relative to authorizing the Los Angeles Housing Department (LAHD) to issue an extension to the Proposition HHH Funding Commitment letter for the Chavez Gardens project located at 2518-2536 East Cesar E. Chavez in Council District 14.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-7",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0755",
+   "title": "CDs 1, 9, 13 HOUSING AND HOMELESSNESS COMMITTEE REPORT and RESOLUTION relative to adopting the Tax Equity and Fiscal Responsibility Act of 1982 (TEFRA) Resolution and Minutes; and issuing a tax-exempt multifamily housing conduit revenue bond and a taxable multifamily conduit revenue bond for Queen Apartments, a scattered site project located in Council Districts 1, 9, and 13.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-8",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-1200-S23",
+   "title": "TRADE, TRAVEL AND TOURISM COMMITTEE REPORT relative to the appointment of Clarence Daniels, Jr. to the Board of Airport *JOURNAL CORRECTION Commissioners for the term ending June 30, 2029.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-9",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-1200-S22",
+   "title": "the appointment of Beatrice Hsu to the Board of Harbor Commissioners for the term ending June 30, 2029.",
+   "action": "Adopted Item - SEE ATTACHED",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-10",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0748",
+   "title": "ADMINISTRATIVE EXEMPTION and TRADE, TRAVEL AND TOURISM COMMITTEE REPORT relative to proposed individual First Amendments to 10 Multiple Award Task Order Contracts (MATOCs) for continued planning and design services at Los Angeles International",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-11",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0760",
+   "title": "TRADE, TRAVEL AND TOURISM COMMITTEE REPORT relative to proposed concession agreements for food and beverage, retail, and passenger services concessions at Los Angeles International Airport (LAX).",
+   "action": "Adopted Item Motion (Park - McOsker) to Disapprove - SEE ATTACHED",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-12",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "25-1200-S5",
+   "title": "TRANSPORTATION COMMITTEE REPORT relative to the reappointment of Mr. Juan Solorio, Jr. to the Board of Transportation Commissioners, for the term ending June 30, 2031.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-13",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "24-1222",
+   "title": "TRANSPORTATION COMMITTEE REPORT relative to reducing signal delay to transit vehicles and reducing transit end-to-end travel times along at-grade Light Rail Transit lines and Bus Rapid Transit (BRT) lines.",
+   "action": "SEE ATTACHED",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-14",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "23-0550-S4",
+   "title": "CATEGORICAL EXEMPTION and TRADE, TRAVEL AND TOURISM COMMITTEE REPORT relative to a proposed Fourth Amendment to Contract DA-5620 with Hensel Phelps Construction Co. for the Central Terminal Area (CTA) Curbside Improvement Program at Los Angeles International Airport (LAX).",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-15",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "09-1872-S4",
+   "title": "CD 15 PREVIOUSLY EVALUATED ADMINISTRATIVE EXEMPTION and TRADE, TRAVEL AND TOURISM COMMITTEE REPORT relative to a proposed Seventh Amendment to Permit No. 999 with China Shipping Holding Company, Ltd.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-16",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0775",
+   "title": "AD HOC COMMITTEE ON MEASURE UNITED TO HOUSE LOS ANGELES REPORT relative to amending the Homelessness and Housing Solutions Tax that provides refunds to nonprofit organizations who have paid the ULA tax and are reinvesting the proceeds of the sale towards programs that further the purpose of ULA.",
+   "action": "Adopted Item to Continue to June 26, 2026",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-17",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "21-0862",
+   "title": "CD 9 PUBLIC WORKS COMMITTEE REPORT relative to erecting permanent ceremonial sign(s) at 3511 Central Avenue in recognition of the historic location of the Florence Mills Theatre.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-18",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "13-0933-S10",
+   "title": "MOTION (PADILLA - JURADO) relative to amending the prior Council action of December 12, 2025, Council file No. (CF) 13-0933-S10, related to the Arts Development Fee Update and the adoption of the Arts Development Fee Expenditure Report.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-19",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0011-S13",
+   "title": "CD 4 MOTION (RAMAN - SOTO-MARTINEZ) relative to funding for speed humps or tables on Greenleaf Street between Cedros Avenue and Van Nuys Boulevard near Sherman Oaks Elementary Charter.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-20",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0740-S1",
+   "title": "CD 10 MOTION (HERNANDEZ FOR HUTT - McOSKER) relative to coordinating a street banner campaign to promote the 2026 festival.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-21",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0011-S8",
+   "title": "CD 10 MOTION (HUTT - LEE) relative to rescinding the Council Action March 24, 2026, regarding funding to supplement the costs associated with removing and replacing trash liners in Council District Ten (CD 10).",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-22",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0855",
+   "title": "MOTION (RODRIGUEZ - LEE) relative to funding for 'MRCA River Rangers', to be used for their general operating expenses.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-23",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0858",
+   "title": "CD 11 MOTION (PARK - BLUMENFIELD) and RESOLUTION relative to issuing Multifamily Housing Revenue Bonds, in an amount not to exceed $20,000,000 to finance the new construction of the 49-unit multifamily housing project known as 3608 Centinela (Project), located at 3608 South Centinela Avenue in Council District 11.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-24",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0859",
+   "title": "CD 11 MOTION (PARK - BLUMENFIELD) and RESOLUTION relative to issuing Multifamily Housing Revenue Bonds, in an amount not to exceed $20,000,000 to finance the new construction of the 41-unit multifamily housing project known as 12442 Pacific (Project), located at 12442 Pacific Avenue in Council District 11.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-25",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "25-0002-S92",
+   "title": "RULES, ELECTIONS AND INTERGOVERNMENTAL RELATIONS COMMITTEE REPORT and RESOLUTION relative to establishing the City\u2019s position on Senate Bill (SB) 922 (Baird), which would clarify that fees associated with providing public services may include the recovery of street maintenance and repair costs.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-26",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "25-0002-S106",
+   "title": "RULES, ELECTIONS AND INTERGOVERNMENTAL RELATIONS COMMITTEE REPORT and RESOLUTION relative to establishing the City\u2019s position on Assembly Bill (AB) 1837 (Gonzalez), which would permanently extend the authorization of public transit operators to use video imaging to enforce parking and stopping violations occurring in transit-only traffic lanes and at transit stops.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-27",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "25-0002-S120",
+   "title": "RULES, ELECTIONS AND INTERGOVERNMENTAL RELATIONS COMMITTEE REPORT and RESOLUTION relative to establishing the City's position on H.R. 6204 and S.3 693 which would extend the authorization for the Large-Scale Water Recycling and Reuse Grant Program.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-28",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0002-S9",
+   "title": "RULES, ELECTIONS AND INTERGOVERNMENTAL RELATIONS COMMITTEE REPORT relative to the United States Department of Housing and Urban Development\u2019s (HUD) Notice of Proposed Rulemaking titled Housing and Community Development Act of 1980: Verification of Eligible Status.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-29",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0002-S22",
+   "title": "RULES, ELECTIONS AND INTERGOVERNMENTAL RELATIONS COMMITTEE REPORT and RESOLUTION relative to establishing the City\u2019s position on the Department of Housing and Urban Development\u2019s (HUD) Notice of Proposed Rulemaking \"Equal Access to Housing in HUD Program Revisions\u201d which seeks to remove regulatory provisions and rescind the Equal Access Rule (EAR).",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-30",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0676",
+   "title": "RULES, ELECTIONS, AND INTERGOVERNMENTAL RELATIONS and BUDGET AND FINANCE COMMITTEES\u2019 REPORT relative to the impact of the Supreme Court\u2019s decision in Louisiana v. Callais regarding the use of race in drawing voting districts.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-31",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0860",
+   "title": "CD 7 COMMUNICATION FROM THE CITY ENGINEER relative to the final map of Parcel Map L.A. No. 2022-2933, located at 12721-12729 West Filmore Street, northerly of Borden Avenue.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-32",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0862",
+   "title": "CD 15 COMMUNICATION FROM THE CITY ENGINEER relative to the final map of Parcel Map L.A. No. 2024-7737, located at 703 North Cabrillo Avenue, northerly of Crestwood Street.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-33",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0866",
+   "title": "CD 14 COMMUNICATION FROM THE CITY ENGINEER relative to the final map of Tract No. 67490-M1 located at 100 South Grand Avenue, southerly of 1st Street.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-34",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0005-S92",
+   "title": "CD 14 COMMUNICATION FROM THE LOS ANGELES HOUSING DEPARTMENT (LAHD) and RESOLUTION relative to removing the property at 627 North Brittania Street (Case Nos. 766449; 836220; 846561; 931865), Assessor I.D. No. 5175-032-018, from the Rent Escrow Account Program (REAP).",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-35",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0005-S93",
+   "title": "CD 10 COMMUNICATION FROM THE LOS ANGELES HOUSING DEPARTMENT (LAHD) and RESOLUTION relative to removing the property at 2506 South Bronson Avenue (Case Nos. 694292; 711223; 775024), Assessor I.D. No. 5059-005-027, from the Rent Escrow Account Program (REAP).",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-36",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0005-S94",
+   "title": "CD 1 COMMUNICATION FROM THE LOS ANGELES HOUSING DEPARTMENT (LAHD) and RESOLUTION relative to removing the property at 923 North Avenue 50 (Case No. 883817), Assessor I.D. No. 5477-019-014, from the Rent Escrow Account Program (REAP).",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-37",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0005-S95",
+   "title": "CD 2 COMMUNICATION FROM THE LOS ANGELES HOUSING DEPARTMENT (LAHD) and RESOLUTION relative to removing the property at 12012 West Hart Street (Case No. 894880), Assessor I.D. No. 2321-011-003, from the Rent Escrow Account Program (REAP).",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-38",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0005-S96",
+   "title": "CD 2 COMMUNICATION FROM THE LOS ANGELES HOUSING DEPARTMENT (LAHD) and RESOLUTION relative to removing the property at 13061 West Vanowen Street (Case No. 885478), Assessor I.D. No. 2327-025-016, from the Rent Escrow Account Program (REAP).",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-39",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0005-S97",
+   "title": "CD 7 COMMUNICATION FROM THE LOS ANGELES HOUSING DEPARTMENT (LAHD) and RESOLUTION relative to removing the property at 15315 West Bledsoe Street (Case No. 903569), Assessor I.D. No. 2604-017-021, from the Rent Escrow Account Program (REAP).",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-40",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0005-S98",
+   "title": "CD 9 COMMUNICATION FROM THE LOS ANGELES HOUSING DEPARTMENT (LAHD) and RESOLUTION relative to removing the property at 4905 South Ascot Avenue (Case No. 558069), Assessor I.D. No. 5107-029-002, from the Rent Escrow Account Program (REAP).",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-41",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0005-S99",
+   "title": "CD 9 COMMUNICATION FROM THE LOS ANGELES HOUSING DEPARTMENT (LAHD) and RESOLUTION relative to removing the property at 4061 South Main Street (Case No. 740855), Assessor I.D. No. 5111-023-026, from the Rent Escrow Account Program (REAP).",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-42",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0005-S100",
+   "title": "CD 11 COMMUNICATION FROM THE LOS ANGELES HOUSING",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-43",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0005-S101",
+   "title": "CD 13 COMMUNICATION FROM THE LOS ANGELES HOUSING DEPARTMENT (LAHD) and RESOLUTION relative to removing the property at 963 North Hobart Boulevard (Case No. 914648), Assessor I.D. No. 5535-024-026, from the Rent Escrow Account Program (REAP).",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-44",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-1200-S26",
+   "title": "ARTS, PARKS, LIBRARIES, AND COMMUNITY ENRICHMENT COMMITTEE REPORT relative to the appointment of Joanne Kim to the Los Angeles Memorial Coliseum Commission.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-45",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0693",
+   "title": "ARTS, PARKS, LIBRARIES, AND COMMUNITY ENRICHMENT COMMITTEE REPORT relative to a contract with Landscape Structures Inc. for the purchase and installation of playground, water play and aquatic equipment, site amenities, and outdoor fitness equipment; delivery, related products and services.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-46",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0694",
+   "title": "ARTS, PARKS, LIBRARIES, AND COMMUNITY ENRICHMENT COMMITTEE REPORT relative to a contract with PlayPower, Inc. for the purchase and installation of playground, water play, and aquatic equipment, site amenities, and outdoor fitness equipment with related accessories and services.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-47",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "14-0061-S2",
+   "title": "ARTS, PARKS, LIBRARIES, AND COMMUNITY ENRICHMENT COMMITTEE REPORT relative to a Fourth Amendment to Contract No. 3538 with Mount Washington Preschool and Child Care Center, Inc. to extend the term for the operation of the Joy Picus Child Care Center located at 111 East First Street.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-48",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "21-0802",
+   "title": "CD 14 STATUTORY EXEMPTION and ARTS, PARKS, LIBRARIES, AND COMMUNITY ENRICHMENT COMMITTEE REPORT relative to a License Agreement with Southern California Edison Company (SCE) for the Eagle Rock Tiny Home Village Project located adjacent to 1100 West Eagle Vista Drive.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-49",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "24-1200-S55",
+   "title": "ARTS, PARKS, LIBRARIES, AND COMMUNITY ENRICHMENT COMMITTEE REPORT relative to the reappointment of Yvette Smith to the Board of Animal Services Commissioners.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-50",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "23-1200-S100",
+   "title": "ARTS, PARKS, LIBRARIES, AND COMMUNITY ENRICHMENT COMMITTEE REPORT relative to the reappointment of Randell Erving to the Board of Neighborhood Commissioners.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-51",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-1200-S30",
+   "title": "ARTS, PARKS, LIBRARIES, AND COMMUNITY ENRICHMENT COMMITTEE REPORT relative to the reappointment of Bernardo Silva to the Board of Zoo Commissioners.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-52",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "22-1200-S22",
+   "title": "ARTS, PARKS, LIBRARIES, AND COMMUNITY ENRICHMENT COMMITTEE REPORT relative to the reappointment of Zelenne Cardenas to the Board of El Pueblo de Los Angeles Historical Monument Authority Commissioners.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-53",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0770",
+   "title": "ARTS, PARKS, LIBRARIES, AND COMMUNITY ENRICHMENT COMMITTEE REPORT relative to a Publishing Agreement between Museum Associates dba Los Angeles County Museum of Art and Angel City Press at Los Angeles Public Library (LAPL) for Brockman Gallery: Los Angeles 1967 \u2013 1990.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-54",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0769",
+   "title": "ARTS, PARKS, LIBRARIES, AND COMMUNITY ENRICHMENT COMMITTEE REPORT relative to a Publishing Agreement between Museum Associates dba Los Angeles County Museum of Art and Angel City Press at Los Angeles Public Library (LAPL) for Wander: Exploring LACMA's David Geffen Galleries.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-55",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "17-0714-S1",
+   "title": "COMMUNICATION FROM THE CITY ATTORNEY and ORDINANCE FIRST CONSIDERATION relative to extending the timeframe for the City Council\u2019s consideration of local emergency declarations from 30 days to 60 days.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-56",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0609",
+   "title": "PUBLIC SAFETY COMMITTEE REPORT relative to the First Amendment and Restated Agreement with ASSI Security, Inc. for continued installation and maintenance services of security management systems at various Los Angeles Police Department (LAPD) facilities.",
+   "action": "Adopted Item",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-57",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0774",
+   "title": "CONSIDERATION OF MOTION (PARK, PADILLA - BLUMENFIELD) relative to a ballot measure to amend Measure ULA to allow a one- time, five-year exemption from the Measure ULA tax for owners of residential properties that were impacted by the January 2025 Palisades fire.",
+   "action": "Adopted Item to Continue to June 17, 2026",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-58",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "23-0038-S15",
+   "title": "AD HOC COMMITTEE ON MEASURE UNITED TO HOUSE LOS ANGELES REPORT relative to amending Measure ULA to remove the requirement for findings for amendments and revise eligibility requirements for House LA Citizens Oversight Committee members.",
+   "action": "Adopted Item to Continue to June 17, 2026",
+   "result": "pass"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18364-59",
+   "meeting_id": "la-primegov-18364",
+   "file_number": "26-0880",
+   "title": "RESOLUTION (HARRIS-DAWSON \u2013 YAROSLAVSKY \u2013 McOSKER \u2013 LEE \u2013 HUTT \u2013 JURADO) relative to the City of Los Angeles opposing the action taken by the U.S. Department of Housing and Urban Development (HUD).",
+   "action": "Adopted Item",
+   "result": "pass"
+  }
+ ],
+ "vote_events": [
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-1-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-1",
+   "file_number": "12-1894-S2",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "absent"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-2-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-2",
+   "file_number": "26-0644",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "absent"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-3-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-3",
+   "file_number": "26-0791",
+   "motion": "ATTACHED",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-4-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-4",
+   "file_number": "15-1207-S9",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "absent"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-5-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-5",
+   "file_number": "26-0707",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "absent"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-6-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-6",
+   "file_number": "14-1318-S1",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "absent"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-7-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-7",
+   "file_number": "23-1200-S20",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "absent"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-8-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-8",
+   "file_number": "24-1200-S54",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "absent"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-9-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-9",
+   "file_number": "26-0785",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "absent"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-10-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-10",
+   "file_number": "26-0554",
+   "motion": "ATTACHED",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "absent"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-11-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-11",
+   "file_number": "26-1200-S20",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "absent"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-12-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-12",
+   "file_number": "26-0614",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-13-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-13",
+   "file_number": "24-0509",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-14-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-14",
+   "file_number": "26-0011-S12",
+   "motion": "Adopted Item Question Whether to Substitute",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-14-2",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-14",
+   "file_number": "26-0011-S12",
+   "motion": "Adopted Item Substitute Motion (Hutt \u2013 McOsker) - SEE ATTACHED",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-15-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-15",
+   "file_number": "26-4118-S6",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "no"
+    },
+    {
+     "member": "Jurado",
+     "position": "no"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 11,
+    "no": 2,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-16-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-16",
+   "file_number": "26-0827",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-17-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-17",
+   "file_number": "26-0826",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-18-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-18",
+   "file_number": "20-1096-S1",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-19-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-19",
+   "file_number": "26-0831",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-20-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-20",
+   "file_number": "26-0829",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-21-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-21",
+   "file_number": "26-0830",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-22-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-22",
+   "file_number": "26-0815",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-23-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-23",
+   "file_number": "26-0002-S25",
+   "motion": "Adopted Item Forthwith",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-24-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-24",
+   "file_number": "25-0002-S107",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-25-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-25",
+   "file_number": "26-0661",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-26-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-26",
+   "file_number": "26-0754",
+   "motion": "Adopted Item - SEE ATTACHED",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-27-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-27",
+   "file_number": "25-0002-S103",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-28-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-28",
+   "file_number": "25-0002-S95",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18334-29-1",
+   "meeting_id": "la-primegov-18334",
+   "item_id": "la-primegov-item-18334-29",
+   "file_number": "25-0002-S93",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 13,
+    "absent": 2
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-1-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-1",
+   "file_number": "26-0008-S10",
+   "motion": "Adopted Item to Continue to June 30, 2026",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-2-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-2",
+   "file_number": "25-1200-S14",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-3-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-3",
+   "file_number": "19-1397-S1",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-4-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-4",
+   "file_number": "24-0590",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 14,
+    "absent": 1
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-5-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-5",
+   "file_number": "23-1022-S30",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-6-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-6",
+   "file_number": "17-0090-S34",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-7-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-7",
+   "file_number": "26-0755",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-8-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-8",
+   "file_number": "26-1200-S23",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-9-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-9",
+   "file_number": "26-1200-S22",
+   "motion": "Adopted Item - SEE ATTACHED",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-10-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-10",
+   "file_number": "26-0748",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-11-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-11",
+   "file_number": "26-0760",
+   "motion": "Adopted Item Motion (Park - McOsker) to Disapprove - SEE ATTACHED",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-12-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-12",
+   "file_number": "25-1200-S5",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-13-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-13",
+   "file_number": "24-1222",
+   "motion": "SEE ATTACHED",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-14-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-14",
+   "file_number": "23-0550-S4",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-15-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-15",
+   "file_number": "09-1872-S4",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-16-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-16",
+   "file_number": "26-0775",
+   "motion": "Adopted Item to Continue to June 26, 2026",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-17-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-17",
+   "file_number": "21-0862",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-18-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-18",
+   "file_number": "13-0933-S10",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-19-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-19",
+   "file_number": "26-0011-S13",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-20-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-20",
+   "file_number": "26-0740-S1",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-21-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-21",
+   "file_number": "26-0011-S8",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-22-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-22",
+   "file_number": "26-0855",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-23-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-23",
+   "file_number": "26-0858",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-24-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-24",
+   "file_number": "26-0859",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-25-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-25",
+   "file_number": "25-0002-S92",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-26-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-26",
+   "file_number": "25-0002-S106",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-27-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-27",
+   "file_number": "25-0002-S120",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-28-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-28",
+   "file_number": "26-0002-S9",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-29-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-29",
+   "file_number": "26-0002-S22",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-30-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-30",
+   "file_number": "26-0676",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-31-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-31",
+   "file_number": "26-0860",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-32-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-32",
+   "file_number": "26-0862",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-33-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-33",
+   "file_number": "26-0866",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-34-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-34",
+   "file_number": "26-0005-S92",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-35-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-35",
+   "file_number": "26-0005-S93",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-36-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-36",
+   "file_number": "26-0005-S94",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-37-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-37",
+   "file_number": "26-0005-S95",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-38-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-38",
+   "file_number": "26-0005-S96",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-39-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-39",
+   "file_number": "26-0005-S97",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-40-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-40",
+   "file_number": "26-0005-S98",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-41-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-41",
+   "file_number": "26-0005-S99",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-42-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-42",
+   "file_number": "26-0005-S100",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-43-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-43",
+   "file_number": "26-0005-S101",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-44-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-44",
+   "file_number": "26-1200-S26",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-45-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-45",
+   "file_number": "26-0693",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-46-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-46",
+   "file_number": "26-0694",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-47-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-47",
+   "file_number": "14-0061-S2",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-48-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-48",
+   "file_number": "21-0802",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-49-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-49",
+   "file_number": "24-1200-S55",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-50-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-50",
+   "file_number": "23-1200-S100",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-51-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-51",
+   "file_number": "26-1200-S30",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-52-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-52",
+   "file_number": "22-1200-S22",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-53-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-53",
+   "file_number": "26-0770",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-54-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-54",
+   "file_number": "26-0769",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-55-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-55",
+   "file_number": "17-0714-S1",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "no"
+    },
+    {
+     "member": "Jurado",
+     "position": "no"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "no"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "no"
+    }
+   ],
+   "counts": {
+    "aye": 11,
+    "no": 4
+   },
+   "result": "pass",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "2026-07-09 human adjudication: Journal (item 55) records the 11-4 vote with McOsker=Aye, Soto-Mart\u00ednez=Nay; CFMS records the same tally with McOsker=NO, Soto-Mart\u00ednez=YES. The extractor matches the Journal text exactly; LA's two official systems disagree. Vote stays quarantined (ingested, never certified)."
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-56-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-56",
+   "file_number": "26-0609",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "no"
+    },
+    {
+     "member": "Jurado",
+     "position": "no"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "no"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "no": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-57-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-57",
+   "file_number": "26-0774",
+   "motion": "Adopted Item to Continue to June 17, 2026",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-58-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-58",
+   "file_number": "23-0038-S15",
+   "motion": "Adopted Item to Continue to June 17, 2026",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 15
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18364-59-1",
+   "meeting_id": "la-primegov-18364",
+   "item_id": "la-primegov-item-18364-59",
+   "file_number": "26-0880",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 14,
+    "absent": 1
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  }
+ ],
+ "members": [
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "member",
+   "name": "Blumenfield"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "member",
+   "name": "Harris-Dawson"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "member",
+   "name": "Hernandez"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "member",
+   "name": "Hutt"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "member",
+   "name": "Jurado"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "member",
+   "name": "Lee"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "member",
+   "name": "McOsker"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "member",
+   "name": "Nazarian"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "member",
+   "name": "Padilla"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "member",
+   "name": "Park"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "member",
+   "name": "Price Jr."
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "member",
+   "name": "Raman"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "member",
+   "name": "Rodriguez"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "member",
+   "name": "Soto-Martinez"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "member",
+   "name": "Soto-Mart\u00ednez"
+  },
+  {
+   "source_id": "la-primegov",
+   "extractor_version": "1",
+   "run_id": "f04cbb4df1b859d6",
+   "type": "member",
+   "name": "Yaroslavsky"
+  }
+ ]
+}

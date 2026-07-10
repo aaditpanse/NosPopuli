@@ -2071,3 +2071,230 @@ async def get_analysis(request: Request):
     loop = asyncio.get_event_loop()
     result = await loop.run_in_executor(None, analyze, get_client())
     return result
+
+
+# ---------------------------------------------------------------------------
+# Foundry lab console (localhost only in spirit: lab-grade data viewer).
+# Serves the quarantine-aware store built by foundry/backfill.py. Uncertified
+# records are displayed with warnings, never silently mixed with certified.
+
+import pathlib as _pathlib
+
+_FOUNDRY_STORE = _pathlib.Path("foundry/data/store")
+
+
+@app.get("/foundry")
+async def foundry_page():
+    return FileResponse("frontend/foundry.html")
+
+
+@app.get("/api/foundry/data")
+async def foundry_data():
+    sources = {}
+    for path in sorted(_FOUNDRY_STORE.glob("*.json")):
+        if ("item-facts" in path.name or "item-summaries" in path.name
+                or path.name == "upcoming.json"):
+            continue
+        sources[path.stem] = json.loads(path.read_text())
+    facts_path = _FOUNDRY_STORE / "loudoun-bos-item-facts.json"
+    item_facts = json.loads(facts_path.read_text()) if facts_path.exists() else {}
+    summaries_path = _FOUNDRY_STORE / "item-summaries.json"
+    item_summaries = json.loads(summaries_path.read_text()) if summaries_path.exists() else {}
+    upcoming_path = _FOUNDRY_STORE / "upcoming.json"
+    upcoming = json.loads(upcoming_path.read_text()) if upcoming_path.exists() else {}
+    if not sources:
+        raise HTTPException(status_code=404, detail="foundry store is empty — run foundry/backfill.py")
+    return {"sources": sources, "item_facts": item_facts,
+            "item_summaries": item_summaries, "upcoming": upcoming}
+
+
+# --- Foundry search-onboarding: probe a named jurisdiction, preview-extract
+# where a known platform family matches. Jobs run in a thread; the console
+# polls. Previews are ingest-only by construction and persisted so a repeat
+# search is instant.
+
+import re as _re
+import sys as _sys
+import threading as _threading
+import uuid as _uuid
+
+_sys.path.insert(0, "foundry")
+import legistar_family as _legistar_family
+import discover as _discover
+import run_onboard as _run_onboard
+
+_FOUNDRY_JOBS = {}
+_FOUNDRY_PREVIEWS = _pathlib.Path("foundry/data/preview")
+
+
+def _foundry_slugs(name):
+    base = _re.sub(r"[^a-z ]", "", name.lower())
+    words = [w for w in base.split() if w not in
+             ("county", "city", "of", "town", "va", "pa", "ca", "virginia",
+              "pennsylvania", "california", "maryland", "md")]
+    joined = "".join(words)
+    out = [joined, joined + "county", joined + "city", joined + "va"]
+    return list(dict.fromkeys(s for s in out if s))
+
+
+def _foundry_probe_primegov(slug):
+    import requests as _rq
+    try:
+        r = _rq.get(f"https://{slug}.primegov.com/api/v2/PublicPortal/"
+                    f"ListArchivedMeetings?year=2026", timeout=12,
+                    headers={"User-Agent": "nospopuli-foundry-lab"})
+        return r.json() if r.status_code == 200 else None
+    except Exception:
+        return None
+
+
+def _foundry_probe_host(url):
+    import requests as _rq
+    try:
+        _rq.get(url, timeout=10, headers={"User-Agent": "nospopuli-foundry-lab"})
+        return True
+    except Exception:
+        return False
+
+
+def _foundry_onboard_job(job_id, name):
+    job = _FOUNDRY_JOBS[job_id]
+    log = job["log"]
+
+    def prog(pct, stage):
+        job["progress"] = {"pct": round(min(pct, 100), 1), "stage": stage}
+    try:
+        prog(2, "starting")
+        slugs = _foundry_slugs(name)
+        def finish_onboarding(slug):
+            """Final stage: profile -> synthesized extractor -> store."""
+            prog(60, "synthesizing extractor from profile")
+            log.append("profile in hand — synthesizing an extractor and "
+                       "gating it (a few minutes)...")
+            source_id = _run_onboard.onboard(
+                slug, log=log.append,
+                prog=lambda frac, stage: prog(60 + 38 * frac, stage))
+            if source_id:
+                job.update(status="done",
+                           result={"onboarded": True, "source_id": source_id})
+            else:
+                job.update(status="done", result={"platform_only": True,
+                    "message": "Discovery succeeded but no synthesized "
+                    "extractor cleared the gate. The profile is saved; a "
+                    "human-assisted onboarding pass is the next step."})
+
+        for slug in slugs:
+            if _pathlib.Path(f"foundry/data/store/{slug}-bos.json").exists():
+                log.append(f"{slug}-bos is already onboarded")
+                job.update(status="done", result={"onboarded": True,
+                                                  "source_id": f"{slug}-bos"})
+                return
+            cached = _FOUNDRY_PREVIEWS / f"{slug}-legistar.json"
+            if cached.exists():
+                log.append(f"cached preview found for {slug}")
+                job.update(status="done", result=json.loads(cached.read_text()))
+                return
+            profile_cache = _pathlib.Path(f"foundry/data/discovery/{slug}_profile.json")
+            if profile_cache.exists():
+                log.append(f"cached discovery profile found for {slug}")
+                finish_onboarding(slug)
+                return
+        log.append(f"probing platform families for tenant slugs: {', '.join(slugs)}")
+        for i, slug in enumerate(slugs):
+            prog(5 + 10 * i / len(slugs), f"probing Legistar ({slug})")
+            log.append(f"Legistar Web API: {slug}...")
+            if _legistar_family.probe(slug):
+                log.append(f"LIVE Legistar tenant '{slug}' — extracting 5 most "
+                           "recent meetings (deterministic, no LLM)...")
+                records = _legistar_family.preview(
+                    slug, progress=lambda frac: prog(
+                        20 + 75 * frac, "extracting recent meetings"))
+                result = {"source_id": f"{slug}-legistar",
+                          "title": name.title(),
+                          "sub": f"Legistar Web API tenant '{slug}' · search preview, not onboarded",
+                          "records": records}
+                _FOUNDRY_PREVIEWS.mkdir(parents=True, exist_ok=True)
+                (_FOUNDRY_PREVIEWS / f"{slug}-legistar.json").write_text(json.dumps(result))
+                log.append(f"extracted {len(records['meetings'])} meetings, "
+                           f"{len(records['agenda_items'])} items, "
+                           f"{len(records['vote_events'])} recorded votes — all ingest-only")
+                job.update(status="done", result=result)
+                return
+        for i, slug in enumerate(slugs):
+            prog(15 + 5 * i / len(slugs), f"probing PrimeGov ({slug})")
+            log.append(f"PrimeGov: {slug}...")
+            meetings = _foundry_probe_primegov(slug)
+            if meetings is not None:
+                log.append(f"LIVE PrimeGov tenant '{slug}' ({len(meetings)} meetings in "
+                           "2026) — meeting list only; votes need journal-parsing "
+                           "onboarding (see LA/M3)")
+                job.update(status="done", result={"platform_only": True,
+                    "message": f"PrimeGov tenant '{slug}' found with "
+                    f"{len(meetings)} meetings in 2026. Vote extraction requires "
+                    "full onboarding (journal PDF parsing + oracle), like Los Angeles."})
+                return
+        found = []
+        for slug in slugs:
+            # NB: no Granicus probe here — granicus.com uses wildcard DNS, so
+            # tenant presence can't be confirmed cheaply.
+            if _foundry_probe_host(f"https://pub-{slug}.escribemeetings.com/"):
+                found.append(f"eScribe tenant pub-{slug}")
+        if found:
+            log.append("platforms present but not preview-capable: " + "; ".join(found))
+            job.update(status="done", result={"platform_only": True,
+                "message": "Found: " + "; ".join(found) + ". These need full "
+                "onboarding (run foundry/discover.py, then synthesis + oracle)."})
+            return
+        log.append("no known platform matched any slug — escalating to the "
+                   "discovery agent (web search + live probing; a few minutes)")
+        slug = slugs[0]
+        profile_path = _pathlib.Path(f"foundry/data/discovery/{slug}_profile.json")
+        if profile_path.exists():
+            log.append("cached discovery profile found")
+            profile = json.loads(profile_path.read_text())
+        else:
+            prog(25, "discovery agent: searching and probing")
+            calls = {"n": 0}
+
+            def agent_log(line):
+                log.append(line)
+                calls["n"] += 1
+                prog(25 + min(65, 65 * calls["n"] / 35),
+                     "discovery agent: searching and probing")
+            profile = _discover.discover(
+                f"{name} — governing body meeting records (agendas, minutes, votes)",
+                slug, budget=30, model="claude-sonnet-4-6", log=agent_log)
+        if profile:
+            finish_onboarding(slug)
+        else:
+            job.update(status="done", result={"platform_only": True,
+                "message": "The discovery agent could not produce a source "
+                "profile within budget. Next rung: a records request to the "
+                "clerk (planned)."})
+    except Exception as exc:
+        log.append(f"error: {exc}")
+        job.update(status="error")
+
+
+class _FoundryOnboardBody(BaseModel):
+    name: str
+
+
+@app.post("/api/foundry/onboard")
+async def foundry_onboard(body: _FoundryOnboardBody):
+    job_id = _uuid.uuid4().hex[:12]
+    _FOUNDRY_JOBS[job_id] = {"status": "running", "log": [], "result": None,
+                             "progress": {"pct": 0, "stage": "queued"}}
+    _threading.Thread(target=_foundry_onboard_job, args=(job_id, body.name),
+                      daemon=True).start()
+    return {"job_id": job_id}
+
+
+@app.get("/api/foundry/onboard/{job_id}")
+async def foundry_onboard_status(job_id: str):
+    job = _FOUNDRY_JOBS.get(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="unknown job")
+    if job["status"] != "running":
+        job["progress"] = {"pct": 100, "stage": job["status"]}
+    return job

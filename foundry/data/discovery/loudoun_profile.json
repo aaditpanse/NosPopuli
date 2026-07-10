@@ -1,0 +1,89 @@
+{
+ "jurisdiction": "Loudoun County, Virginia \u2014 Board of Supervisors",
+ "primary_source": {
+  "system": "Dual-system: eScribe (Standing Committees) + Laserfiche WebLink (BOS Business Meetings)",
+  "base_urls": [
+   "https://pub-loudoun.escribemeetings.com",
+   "https://lfportal.loudoun.gov/LFPortalinternet"
+  ],
+  "rung": "html",
+  "how_to_enumerate_meetings": {
+   "escribe_committees": "GET https://pub-loudoun.escribemeetings.com \u2014 calendar page lists upcoming and past meetings for Finance/Government Operations & Economic Development Committee and Transportation and Land Use Committee. Individual meeting pages at Meeting.aspx?Id={GUID}&lang=English. POST to MeetingsCalendarView.aspx/GetCalendarMeetings returns empty (calendar rendered client-side via FullCalendar JS).",
+   "bos_business_meetings": "Laserfiche WebLink folder at https://lfportal.loudoun.gov/LFPortalinternet/0/fol/98907/Row1.aspx \u2014 embedded iframe on https://www.loudoun.gov/3426/Board-of-Supervisors-Meetings. Agenda packets posted by Thursday prior to meeting; Action Reports posted within 2 business days after."
+  },
+  "sample_document_urls": [
+   "https://pub-loudoun.escribemeetings.com/Meeting.aspx?Id=5cefff5d-2b42-4aa7-9598-c549cc7b849f&lang=English  (Finance/Gov Ops & Econ Dev Committee \u2014 July 14, 2026; contains structured agenda items with attachments, MotionText/MovedBy/SecondedBy/MotionVot CSS classes indicating per-item vote capture)",
+   "https://lfportal.loudoun.gov/LFPortalinternet/0/fol/98907/Row1.aspx  (BOS Business Meetings Laserfiche folder)",
+   "https://lfportal.loudoun.gov/LFPortalinternet/0/fol/115347/Row1.aspx  (Action Report Books Laserfiche folder, 1991\u2013present)"
+  ]
+ },
+ "second_source": {
+  "exists": true,
+  "system": "Board of Supervisors Action Report Books \u2014 Laserfiche WebLink",
+  "urls": [
+   "https://www.loudoun.gov/3436/Action-Report-Books",
+   "https://lfportal.loudoun.gov/LFPortalinternet/0/fol/115347/Row1.aspx"
+  ],
+  "what_it_affirms": "The Clerk of the Board produces Action Reports independently from agenda packets. Per loudoun.gov/4829: 'The Action Report of the meeting is usually available in the same packet website folder within two business days following the meeting.' Action Report Books run from 1991 to present. Copy Teste Books (1954\u2013present) and scanned Minute Books (1870\u2013present) are also archived in the same Laserfiche system, providing a multi-century chain of independently certified Board action records."
+ },
+ "votes_located": "Per-item votes (motions, movers, seconders, and vote outcomes) are captured in eScribe for Standing Committee meetings. The eScribe Meeting.aspx page for each meeting includes CSS classes: .MotionText, .AgendaItemMotion, .MovedBy, .SecondedBy, .MotionVot \u2014 indicating structured per-item vote data rendered in HTML. Example: Finance/Government Operations & Economic Development Committee meeting July 14 2026 (Meeting.aspx?Id=5cefff5d-2b42-4aa7-9598-c549cc7b849f) shows items like '3.a Monthly Department of Economic Development Report \u2026 Election District(s): Countywide \u2026 Staff Contact(s): Buddy Rizer'. For BOS Business Meetings, vote outcomes appear in the PDF Action Reports stored in Laserfiche (fol/115347), produced within 2 business days of each meeting.",
+ "systems_surveyed": [
+  {
+   "system": "eScribe",
+   "url": "https://pub-loudoun.escribemeetings.com",
+   "status": "ACTIVE \u2014 confirmed live; hosts Finance/Government Operations & Economic Development Committee and Transportation and Land Use Committee meetings; current meeting July 2026 verified",
+   "era_covered": "Current (2024\u2013present); described by county as 'new platform' for BOS and Planning Commission materials"
+  },
+  {
+   "system": "Laserfiche WebLink",
+   "url": "https://lfportal.loudoun.gov/LFPortalinternet",
+   "status": "ACTIVE \u2014 iframe embedded in loudoun.gov/3426 (BOS Business Meetings, fol/98907) and loudoun.gov/3436 (Action Reports, fol/115347); URL confirmed in page source",
+   "era_covered": "Action Reports 1991\u2013present; Copy Teste Books 1954\u2013present; Minute Books 1870\u2013present"
+  },
+  {
+   "system": "CivicPlus AgendaCenter",
+   "url": "https://www.loudoun.gov/AgendaCenter",
+   "status": "LEGACY \u2014 accessible but only contains records for ancillary committees (Administrative Operations Committee, Emergency Management, Fire Operations, etc.) from 2014\u20132016; NOT used for main BOS",
+   "era_covered": "2014\u20132016 (legacy/archive only)"
+  },
+  {
+   "system": "Legistar API",
+   "url": "https://webapi.legistar.com/v1/loudoun/bodies",
+   "status": "HTTP 500 \u2014 LegistarConnectionString-style error (client slug 'loudoun' may be registered but API is disabled or misconfigured; /meetings endpoint returned 404)",
+   "era_covered": "Unknown / not operational"
+  },
+  {
+   "system": "Legistar InSite",
+   "url": "https://loudoun.legistar.com",
+   "status": "Returns 'Invalid parameters!' \u2014 site exists at the host but is not a functional public portal",
+   "era_covered": "Not operational"
+  },
+  {
+   "system": "PrimeGov",
+   "url": "https://loudoun.primegov.com",
+   "status": "DNS does not resolve \u2014 not a tenant",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "Granicus",
+   "url": "https://loudouncountyva.granicus.com",
+   "status": "HTTP 404 \u2014 not a tenant",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "CivicPlus AgendaCenter (main BOS)",
+   "url": "https://www.loudoun.gov/AgendaCenter (BOS category)",
+   "status": "BOS meetings NOT present in AgendaCenter; only minor committee archives",
+   "era_covered": "N/A for BOS"
+  }
+ ],
+ "access_constraints": "No authentication required for eScribe public portal or Laserfiche WebLink portal. eScribe calendar is rendered client-side via FullCalendar JS; the MeetingsCalendarView.aspx/GetCalendarMeetings POST endpoint returns empty JSON arrays (data is baked into the initial HTML page load). Laserfiche documents are served via a frames-based WebLink interface \u2014 individual document URLs require navigating folder tree. No Cloudflare or captcha blocks detected on either primary system.",
+ "open_questions": [
+  "The Laserfiche WebLink portal (lfportal.loudoun.gov/LFPortalinternet/0/fol/98907) was not directly fetched before budget exhausted \u2014 confirm it is publicly accessible without login and enumerate its subfolder/document structure.",
+  "eScribe's main calendar only shows two Standing Committee types; confirm whether full BOS Business Meetings (not just committees) will appear in eScribe going forward or remain exclusively in Laserfiche.",
+  "The Legistar 'loudoun' slug returned a 500 error \u2014 determine whether Loudoun ever used Legistar historically and whether any Legistar records pre-date the current eScribe/Laserfiche setup.",
+  "Loudoun County webcast system URL was referenced (for meeting video) but not identified \u2014 determine the video platform (likely a Granicus/MediaSite/YouTube channel) and whether timestamped vote segments are accessible.",
+  "eScribe POST endpoint GetCalendarMeetings returns empty arrays \u2014 confirm whether a different parameter format (e.g., different date format or additional body fields) can unlock paginated JSON meeting lists for automated enumeration.",
+  "Verify the era boundary: when exactly did eScribe replace the previous system for Standing Committee documents?"
+ ]
+}

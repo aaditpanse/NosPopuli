@@ -1,0 +1,88 @@
+{
+ "jurisdiction": "Prince William County, Virginia \u2014 Board of County Supervisors",
+ "primary_source": {
+  "system": "Granicus",
+  "base_urls": [
+   "https://pwcgov.granicus.com/ViewPublisher.php?view_id=23",
+   "https://pwcgov.granicus.com/AgendaViewer.php?view_id=23&clip_id={clip_id}",
+   "https://pwcgov.granicus.com/AgendaViewer.php?view_id=23&event_id={event_id}",
+   "https://pwcgov.granicus.com/MinutesViewer.php?view_id=23&clip_id={clip_id}",
+   "https://pwcgov.granicus.com/MediaPlayer.php?view_id=23&clip_id={clip_id}"
+  ],
+  "rung": "html",
+  "how_to_enumerate_meetings": "Fetch https://pwcgov.granicus.com/ViewPublisher.php?view_id=23 \u2014 meetings are listed in collapsible year panels (2008\u20132026 confirmed). Each row exposes clip_id and event_id as query parameters on AgendaViewer and MinutesViewer links. A 'VoteLog' tab is also present on the same page for vote-specific search.",
+  "sample_document_urls": [
+   "https://pwcgov.granicus.com/MinutesViewer.php?view_id=23&clip_id=3856  (Briefs/minutes for Jun 23 2026 \u2014 contains per-item votes)",
+   "https://pwcgov.granicus.com/AgendaViewer.php?view_id=23&event_id=3436  (Agenda for upcoming Jul 14 2026 work session)",
+   "https://pwcva.gov/department/board-county-supervisors/live-video-briefs-archives  (county landing page \u2014 embeds Granicus via iframe)"
+  ]
+ },
+ "second_source": {
+  "exists": true,
+  "system": "Prince William County pwcva.gov Document Center + Agenda Packet PDFs",
+  "urls": [
+   "https://www.pwcva.gov/document-center?guid=19",
+   "https://www.pwcva.gov/assets/2021-05/BOCSMeetingSchedule.pdf  (sample asset path pattern for board PDFs)"
+  ],
+  "what_it_affirms": "The county's own CMS hosts separately-generated Agenda Packet PDFs (linked from Granicus rows as distinct S3-backed assets on pwcva.gov). These packets are produced independently from the Briefs/MinutesViewer HTML and can corroborate agenda item text and resolution numbers. However, they are attachments originating from the same workflow \u2014 they are NOT a fully independent legislative management system. No second standalone system (Legistar, PrimeGov, eScribe, a separate minutes repository) was found."
+ },
+ "votes_located": "Per-item votes appear in the Granicus MinutesViewer ('Briefs') HTML documents at https://pwcgov.granicus.com/MinutesViewer.php?view_id=23&clip_id={clip_id}. Confirmed example from clip_id=3856 (Jun 23, 2026): \\\"3.A. APPROVED: Approve the Minutes of May 19, 2026 1: Bailey 2: Boddye / Unanimous / ABSENT FROM MEETING: Vega Res. No. 26-378\\\" \u2014 format encodes disposition, mover (1:), seconder (2:), aggregate outcome, and named absentees. A 'VoteLog' tab is also present on the ViewPublisher page, offering keyword search across Motions/Votes fields.",
+ "systems_surveyed": [
+  {
+   "system": "Granicus (pwcgov tenant)",
+   "url": "https://pwcgov.granicus.com/ViewPublisher.php?view_id=23",
+   "status": "CONFIRMED ACTIVE \u2014 200 OK, full meeting list rendered",
+   "era_covered": "2008\u2013present (July 2026 meetings listed)"
+  },
+  {
+   "system": "Legistar API \u2014 slug 'princeWilliam'",
+   "url": "https://webapi.legistar.com/v1/princeWilliam/bodies",
+   "status": "500 Internal Server Error \u2014 not a Legistar tenant",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "Legistar API \u2014 slug 'pwc'",
+   "url": "https://webapi.legistar.com/v1/pwc/bodies",
+   "status": "500 Internal Server Error \u2014 not a Legistar tenant",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "PrimeGov \u2014 slug 'princeWilliamCounty'",
+   "url": "https://princeWilliamCounty.primegov.com/api/v2/PublicPortal/ListArchivedMeetings?year=2024",
+   "status": "DNS failure \u2014 not a PrimeGov tenant",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "PrimeGov \u2014 slug 'pwc'",
+   "url": "https://pwc.primegov.com/api/v2/PublicPortal/ListArchivedMeetings?year=2024",
+   "status": "DNS failure \u2014 not a PrimeGov tenant",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "pwcva.gov official county CMS (Granicus iframe host)",
+   "url": "https://www.pwcva.gov/department/board-county-supervisors/live-video-briefs-archives",
+   "status": "200 OK \u2014 confirmed embeds Granicus view_id=23 via iframe; also links Agenda Packet PDFs",
+   "era_covered": "Current (2026 content present)"
+  },
+  {
+   "system": "pwcva.gov Document Center",
+   "url": "https://www.pwcva.gov/document-center?guid=19",
+   "status": "200 OK \u2014 CMS document store, no independent meeting-record API found",
+   "era_covered": "Current"
+  },
+  {
+   "system": "Granicus VoteLogSearch.php",
+   "url": "https://pwcgov.granicus.com/VoteLogSearch.php?view_id=23",
+   "status": "404 Not Found \u2014 VoteLog is a JavaScript tab within ViewPublisher, not a standalone page",
+   "era_covered": "N/A"
+  }
+ ],
+ "access_constraints": "No authentication required. Granicus HTML pages are publicly accessible. AgendaViewer redirects to S3-hosted PDFs which trigger SSL hostname-mismatch errors in the crawler (granicus_production_attachments.s3.amazonaws.com) \u2014 those PDF assets are browser-accessible but not directly fetchable by this agent. MinutesViewer HTML returns fine. No Cloudflare or CAPTCHA observed on Granicus. The county CMS (pwcva.gov) returns 403 on some sub-paths (e.g. /agendas-minutes) but the Granicus portal itself is unrestricted.",
+ "open_questions": [
+  "How far back does the archive pre-date 2008? The year selector stops at 2008 \u2014 earlier records (if any) may be on the legacy pwcgov.org SharePoint site.",
+  "The AgendaViewer PDFs (served via S3) could not be fetched due to SSL hostname mismatch \u2014 confirm their internal structure (item numbering, attachment links) via a browser.",
+  "The VoteLog tab on ViewPublisher.php uses JavaScript to render; its underlying data endpoint (likely a Granicus internal API) was not isolated \u2014 worth probing browser Network tab for a hidden JSON feed.",
+  "Does 'Briefs' (MinutesViewer) represent official adopted minutes or a staff-produced action summary? The distinction matters for legal record status. Official minutes may be separate PDFs in the Document Center.",
+  "The old domain pwcgov.org (SharePoint-based) appeared in search results \u2014 verify whether it still hosts pre-Granicus historical records or simply redirects to pwcva.gov."
+ ]
+}

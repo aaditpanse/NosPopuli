@@ -1,0 +1,2183 @@
+{
+ "pittsburgh-legistar-12022": {
+  "date": "2026-06-30",
+  "attendance": {
+   "present": [
+    "Coghill",
+    "Lavelle",
+    "Mosley",
+    "Salinetro",
+    "Strassburger",
+    "Warwick"
+   ],
+   "absent": [
+    "Charland",
+    "Gross",
+    "Wilson"
+   ]
+  },
+  "items": {
+   "2026-0672": [
+    {
+     "result": "pass",
+     "votes": {},
+     "enactment": "389"
+    }
+   ],
+   "2026-0692": [
+    {
+     "result": "pass",
+     "votes": {},
+     "enactment": "390"
+    }
+   ],
+   "2026-0680": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0682": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0683": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0684": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0685": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0686": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0687": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0688": [
+    {
+     "result": "pass",
+     "votes": {},
+     "enactment": "391"
+    }
+   ],
+   "2026-0691": [
+    {
+     "result": "pass",
+     "votes": {},
+     "enactment": "392"
+    }
+   ],
+   "2026-0689": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0690": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0673": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0595": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0608": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0629": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0630": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0631": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0632": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0633": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0634": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0635": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0636": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0674": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0612": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0675": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0615": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0616": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0617": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0618": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0619": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0620": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0621": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0622": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0624": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0625": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0626": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0627": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0628": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0676": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0611": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0677": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0614": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0678": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0670": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0679": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0224": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0613": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    },
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 6,
+       "members": [
+        "Coghill",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Warwick"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 3,
+       "members": [
+        "Charland",
+        "Gross",
+        "Wilson"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ]
+  }
+ },
+ "pittsburgh-legistar-12017": {
+  "date": "2026-06-24",
+  "attendance": {
+   "present": [
+    "Charland",
+    "Coghill",
+    "Gross",
+    "Lavelle",
+    "Mosley",
+    "Salinetro",
+    "Strassburger",
+    "Wilson"
+   ],
+   "absent": [
+    "Warwick"
+   ]
+  },
+  "items": {
+   "2026-0671": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0426": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Warwick"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0544": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Salinetro",
+        "Strassburger",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Warwick"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ]
+  }
+ },
+ "pittsburgh-legistar-12013": {
+  "date": "2026-06-23",
+  "attendance": {
+   "present": [
+    "Charland",
+    "Coghill",
+    "Gross",
+    "Lavelle",
+    "Mosley",
+    "Strassburger",
+    "Warwick",
+    "Wilson"
+   ],
+   "absent": [
+    "Salinetro"
+   ]
+  },
+  "items": {
+   "2026-0663": [
+    {
+     "result": "pass",
+     "votes": {},
+     "enactment": "363"
+    }
+   ],
+   "2026-0665": [
+    {
+     "result": "pass",
+     "votes": {},
+     "enactment": "364"
+    }
+   ],
+   "2026-0666": [
+    {
+     "result": "pass",
+     "votes": {},
+     "enactment": "365"
+    }
+   ],
+   "2026-0667": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0668": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0669": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0670": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0651": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0659": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0660": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0652": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0653": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0654": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0655": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0656": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0657": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0658": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0664": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0661": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0662": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0644": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0592": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Strassburger",
+        "Warwick",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Salinetro"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0593": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Strassburger",
+        "Warwick",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Salinetro"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0594": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Strassburger",
+        "Warwick",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Salinetro"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0645": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0584": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Strassburger",
+        "Warwick",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Salinetro"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0587": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Strassburger",
+        "Warwick",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Salinetro"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0588": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Strassburger",
+        "Warwick",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Salinetro"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0646": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0591": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Strassburger",
+        "Warwick",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Salinetro"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0647": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0481": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Strassburger",
+        "Warwick",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Salinetro"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0564": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Strassburger",
+        "Warwick",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Salinetro"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0648": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0562": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Strassburger",
+        "Warwick",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Salinetro"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0565": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Strassburger",
+        "Warwick",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Salinetro"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0566": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Strassburger",
+        "Warwick",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Salinetro"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0567": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Strassburger",
+        "Warwick",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Salinetro"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0650": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0585": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Strassburger",
+        "Warwick",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Salinetro"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0586": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Strassburger",
+        "Warwick",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Salinetro"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0649": [
+    {
+     "result": null,
+     "votes": {},
+     "enactment": null
+    }
+   ],
+   "2026-0589": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Strassburger",
+        "Warwick",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Salinetro"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ],
+   "2026-0590": [
+    {
+     "result": "pass",
+     "votes": {
+      "aye": {
+       "count": 8,
+       "members": [
+        "Charland",
+        "Coghill",
+        "Gross",
+        "Lavelle",
+        "Mosley",
+        "Strassburger",
+        "Warwick",
+        "Wilson"
+       ]
+      },
+      "no": {
+       "count": 0,
+       "members": []
+      },
+      "abstain": {
+       "count": 0,
+       "members": []
+      },
+      "absent": {
+       "count": 1,
+       "members": [
+        "Salinetro"
+       ]
+      }
+     },
+     "enactment": null
+    }
+   ]
+  }
+ }
+}

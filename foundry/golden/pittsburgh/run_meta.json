@@ -1,0 +1,17 @@
+{
+ "source_id": "pittsburgh-legistar",
+ "extractor_version": "1",
+ "schema_version": "1",
+ "event_ids": [
+  12022,
+  12017,
+  12013
+ ],
+ "row_counts": {
+  "meetings": 3,
+  "agenda_items": 98,
+  "vote_events": 48,
+  "members": 9
+ },
+ "elapsed_seconds": 31.9
+}

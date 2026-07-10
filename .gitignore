@@ -15,3 +15,10 @@ flags.json
 CLAUDE.md
 specs/
 correspondence.db
+# Foundry: ignore regenerable http caches and run outputs, but keep the
+# paid-for artifacts — the record stores and agent-discovered source profiles
+foundry/data/*
+!foundry/data/store/
+foundry/data/store/*.bak
+!foundry/data/discovery/
+foundry/data/discovery/*_http_cache.json

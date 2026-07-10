@@ -1,0 +1,75 @@
+{
+ "jurisdiction": "Fairfax County, Virginia, USA \u2014 Board of Supervisors",
+ "primary_source": {
+  "system": "Fairfax County custom CMS (fairfaxcounty.gov/boardofsupervisors) \u2014 static HTML meeting index pages with linked PDF agenda and minutes documents produced by the Clerk for the Board of Supervisors",
+  "base_urls": [
+   "https://www.fairfaxcounty.gov/boardofsupervisors/board-supervisors-meetings-archive",
+   "https://www.fairfaxcounty.gov/boardofsupervisors/{meeting-slug}-meeting",
+   "https://www.fairfaxcounty.gov/boardofsupervisors/board-meeting-summaries"
+  ],
+  "rung": "html \u2192 pdf",
+  "how_to_enumerate_meetings": "1) Fetch the archive page (board-supervisors-meetings-archive) \u2014 it renders a chronological HTML list of all BOS and committee meetings with hyperlinks to individual meeting pages (URL pattern: /boardofsupervisors/MONTH-DD-YYYY-meeting). 2) Fetch each meeting page to locate two document links: 'Final Board Package' (agenda PDF) and 'Final Meeting Summary' (Clerk's summary/minutes PDF). PDF paths follow the pattern: /boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/YYYY/MM-DD-YY Final Summary.pdf",
+  "sample_document_urls": [
+   "https://www.fairfaxcounty.gov/boardofsupervisors/jan-14-2025-meeting",
+   "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2025/January14-Board-Package-Final.pdf",
+   "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2025/01-14-25%20Final%20Summary.pdf"
+  ]
+ },
+ "second_source": {
+  "exists": true,
+  "system": "County-hosted Granicus video platform (video.fairfaxcounty.gov) \u2014 independently serves a structured HTML agenda per meeting (MinutesViewer.php), keyed by view_id=7 and a numeric clip_id, plus links back to the county CMS 'Full Meeting Archive' page. Affirms meeting dates, agenda item lists, and item-level video timestamps independently of the primary CMS.",
+  "urls": [
+   "https://video.fairfaxcounty.gov/ViewPublisher.php?view_id=7",
+   "https://video.fairfaxcounty.gov/MediaPlayer.php?view_id=7&clip_id=3639",
+   "https://video.fairfaxcounty.gov/MinutesViewer.php?view_id=7&clip_id=4174&doc_id=20cc7a55-64e3-11f1-9494-005056a89546"
+  ],
+  "what_it_affirms": "Independently enumerates all archived BOS meetings via ViewPublisher (most recent: June 23, 2026). The MinutesViewer endpoint renders a full HTML agenda with numbered items, action status ('Done'), and deep-linked video timestamps per item \u2014 e.g., 'RESOLUTION - To recognize the Fairfax County Public Schools teams at the Robotics World Championship. Requested by Chairman McKay.' Agenda items here cross-check the PDF Board Package from the primary source. Does NOT duplicate the Clerk's vote-narrative minutes PDF; those remain only on the primary CMS."
+ },
+ "votes_located": "Votes appear in the Clerk's Board Summary PDFs (\\\"CLERK'S BOARD SUMMARY \u2014 REPORT OF ACTIONS OF THE FAIRFAX COUNTY BOARD OF SUPERVISORS\\\"), linked as 'Final Meeting Summary' from each individual meeting page. Votes are recorded as narrative prose per agenda item. Confirmed example from Jan 14, 2025 summary: \\\"Chairman McKay seconded the motion and it carried by unanimous vote\\\" and \\\"The motion was multiply seconded and carried by unanimous vote.\\\" Each action item names the moving supervisor. Split-vote supervisor-level breakdown was not observed in the Jan 14, 2025 sample (all votes were unanimous on that date); whether dissenting supervisor names are individually listed on contested votes is an open question requiring a meeting with a recorded split vote.",
+ "systems_surveyed": [
+  {
+   "system": "Legistar API (slug: fairfax)",
+   "url": "https://webapi.legistar.com/v1/fairfax/bodies",
+   "status": "HTTP 500 \u2014 no such tenant (expected error for unknown slug, not a Legistar client)",
+   "era_covered": "n/a"
+  },
+  {
+   "system": "Legistar API (slug: fairfaxcounty)",
+   "url": "https://webapi.legistar.com/v1/fairfaxcounty/bodies",
+   "status": "HTTP 500 \u2014 no such tenant",
+   "era_covered": "n/a"
+  },
+  {
+   "system": "PrimeGov (tenant: fairfaxcounty)",
+   "url": "https://fairfaxcounty.primegov.com/api/v2/PublicPortal/ListArchivedMeetings?year=2024",
+   "status": "DNS failure \u2014 host does not exist, not a PrimeGov client",
+   "era_covered": "n/a"
+  },
+  {
+   "system": "Fairfax County CMS \u2014 Board of Supervisors site",
+   "url": "https://www.fairfaxcounty.gov/boardofsupervisors/board-supervisors-meetings-archive",
+   "status": "HTTP 200 OK \u2014 PRIMARY SOURCE. Archive page lists all BOS and committee meetings with per-meeting pages containing Agenda PDF + Clerk's Summary PDF. Current 2026 meetings confirmed.",
+   "era_covered": "Current (2025\u20132026 confirmed online); older years also present on site"
+  },
+  {
+   "system": "Granicus video platform (county-hosted)",
+   "url": "https://video.fairfaxcounty.gov/ViewPublisher.php?view_id=7",
+   "status": "HTTP 200 OK \u2014 SECOND SOURCE. Full archive of BOS meeting videos with structured HTML agendas (MinutesViewer.php) and links to Full Meeting Archive. Most recent listing: June 23, 2026.",
+   "era_covered": "Current (2025\u20132026 confirmed); archive extends back at least several years"
+  },
+  {
+   "system": "CivicWeb (fairfaxcounty.civicweb.net)",
+   "url": "https://fairfaxcounty.civicweb.net/Portal/MeetingTypeList.aspx",
+   "status": "HTTP 200 OK \u2014 ACTIVE but scope limited. Portal lists Boards, Authorities and Commissions (BACs); BOS meeting IDs probed (Id=1, Id=10) returned 'No meetings for this meeting type'. Per county documentation, CivicWeb's Board Document Center holds BOS minute books 1924\u20131989 only.",
+   "era_covered": "Historical BOS records 1924\u20131989; current BAC meetings"
+  }
+ ],
+ "access_constraints": "All records are publicly accessible with no login required. Agenda and summary PDFs are direct HTTP downloads. The county CMS archive page and individual meeting pages are standard HTML but navigation-heavy (large global nav); content is in the page body and parseable without JavaScript rendering. The video.fairfaxcounty.gov Granicus platform is publicly accessible; MinutesViewer.php returns plain HTML. No Cloudflare or CAPTCHA blocks encountered on any endpoint. CivicWeb portal notes 'Your Javascript is turned off, without it, this site will not operate as intended' \u2014 JS required for full CivicWeb navigation, but meeting-type and document pages still returned HTML content.",
+ "open_questions": [
+  "Split-vote granularity: Do the Clerk's Summary PDFs individually name dissenting supervisors on non-unanimous votes, or only record the outcome narrative? A meeting with a known contested vote must be sampled to confirm.",
+  "CivicWeb BAC coverage: CivicWeb appears active for current BAC (Boards, Authorities, Commissions) meetings \u2014 are structured agendas/minutes available there via the portal API for non-BOS bodies?",
+  "Historical PDF depth: The earliest year of current-format PDF summaries available on the county CMS was not determined; only 2025\u20132026 were confirmed. Older PDFs may exist for prior years.",
+  "Committee meetings: Board committee meetings (Budget Policy, Land Use Policy, etc.) appear in the same archive \u2014 confirm whether their individual meeting pages also carry Clerk's Summary PDFs or only agendas.",
+  "Granicus clip_id enumeration: The clip_id parameter on video.fairfaxcounty.gov is numeric and sequential but the sequence bounds are unknown; a range scan or RSS feed (advertised on the publisher page) may be the cleanest enumeration path."
+ ]
+}

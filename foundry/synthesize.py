@@ -1,0 +1,217 @@
+"""Extractor synthesis via LLM (spec module 3) — offline, gated, never in
+the hot path.
+
+The model sees three things: the source profile (real sample responses from
+the frozen HTTP cache), the domain schema source, and the artifact contract.
+It does NOT see extractor v1 — the point of M1 is measuring synthesis from
+the source, not paraphrase of existing code. Gate feedback (tracebacks,
+harness findings, golden diffs) is appended as follow-up turns, so the
+attempt loop is one conversation.
+"""
+
+import json
+import pathlib
+import re
+
+import anthropic
+from dotenv import load_dotenv
+
+load_dotenv(pathlib.Path(__file__).parent.parent / ".env")
+
+MODEL = "claude-opus-4-8"
+# $/MTok for claude-opus-4-8: input, cache write (1.25x), cache read (0.1x), output
+PRICES = {"input_tokens": 5.00, "cache_creation_input_tokens": 6.25,
+          "cache_read_input_tokens": 0.50, "output_tokens": 25.00}
+
+SYSTEM = """You write deterministic data-extractor code for a municipal-data \
+pipeline system. You are given a source profile (sample API responses), a \
+target domain schema, and an artifact contract. Reply with ONE complete \
+Python module in a single ```python code block and nothing else outside it. \
+The module must be plain deterministic code: stdlib only, no network or file \
+I/O of its own — all HTTP goes through the fetch_json callable it receives."""
+
+CONTRACT = """## Artifact contract
+
+Write a complete Python module implementing an extractor for source
+`pittsburgh-legistar` (Pittsburgh City Council on the Legistar Web API).
+
+- Define `EXTRACTOR_VERSION = "2"`.
+- Define `extract(fetch_json, event_ids) -> (records, run_meta)`.
+- `fetch_json(path, params=None)` is injected by the runtime. It GETs
+  `https://webapi.legistar.com/v1/pittsburgh{path}` and returns parsed JSON.
+  It is the only I/O available to you.
+- `records` is {"meetings": [...], "agenda_items": [...], "vote_events": [...],
+  "members": [...]} in the domain schema below — one meeting record per given
+  Legistar event id, plus that meeting's agenda items and recorded votes.
+- `run_meta` is {"source_id": "pittsburgh-legistar", "extractor_version": ...,
+  "schema_version": "1", "event_ids": [...], "row_counts": {type: count}}.
+
+Target-schema conventions for this source:
+- meeting_id = f"pittsburgh-legistar-{EventId}"
+  item_id    = f"pittsburgh-legistar-item-{EventItemId}"
+  vote_id    = f"pittsburgh-legistar-vote-{EventItemId}"
+- Only agenda items that have a file number (a Legistar "matter file") become
+  agenda_item records; procedural rows (roll call, section headings) do not.
+- meeting `attendance` comes from the meeting's roll call.
+- Vote and roll-call position names must be normalized into the schema's
+  POSITIONS vocabulary.
+- `members` holds one record per distinct person seen across the run
+  (roll calls and votes), sorted by name, carrying the Legistar person id.
+- A vote_event exists only where the source records an actual per-member vote."""
+
+
+def _sample(cache, key, shrink=None):
+    data = json.loads(json.dumps(cache[key]))
+    if shrink:
+        data = shrink(data)
+    return json.dumps(data, indent=1)
+
+
+def build_source_profile(cache, event_ids):
+    """Real sample responses from the frozen cache — the model works from
+    the source's actual shapes, not a description of them."""
+    eid = event_ids[0]
+    items_key = f"/events/{eid}/eventitems"
+    items = cache[items_key]
+    # a representative spread: procedural rows, referred items, final actions
+    def item_spread(data):
+        with_file = [i for i in data if i.get("EventItemMatterFile")]
+        without = [i for i in data if not i.get("EventItemMatterFile")]
+        passed = [i for i in with_file if i.get("EventItemPassedFlagName")]
+        referred = [i for i in with_file if not i.get("EventItemPassedFlagName")]
+        return without[:2] + referred[:1] + passed[:1]
+
+    rollcall_item = next(i for i in items if i.get("EventItemRollCallFlag"))
+    voted_item = next(i for i in items
+                      if i.get("EventItemMatterFile") and i.get("EventItemPassedFlagName")
+                      and f"/eventitems/{i['EventItemId']}/votes" in cache
+                      and cache[f"/eventitems/{i['EventItemId']}/votes"])
+
+    return f"""## Source profile
+
+Base API: https://webapi.legistar.com/v1/pittsburgh (open, no key).
+Endpoints discovered, with real sample responses:
+
+`GET /events/{{event_id}}` — one meeting:
+```json
+{_sample(cache, f"/events/{eid}", lambda d: {k: v for k, v in d.items() if k != "EventItems"})}
+```
+
+`GET /events/{{event_id}}/eventitems` — agenda rows in meeting order
+(sample of 4 rows out of {len(items)}; note which have a matter file and
+which have a passed flag):
+```json
+{_sample(cache, items_key, item_spread)}
+```
+
+`GET /eventitems/{{event_item_id}}/rollcalls` — attendance rows for a
+roll-call item (EventItemRollCallFlag == 1); sample of 3:
+```json
+{_sample(cache, f"/eventitems/{rollcall_item['EventItemId']}/rollcalls", lambda d: d[:3])}
+```
+
+`GET /eventitems/{{event_item_id}}/votes` — per-member recorded vote rows
+for an acted-on item; empty list where no recorded vote exists; sample of 3:
+```json
+{_sample(cache, f"/eventitems/{voted_item['EventItemId']}/votes", lambda d: d[:3])}
+```"""
+
+
+def build_initial_messages(cache, event_ids):
+    schema_src = (pathlib.Path(__file__).parent / "schema.py").read_text()
+    prompt = (f"{build_source_profile(cache, event_ids)}\n\n"
+              f"## Domain schema (schema.py, verbatim)\n\n```python\n{schema_src}```\n\n"
+              f"{CONTRACT}")
+    return [{"role": "user", "content": prompt}]
+
+
+def build_repair_samples(cache, event_ids):
+    """Fresh samples from a (possibly changed) source. Selection is by URL
+    pattern and position only — never by field name, since field renames are
+    exactly the breakage being sampled."""
+    eid = event_ids[0]
+    items = cache[f"/events/{eid}/eventitems"]
+    rollcalls_key = next(k for k in sorted(cache) if "/rollcalls" in k and cache[k])
+    votes_key = next(k for k in sorted(cache) if "/votes" in k and cache[k])
+    return (f"`GET /events/{eid}`:\n```json\n"
+            f"{json.dumps(cache[f'/events/{eid}'], indent=1)}\n```\n\n"
+            f"`GET /events/{eid}/eventitems` (first 6 of {len(items)} rows):\n"
+            f"```json\n{json.dumps(items[:6], indent=1)}\n```\n\n"
+            f"`GET {rollcalls_key}` (first 3 rows):\n"
+            f"```json\n{json.dumps(cache[rollcalls_key][:3], indent=1)}\n```\n\n"
+            f"`GET {votes_key}` (first 3 rows):\n"
+            f"```json\n{json.dumps(cache[votes_key][:3], indent=1)}\n```")
+
+
+def build_repair_messages(old_code, cache, event_ids, error=None,
+                          findings=None, diff_lines=None):
+    """Repair loop kickoff (spec module 6): old extractor + new source
+    samples + failing evidence -> replacement artifact."""
+    evidence = feedback_message(error, findings, diff_lines)["content"]
+    prompt = f"""The upstream source for extractor `pittsburgh-legistar` changed \
+its response format, and the currently deployed extractor below now fails \
+validation. Repair it.
+
+## Current extractor
+```python
+{old_code}
+```
+
+## Fresh sample responses from the changed source
+
+{build_repair_samples(cache, event_ids)}
+
+## Failing evidence from the validation harness
+
+{evidence}
+
+## Requirements
+
+Same artifact contract as the current extractor: `extract(fetch_json, \
+event_ids) -> (records, run_meta)`, stdlib only, domain schema v1 unchanged \
+(the schema did not change — only the source did). Bump EXTRACTOR_VERSION. \
+The repaired extractor must reproduce the same records from the changed \
+source. Return the complete module in one ```python block."""
+    return [{"role": "user", "content": prompt}]
+
+
+def feedback_message(error=None, findings=None, diff_lines=None):
+    parts = ["Your extractor failed the gate. Return the complete corrected "
+             "module in one ```python block."]
+    if error:
+        parts.append(f"## Execution error\n```\n{error[-3000:]}\n```")
+    if findings:
+        parts.append("## Validation-harness findings\n" + "\n".join(
+            f"- [{f['layer']}/{f['check']}] {f['ref']}: {f['msg'][:200]}"
+            for f in findings[:10]))
+    if diff_lines:
+        parts.append("## Differences vs the hand-verified golden set\n" +
+                     "\n".join(diff_lines[:30]))
+    return {"role": "user", "content": "\n\n".join(parts)}
+
+
+def generate(messages):
+    """One synthesis call. Returns (code, assistant_content, usage)."""
+    client = anthropic.Anthropic()
+    with client.messages.stream(
+        model=MODEL,
+        max_tokens=32000,
+        thinking={"type": "adaptive"},
+        system=SYSTEM,
+        cache_control={"type": "ephemeral"},  # profile+schema prefix reused across attempts
+        messages=messages,
+    ) as stream:
+        msg = stream.get_final_message()
+    text = "".join(b.text for b in msg.content if b.type == "text")
+    blocks = re.findall(r"```python\n(.*?)```", text, re.DOTALL)
+    if not blocks:
+        raise RuntimeError(f"no python code block in response: {text[:300]}")
+    return max(blocks, key=len), msg.content, msg.usage
+
+
+def cost_usd(usages):
+    total = 0.0
+    for u in usages:
+        for field, price in PRICES.items():
+            total += (getattr(u, field, 0) or 0) * price / 1e6
+    return total
