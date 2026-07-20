@@ -135,6 +135,32 @@
       color: var(--muted); padding: 3rem 0; text-align: center; }
     .ed-error { font-family: 'Source Serif 4', serif; color: var(--accent);
       padding: 2rem 0; }
+
+    /* Money & momentum (FEC) */
+    .fin-contest { margin-bottom: 1.5rem; }
+    .fin-office { font-family: 'IBM Plex Mono', monospace; font-size: 0.55rem;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+      margin-bottom: 0.85rem; }
+    .fin-cand { padding: 0.75rem 0; border-bottom: 1px solid var(--rule); }
+    .fin-cand:last-child { border-bottom: none; }
+    .fin-cand-head { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.4rem; }
+    .fin-cand-name { font-family: 'Source Serif 4', serif; font-size: 0.9rem; }
+    .fin-cand-party { font-family: 'IBM Plex Mono', monospace; font-size: 0.5rem;
+      color: var(--muted); letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.3rem; }
+    .fin-raised { font-family: 'IBM Plex Mono', monospace; font-size: 0.95rem;
+      font-weight: 500; margin-left: auto; }
+    .fin-bar-track { height: 6px; background: var(--aged); margin: 0.3rem 0 0.55rem; }
+    .fin-bar-fill { height: 100%; }
+    .fin-bar-fill.dem { background: #2457a0; } .fin-bar-fill.rep { background: #a02424; }
+    .fin-bar-fill.ind { background: #888; }
+    .fin-stats { display: flex; flex-wrap: wrap; gap: 0.15rem 1.25rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.56rem; color: var(--muted);
+      letter-spacing: 0.03em; }
+    .fin-stats b { color: var(--ink); font-weight: 500; }
+    .fin-stats a { color: var(--accent); text-decoration: none; }
+    .fin-stats a:hover { color: var(--ink); }
+    .fin-note { font-family: 'Source Serif 4', serif; font-style: italic;
+      font-size: 0.78rem; color: var(--muted); margin-top: 1rem; line-height: 1.5; }
   </style>
 </head>
 <body>
@@ -261,6 +287,82 @@ async function loadPolling(electionId, state) {
   }
 }
 
+function _money(n) {
+  n = Number(n) || 0;
+  if (n >= 1e6) return '$' + (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M';
+  if (n >= 1e3) return '$' + Math.round(n / 1e3) + 'K';
+  return '$' + Math.round(n);
+}
+
+function _renderFinanceData(data) {
+  const contests = (data && data.contests) || [];
+  if (!contests.length) {
+    return '<div class="no-candidates">No federal race on this ballot — the FEC covers only U.S. House, Senate, and President.</div>';
+  }
+  const blocks = contests.map(c => {
+    const maxR = Math.max(1, ...c.candidates.map(x => x.finance.receipts || 0));
+    const office = c.office + (c.district ? ` — ${c.district}` : '');
+    const rows = c.candidates.map(cand => {
+      const f = cand.finance;
+      const cls = _partyClass(cand.party);
+      const pacPct = f.receipts ? Math.round(100 * (f.from_pacs || 0) / f.receipts) : null;
+      const cycle = f.cycle ? `${f.cycle} cycle` : 'most recent filing';
+      const stats = [
+        f.cash_on_hand != null ? `<span><b>${_money(f.cash_on_hand)}</b> cash on hand</span>` : '',
+        pacPct != null ? `<span><b>${pacPct}%</b> from PACs</span>` : '',
+        `<span>${cycle}</span>`,
+        f.fec_url ? `<span><a href="${f.fec_url}" target="_blank" rel="noopener">FEC ↗</a></span>` : '',
+      ].filter(Boolean).join('');
+      return `<div class="fin-cand">
+        <div class="fin-cand-head">
+          <span class="fin-cand-name">${cand.name}</span>
+          ${cand.party ? `<span class="fin-cand-party"><span class="party-dot ${cand.party_color || 'ind'}"></span>${cand.party}</span>` : ''}
+          <span class="fin-raised">${_money(f.receipts)}</span>
+        </div>
+        <div class="fin-bar-track"><div class="fin-bar-fill ${cls}" style="width:${Math.max(3, 100 * (f.receipts || 0) / maxR)}%"></div></div>
+        <div class="fin-stats">${stats}</div>
+      </div>`;
+    }).join('');
+    return `<div class="fin-contest"><div class="fin-office">${office}</div>${rows}</div>`;
+  }).join('');
+  const fromRoster = contests.some(c => c.from_fec_roster);
+  const rosterNote = fromRoster
+    ? 'Candidates listed are everyone registered with the FEC for this race — the full declared field, not a ballot-qualified roster. '
+    : '';
+  return blocks + `<p class="fin-note">${rosterNote}Total receipts this election cycle, reported to the Federal Election Commission. Money raised is not an endorsement or a prediction — it is one measurable signal among many. Figures lag filing deadlines by weeks.</p>`;
+}
+
+function _financeSectionHtml(electionId, source, zip, state) {
+  const q = new URLSearchParams();
+  if (zip) q.set('zip', zip);
+  if (state) q.set('state', state);
+  return `
+    <div class="ed-section" id="finance-section">
+      <div class="ed-section-label">Money &amp; Momentum</div>
+      <div id="finance-body">
+        <button class="poll-load-btn" id="finance-load-btn"
+          onclick="loadFinance('${electionId}','${q.toString()}')">
+          Load campaign finance →
+        </button>
+      </div>
+    </div>`;
+}
+
+async function loadFinance(electionId, query) {
+  const btn = document.getElementById('finance-load-btn');
+  const body = document.getElementById('finance-body');
+  if (!btn || !body) return;
+  btn.disabled = true;
+  btn.textContent = 'Querying the FEC…';
+  try {
+    const res = await fetch(`/api/elections/${electionId}/finance?${query}`);
+    const data = await res.json();
+    body.innerHTML = _renderFinanceData(data);
+  } catch {
+    body.innerHTML = '<div class="no-candidates">Could not load campaign finance data.</div>';
+  }
+}
+
 function _renderCandidates(contests) {
   if (!contests || !contests.length) return '';
   const html = contests.map(c => {
@@ -334,7 +436,7 @@ function toggleTrack(id, btn) {
   _saveTracked();
 }
 
-function renderDetail(data, prefs) {
+function renderDetail(data, ctx) {
   const days = data.countdown_days ?? null;
   const isPast = data.is_past || false;
   const cls = days !== null && days <= 30 ? 'urgent' : days !== null && days <= 90 ? 'near' : 'far';
@@ -372,18 +474,32 @@ function renderDetail(data, prefs) {
       ${_renderStageRail(data.stage, isPast)}
     </div>
 
-    ${_pollingSectionHtml(data.id, data.source, prefs?.state)}
+    ${_pollingSectionHtml(data.id, data.source, ctx?.state)}
+    ${_financeSectionHtml(data.id, data.source, ctx?.zip, ctx?.state)}
     ${_renderCandidates(data.contests)}
     ${_renderParticipation(data)}
   `;
 }
 
+// Resolve zip/state from prefs, then the URL query, then the web_XX_ id itself.
+// Federal races are regenerated server-side per state, so a missing state means
+// the election can't be found — deriving it from the id is the reliable path.
+function _resolveCtx(id) {
+  const prefs = getPrefs() || {};
+  const url = new URLSearchParams(window.location.search);
+  const m = /^web_([A-Za-z]{2})_/.exec(id || '');
+  return {
+    zip: prefs.zip || url.get('zip') || '',
+    state: (prefs.state || url.get('state') || (m ? m[1] : '') || '').toUpperCase(),
+  };
+}
+
 async function loadDetail() {
   const id = window.location.pathname.split('/').pop();
-  const prefs = getPrefs();
+  const ctx = _resolveCtx(id);
   const params = new URLSearchParams();
-  if (prefs?.zip)   params.set('zip', prefs.zip);
-  if (prefs?.state) params.set('state', prefs.state);
+  if (ctx.zip)   params.set('zip', ctx.zip);
+  if (ctx.state) params.set('state', ctx.state);
 
   try {
     const res = await fetch(`/api/elections/${id}?${params}`);
@@ -393,7 +509,7 @@ async function loadDetail() {
 
     document.getElementById('ed-loading').style.display = 'none';
     document.getElementById('ed-content').style.display = 'block';
-    renderDetail(data, prefs);
+    renderDetail(data, ctx);
   } catch(e) {
     document.getElementById('ed-loading').style.display = 'none';
     const errEl = document.getElementById('ed-error');

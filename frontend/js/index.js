@@ -3010,11 +3010,20 @@ function _makeElectionCard(election, isPast) {
     </div>
     <div class="election-contests">${_renderContests(election.contests)}</div>`;
 
-  // Toggle contests on click
+  // Open the full detail page (stage, candidates, polling, campaign finance).
+  // Pass zip/state so federal races — whose roster comes from the FEC, not the
+  // ballot — can resolve; state is parsed from the web_XX_ id when prefs lack it.
   card.querySelector('.election-card-top').addEventListener('click', () => {
-    const c = card.querySelector('.election-contests');
-    c.classList.toggle('open');
+    const p = getPrefs() || {};
+    let st = p.state || '';
+    if (!st) { const m = /^web_([A-Za-z]{2})_/.exec(election.id || ''); if (m) st = m[1].toUpperCase(); }
+    const params = new URLSearchParams();
+    if (p.zip) params.set('zip', p.zip);
+    if (st) params.set('state', st);
+    const qs = params.toString();
+    window.location = `/elections/${encodeURIComponent(election.id)}${qs ? '?' + qs : ''}`;
   });
+  card.querySelector('.election-card-top').style.cursor = 'pointer';
 
   return card;
 }

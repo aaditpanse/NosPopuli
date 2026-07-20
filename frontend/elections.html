@@ -218,10 +218,12 @@ function _makeElectionCard(election, isPast) {
     <div class="election-contests">${_renderContests(election.contests)}</div>`;
 
   card.querySelector('.election-card-top').addEventListener('click', () => {
-    const prefs = getPrefs();
+    const prefs = getPrefs() || {};
+    let st = prefs.state || '';
+    if (!st) { const m = /^web_([A-Za-z]{2})_/.exec(election.id || ''); if (m) st = m[1].toUpperCase(); }
     const params = new URLSearchParams();
-    if (prefs?.zip)   params.set('zip', prefs.zip);
-    if (prefs?.state) params.set('state', prefs.state);
+    if (prefs.zip) params.set('zip', prefs.zip);
+    if (st) params.set('state', st);
     window.location = `/elections/${election.id}?${params}`;
   });
 

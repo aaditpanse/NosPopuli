@@ -605,3 +605,189 @@ async def fetch_election_polling(election_id, state_code=None):
         return {}
 
     return await _fetch_polling_with_claude(election_name, state_name, election_id)
+
+
+# Cap the number of FEC candidate lookups per election so a crowded primary
+# ballot can't fan out into dozens of API calls (each is disk-cached anyway).
+_FINANCE_MAX_LOOKUPS = 16
+
+_FED_OFFICE_LABEL = {"S": "U.S. Senate", "H": "U.S. House", "P": "President"}
+# Names that are office-specific and NOT federal — don't let the generic
+# "even-year statewide ballot" fallback attach a Senate race to them.
+_NONFEDERAL_HINT = re.compile(r"govern|gubernatorial|mayor|council|school|attorney|"
+                              r"treasurer|assembly|state senate|state house|legislat|"
+                              r"county|city|judge|sheriff|ballot measure|proposition",
+                              re.I)
+
+
+def _federal_races_for(name, state, date_str):
+    """Infer the federal race(s) a calendar election covers, as (office, state,
+    cycle) tuples. FEC only has federal offices; House needs a district we don't
+    have from a calendar entry, so we resolve statewide races only — Senate and
+    President. A generic 'General'/'Primary' ballot in an even year gets the
+    state's Senate seat (empty if none is up) plus President in a presidential
+    year. Office-specific state races (governor, etc.) resolve to nothing."""
+    n = (name or "").lower()
+    st = (state or "").upper() or None
+    try:
+        year = int((date_str or "")[:4])
+    except ValueError:
+        return []
+    cycle = year if year % 2 == 0 else year + 1  # FEC cycles are even years
+
+    races = []
+    if "president" in n or "presidential" in n:
+        races.append(("P", None, cycle))
+    if ("senate" in n or "senator" in n) and st:
+        races.append(("S", st, cycle))
+    if races:
+        return races
+
+    # Generic bundled ballot: only when it isn't an office-specific state race.
+    if st and year % 2 == 0 and ("general" in n or "primary" in n) \
+            and not _NONFEDERAL_HINT.search(n):
+        races.append(("S", st, cycle))
+        if cycle % 4 == 0:
+            races.append(("P", None, cycle))
+    return races
+
+
+def _primary_party(name):
+    """The party of a partisan primary, as an FEC-party substring, or None for
+    general elections and open/nonpartisan primaries. A 'Republican Primary'
+    should show only Republicans — not the whole bipartisan field."""
+    n = (name or "").lower()
+    if "primary" not in n:
+        return None
+    if "republican" in n or "gop" in n:
+        return "republican"
+    if "democratic" in n or "democrat" in n:
+        return "democratic"
+    return None
+
+
+async def _finance_from_fec_roster(detail, state):
+    """Fallback roster: when no candidate list reaches us (Google Civic's
+    voterinfo is retired), build federal contests straight from the FEC's own
+    candidate registry for the race the election name implies. For a partisan
+    primary, the field is narrowed to that party."""
+    import fec_client
+    races = _federal_races_for(detail.get("name"), state, detail.get("date"))
+    party = _primary_party(detail.get("name"))
+    out_contests = []
+    for office, st, cycle in races:
+        # Pull a wide roster, then narrow by party so filtering doesn't clip the
+        # field down to almost nothing.
+        cands = await asyncio.to_thread(fec_client.race_candidates, office, st, cycle, 40)
+        if party:
+            cands = [f for f in cands if party in (f.get("party") or "").lower()]
+        cands = cands[:12]
+        rows = [{
+            "name": _title_case(f.get("name")),
+            "party": f.get("party"),
+            "party_color": _party_color(f.get("party")),
+            "finance": f,
+        } for f in cands]
+        if rows:
+            label = _FED_OFFICE_LABEL.get(office, office)
+            if party:
+                label += f" — {party.capitalize()} primary"
+            out_contests.append({
+                "office": label,
+                "district": None,
+                "candidates": rows,
+                "from_fec_roster": True,
+            })
+    return out_contests
+
+
+_HONORIFIC = {"mr", "mr.", "mrs", "mrs.", "ms", "ms.", "dr", "dr.", "hon", "hon."}
+
+
+def _cap_word(w):
+    if "." in w:                       # initials like 'C.L.'
+        return w.upper()
+    if w.isupper() and len(w) <= 2:    # bare initial 'F'
+        return w
+    return w.capitalize()
+
+
+def _title_case(name):
+    """FEC stores names uppercase, surname-first, with embedded honorifics and
+    trailing suffixes ('KENNEDY, ROBERT F JR'). Present them the way a reader
+    expects — 'Robert F Kennedy Jr.': drop honorifics, move the surname to the
+    front, and keep a generational suffix at the very end."""
+    n = (name or "").strip()
+    if "," in n:
+        last, rest = n.split(",", 1)
+    else:
+        rest, last = n, ""
+    tokens = rest.split()
+    suffix = None
+    if tokens and tokens[-1].lower().strip(".") in ("jr", "sr", "ii", "iii", "iv", "v"):
+        suffix = tokens.pop().lower().strip(".")
+    given = [t for t in tokens if t.lower() not in _HONORIFIC]
+    parts = [_cap_word(w) for w in given]
+    if last.strip():
+        parts.append(_cap_word(last.strip()))
+    if suffix:
+        parts.append(suffix.upper() if suffix in ("ii", "iii", "iv", "v")
+                     else suffix.capitalize() + ".")
+    return " ".join(parts)
+
+
+async def fetch_election_finance(election_id, zip_code=None, state_code=None):
+    """Federal campaign finance for the candidates on this ballot (FEC).
+
+    FEC only covers U.S. House, Senate, and President. Primary path uses the
+    ballot's own candidate roster (Google Civic); when that's empty — which is
+    now the norm, since Civic's voterinfo endpoint is retired — we fall back to
+    the FEC's candidate registry for the federal race the election name implies.
+    Returns {"contests": [...]} for whatever produced matches, else {}.
+    """
+    import fec_client
+
+    detail = await fetch_election_detail(election_id, zip_code, state_code)
+    if not detail:
+        return {}
+    state = (state_code or detail.get("state") or "").upper() or None
+
+    out_contests, lookups = [], 0
+    for contest in detail.get("contests", []):
+        office = fec_client.office_from_contest(contest.get("office"), contest.get("level"))
+        if not office:
+            continue
+        rows = []
+        for cand in contest.get("candidates", []):
+            if lookups >= _FINANCE_MAX_LOOKUPS:
+                break
+            name = cand.get("name")
+            if not name:
+                continue
+            lookups += 1
+            fin = await asyncio.to_thread(
+                fec_client.candidate_finance, name, state, office
+            )
+            if fin and (fin.get("receipts") or fin.get("disbursements")):
+                rows.append({
+                    "name": cand.get("name"),
+                    "party": cand.get("party"),
+                    "party_color": cand.get("party_color"),
+                    "finance": fin,
+                })
+        if rows:
+            # Lead with the biggest war chest — that's the story the section tells.
+            rows.sort(key=lambda r: r["finance"].get("receipts") or 0, reverse=True)
+            out_contests.append({
+                "office": contest.get("office"),
+                "district": contest.get("district"),
+                "candidates": rows,
+            })
+
+    # No roster reached us → derive the field from the FEC directly.
+    if not out_contests:
+        out_contests = await _finance_from_fec_roster(detail, state)
+
+    if not out_contests:
+        return {}
+    return {"contests": out_contests}

@@ -82,7 +82,10 @@ from correspondence.db import (
     delete_known_election as db_delete_known_election,
     get_bill_lobbying as db_get_bill_lobbying,
 )
-from elections_agent import fetch_elections, fetch_election_detail, fetch_election_polling
+from elections_agent import (
+    fetch_elections, fetch_election_detail, fetch_election_polling,
+    fetch_election_finance,
+)
 from lda_client import search_entities as lda_search_entities, get_entity_profile as lda_get_entity_profile
 
 # Quiet uvicorn access logs for the high-frequency SSE monitor stream — it
@@ -1979,6 +1982,23 @@ async def election_polling_endpoint(
         return data
     except Exception as e:
         print(f"[API] Polling error for {election_id}: {e}")
+        return {}
+
+
+@app.get("/api/elections/{election_id}/finance")
+@limiter.limit("10/minute")
+async def election_finance_endpoint(
+    request: Request,
+    election_id: str,
+    zip: Optional[str] = None,
+    state: Optional[str] = None,
+):
+    """Federal campaign finance (FEC) for the candidates on this ballot. Empty
+    object when the ballot has no federal race — the section stays hidden."""
+    try:
+        return await fetch_election_finance(election_id, zip_code=zip, state_code=state)
+    except Exception as e:
+        print(f"[API] Finance error for {election_id}: {e}")
         return {}
 
 
