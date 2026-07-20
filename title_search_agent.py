@@ -329,6 +329,82 @@ def _congress_gov_title_scan(named_entity, congresses=(119, 118), types=("hr", "
     return out
 
 
+def _congress_gov_law_scan(named_entity, congresses=(119, 118), limit=4):
+    """Scan Congress.gov's enacted-law listing for a named act whose title
+    contains every distinctive keyword.
+
+    This is the authoritative source for a law's *enrolled* title. Two failure
+    modes make the GovInfo phrase search (Phase 2) miss recently-enacted acts:
+    GovInfo's BILLS index lags Congress.gov by days/weeks on fresh enactments,
+    and it indexes each print version under the title that version carried — so
+    a bill introduced as "Housing for the 21st Century Act" that is enacted as
+    the "21st Century ROAD to Housing Act" is only findable under its *old*
+    name. The /law endpoint always reflects the current public-law title, so it
+    catches these where every other phase returns nothing.
+
+    The listing is bounded (roughly 100–300 laws per Congress) and sorted
+    newest-first, so unlike the general bill-listing scan there's no 250-row
+    truncation problem for the recent enactments this targets."""
+    keywords = {
+        w for w in named_entity.lower().split()
+        if w not in _SCAN_STOPWORDS and len(w) > 3
+    }
+    if len(keywords) < 2:
+        return []  # too generic — would match noise
+
+    out = []
+    seen = set()
+    for congress in congresses:
+        try:
+            r = requests.get(
+                f"https://api.congress.gov/v3/law/{congress}/pub",
+                params={
+                    "api_key": CONGRESS_API_KEY,
+                    "format": "json",
+                    "limit": 250,
+                    "sort": "updateDate+desc",
+                },
+                timeout=15,
+            )
+        except Exception as e:
+            print(f"[TITLE SEARCH] Law scan error ({congress}): {e}")
+            continue
+        if r.status_code != 200:
+            continue
+        try:
+            laws = r.json().get("bills", [])
+        except Exception:
+            continue
+        for law in laws:
+            title_lower = (law.get("title") or "").lower()
+            if not all(kw in title_lower for kw in keywords):
+                continue
+            btype = (law.get("type") or "").lower()
+            number = law.get("number")
+            lcongress = law.get("congress", congress)
+            key = (lcongress, btype, number)
+            if key in seen or not number:
+                continue
+            seen.add(key)
+            raw_law_num = str((law.get("laws") or [{}])[0].get("number", ""))
+            law_number = raw_law_num.split("-")[-1] if "-" in raw_law_num else raw_law_num
+            out.append({
+                "congress": lcongress,
+                "type": btype,
+                "number": number,
+                "title": law.get("title", ""),
+                "date_issued": (law.get("latestAction") or {}).get("actionDate", ""),
+                "latest_action": (law.get("latestAction") or {}).get("text", ""),
+                "source": "congress_law_scan",
+                "is_original": True,
+                "is_law": True,
+                "law_number": law_number,
+            })
+            if len(out) >= limit:
+                return out
+    return out
+
+
 # ---------------------------------------------------------------------------
 # Main entry point
 # ---------------------------------------------------------------------------
@@ -340,6 +416,8 @@ def search_by_title(named_entity, max_recent=3):
     Phase 0: hardcoded POPULAR_NAMES table (historical acts with divergent titles)
     Phase 1: scraped congress.gov popular names cache (auto-refreshed weekly)
     Phase 2: GovInfo BILLS phrase search (deduped, multi-result)
+    Phase 3: Congress.gov enacted-law title scan (enrolled title, no GovInfo lag)
+    Phase 4: Congress.gov bill listing scan (fresh, not-yet-enacted bills)
 
     Congress.gov's /v3/bill endpoint does NOT support keyword search — the `query`
     parameter is silently ignored and the response is a default-sorted list that
@@ -422,11 +500,19 @@ def search_by_title(named_entity, max_recent=3):
     if not results and _year_congress is not None:
         results = _govinfo_phrase_search(named_entity, limit=max_recent + 1)
 
-    # Phase 3 — Congress.gov listing scan. GovInfo's BILLS index lags
-    # Congress.gov by days/weeks; freshly introduced bills are missing from
-    # Phase 2 even when they exist. Scan recent bills by title keyword.
+    # Phase 3 — Congress.gov enacted-law title scan. Authoritative for the
+    # enrolled title, so it catches recent enactments GovInfo hasn't ingested
+    # and acts renamed between introduction and enactment (where Phase 2 is
+    # searching the stale introduced title). Tried before the general listing
+    # scan because the /law endpoint is bounded and reliably sorted.
     if not results:
-        print(f"[TITLE SEARCH] GovInfo empty — scanning Congress.gov listings for: {named_entity}")
+        print(f"[TITLE SEARCH] GovInfo empty — scanning Congress.gov enacted laws for: {named_entity}")
+        results = _congress_gov_law_scan(named_entity, limit=max_recent + 1)
+
+    # Phase 4 — Congress.gov bill listing scan. Last-ditch for freshly
+    # introduced (not-yet-enacted) bills that GovInfo's BILLS index lags on.
+    if not results:
+        print(f"[TITLE SEARCH] Law scan empty — scanning Congress.gov listings for: {named_entity}")
         results = _congress_gov_title_scan(named_entity, limit=max_recent + 1)
 
     log_action(

@@ -43,7 +43,15 @@ def search_bills(structured_query, max_results=None):
 
     if is_named_act and keywords:
         original_phrase = " ".join(keywords)
-        if len(keywords) <= 3:
+        # Prefer a full named-act phrase when the router preserved one in
+        # expanded_terms. The raw keywords are frequently stripped down to a
+        # single generic noun (e.g. "housing" for the "21st Century ROAD to
+        # Housing Act"), and searching that alone drowns the specific act in
+        # unrelated bills. The named phrase is the distinctive signal.
+        named_phrases = [e for e in expanded if len(e.split()) > len(keywords)]
+        if named_phrases:
+            all_terms = named_phrases[:1] + [original_phrase]
+        elif len(keywords) <= 3:
             all_terms = [original_phrase]
         else:
             all_terms = [original_phrase] + expanded[:2]
