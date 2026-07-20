@@ -1127,11 +1127,10 @@ function _renderMemberFinance(fin) {
     <div class="mf-legend">${rows}</div>
     ${pacHtml}
     <div id="mf-industries"></div>
-    <p class="pushing-note">Source composition and named PAC contributors are from FEC filings
-      (the candidate's own joint-fundraising committees and pass-through conduits like ActBlue and
-      WinRed are removed). Top industries are <em>estimated</em> — each donor's self-reported employer
-      is sorted into an industry automatically, the way OpenSecrets once did by hand; approximate,
-      not authoritative.</p>`;
+    <p class="pushing-note">Percentages above are shares of <strong>total money raised</strong> this
+      cycle. Top PAC contributors are the largest names within the PAC share (not the full list).
+      Both are from FEC filings, with the candidate's own joint-fundraising committees and
+      pass-through conduits (ActBlue, WinRed) removed.</p>`;
   section.style.display = 'block';
 }
 
@@ -1149,18 +1148,22 @@ function _renderMemberIndustries(data) {
     ? `estimated · ${data.cycle - 1}–${String(data.cycle).slice(-2)} election cycle`
     : 'estimated';
   host.innerHTML = `
-    <div class="mf-pac-head">Top industries <span class="mf-sub">${cyc}</span></div>
+    <div class="mf-pac-head">Individual donors by industry <span class="mf-sub">${cyc}</span></div>
     <div class="mf-ind-list">${inds.map(i => {
       const other = i.industry === 'Unclassified employers';
-      // Bar = share of the total, so 27% reads as 27% — not scaled to the max
-      // category (which made the biggest bar look like 100%).
+      // Bar = share of this section's own total, so 27% reads as 27% — not
+      // scaled to the max category (which made the biggest bar look like 100%).
       return `<div class="mf-ind-row${other ? ' mf-ind-other' : ''}">
         <span class="mf-ind-name">${escapeHtml(i.industry)}</span>
         <span class="mf-ind-bar"><span class="mf-ind-fill" style="width:${Math.min(100, Math.max(2, 100 * i.share))}%"></span></span>
         <span class="mf-ind-pct">${Math.round(i.share * 100)}%</span>
         <span class="mf-ind-amt">${_mfMoney(i.total)}</span>
       </div>`;
-    }).join('')}</div>`;
+    }).join('')}</div>
+    <p class="pushing-note">A separate lens: the member's <em>itemized individual</em> donors ($200+),
+      grouped by the industry of each donor's employer — the curation OpenSecrets did by hand, here an
+      estimate. Percentages are shares of this classified individual money, <strong>not</strong> of
+      total money raised, and this is often an earlier cycle than the totals above. Approximate.</p>`;
 }
 
 async function loadMemberIndustries(cid, cycle) {
