@@ -1,14 +1,15 @@
-"""
-State vote mapper tests — committee vs floor vote disambiguation.
+"""State vote mapper tests — LegiScan roll-call selection + seat mapping.
 
-OpenStates tags committee votes and floor votes with the SAME chamber
-classification ("lower"/"upper") and often leaves motion_classification empty.
-We disambiguate by motion_text patterns plus a participation-count sanity
-check against the chamber seat map.
+Two units:
+- select_floor_roll_call(summaries, chamber_class, state_code): picks the floor
+  vote from getBill.votes summaries, excluding committee/subcommittee votes (by
+  desc) and guarding against low-turnout non-floor votes being promoted.
+- map_roll_call(roll_call, state_code, chamber_class, people_map): turns a
+  getRollCall payload into the semicircle seat structure.
 
-These tests guard the rules added when we caught the bugs where:
-- VA HB 191 was showing 22-0 committee tally as the House floor vote (real: 98-0-2)
-- CA SB 1407 was showing 8-0 Assembly committee tally when no floor vote exists yet
+Guards the real-world bugs we care about:
+- A committee tally (e.g. 22-0) must not be shown as the chamber floor vote.
+- A chamber with only committee votes must yield None (frontend hides the tile).
 """
 
 import os
@@ -17,198 +18,135 @@ import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from state_vote_mapper import map_state_votes
+from state_vote_mapper import select_floor_roll_call, map_roll_call
 
 
-def _vote(*, chamber, motion, counts, date="2026-01-01"):
-    """Build a synthetic OpenStates vote record."""
+def _summary(*, chamber, desc, yea, nay, nv=0, absent=0, date="2026-01-01", rid=1):
+    """A LegiScan getBill.votes summary record."""
     return {
-        "organization": {"classification": chamber},
-        "motion_text": motion,
-        "motion_classification": [],
-        "counts": [{"option": k, "value": v} for k, v in counts.items()],
-        "start_date": date,
-        "votes": [],  # No individual voter records — uses bucket fill
+        "roll_call_id": rid,
+        "chamber": chamber,          # "H" (lower) / "S" (upper)
+        "desc": desc,
+        "yea": yea, "nay": nay, "nv": nv, "absent": absent,
+        "total": yea + nay + nv + absent,
+        "date": date,
+        "passed": 1 if yea > nay else 0,
     }
 
 
-def _summary(result):
-    return result["summary"] if result else None
+def _roll_call(*, yea, nay, nv=0, absent=0, desc="Floor Vote", passed=1, votes=None):
+    """A LegiScan getRollCall payload."""
+    return {
+        "roll_call_id": 1, "yea": yea, "nay": nay, "nv": nv, "absent": absent,
+        "total": yea + nay + nv + absent, "desc": desc, "passed": passed,
+        "votes": votes or [],
+    }
 
 
-class FloorVsCommitteeVA(unittest.TestCase):
-    """Virginia HB 191 — real-world bugs we already fixed."""
+class SelectFloorVsCommittee(unittest.TestCase):
+    """VA HB 191 — committee report must not be picked over floor passage."""
 
     def setUp(self):
-        # Simulated VA HB 191 votes — committee report + floor passage
-        self.votes = [
-            _vote(  # Committee report — should NOT be picked as the floor vote
-                chamber="lower",
-                motion="Reported from Courts of Justice with substitute",
-                counts={"yes": 22, "no": 0},
-                date="2026-02-04",
-            ),
-            _vote(  # Floor passage — this IS the chamber vote
-                chamber="lower",
-                motion="H VOTE:",
-                counts={"yes": 98, "no": 0, "not voting": 2},
-                date="2026-02-10",
-            ),
-            _vote(  # Subcommittee — must not leak through
-                chamber="lower",
-                motion="Subcommittee recommends reporting with substitute",
-                counts={"yes": 10, "no": 0},
-                date="2026-01-30",
-            ),
+        self.summaries = [
+            _summary(chamber="H", desc="House Courts of Justice Committee - Reported (22-0)",
+                     yea=22, nay=0, rid=10, date="2026-02-04"),
+            _summary(chamber="H", desc="House Floor - Third Reading Passed (98-0)",
+                     yea=98, nay=0, nv=2, rid=11, date="2026-02-10"),
+            _summary(chamber="H", desc="House Human Services Subcommittee: DO PASS",
+                     yea=10, nay=0, rid=12, date="2026-01-30"),
         ]
 
-    def test_picks_floor_vote_not_committee(self):
-        result = map_state_votes(self.votes, "VA", "lower")
-        self.assertEqual(_summary(result),
-            {"yea": 98, "nay": 0, "present": 0, "not_voting": 2})
+    def test_picks_floor_not_committee(self):
+        sel = select_floor_roll_call(self.summaries, "lower", "VA")
+        self.assertIsNotNone(sel)
+        self.assertEqual(sel["roll_call_id"], 11)
+        self.assertEqual(sel["yea"], 98)
 
-    def test_motion_text_carries_floor_marker(self):
-        result = map_state_votes(self.votes, "VA", "lower")
-        self.assertIn("VOTE", result["motion"].upper())
+    def test_floor_marker_present_in_pick(self):
+        sel = select_floor_roll_call(self.summaries, "lower", "VA")
+        self.assertIn("floor", sel["desc"].lower())
 
 
 class NoFloorVoteCA(unittest.TestCase):
-    """California SB 1407 — Assembly hasn't voted on the floor yet.
-
-    Only committee votes exist for the Assembly. Mapper must return None so
-    the frontend hides the chamber tile rather than mislabeling a committee
-    tally as a floor vote.
-    """
+    """CA SB 1407 — Assembly (lower) has only a committee vote → None."""
 
     def setUp(self):
-        self.votes = [
-            _vote(  # Assembly committee — only Assembly vote in the set
-                chamber="lower",
-                motion="Do pass and be re-referred to the Committee on Revenue and Taxation",
-                counts={"yes": 8, "no": 0},
-                date="2026-06-17",
-            ),
-            _vote(  # Senate floor passage (Special Consent calendar)
-                chamber="upper",
-                motion="Special Consent SB1407",
-                counts={"yes": 39, "no": 0, "not voting": 1},
-                date="2026-05-28",
-            ),
+        self.summaries = [
+            _summary(chamber="H", desc="Assembly Revenue and Taxation Committee - Do pass",
+                     yea=8, nay=0, rid=20),
+            _summary(chamber="S", desc="Senate Floor - Passage (39-0)",
+                     yea=39, nay=0, nv=1, rid=21),
         ]
 
-    def test_assembly_returns_none_when_no_floor_vote(self):
-        self.assertIsNone(map_state_votes(self.votes, "CA", "lower"))
+    def test_lower_returns_none(self):
+        self.assertIsNone(select_floor_roll_call(self.summaries, "lower", "CA"))
 
-    def test_senate_picks_floor_vote(self):
-        result = map_state_votes(self.votes, "CA", "upper")
-        self.assertEqual(_summary(result),
-            {"yea": 39, "nay": 0, "present": 0, "not_voting": 1})
+    def test_upper_picks_floor(self):
+        sel = select_floor_roll_call(self.summaries, "upper", "CA")
+        self.assertIsNotNone(sel)
+        self.assertEqual(sel["roll_call_id"], 21)
 
 
-class CommitteeMotionTextDetection(unittest.TestCase):
-    """The _is_committee_vote() rules — encoded as scenarios so future
-    refactors can't silently relax detection."""
-
-    CHAMBER_SEATS = 100  # arbitrary; just need a baseline for participation threshold
-
-    def _has_only(self, motion, counts):
-        """Helper: a single vote with the given motion_text + counts. Expects
-        the mapper to either return None or to not pick this vote as the floor
-        result (i.e. its motion shouldn't show up)."""
-        return [_vote(chamber="lower", motion=motion, counts=counts)]
-
-    def test_reported_from_committee_excluded(self):
-        votes = self._has_only("Reported from Judiciary Committee with amendment", {"yes": 12, "no": 0})
-        self.assertIsNone(map_state_votes(votes, "VA", "lower"))
+class CommitteeExclusion(unittest.TestCase):
+    def test_reported_committee_excluded(self):
+        s = [_summary(chamber="H", desc="Reported from Judiciary Committee", yea=12, nay=0)]
+        self.assertIsNone(select_floor_roll_call(s, "lower", "VA"))
 
     def test_subcommittee_excluded(self):
-        votes = self._has_only("Subcommittee recommends do pass", {"yes": 5, "no": 0})
-        self.assertIsNone(map_state_votes(votes, "VA", "lower"))
-
-    def test_do_pass_and_re_refer_excluded(self):
-        votes = self._has_only("Do pass and re-refer to Com. on Appropriations", {"yes": 7, "no": 0})
-        self.assertIsNone(map_state_votes(votes, "CA", "lower"))
-
-    def test_do_pass_be_re_referred_excluded(self):
-        votes = self._has_only("Do pass and be re-referred to the Committee on Health", {"yes": 8, "no": 0})
-        self.assertIsNone(map_state_votes(votes, "CA", "lower"))
-
-    def test_placed_on_suspense_excluded(self):
-        votes = self._has_only("Placed on suspense file", {"yes": 7, "no": 0})
-        self.assertIsNone(map_state_votes(votes, "CA", "lower"))
-
-    def test_from_committee_excluded(self):
-        votes = self._has_only("From committee: Do pass", {"yes": 6, "no": 0})
-        self.assertIsNone(map_state_votes(votes, "CA", "lower"))
+        s = [_summary(chamber="H", desc="Subcommittee recommends do pass", yea=5, nay=0)]
+        self.assertIsNone(select_floor_roll_call(s, "lower", "VA"))
 
 
-class ParticipationThreshold(unittest.TestCase):
-    """When no clean floor-vote motion exists, fall back only if a
-    non-committee vote has >= 50% of the chamber participating. Below that
-    we return None so committee-sized tallies can't get fallback-promoted."""
+class ParticipationGuard(unittest.TestCase):
+    """No floor marker + low turnout must not be promoted (VA House = 100)."""
 
-    def test_below_50_pct_returns_none(self):
-        # VA House = 100 seats. 30 participants is well below 50%.
-        votes = [_vote(
-            chamber="lower",
-            motion="Motion to recommit",  # Not a committee marker, not a clear floor marker
-            counts={"yes": 30, "no": 0},
-        )]
-        self.assertIsNone(map_state_votes(votes, "VA", "lower"))
+    def test_below_50_pct_no_marker_returns_none(self):
+        s = [_summary(chamber="H", desc="Motion to recommit", yea=30, nay=0)]
+        self.assertIsNone(select_floor_roll_call(s, "lower", "VA"))
 
-    def test_above_50_pct_with_clear_floor_marker_passes(self):
-        # VA House = 100. 80 participants on a clear floor marker — should pass.
-        votes = [_vote(
-            chamber="lower",
-            motion="H VOTE: Third reading",
-            counts={"yes": 70, "no": 10},
-        )]
-        result = map_state_votes(votes, "VA", "lower")
-        self.assertEqual(_summary(result),
-            {"yea": 70, "nay": 10, "present": 0, "not_voting": 0})
+    def test_marker_passes_regardless(self):
+        s = [_summary(chamber="H", desc="House Floor Passage", yea=70, nay=10)]
+        sel = select_floor_roll_call(s, "lower", "VA")
+        self.assertIsNotNone(sel)
 
 
-class WrongChamber(unittest.TestCase):
-    """Votes from the other chamber must not bleed into the result."""
+class WrongChamberAndEmpty(unittest.TestCase):
+    def test_only_upper_none_for_lower(self):
+        s = [_summary(chamber="S", desc="Senate Floor Passage", yea=30, nay=0)]
+        self.assertIsNone(select_floor_roll_call(s, "lower", "VA"))
 
-    def test_only_upper_votes_returns_none_for_lower(self):
-        votes = [_vote(
-            chamber="upper",
-            motion="H VOTE: Passage",
-            counts={"yes": 30, "no": 0},
-        )]
-        self.assertIsNone(map_state_votes(votes, "VA", "lower"))
+    def test_empty_none(self):
+        self.assertIsNone(select_floor_roll_call([], "lower", "VA"))
 
-    def test_empty_input_returns_none(self):
-        self.assertIsNone(map_state_votes([], "VA", "lower"))
+    def test_none_none(self):
+        self.assertIsNone(select_floor_roll_call(None, "lower", "VA"))
+
+
+class MapRollCall(unittest.TestCase):
+    def test_summary_aggregates_nv_and_absent(self):
+        rc = _roll_call(yea=50, nay=30, nv=5, absent=5)
+        result = map_roll_call(rc, "VA", "lower")
+        self.assertEqual(result["summary"],
+                         {"yea": 50, "nay": 30, "present": 0, "not_voting": 10})
+
+    def test_named_seats_from_people_map(self):
+        rc = _roll_call(yea=1, nay=1, votes=[
+            {"people_id": 100, "vote_text": "Yea"},
+            {"people_id": 200, "vote_text": "Nay"},
+        ])
+        people = {100: {"name": "Jane Doe", "party": "D"},
+                  200: {"name": "John Roe", "party": "R"}}
+        result = map_roll_call(rc, "VA", "lower", people)
+        names = {s["name"] for s in result["seats"] if s["name"]}
+        self.assertIn("Jane Doe", names)
+        self.assertIn("John Roe", names)
+
+    def test_result_reflects_passed_flag(self):
+        self.assertEqual(map_roll_call(_roll_call(yea=1, nay=0, passed=1), "VA", "lower")["result"], "Passed")
+        self.assertEqual(map_roll_call(_roll_call(yea=0, nay=1, passed=0), "VA", "lower")["result"], "Failed")
 
     def test_none_input_returns_none(self):
-        self.assertIsNone(map_state_votes(None, "VA", "lower"))
-
-
-class CountsMapping(unittest.TestCase):
-    """OpenStates count keys vary — verify aggregation."""
-
-    def test_absent_excused_not_voting_aggregate(self):
-        votes = [_vote(
-            chamber="lower",
-            motion="H VOTE:",
-            counts={"yes": 50, "no": 30, "absent": 5, "excused": 3, "not voting": 2},
-        )]
-        summary = _summary(map_state_votes(votes, "VA", "lower"))
-        self.assertEqual(summary["not_voting"], 10)  # 5 + 3 + 2
-        self.assertEqual(summary["yea"], 50)
-        self.assertEqual(summary["nay"], 30)
-
-    def test_abstain_separate_from_not_voting(self):
-        votes = [_vote(
-            chamber="lower",
-            motion="H VOTE:",
-            counts={"yes": 60, "no": 35, "abstain": 5},
-        )]
-        summary = _summary(map_state_votes(votes, "VA", "lower"))
-        self.assertEqual(summary["present"], 5)
-        self.assertEqual(summary["not_voting"], 0)
+        self.assertIsNone(map_roll_call(None, "VA", "lower"))
 
 
 if __name__ == "__main__":

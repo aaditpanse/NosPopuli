@@ -35,6 +35,7 @@ wrapt==2.1.2
 supabase
 beautifulsoup4
 cachetools
+pypdf  # extract text from LegiScan bill-text PDFs (state bills)
 google-auth-oauthlib
 google-api-python-client
 python-jose[cryptography]

@@ -338,7 +338,7 @@ def fast_route_state(user_question: str, state_code: str | None = None):
     Regex fast-path for state bill IDs. Returns a structured dict on a confident
     match (with `requested_session` set when the query had an explicit year or
     ordinal anchor), else None. Defaults to the current session when no anchor
-    is given; the caller resolves that via OpenStates.
+    is given; the caller resolves that via LegiScan.
     """
     if not user_question:
         return None

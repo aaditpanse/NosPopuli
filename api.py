@@ -66,7 +66,8 @@ from state_bill_fetcher import (
     fetch_state_bill_text,
     structure_state_actions,
 )
-from state_vote_mapper import map_state_votes
+from state_vote_mapper import select_floor_roll_call, map_roll_call
+import legiscan_client as legiscan
 from state_member_search_agent import (
     search_state_member,
     fetch_state_member_profile,
@@ -1013,10 +1014,10 @@ async def handle_state_search(structured, question, loop):
                 "cached": True,
             }
 
-    # ── Search OpenStates with structured router output ──
+    # ── Search LegiScan with structured router output ──
     # Prefer named_entity (router's best guess at an act name); otherwise
     # synthesise a phrase from the keywords. Two-word topic phrases like
-    # "housing affordability" often perform worse in OpenStates' index than
+    # "housing affordability" often perform worse in the full-text index than
     # their canonical form ("affordable housing") — when the expander surfaces
     # a known synonym we'll let it ride at the front of the queue.
     named_entity = (structured.get("named_entity") or "").strip()
@@ -1037,7 +1038,7 @@ async def handle_state_search(structured, question, loop):
     seen = set()
     results = []
 
-    # Primary term — retried once on timeout (transient OpenStates slowness
+    # Primary term — retried once on empty/timeout (transient search slowness
     # is common on first-touch phrase queries).
     primary_results = await loop.run_in_executor(
         None, search_state_bills, primary_term, state_code, None, 20
@@ -1054,7 +1055,7 @@ async def handle_state_search(structured, question, loop):
 
     # Enrichment from expanded synonyms is opportunistic. Skip entirely when
     # the primary already gave us a useful set (3+ hits), and stop on first
-    # failure so one slow OpenStates response can't ruin the whole search.
+    # failure so one slow LegiScan response can't ruin the whole search.
     if len(results) < 3 and expanded:
         for term in expanded[:2]:
             try:
@@ -1634,12 +1635,16 @@ async def state_search(request: Request, body: StateSearchRequest):
 
 
 def _state_bill_fingerprint(bill_data):
-    """Short hash of a state bill's mutable state, so the translation cache
-    invalidates when the bill moves through the legislature."""
+    """Short fingerprint of a state bill's mutable state, so the translation
+    cache invalidates when the bill moves through the legislature. LegiScan's
+    per-bill change_hash already captures this exactly; fall back to the latest
+    action if it's ever missing."""
+    change_hash = bill_data.get("change_hash")
+    if change_hash:
+        return str(change_hash)[:12]
     parts = [
         str(bill_data.get("latest_action_date") or ""),
         str(bill_data.get("latest_action_description") or ""),
-        str(bill_data.get("updated_at") or ""),
     ]
     return hashlib.sha1("|".join(parts).encode()).hexdigest()[:12]
 
@@ -1681,16 +1686,38 @@ def _state_bill_stream(bill_data, state_code, ocd_id):
             return {
                 "section": "meta", "identifier": identifier, "title": title,
                 "state_code": state_code, "is_state_bill": True,
-                "openstates_url": bill_data.get("openstates_url") or None,
+                "source_url": bill_data.get("url") or None,
                 "sources": sources, "sponsors": sponsors,
             }
 
         async def sec_votes():
-            votes_raw = bill_data.get("votes", [])
-            return {"section": "votes", "votes": {
-                "house": map_state_votes(votes_raw, state_code, "lower"),
-                "senate": map_state_votes(votes_raw, state_code, "upper"),
-            }}
+            # LegiScan getBill carries only roll-call *summaries*. Pick the floor
+            # vote per chamber, then fetch its per-legislator detail (getRollCall)
+            # and the session roster (getSessionPeople, cached) to label seats —
+            # at most 2 roll-call queries + 1 cached roster per bill open.
+            summaries = bill_data.get("votes") or []
+            session_id = (bill_data.get("session_id")
+                          or (bill_data.get("session") or {}).get("session_id"))
+            selected = {
+                "lower": select_floor_roll_call(summaries, "lower", state_code),
+                "upper": select_floor_roll_call(summaries, "upper", state_code),
+            }
+
+            people_map = {}
+            if any(selected.values()) and session_id:
+                people_map = await ex(legiscan.get_session_people, session_id)
+
+            async def build(chamber_class):
+                sel = selected[chamber_class]
+                if not sel or not sel.get("roll_call_id"):
+                    return None
+                rc = await ex(legiscan.get_roll_call, sel["roll_call_id"])
+                if not rc:
+                    return None
+                return map_roll_call(rc, state_code, chamber_class, people_map)
+
+            house, senate = await asyncio.gather(build("lower"), build("upper"))
+            return {"section": "votes", "votes": {"house": house, "senate": senate}}
 
         async def sec_timeline():
             return {"section": "timeline", "timeline": "",

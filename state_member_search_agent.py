@@ -1,142 +1,120 @@
-import requests
-import os
-from dotenv import load_dotenv
+"""State legislator search + profile, backed by LegiScan.
+
+LegiScan has no name-search endpoint, so we resolve a legislator against the
+state's current-session roster (`getSessionPeople`, one cached query) and
+fuzzy-match by name. Identity flows as `ocd_person_id` = str(people_id) so the
+frontend member page keeps working. Sponsored bills come from `getSponsoredList`.
+
+Note: LegiScan person records carry no photo/email, so those fields degrade to
+empty (they were populated from OpenStates before).
+"""
+
+import legiscan_client as legiscan
 from documentor_agent import log_action
 from state_search_agent import STATE_JURISDICTIONS, ENABLED_STATES
 
-load_dotenv()
+_PARTY = {"D": "Democratic", "R": "Republican", "I": "Independent",
+          "L": "Libertarian", "G": "Green"}
 
-OPENSTATES_API_KEY = os.getenv("OPENSTATES_API_KEY")
-OPENSTATES_BASE = "https://v3.openstates.org"
-_session = requests.Session()
+
+def _name_score(query: str, name: str) -> int:
+    """Crude match score: exact > all-tokens-present > last-token-present > 0."""
+    q = (query or "").strip().lower()
+    n = (name or "").strip().lower()
+    if not q or not n:
+        return 0
+    if q == n:
+        return 3
+    q_tokens = q.split()
+    if all(t in n for t in q_tokens):
+        return 2
+    if q_tokens and q_tokens[-1] in n:
+        return 1
+    return 0
 
 
 def search_state_member(name, state_code):
-    """Search for a state legislator by name."""
+    """Find a state legislator by name via the current-session roster."""
     state_code = state_code.upper()
-    jurisdiction = STATE_JURISDICTIONS.get(state_code)
-
-    if not jurisdiction:
+    if state_code not in ENABLED_STATES:
         return None
 
-    params = {
-        "name": name,
-        "jurisdiction": jurisdiction,
-        "include": ["other_names", "links"],
-    }
-    headers = {"X-API-KEY": OPENSTATES_API_KEY}
-
-    try:
-        r = _session.get(
-            f"{OPENSTATES_BASE}/people",
-            params=params,
-            headers=headers,
-            timeout=30
-        )
-        if r.status_code != 200:
-            return None
-
-        results = r.json().get("results", [])
-        if not results:
-            return None
-
-        p = results[0]
-        return normalize_state_member(p, state_code)
-
-    except Exception as e:
-        print(f"[STATE MEMBER] Search error: {e}")
+    session_id = legiscan.get_session_id(state_code)
+    if not session_id:
         return None
+
+    roster = legiscan.get_session_people(session_id)  # {people_id: {name, party, district, role}}
+    best_pid, best = None, 0
+    for pid, person in roster.items():
+        score = _name_score(name, person.get("name", ""))
+        if score > best:
+            best, best_pid = score, pid
+
+    if not best_pid:
+        return None
+
+    member = normalize_state_member({"people_id": best_pid, **roster[best_pid]}, state_code)
+    log_action(
+        agent_name="state_member",
+        action="search_state_member",
+        input_data={"name": name, "state": state_code},
+        output_data={"found": True, "people_id": best_pid},
+    )
+    return member
 
 
 def fetch_state_member_profile(ocd_person_id):
-    """Fetch full profile for a state legislator."""
-    person_id = ocd_person_id.replace("/", "%2F")
-    url = f"{OPENSTATES_BASE}/people/{person_id}"
-    params = {
-        "include": ["other_names", "links", "sources"],
-    }
-    headers = {"X-API-KEY": OPENSTATES_API_KEY}
-
-    try:
-        r = _session.get(url, params=params, headers=headers, timeout=30)
-        if r.status_code != 200:
-            return None
-        return normalize_state_member(r.json(), None)
-    except Exception as e:
-        print(f"[STATE MEMBER] Profile error: {e}")
+    """Fetch a fuller profile for a legislator by people_id (getPerson)."""
+    person = legiscan.get_person(ocd_person_id)
+    if not person:
         return None
+    return normalize_state_member(person, None)
 
 
 def fetch_state_member_bills(ocd_person_id, state_code, limit=10):
-    """Fetch bills sponsored by a state legislator."""
-    jurisdiction = STATE_JURISDICTIONS.get(state_code.upper(), "")
-    session = None
-
-    from state_search_agent import STATE_SESSIONS
-    session = STATE_SESSIONS.get(state_code.upper())
-
-    params = {
-        "jurisdiction": jurisdiction,
-        "sponsor": ocd_person_id,
-        "pageSize": limit,
-        "include": "sponsorships",
-    }
-    if session:
-        params["session"] = session
-
-    headers = {"X-API-KEY": OPENSTATES_API_KEY}
-
-    try:
-        r = _session.get(
-            f"{OPENSTATES_BASE}/bills",
-            params=params,
-            headers=headers,
-            timeout=30
-        )
-        if r.status_code != 200:
-            return []
-
-        bills = []
-        for bill in r.json().get("results", []):
-            bills.append({
-                "ocd_id": bill.get("id"),
-                "identifier": bill.get("identifier", ""),
-                "title": bill.get("title", ""),
-                "session": bill.get("session", ""),
-                "latest_action": bill.get("latest_action_description", ""),
-                "date": bill.get("latest_action_date", ""),
-                "is_state_bill": True,
-            })
-        return bills
-
-    except Exception as e:
-        print(f"[STATE MEMBER] Bills error: {e}")
-        return []
+    """Bills sponsored by a legislator (getSponsoredList)."""
+    bills_raw = legiscan.get_sponsored_list(ocd_person_id)
+    bills = []
+    for b in bills_raw[:limit]:
+        number = b.get("number", "")
+        bills.append({
+            "ocd_id": str(b.get("bill_id", "")),
+            "identifier": number,
+            "title": b.get("title") or number,
+            "session": "",
+            "latest_action": b.get("last_action", ""),
+            "date": b.get("last_action_date", ""),
+            "is_state_bill": True,
+        })
+    return bills
 
 
 def normalize_state_member(p, state_code):
-    """Normalize OpenStates person object to NosPopuli member shape."""
-    roles = p.get("current_role") or {}
-    org_class = roles.get("org_classification", "")
-    chamber_label = "House" if org_class == "lower" else "Senate" if org_class == "upper" else org_class.title()
-    district = roles.get("district", "")
-    title = roles.get("title", "")
+    """Normalize a LegiScan person record to the NosPopuli member shape."""
+    role = p.get("role", "")
+    chamber_label = "House" if role == "Rep" else "Senate" if role == "Sen" else (role or "")
+    party = _PARTY.get((p.get("party") or "").upper(), p.get("party", ""))
+    resolved_state = state_code
+    if not resolved_state:
+        sid = p.get("state_id")
+        # getPerson carries state_id; leave state blank if we can't resolve it.
+        resolved_state = "" if sid is None else ""
 
     return {
-        "ocd_person_id": p.get("id"),
+        "ocd_person_id": str(p.get("people_id", "")),
         "name": p.get("name", ""),
-        "party": p.get("party", ""),
-        "state": state_code or (p.get("jurisdiction") or {}).get("name", ""),
+        "party": party,
+        "state": resolved_state or "",
         "chamber": chamber_label,
         "chambers": [chamber_label] if chamber_label else [],
-        "district": district,
-        "title": title,
-        "email": p.get("email", ""),
-        "photo_url": p.get("image", ""),
-        "links": [l.get("url") for l in p.get("links", [])],
+        "district": p.get("district", ""),
+        "title": role,
+        "email": "",
+        "photo_url": "",
+        "links": [],
         "current": True,
         "is_state_legislator": True,
-        "source": "openstates",
+        "source": "legiscan",
         # Compatibility fields for renderMemberPage
         "bioguide_id": None,
         "start_year": None,

@@ -1,52 +1,63 @@
-import requests
+"""Fetch and normalize state bill detail from LegiScan.
+
+Replaces the OpenStates fetcher. `fetch_state_bill` returns the raw LegiScan
+`getBill` payload augmented with a few legacy-named convenience keys
+(`identifier`, `sponsorships`, `sources`, `latest_action_*`) so the streaming
+contract in api.py (`_state_bill_stream`) keeps working unchanged. Raw LegiScan
+keys (`texts`, `history`, `votes`, `sponsors`, `session_id`, `change_hash`) are
+preserved for the text/timeline/vote paths.
+
+Bill text arrives from `getBillText` as raw bytes (base64-decoded in the client)
+— PDF for most states, HTML/plain for some — and is extracted here.
+"""
+
 import re
-import os
+import io
 from bs4 import BeautifulSoup
-from dotenv import load_dotenv
-from cachetools import TTLCache, cached
+from cachetools import TTLCache
 from threading import RLock
+
+import legiscan_client as legiscan
 from documentor_agent import log_action
 
-load_dotenv()
-
-OPENSTATES_API_KEY = os.getenv("OPENSTATES_API_KEY")
-OPENSTATES_BASE = "https://v3.openstates.org"
-
-_session = requests.Session()
-_bill_cache = TTLCache(maxsize=256, ttl=1800)   # 30 min — state bills update more frequently
-_text_cache = TTLCache(maxsize=128, ttl=7200)   # 2 hours — bill text is stable
+_text_cache = TTLCache(maxsize=256, ttl=7200)  # extracted text by doc_id — stable
 _text_lock  = RLock()
 
 
-@cached(cache=_bill_cache, lock=RLock())
+def _augment_bill(bill: dict) -> dict:
+    """Add legacy-named keys the streaming layer reads, alongside raw LegiScan
+    fields. Non-destructive: raw keys stay for text/timeline/vote handling."""
+    bill["identifier"] = bill.get("bill_number", "")
+    # sponsor_type_id == 1 is the primary sponsor in LegiScan's taxonomy.
+    bill["sponsorships"] = [
+        {"name": s.get("name", ""), "primary": s.get("sponsor_type_id") == 1}
+        for s in (bill.get("sponsors") or [])
+    ]
+    # Sources: the LegiScan bill page and the official state document link.
+    sources = []
+    if bill.get("url"):
+        sources.append({"url": bill["url"], "note": "LegiScan"})
+    if bill.get("state_link"):
+        sources.append({"url": bill["state_link"], "note": "Official state source"})
+    bill["sources"] = sources
+    # Latest action from the tail of history (chronological order).
+    history = bill.get("history") or []
+    if history:
+        last = history[-1]
+        bill["latest_action_description"] = last.get("action", "")
+        bill["latest_action_date"] = last.get("date", "")
+    else:
+        bill["latest_action_description"] = ""
+        bill["latest_action_date"] = ""
+    return bill
+
+
 def fetch_state_bill(ocd_id):
-    """
-    Fetch full bill detail from OpenStates by OCD ID.
-    Includes actions, versions, sponsorships.
-    """
-    # OCD IDs look like ocd-bill/uuid — encode the slash
-    bill_id = ocd_id.replace("/", "%2F") if "/" in ocd_id else ocd_id
-
-    url = f"{OPENSTATES_BASE}/bills/{bill_id}"
-    params = {
-        "include": ["actions", "versions", "sponsorships", "votes", "abstracts"],
-    }
-    headers = {"X-API-KEY": OPENSTATES_API_KEY}
-
-    try:
-        r = _session.get(url, params=params, headers=headers, timeout=30)
-    except Exception as e:
-        print(f"[STATE FETCHER] Request error: {e}")
+    """Fetch full bill detail from LegiScan by bill_id (carried in `ocd_id`)."""
+    bill = legiscan.get_bill(ocd_id)
+    if not bill:
         return None
-
-    if r.status_code != 200:
-        print(f"[STATE FETCHER] Error {r.status_code} for {ocd_id}")
-        return None
-
-    try:
-        return r.json()
-    except Exception:
-        return None
+    return _augment_bill(bill)
 
 
 def _normalize_bill_text(text):
@@ -64,7 +75,7 @@ def _normalize_bill_text(text):
     6. Add a single blank line before each major SECTION to aid scanning
     """
     # 1. Normalize unicode whitespace artifacts
-    text = text.replace('\xa0', ' ').replace(' ', ' ').replace(' ', ' ')
+    text = text.replace('\xa0', ' ').replace(' ', ' ').replace(' ', ' ')
 
     # 2. Strip each line; drop lines that are pure whitespace after stripping
     lines = [l.strip() for l in text.split('\n')]
@@ -130,94 +141,100 @@ def _normalize_bill_text(text):
     return '\n'.join(spaced).strip()
 
 
+def _extract_text(record: dict) -> str | None:
+    """Turn a getBillText record (mime + raw bytes) into normalized plain text.
+    PDF via pypdf, HTML via BeautifulSoup, plain text decoded directly."""
+    raw = record.get("bytes")
+    mime = (record.get("mime") or "").lower()
+    if not raw:
+        return None
+
+    try:
+        if "pdf" in mime:
+            from pypdf import PdfReader
+            reader = PdfReader(io.BytesIO(raw))
+            text = "\n".join((page.extract_text() or "") for page in reader.pages)
+        elif "html" in mime:
+            soup = BeautifulSoup(raw, "html.parser")
+            text = soup.get_text(separator="\n")
+        elif "text" in mime:
+            text = raw.decode("utf-8", errors="replace")
+        else:
+            # Word docs and other binaries — no clean extraction path.
+            print(f"[STATE FETCHER] Unsupported text mime: {mime}")
+            return None
+    except Exception as e:
+        print(f"[STATE FETCHER] Text extraction error ({mime}): {e}")
+        return None
+
+    result = _normalize_bill_text(text)
+    return result or None
+
+
 def fetch_state_bill_text(bill_data):
     """
-    Fetch HTML text of the bill from the version links.
-    Prefers: Chaptered > Enrolled > Engrossed > Introduced
+    Fetch the best available bill text version from LegiScan and extract it.
+    Prefers: Chaptered > Enacted > Enrolled > Engrossed > Introduced.
     """
     if not bill_data:
         return None
 
-    ocd_id = bill_data.get("id")
-    if ocd_id:
-        with _text_lock:
-            if ocd_id in _text_cache:
-                return _text_cache[ocd_id]
-
-    versions = bill_data.get("versions", [])
-    if not versions:
+    texts = bill_data.get("texts") or []
+    if not texts:
         return None
 
-    # Priority order for version selection
     VERSION_PRIORITY = [
         "chaptered", "enacted", "enrolled", "reenrolled",
-        "engrossed", "introduced"
+        "engrossed", "introduced",
     ]
 
-    selected_url = None
-
+    selected = None
     for priority in VERSION_PRIORITY:
-        for version in versions:
-            note = (version.get("note") or "").lower()
-            if priority in note:
-                for link in version.get("links", []):
-                    if link.get("media_type") == "text/html":
-                        selected_url = link["url"]
-                        break
-            if selected_url:
+        for t in texts:
+            if priority in (t.get("type") or "").lower():
+                selected = t
                 break
-        if selected_url:
+        if selected:
             break
+    # Fallback — the most recent text version available.
+    if not selected:
+        selected = max(texts, key=lambda t: t.get("date") or "")
 
-    # Fallback — first HTML link available
-    if not selected_url:
-        for version in versions:
-            for link in version.get("links", []):
-                if link.get("media_type") == "text/html":
-                    selected_url = link["url"]
-                    break
-            if selected_url:
-                break
-
-    if not selected_url:
-        print(f"[STATE FETCHER] No HTML version found")
+    doc_id = selected.get("doc_id")
+    if not doc_id:
         return None
 
-    try:
-        r = _session.get(selected_url, timeout=15)
-        if r.status_code != 200:
-            return None
+    with _text_lock:
+        if doc_id in _text_cache:
+            return _text_cache[doc_id]
 
-        soup = BeautifulSoup(r.text, "html.parser")
-        raw  = soup.get_text(separator="\n")
-        result = _normalize_bill_text(raw)
-
-        if ocd_id and result:
-            with _text_lock:
-                _text_cache[ocd_id] = result
-        return result
-
-    except Exception as e:
-        print(f"[STATE FETCHER] Text fetch error: {e}")
+    record = legiscan.get_bill_text(doc_id)
+    if not record:
         return None
+
+    result = _extract_text(record)
+    if result:
+        with _text_lock:
+            _text_cache[doc_id] = result
+    return result
 
 
 def structure_state_actions(bill_data):
     """
-    Convert OpenStates actions to the same structure as federal timeline.
+    Convert LegiScan `history` entries to the federal-style timeline structure.
     """
     if not bill_data:
         return []
 
-    actions = bill_data.get("actions", [])
-    if not actions:
+    history = bill_data.get("history") or []
+    if not history:
         return []
 
     seen = set()
     structured = []
 
-    for a in sorted(actions, key=lambda x: (x.get("order", 0))):
-        text = a.get("description", "").strip()
+    for a in history:
+        text = (a.get("action") or "").strip()
         date = a.get("date", "")
         key = f"{date}:{text[:80]}"
 
@@ -225,32 +242,14 @@ def structure_state_actions(bill_data):
             continue
         seen.add(key)
 
-        classifications = a.get("classification", [])
-        org = (a.get("organization") or {})
-        org_class = org.get("classification", "")
-        chamber = "House" if org_class == "lower" else \
-                  "Senate" if org_class == "upper" else \
-                  org.get("name", "")
+        body = (a.get("chamber") or "").upper()
+        chamber = "House" if body == "H" else "Senate" if body == "S" else ""
 
-        # Detect event type from classifications
-        if "became-law" in classifications or "executive-signature" in classifications:
-            event_type = "signed"
-        elif "executive-veto" in classifications:
-            event_type = "vetoed"
-        elif "passage" in classifications and "reading-3" in classifications:
-            event_type = "passed"
-        elif "committee-passage" in classifications:
-            event_type = "committee"
-        elif "referral-committee" in classifications:
-            event_type = "referred"
-        elif "introduction" in classifications:
-            event_type = "introduced"
-        else:
-            event_type = "action"
+        event_type = _classify_action(text)
 
-        # Extract vote counts from description
+        # LegiScan encodes vote tallies inline as "(46-0)" / "Passed (125-4)".
         yea = nay = None
-        vote_match = re.search(r'\((\d+)-Y\s+(\d+)-N\)', text)
+        vote_match = re.search(r'\((\d+)\s*-\s*(\d+)\)', text)
         if vote_match:
             yea = int(vote_match.group(1))
             nay = int(vote_match.group(2))
@@ -268,6 +267,25 @@ def structure_state_actions(bill_data):
     return structured
 
 
+def _classify_action(text: str) -> str:
+    """Map a LegiScan action description to a timeline event type."""
+    t = text.lower()
+    if "veto" in t:
+        return "vetoed"
+    if any(k in t for k in ("signed by governor", "enacted", "chaptered",
+                            "became law", "approved by governor", "signed into law")):
+        return "signed"
+    if any(k in t for k in ("third reading passed", "final passage", "passed")):
+        return "passed"
+    if any(k in t for k in ("committee", "favorable report", "reported")):
+        return "committee"
+    if any(k in t for k in ("referred", "first reading")):
+        return "referred"
+    if any(k in t for k in ("introduced", "filed", "prefiled", "read first time")):
+        return "introduced"
+    return "action"
+
+
 def make_state_event_title(text, event_type):
     """Clean action text into a short readable title."""
     # Truncate at natural breakpoints
@@ -281,5 +299,3 @@ def make_state_event_title(text, event_type):
         text = text[:100].rsplit(' ', 1)[0] + '…'
 
     return text
-
-

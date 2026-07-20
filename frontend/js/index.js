@@ -654,9 +654,9 @@ function renderFullText(text) {
     if (primarySource && primarySource.url) {
       linkUrl = primarySource.url;
       linkLabel = `View on ${stateName} legislature site →`;
-    } else if (_currentBill.openstates_url) {
-      linkUrl = _currentBill.openstates_url;
-      linkLabel = 'View on OpenStates →';
+    } else if (_currentBill.source_url) {
+      linkUrl = _currentBill.source_url;
+      linkLabel = 'View on LegiScan →';
     }
     const linkHtml = linkUrl
       ? `<p><a href="${escapeHtml(linkUrl)}" target="_blank" rel="noopener" class="conn-amends-link">${escapeHtml(linkLabel)}</a></p>`
@@ -2321,7 +2321,7 @@ async function openStateBill(bill) {
         ensureRevealed();
         // Enrich _currentBill so renderFullText can deep-link to the state's
         // own bill page when no text is available.
-        _currentBill = { ..._currentBill, openstates_url: msg.openstates_url || _currentBill.openstates_url, sources: msg.sources || [] };
+        _currentBill = { ..._currentBill, source_url: msg.source_url || _currentBill.source_url, sources: msg.sources || [] };
         _initNotifyBtn(billId, null, null, null, bill.ocd_id);
         break;
       case 'translation':
