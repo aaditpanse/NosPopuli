@@ -296,7 +296,7 @@ def top_pac_contributors(candidate_id, cycle, candidate_name=None, limit=8):
     vehicles bearing the candidate's name. Returns [{name, amount}] or []."""
     if not candidate_id or not cycle:
         return []
-    ck = f"fec:pac:v2:{candidate_id}:{cycle}"
+    ck = f"fec:pac:v3:{candidate_id}:{cycle}"
     cached = _cache_get(ck)
     if cached is not None:
         return cached
@@ -308,9 +308,13 @@ def top_pac_contributors(candidate_id, cycle, candidate_name=None, limit=8):
         _cache_set(ck, [])
         return []
     try:
+        # line_number F3-11C = "contributions from other political committees"
+        # (actual PACs). The broad contributor_type=committee also returned
+        # entity_type=ORG rows — businesses/processors like banks, which aren't
+        # PAC gifts — so a no-PAC candidate (Sanders) wrongly showed M&T Bank.
         data = _get("schedules/schedule_a/", {
             "committee_id": cm, "two_year_transaction_period": int(cycle),
-            "contributor_type": "committee", "sort": "-contribution_receipt_amount",
+            "line_number": "F3-11C", "sort": "-contribution_receipt_amount",
             "per_page": 100,
         })
     except Exception as e:
