@@ -192,6 +192,8 @@ def cost_usd(usages, model):
 
 
 def discover(seed, slug, budget, model, log=print):
+    import budget as spend  # module; the arg above is the tool-call budget
+    spend.check("discovery")
     OUT.mkdir(parents=True, exist_ok=True)
     cache_path = OUT / f"{slug}_http_cache.json"
     rt = sandbox2.Runtime(json.loads(cache_path.read_text())
@@ -270,6 +272,7 @@ def discover(seed, slug, budget, model, log=print):
     cache_path.write_text(json.dumps(rt.cache))
     if profile:
         (OUT / f"{slug}_profile.json").write_text(json.dumps(profile, indent=1))
+    spend.record("discovery", cost_usd(usages, model))
     log(f"discovery metrics ({model}): {calls} tool calls, "
         f"${cost_usd(usages, model):.2f}, {(time.time() - t0) / 60:.1f} min")
     return profile

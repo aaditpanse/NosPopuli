@@ -1,0 +1,7 @@
+[Unit]
+Description=Foundry ledger refresh (deterministic; drift is flagged, never merged)
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/aaditpanse/NosPopuli/foundry
+ExecStart=/home/aaditpanse/NosPopuli/.venv/bin/python refresh.py --due

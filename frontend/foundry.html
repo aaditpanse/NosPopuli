@@ -7,6 +7,7 @@
 <title>Foundry — Municipal Ledger · NosPopuli Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/leaflet.css">
 <style>
 :root {
   --ink: #0e0e0e; --paper: #f5f0e8; --aged: #e8e0cc; --card-bg: #faf7f2;
@@ -57,6 +58,105 @@ td { padding: 0.45rem 1rem; border-bottom: 1px solid var(--aged); vertical-align
 td.code, span.code { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
   color: var(--accent); letter-spacing: 0.12em; white-space: nowrap; }
 .plain { font-size: 0.95rem; }
+.cpbar { display: flex; gap: 0.75rem; flex-wrap: wrap; margin: 0.5rem 0 1rem; }
+.cpbar select, .cpbar input { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+  padding: 0.35rem 0.55rem; border: 1px solid var(--rule); background: var(--card-bg);
+  color: var(--ink); }
+.cpbar input { flex: 1; min-width: 140px; }
+.cptable td a { color: var(--accent); text-decoration: none; }
+.cptable td a:hover { text-decoration: underline; }
+.cpid { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; color: var(--muted);
+  letter-spacing: 0.08em; margin-top: 0.15rem; }
+.cpfunc, .cpfund { font-size: 0.8rem; color: var(--muted); }
+.cpnum { font-family: 'IBM Plex Mono', monospace; text-align: right; white-space: nowrap; }
+.cpmap { margin: 0.5rem 0 1.25rem; }
+.cpmap-canvas { height: 460px; margin-top: 0.5rem; border: 1px solid var(--rule);
+  background: var(--card-bg); }
+.cppin { font-size: 0.85rem; vertical-align: middle; }
+.cp-emoji { background: none; border: none; text-align: center; }
+.cp-emoji span { font-size: 20px; line-height: 26px; display: block;
+  text-shadow: 0 0 2px #fff, 0 0 2px #fff; }
+/* completed (already built) pins read as historical: faded + desaturated */
+.cp-emoji.cp-completed span, .cppin.cp-completed { filter: grayscale(1); opacity: 0.5; }
+.cpstat { font-family: 'IBM Plex Mono', monospace; font-size: 0.52rem;
+  letter-spacing: 0.1em; text-transform: uppercase; padding: 0.05rem 0.35rem;
+  border: 1px solid var(--rule); border-radius: 2px; white-space: nowrap; }
+.cpstat-active { color: var(--accent); border-color: var(--accent); }
+.cpstat-ongoing { color: var(--muted); }
+.cpstat-completed { color: var(--muted); background: var(--aged); border-color: var(--aged); }
+.cpbond { font-family: 'IBM Plex Mono', monospace; font-size: 0.52rem;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+  padding: 0.05rem 0.35rem; border: 1px dashed var(--rule); border-radius: 2px;
+  white-space: nowrap; }
+.cpwork { font-family: 'IBM Plex Mono', monospace; font-size: 0.52rem;
+  letter-spacing: 0.1em; text-transform: uppercase; padding: 0.05rem 0.35rem;
+  border-radius: 2px; white-space: nowrap; }
+.cpwork-new_construction { color: #fff; background: #2a6e2a; }
+.cpwork-renovation { color: var(--accent); border: 1px solid var(--accent); }
+.cpwork-addition { color: var(--muted); border: 1px solid var(--rule); }
+.cpdone { font-family: 'IBM Plex Mono', monospace; font-size: 0.52rem;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+  padding: 0.05rem 0.35rem; white-space: nowrap; }
+.cprow-completed td:first-child a { color: var(--muted); }
+.eloffice { margin-top: 0.75rem; }
+.elyear { font-family: 'IBM Plex Mono', monospace; font-weight: 700; white-space: nowrap;
+  vertical-align: top; }
+.elcand { font-size: 0.9rem; padding: 0.1rem 0; }
+.elcand.elwin { font-weight: 600; }
+.elvotes { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: var(--muted);
+  margin-left: 0.4rem; }
+.elturn { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; color: var(--muted);
+  margin-top: 0.15rem; letter-spacing: 0.05em; }
+.cplegend { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+  color: var(--muted); margin-top: 0.35rem; display: flex; gap: 0.4rem;
+  align-items: center; flex-wrap: wrap; }
+.leaflet-popup-content { font-family: 'Source Serif 4', serif; font-size: 0.85rem; line-height: 1.4; }
+.leaflet-container { font-family: 'IBM Plex Mono', monospace; }
+/* county dashboard: meetings main-left, public-works map top-right, elections bottom-right */
+.dash-title { margin-bottom: 1rem; }
+.dash { display: grid; grid-template-columns: 1fr 400px; gap: 1.5rem 2rem; align-items: start; }
+.dash-meet { min-width: 0; }
+/* right sidebar is its own flow: map with elections tight beneath it, so the
+   meetings column's height (and expanding a meeting) can't push them apart */
+.dash-side { display: flex; flex-direction: column; gap: 1rem;
+  position: sticky; top: 1rem; }
+@media (max-width: 900px) { .dash { grid-template-columns: 1fr; }
+  .dash-side { position: static; } }
+.dash-meet section.region > h2 { display: none; }
+.dash-h { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent); border-bottom: 1px solid var(--rule);
+  padding-bottom: 0.35rem; margin-bottom: 0.6rem; }
+.dash-map, .dash-elec { background: var(--card-bg); border: 1px solid var(--rule);
+  padding: 0.85rem 1rem 1rem; }
+.dash-mapcanvas { height: 420px; border: 1px solid var(--rule); background: var(--paper);
+  margin-bottom: 0.5rem; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(14,14,14,0.55); z-index: 1000;
+  display: flex; align-items: flex-start; justify-content: center; padding: 3vh 2vw; overflow: auto; }
+.modal { background: var(--paper); border: 1px solid var(--ink); max-width: 1000px; width: 100%;
+  padding: 0 1.5rem 1.5rem; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+.modal-bar { position: sticky; top: 0; background: var(--paper); display: flex; align-items: center;
+  justify-content: space-between; padding: 1rem 0 0.75rem; border-bottom: 2px solid var(--ink);
+  margin-bottom: 1rem; z-index: 2; }
+.modal-h { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; }
+.modal-close { font-family: 'IBM Plex Mono', monospace; font-size: 0.9rem; cursor: pointer;
+  background: none; border: 1px solid var(--rule); width: 2rem; height: 2rem; color: var(--ink); }
+.modal-close:hover { border-color: var(--accent); color: var(--accent); }
+.modal section.region > h2 { display: none; }
+.modal section.region { margin-bottom: 0; }
+.dash-nodata { font-size: 0.82rem; color: var(--muted); font-style: italic; line-height: 1.5; }
+.dash-more { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent); background: none; border: none;
+  cursor: pointer; padding: 0.4rem 0; }
+.dash-more:hover { text-decoration: underline; }
+.dash-full { margin-top: 0.5rem; }
+.dash-next { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 0.85rem; }
+.dash-when { display: block; font-family: 'Playfair Display', serif; font-size: 1.1rem;
+  color: var(--ink); font-weight: 700; letter-spacing: 0; text-transform: none; margin-top: 0.1rem; }
+.dash-rlabel { font-family: 'IBM Plex Mono', monospace; font-size: 0.55rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--muted); }
+.dash-rbody { font-size: 0.9rem; margin-top: 0.15rem; }
+.dash-stale { font-size: 0.72rem; color: var(--muted); font-style: italic; margin-top: 0.35rem; }
 .official { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
   color: var(--muted); letter-spacing: 0.04em; margin-top: 0.15rem; }
 .topic { font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem;
@@ -87,6 +187,12 @@ details.consent > summary::-webkit-details-marker { display: none; }
 .nextmeet .nm-body { font-size: 0.9rem; color: var(--ink); }
 .dispnote { border-left: 3px solid var(--accent); padding: 0.2rem 0.6rem;
   margin-top: 0.3rem; font-size: 0.8rem; color: var(--muted); }
+.evidence { border-left: 2px solid var(--rule); padding: 0.15rem 0.6rem;
+  margin-top: 0.3rem; font-size: 0.78rem; font-style: italic; color: var(--muted);
+  max-width: 26rem; }
+.evidence .evlabel { font-family: 'IBM Plex Mono', monospace; font-style: normal;
+  font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase;
+  display: block; }
 .tallycell { white-space: nowrap; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; }
 .result-pass { color: var(--ink); } .result-fail { color: var(--accent); font-weight: 400; }
 #loading { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
@@ -100,11 +206,63 @@ details.consent > summary::-webkit-details-marker { display: none; }
   letter-spacing: 0.06em; color: var(--muted); white-space: pre-wrap;
   margin: 0 0 1rem; }
 #joblog .jl-head { color: var(--accent); text-transform: uppercase; letter-spacing: 0.2em; }
+#joblog .jl-cancel { float: right; background: none; border: 1px solid var(--warn, #a33);
+  color: var(--warn, #a33); font: inherit; font-size: 0.85em; letter-spacing: 0.1em;
+  padding: 0 0.6em; cursor: pointer; text-transform: uppercase; }
+#joblog .jl-cancel:hover { background: var(--warn, #a33); color: var(--paper, #fff); }
 .pbar { height: 7px; border: 1px solid var(--ink); background: var(--card-bg);
   margin: 0.4rem 0 0.8rem; }
 .pfill { height: 100%; background: var(--accent); transition: width 0.6s ease; }
 h3 { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; margin: 1.5rem 0 0.5rem; }
+h4 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; margin: 1rem 0 0.4rem; }
+.memberstrip { margin: 0 0 1rem; }
+.attention { border: 1px solid var(--rule); background: var(--card-bg);
+  padding: 0.6rem 1rem 0.7rem; margin: 0 0 0.9rem; }
+.attn-why { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+  color: var(--accent); }
+.topicstrip { margin: 0 0 0.9rem; }
+.topicchip { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  border: 1px solid var(--rule); padding: 0.1rem 0.45rem; white-space: nowrap;
+  display: inline-block; margin: 0.12rem 0; }
+.digest { border-bottom: 1px dotted var(--rule); padding: 0.6rem 1rem 0.7rem; }
+.digest-text { font-size: 0.95rem; margin: 0.2rem 0 0.3rem; }
+.memberchip { font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem;
+  letter-spacing: 0.1em; color: var(--ink); background: var(--card-bg);
+  border: 1px solid var(--rule); padding: 0.2rem 0.6rem; margin: 0.15rem 0.3rem 0.15rem 0;
+  cursor: pointer; }
+.memberchip:hover { border-color: var(--accent); color: var(--accent); }
+.memberpanel { border: 1px solid var(--ink); border-left: 4px solid var(--accent);
+  background: var(--card-bg); padding: 0.75rem 1.1rem 1rem; margin: 0.6rem 0 1rem; }
+.memberpanel .mp-name { font-family: 'Playfair Display', serif;
+  font-size: 1.35rem; font-weight: 700; }
+details.fullrecord > summary { cursor: pointer; font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--accent); padding: 0.4rem 0; list-style: none; }
+details.fullrecord > summary::-webkit-details-marker { display: none; }
 a { color: var(--accent); }
+.county { display: none; }
+.county.active { display: block; }
+#usmap { margin: 0.5rem 0 1.5rem; }
+.map-head { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+.map-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; }
+.map-sub { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+.map-back { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent);
+  cursor: pointer; background: none; border: none; padding: 0; }
+.map-legend { display: flex; align-items: center; gap: 0.35rem; margin-left: auto;
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); }
+.legend-swatch { width: 13px; height: 13px; display: inline-block; border: 1px solid var(--rule); }
+#usmap svg { width: 100%; height: auto; display: block; background: var(--card-bg);
+  border: 1px solid var(--rule); }
+.geo-area { stroke: var(--paper); stroke-width: 0.4; transition: opacity 0.12s; }
+.geo-area.clickable { cursor: pointer; }
+.geo-area.clickable:hover { opacity: 0.72; }
+.map-tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--paper);
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.64rem; padding: 0.3rem 0.5rem;
+  opacity: 0; transition: opacity 0.1s; z-index: 50; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -124,8 +282,14 @@ a { color: var(--accent); }
   </form>
   <div id="joblog"></div>
   <div id="loading">Loading the ledger…</div>
+  <div id="usmap"></div>
   <div id="regions"></div>
 </main>
-<script src="/static/js/foundry.js?v=8"></script>
+<div class="map-tip" id="maptip"></div>
+<script src="/static/js/d3-array.min.js"></script>
+<script src="/static/js/d3-geo.min.js"></script>
+<script src="/static/js/topojson-client.min.js"></script>
+<script src="/static/js/leaflet.js"></script>
+<script src="/static/js/foundry.js?v=32"></script>
 </body>
 </html>

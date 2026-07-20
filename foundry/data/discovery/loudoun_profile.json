@@ -19,12 +19,13 @@
  },
  "second_source": {
   "exists": true,
-  "system": "Board of Supervisors Action Report Books \u2014 Laserfiche WebLink",
+  "system": "Per-meeting Board minutes \u2014 Laserfiche WebLink (a distinct document from the Action Report, produced by the Clerk and approved by the Board at a subsequent meeting)",
   "urls": [
-   "https://www.loudoun.gov/3436/Action-Report-Books",
-   "https://lfportal.loudoun.gov/LFPortalinternet/0/fol/115347/Row1.aspx"
+   "https://lfportal.loudoun.gov/LFPortalinternet/rss/dbid/0/folder/1966224/feed.rss"
   ],
-  "what_it_affirms": "The Clerk of the Board produces Action Reports independently from agenda packets. Per loudoun.gov/4829: 'The Action Report of the meeting is usually available in the same packet website folder within two business days following the meeting.' Action Report Books run from 1991 to present. Copy Teste Books (1954\u2013present) and scanned Minute Books (1870\u2013present) are also archived in the same Laserfiche system, providing a multi-century chain of independently certified Board action records."
+  "how_to_locate": "The year folder RSS (2026: folder 1966224; 2025: 1947831) lists per-meeting folders ('MM-DD-YY Business Meeting', link carries startid={folder_id}). Each meeting folder's RSS (/LFPortalinternet/rss/dbid/0/folder/{id}/feed.rss) lists a 'MM-DD-YY Business Meeting Minutes' document alongside the Action Report the primary reads. Documents fetch as /LFPortalinternet/0/edoc/{doc_id}/x.pdf (doc_id from the link's id= param).",
+  "what_it_affirms": "Minutes narrate each motion (mover, seconder, outcome, named dissents/abstentions/absences) independently of the Action Report's tabular summary. Minutes for the newest 1-2 meetings may not exist yet (approved at a subsequent meeting) \u2014 skip those, do not guess.",
+  "superseded_note": "Earlier profile pointed at Action Report Books \u2014 those compile the primary's own documents (circular), and the archived Minute Books / Copy Teste Books end in 2019/2018. Verified 2026-07-10."
  },
  "votes_located": "Per-item votes (motions, movers, seconders, and vote outcomes) are captured in eScribe for Standing Committee meetings. The eScribe Meeting.aspx page for each meeting includes CSS classes: .MotionText, .AgendaItemMotion, .MovedBy, .SecondedBy, .MotionVot \u2014 indicating structured per-item vote data rendered in HTML. Example: Finance/Government Operations & Economic Development Committee meeting July 14 2026 (Meeting.aspx?Id=5cefff5d-2b42-4aa7-9598-c549cc7b849f) shows items like '3.a Monthly Department of Economic Development Report \u2026 Election District(s): Countywide \u2026 Staff Contact(s): Buddy Rizer'. For BOS Business Meetings, vote outcomes appear in the PDF Action Reports stored in Laserfiche (fol/115347), produced within 2 business days of each meeting.",
  "systems_surveyed": [

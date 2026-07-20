@@ -1,0 +1,79 @@
+{
+ "jurisdiction": "New York City, NY \u2014 New York City Council (governing body)",
+ "primary_source": {
+  "system": "Granicus Legistar (Legislative Management Suite) \u2014 NYC tenant",
+  "base_urls": [
+   "https://legistar.council.nyc.gov/",
+   "https://nyc.legistar.com/"
+  ],
+  "rung": "api (token-gated) + html (public, no token)",
+  "how_to_enumerate_meetings": "HTML calendar: GET https://legistar.council.nyc.gov/Calendar.aspx \u2014 returns paginated list of all meetings with MeetingDetail.aspx?ID={id}&GUID={guid} links, filterable by year (1994\u20132029) and committee. API (with token): GET https://webapi.legistar.com/v1/nyc/events?token={token} for structured JSON; paginates via OData $top/$skip (max 1000/page). Token requested via form at https://council.nyc.gov/legislation/api/.",
+  "sample_document_urls": [
+   "https://nyc.legistar.com/MeetingDetail.aspx?LEGID=21297&GID=61&G=2FD004F1-D85B-4588-A648-0A736C77D6E3 \u2014 Stated Meeting 12/19/2024, Final agenda+minutes, 121 items, video linked",
+   "https://legistar.council.nyc.gov/Calendar.aspx \u2014 live calendar covering sessions from 1994 to 2026-2029 current",
+   "https://legistar.council.nyc.gov/Legislation.aspx \u2014 full legislation index (Introductions, Resolutions, Local Laws, Hearing Transcripts back to 1994)"
+  ]
+ },
+ "second_source": {
+  "exists": true,
+  "system": "NYC Open Data \u2014 Socrata dataset 'Council Committees And Meetings' (dataset ID: m48u-yjt8)",
+  "urls": [
+   "https://data.cityofnewyork.us/City-Government/Council-Committees-And-Meetings/m48u-yjt8",
+   "https://data.cityofnewyork.us/resource/m48u-yjt8.json"
+  ],
+  "what_it_affirms": "An independently-published, queryable Socrata export of meeting metadata \u2014 event_id, committee name, meeting_date, meeting_time, meeting_location, agenda_status, minutes_status, modified_date, and a URL back to the Legistar MeetingDetail page. Verified live: returns JSON rows confirming e.g. event_id=21297, 'City Council', 2024-12-19, agenda_status='Final', minutes_status='Final'. Provides independent confirmation of meeting dates, committee assignments, and agenda/minutes finalization status. Coverage confirmed through at least December 2024. A separate Socrata dataset (uvw5-9znb, 'City Council Members 1999 to Present', last updated April 10 2026) provides member roster data."
+ },
+ "votes_located": "Per-item action results (aggregate outcome) appear directly in the Legistar HTML meeting detail page. Confirmed quote from Meeting ID 21297 (12/19/2024 Stated Meeting, 121 items): table columns show 'Action' = 'Approved by Council' and 'Result' = 'Pass' for each legislation row. Per-member roll-call votes (how each council member voted) are accessible via the Legistar API at https://webapi.legistar.com/v1/nyc/eventitems/{eventItemId}/votes?token={token} \u2014 per Granicus documentation the endpoint returns the vote tally using the EventItem ID returned from matter histories. Each meeting detail page also carries a 'HistoryDetail.aspx?ID={historyId}' popup link per item (ID example: 32307670 from the 12/19/2024 meeting), though those pages require session context from the parent page and returned 410 when fetched standalone.",
+ "systems_surveyed": [
+  {
+   "system": "Legistar HTML \u2014 legistar.council.nyc.gov (primary domain)",
+   "url": "https://legistar.council.nyc.gov/Calendar.aspx",
+   "status": "200 OK \u2014 live and current",
+   "era_covered": "Session 1994\u2013present (current session 2026\u20132029); committee hearings, Stated Meetings, all committee types"
+  },
+  {
+   "system": "Legistar HTML \u2014 nyc.legistar.com (alternate/older domain)",
+   "url": "https://nyc.legistar.com/MeetingDetail.aspx?LEGID=21297&GID=61&G=2FD004F1-D85B-4588-A648-0A736C77D6E3",
+   "status": "200 OK \u2014 Stated Meeting 12/19/2024 fully loaded with 121 items, Final minutes, agenda PDF, hearing transcript, video link",
+   "era_covered": "Same as primary domain; used by older Socrata dataset URLs"
+  },
+  {
+   "system": "Legistar Web API \u2014 webapi.legistar.com/v1/nyc",
+   "url": "https://webapi.legistar.com/v1/nyc/bodies",
+   "status": "403 Token is required \u2014 confirms NYC IS a valid Legistar tenant; token freely obtainable via form at https://council.nyc.gov/legislation/api/",
+   "era_covered": "Same as HTML; OData-based JSON API for bodies, events, matters, event items, votes, persons"
+  },
+  {
+   "system": "NYC Open Data (Socrata) \u2014 Council Committees And Meetings dataset m48u-yjt8",
+   "url": "https://data.cityofnewyork.us/resource/m48u-yjt8.json",
+   "status": "200 OK \u2014 returns live JSON; most recent finalized records through December 2024",
+   "era_covered": "Covers multiple years of meeting records; latest confirmed meeting: 2024-12-19"
+  },
+  {
+   "system": "NYC Open Data (Socrata) \u2014 City Council Members 1999 to Present (uvw5-9znb)",
+   "url": "https://data.cityofnewyork.us/City-Government/City-Council-Members-1999-to-Present-/uvw5-9znb",
+   "status": "200 OK \u2014 last updated April 10 2026; 558 rows covering member terms 1999\u2013present",
+   "era_covered": "1999\u2013present"
+  },
+  {
+   "system": "Legistar HistoryDetail popup (per-item action detail)",
+   "url": "https://nyc.legistar.com/HistoryDetail.aspx?ID=32307670&GUID=47CF2118-C563-48F7-BD04-3F28CABCCD189",
+   "status": "410 Gone when fetched standalone \u2014 this is an AJAX modal launched from the MeetingDetail page; requires parent page session context",
+   "era_covered": "N/A \u2014 per-item; standalone access not available"
+  },
+  {
+   "system": "PrimeGov \u2014 probed as alternative platform",
+   "url": "https://nyc.primegov.com/api/v2/PublicPortal/ListArchivedMeetings?year=2024",
+   "status": "Not probed \u2014 NYC confirmed as Legistar tenant, no need to probe PrimeGov",
+   "era_covered": "N/A"
+  }
+ ],
+ "access_constraints": "1. Legistar API (webapi.legistar.com/v1/nyc): Requires a bearer token. Token is publicly obtainable at no cost by submitting a form at https://council.nyc.gov/legislation/api/ \u2014 confirmed by NYC Council's own API page. Passed as URL parameter: ?token={token}. API responses capped at 1,000 records per page (use OData $top/$skip to paginate). 2. Legistar HTML interface (legistar.council.nyc.gov and nyc.legistar.com): Fully public, no authentication required. 3. NYC Open Data Socrata (data.cityofnewyork.us): Fully public, no authentication required for read access. SODA API also available without key. 4. HistoryDetail popup pages cannot be fetched standalone (410); per-member votes must be retrieved via the Legistar API votes endpoint.",
+ "open_questions": [
+  "Per-member roll-call votes via the HTML route: the HistoryDetail.aspx popup returned 410 standalone \u2014 it is unclear whether any public HTML page renders per-member votes without the API token. This should be verified by loading the HistoryDetail within the parent MeetingDetail page session in a browser.",
+  "The NYC Open Data 'Council Committees And Meetings' dataset (m48u-yjt8) appears to have last been updated through December 2024 \u2014 it may have a lag or may not cover the current 2026 session. The refresh cadence and owner should be confirmed.",
+  "The Socrata dataset does NOT contain vote-level data (how individual members voted) \u2014 it is meeting-level metadata only. A dedicated vote-by-member dataset on NYC Open Data was not found; per-member votes appear to only be available via the Legistar API (token required).",
+  "Two Legistar domains coexist: legistar.council.nyc.gov (newer, canonical) and nyc.legistar.com (older, still live). The Socrata dataset URLs point to the older domain. Whether the older domain will eventually be deprecated is unknown.",
+  "NYC City Record (data.cityofnewyork.us/City-Government/City-Record-Online/dg92-zbpx) publishes public hearing notices and may serve as an additional cross-reference for scheduled meetings, but was not fully verified as a vote source."
+ ]
+}

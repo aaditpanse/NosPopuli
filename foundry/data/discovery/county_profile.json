@@ -1,0 +1,32 @@
+{
+ "jurisdiction": "Unknown \u2014 no jurisdiction was provided in the seed prompt",
+ "primary_source": {
+  "system": "N/A",
+  "base_urls": [],
+  "rung": "N/A",
+  "how_to_enumerate_meetings": "Cannot enumerate \u2014 jurisdiction not specified",
+  "sample_document_urls": []
+ },
+ "second_source": {
+  "exists": false,
+  "system": "N/A",
+  "urls": [],
+  "what_it_affirms": "No jurisdiction was supplied, so no second source could be located or verified"
+ },
+ "votes_located": "No votes located \u2014 discovery could not begin without a named jurisdiction",
+ "systems_surveyed": [
+  {
+   "system": "None",
+   "url": "N/A",
+   "status": "No probes issued \u2014 seed jurisdiction field was blank",
+   "era_covered": "N/A"
+  }
+ ],
+ "access_constraints": "Unknown \u2014 no jurisdiction to assess",
+ "open_questions": [
+  "What is the target jurisdiction (city, county, town, or special district)?",
+  "Once the jurisdiction is named, which platform does it use (Legistar, PrimeGov, Granicus, eScribe, CivicPlus, or custom)?",
+  "Are records behind authentication or freely public?",
+  "What era of records is needed (current only, or historical archive too)?"
+ ]
+}

@@ -2215,21 +2215,37 @@ async def foundry_page():
 @app.get("/api/foundry/data")
 async def foundry_data():
     sources = {}
+    capital_projects = {}
+    elections = {}
     for path in sorted(_FOUNDRY_STORE.glob("*.json")):
         if ("item-facts" in path.name or "item-summaries" in path.name
-                or path.name == "upcoming.json"):
+                or path.name in ("upcoming.json", "meeting-digests.json")):
             continue
-        sources[path.stem] = json.loads(path.read_text())
+        store = json.loads(path.read_text())
+        # Non-meetings record types (CIP capital projects, local elections)
+        # ride in their own maps so the meetings timeline renderer never sees
+        # a shape it can't read.
+        kind = store.get("meta", {}).get("kind")
+        if kind == "capital_projects":
+            capital_projects[path.stem] = store
+        elif kind == "elections":
+            elections[path.stem] = store
+        else:
+            sources[path.stem] = store
     facts_path = _FOUNDRY_STORE / "loudoun-bos-item-facts.json"
     item_facts = json.loads(facts_path.read_text()) if facts_path.exists() else {}
     summaries_path = _FOUNDRY_STORE / "item-summaries.json"
     item_summaries = json.loads(summaries_path.read_text()) if summaries_path.exists() else {}
     upcoming_path = _FOUNDRY_STORE / "upcoming.json"
     upcoming = json.loads(upcoming_path.read_text()) if upcoming_path.exists() else {}
-    if not sources:
+    digests_path = _FOUNDRY_STORE / "meeting-digests.json"
+    digests = json.loads(digests_path.read_text()) if digests_path.exists() else {}
+    if not sources and not capital_projects:
         raise HTTPException(status_code=404, detail="foundry store is empty — run foundry/backfill.py")
     return {"sources": sources, "item_facts": item_facts,
-            "item_summaries": item_summaries, "upcoming": upcoming}
+            "item_summaries": item_summaries, "upcoming": upcoming,
+            "meeting_digests": digests, "capital_projects": capital_projects,
+            "elections": elections}
 
 
 # --- Foundry search-onboarding: probe a named jurisdiction, preview-extract
@@ -2281,11 +2297,30 @@ def _foundry_probe_host(url):
         return False
 
 
+class _FoundryJobCancelled(Exception):
+    pass
+
+
 def _foundry_onboard_job(job_id, name):
     job = _FOUNDRY_JOBS[job_id]
-    log = job["log"]
+    _raw_log = job["log"]
+
+    # Cooperative cancellation: every stage (probes, discovery tool calls,
+    # synthesis attempts) reports through log/prog, so checking the flag here
+    # kills a run at its next heartbeat. A model call already in flight
+    # finishes (and is billed) — the flag stops the NEXT stage.
+    class _CancellableLog:
+        @staticmethod
+        def append(line):
+            if job.get("cancel"):
+                raise _FoundryJobCancelled
+            _raw_log.append(line)
+
+    log = _CancellableLog()
 
     def prog(pct, stage):
+        if job.get("cancel"):
+            raise _FoundryJobCancelled
         job["progress"] = {"pct": round(min(pct, 100), 1), "stage": stage}
     try:
         prog(2, "starting")
@@ -2395,8 +2430,11 @@ def _foundry_onboard_job(job_id, name):
                 "message": "The discovery agent could not produce a source "
                 "profile within budget. Next rung: a records request to the "
                 "clerk (planned)."})
+    except _FoundryJobCancelled:
+        _raw_log.append("cancelled by user — no further stages will run")
+        job.update(status="cancelled")
     except Exception as exc:
-        log.append(f"error: {exc}")
+        _raw_log.append(f"error: {exc}")
         job.update(status="error")
 
 
@@ -2432,3 +2470,18 @@ async def foundry_onboard_status(job_id: str):
     if job["status"] != "running":
         job["progress"] = {"pct": 100, "stage": job["status"]}
     return job
+
+
+@app.post("/api/foundry/onboard/{job_id}/cancel")
+async def foundry_onboard_cancel(job_id: str, request: Request):
+    local = request.client and request.client.host in ("127.0.0.1", "::1")
+    if not local and os.environ.get("FOUNDRY_ONBOARD") != "on":
+        raise HTTPException(status_code=403, detail="onboarding is disabled "
+                            "on this deployment")
+    job = _FOUNDRY_JOBS.get(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="unknown job")
+    if job["status"] == "running":
+        job["cancel"] = True
+        job["progress"]["stage"] = "cancelling — stops at the next stage"
+    return {"status": job["status"], "cancelling": bool(job.get("cancel"))}

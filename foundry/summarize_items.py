@@ -15,6 +15,7 @@ labeled as such in the console and never certified.
 import argparse
 import json
 import pathlib
+import re
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
@@ -38,7 +39,17 @@ SCHEMA = {
             "plain_english": {"type": "string", "description":
                 "One sentence a non-lawyer instantly understands: what this "
                 "item actually does. No 'Resolution authorizing' framing — "
-                "say the substance ('Pays $108,296 to settle a lawsuit...')"},
+                "say the substance ('Pays $108,296 to settle a lawsuit...'). "
+                "Use the [source context] block to identify the real subject "
+                "(project, place, money, rule), but BEWARE: the context may "
+                "include NEIGHBORING agenda items — describe only the item "
+                "whose identifier matches. NEVER state vote counts, tallies, "
+                "or outcomes (the ledger displays those; a wrong number here "
+                "contradicts it). NEVER describe the act of voting or "
+                "record-keeping. If the text genuinely does not say what the "
+                "item is about, say exactly that: 'No subject stated in the "
+                "minutes; see the official record.' — an honest gap beats a "
+                "guess."},
             "topic": {"type": "string", "description":
                 "2-3 word topic tag, e.g. 'legal settlement', 'zoning', "
                 "'public safety', 'budget', 'appointments'"},
@@ -50,22 +61,56 @@ SCHEMA = {
 }
 
 
+def _source_docs(slug):
+    """Cached document bodies for a source, for evidence-context lookup."""
+    cache_path = FOUNDRY / "data" / "onboard" / f"{slug}_http_cache.json"
+    if not cache_path.exists():
+        return []
+    cache = json.loads(cache_path.read_text())
+    return [b for b in cache.values() if isinstance(b, str) and len(b) > 3000]
+
+
+def _quote_context(quote, docs, before=900, after=200):
+    """The source text surrounding an evidence quote. Extractor-made titles
+    are often just the motion sentence; the subject matter (agenda heading,
+    staff summary) sits immediately BEFORE the quote in the minutes."""
+    if not quote or not docs:
+        return None
+    pat = re.compile(r"\s+".join(re.escape(w) for w in quote.split()[:12]))
+    for doc in docs:
+        m = pat.search(doc)
+        if m:
+            seg = doc[max(0, m.start() - before):m.end() + after]
+            return " ".join(seg.split())
+    return None
+
+
 def voted_items():
     """id -> official text for everything a vote references: the agenda
     item's title where one exists (Pittsburgh, LA), else the motion text
-    itself keyed by vote_id (Loudoun records votes as motions)."""
+    itself keyed by vote_id (Loudoun records votes as motions). Where the
+    vote carries an evidence quote, source context around the quote is
+    appended so the summary can name the actual subject."""
     out = {}
     for path in STORE.glob("*.json"):
         if path.name in (OUT.name,) or "item-facts" in path.name:
             continue
         store = json.loads(path.read_text())
         items = store.get("agenda_items", {})
+        docs = _source_docs(path.stem.rsplit("-", 1)[0])
         for vote in store.get("vote_events", {}).values():
             item = items.get(vote.get("item_id"))
             if item and item.get("title"):
-                out[item["item_id"]] = item["title"][:600]
+                key, text = item["item_id"], item["title"][:600]
             elif vote.get("motion"):
-                out[vote["vote_id"]] = vote["motion"][:600]
+                key, text = vote["vote_id"], vote["motion"][:600]
+            else:
+                continue
+            ctx = _quote_context((vote.get("evidence") or {}).get("quote"), docs)
+            if ctx:
+                text += ("\n[source context around this vote — the agenda "
+                         "heading/subject usually appears here]\n" + ctx[:900])
+            out[key] = text
     return out
 
 
@@ -105,6 +150,9 @@ def main():
         OUT.write_text(json.dumps(existing, indent=1))
         print(f"  {min(i + args.batch, len(pending))}/{len(pending)} "
               f"(${cost:.2f})")
+    if cost:
+        import budget
+        budget.record("enrichment", cost)
     print(f"done: {len(existing)} summaries -> {OUT.name} (${cost:.2f}, {args.model})")
     return 0
 

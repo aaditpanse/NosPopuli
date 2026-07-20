@@ -64,7 +64,7 @@ def run_artifact(candidate_path, event_ids, out_path, cache_path=None, allow_liv
     proc = subprocess.run(
         [sys.executable, str(pathlib.Path(__file__).resolve()), str(candidate_path),
          str(out_path)] + [str(e) for e in event_ids],
-        capture_output=True, text=True, timeout=300, env=env)
+        capture_output=True, text=True, timeout=900, env=env)
     if proc.returncode != 0:
         return None, proc.stderr
     return json.loads(pathlib.Path(out_path).read_text())["records"], None

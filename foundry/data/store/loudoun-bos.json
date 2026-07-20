@@ -15021,5 +15021,9 @@
   "Koran Saines": {
    "name": "Koran Saines"
   }
+ },
+ "meta": {
+  "sub": "cross-source certified",
+  "oracle_artifact": "extractors/loudoun-bos-oracle/v1_attempt1.py"
  }
 }

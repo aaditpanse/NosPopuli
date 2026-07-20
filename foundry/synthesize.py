@@ -175,7 +175,7 @@ source. Return the complete module in one ```python block."""
     return [{"role": "user", "content": prompt}]
 
 
-def feedback_message(error=None, findings=None, diff_lines=None):
+def feedback_message(error=None, findings=None, diff_lines=None, fetch_trace=None):
     parts = ["Your extractor failed the gate. Return the complete corrected "
              "module in one ```python block."]
     if error:
@@ -184,6 +184,10 @@ def feedback_message(error=None, findings=None, diff_lines=None):
         parts.append("## Validation-harness findings\n" + "\n".join(
             f"- [{f['layer']}/{f['check']}] {f['ref']}: {f['msg'][:200]}"
             for f in findings[:10]))
+    if fetch_trace:
+        parts.append("## Fetch trace from your run (url · response chars · "
+                     "response head)\nDiagnose from what you ACTUALLY got "
+                     "back, not what you expected:\n" + "\n".join(fetch_trace))
     if diff_lines:
         parts.append("## Differences vs the hand-verified golden set\n" +
                      "\n".join(diff_lines[:30]))
@@ -192,10 +196,12 @@ def feedback_message(error=None, findings=None, diff_lines=None):
 
 def generate(messages):
     """One synthesis call. Returns (code, assistant_content, usage)."""
+    import budget
+    budget.check("synthesis")
     client = anthropic.Anthropic()
     with client.messages.stream(
         model=MODEL,
-        max_tokens=32000,
+        max_tokens=64000,  # adaptive thinking shares this budget with the code
         thinking={"type": "adaptive"},
         system=SYSTEM,
         cache_control={"type": "ephemeral"},  # profile+schema prefix reused across attempts
@@ -204,8 +210,15 @@ def generate(messages):
         msg = stream.get_final_message()
     text = "".join(b.text for b in msg.content if b.type == "text")
     blocks = re.findall(r"```python\n(.*?)```", text, re.DOTALL)
+    if not blocks and msg.stop_reason != "max_tokens":
+        # the model sometimes omits the closing fence on its final block;
+        # only trust an unterminated block when the turn ended naturally
+        blocks = re.findall(r"```python\n(.*)\Z", text, re.DOTALL)
+    import budget
+    budget.record("synthesis", cost_usd([msg.usage]))
     if not blocks:
-        raise RuntimeError(f"no python code block in response: {text[:300]}")
+        raise RuntimeError(f"no complete python code block "
+                           f"(stop_reason={msg.stop_reason}): {text[:300]}")
     return max(blocks, key=len), msg.content, msg.usage
 
 

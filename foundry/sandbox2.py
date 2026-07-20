@@ -26,11 +26,13 @@ class Runtime:
     def __init__(self, cache, allow_live=True):
         self.cache = cache
         self.allow_live = allow_live
+        self.trace = []  # every URL the artifact asked for, in order
 
     def _fetch(self, url, params, kind):
         key = url
         if params:
             key += "?" + urllib.parse.urlencode(sorted(params.items()))
+        self.trace.append(key)
         if key not in self.cache:
             if not self.allow_live:
                 raise RuntimeError(f"cache miss with live fetch disabled: {key}")
@@ -90,9 +92,14 @@ def main():
 
     cache = json.loads(cache_path.read_text()) if cache_path.exists() else {}
     rt = Runtime(cache, allow_live)
-    records, run_meta = module.extract(rt, args)
-    if allow_live:
-        cache_path.write_text(json.dumps(cache))
+    try:
+        records, run_meta = module.extract(rt, args)
+    finally:
+        # Persist fetches and the trace even when the extractor crashes, so a
+        # failed attempt still informs the repair loop (and doesn't refetch).
+        if allow_live:
+            cache_path.write_text(json.dumps(cache))
+        pathlib.Path(str(out_path) + ".trace").write_text(json.dumps(rt.trace))
     pathlib.Path(out_path).write_text(json.dumps(
         {"records": records, "run_meta": run_meta}))
 

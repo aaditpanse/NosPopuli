@@ -1,0 +1,2358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NosPopuli — Unified Civic Ledger (builds on test.html frame)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/test.css?v=lobbying">
+  <style>
+    /* test2 additions: live Foundry ledger + money flow, on the test.css frame */
+    .lv-wrap { border: 1px solid var(--ink, #0e0e0e); background: var(--card, #faf7f2); }
+    .lv-head { display: flex; gap: 0.9rem; align-items: baseline; flex-wrap: wrap;
+      background: var(--ink, #0e0e0e); color: #f5f0e8; padding: 0.5rem 1.1rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.64rem;
+      letter-spacing: 0.2em; text-transform: uppercase; }
+    .lv-dot { width: 9px; height: 9px; border-radius: 50%; background: #5c9c5c;
+      display: inline-block; animation: lvpulse 2s infinite; }
+    @keyframes lvpulse { 50% { opacity: 0.35; } }
+    .lv-body { padding: 1rem 1.2rem 1.2rem; }
+    .lv-stats { display: flex; gap: 1.6rem; flex-wrap: wrap; margin: 0.2rem 0 1rem; }
+    .lv-stat .n { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; }
+    .lv-stat .l { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted, #6b6355); }
+    .lv-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted, #6b6355); }
+    .lv-next { display: inline-block; border: 1px solid var(--ink, #0e0e0e);
+      border-left: 5px solid var(--accent, #8b1a1a); padding: 0.45rem 1rem 0.5rem; margin: 0 0 1rem; }
+    .lv-next .when { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.1rem; }
+    .lv-attn { border-left: 4px solid var(--accent, #8b1a1a); padding: 0.6rem 1rem 0.7rem; margin: 0 0 1rem; }
+    .lv-fact { font-size: 0.88rem; padding: 0.2rem 0 0.2rem 0.7rem;
+      border-left: 2px solid var(--rule, #c8bfaa); margin: 0.18rem 0; }
+    .lv-why { font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; color: var(--accent, #8b1a1a); }
+    .lvb { font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem;
+      letter-spacing: 0.14em; text-transform: uppercase; padding: 0.08rem 0.42rem;
+      border: 1px solid var(--rule, #c8bfaa); white-space: nowrap; }
+    .lvb-ok { background: var(--aged, #e8e0cc); }
+    .lvb-warn { color: #fff; background: var(--accent, #8b1a1a); border-color: var(--accent, #8b1a1a); }
+    .lvb-der { color: var(--muted, #6b6355); border-color: var(--muted, #6b6355); }
+    details.lv-meeting { border: 1px solid var(--rule, #c8bfaa); margin-bottom: 0.7rem; }
+    details.lv-meeting > summary { cursor: pointer; padding: 0.65rem 1rem; list-style: none;
+      display: flex; align-items: baseline; gap: 0.9rem; flex-wrap: wrap; }
+    details.lv-meeting > summary::-webkit-details-marker { display: none; }
+    details.lv-meeting > summary::before { content: "+"; font-family: 'Playfair Display', serif;
+      font-weight: 900; color: var(--accent, #8b1a1a); }
+    details.lv-meeting[open] > summary::before { content: "–"; }
+    .lv-mdate { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; }
+    .lv-digest { border-top: 1px dotted var(--rule, #c8bfaa); padding: 0.55rem 1rem 0.5rem; font-size: 0.93rem; }
+    table.lv-votes { width: 100%; border-collapse: collapse; }
+    table.lv-votes th { font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted, #6b6355);
+      text-align: left; border-top: 1px solid var(--rule, #c8bfaa);
+      border-bottom: 1px solid var(--rule, #c8bfaa); padding: 0.35rem 1rem; font-weight: 400; }
+    table.lv-votes td { padding: 0.4rem 1rem; border-bottom: 1px solid var(--aged, #e8e0cc);
+      vertical-align: top; font-size: 0.9rem; }
+    .lv-tally { white-space: nowrap; font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; }
+    .lv-fail { color: var(--accent, #8b1a1a); }
+    .lv-chip { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em;
+      background: none; border: 1px solid var(--rule, #c8bfaa); padding: 0.18rem 0.55rem;
+      margin: 0.15rem 0.28rem 0.15rem 0; cursor: pointer; }
+    .lv-chip:hover { border-color: var(--accent, #8b1a1a); color: var(--accent, #8b1a1a); }
+    .lv-panel { border: 1px solid var(--ink, #0e0e0e); border-left: 5px solid var(--accent, #8b1a1a);
+      padding: 0.7rem 1rem 0.9rem; margin: 0.5rem 0 0.9rem; }
+    .lv-panel .name { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 1.25rem; }
+    .lv-sankey { border: 1px solid var(--rule, #c8bfaa); background: var(--card, #faf7f2);
+      padding: 1rem 0.8rem 0.4rem; overflow-x: auto; }
+    /* nav: the record on the left, yours on the right */
+    .top-nav { display: flex; }
+    .nav-spacer { flex: 1; }
+    .nav-link.nav-util { color: var(--muted, #6b6355); }
+    /* desk tabs shared by letters + notifications */
+    .desk-tabs { display: flex; gap: 0; margin: 0 0 1.2rem; }
+    .desk-tabs a { font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink, #0e0e0e);
+      border: 1px solid var(--ink, #0e0e0e); padding: 0.5rem 1.2rem; margin-right: -1px;
+      text-decoration: none; }
+    .desk-tabs a.on { background: var(--ink, #0e0e0e); color: var(--paper, #f5f0e8); }
+
+    /* ════════ THE COMPOSITOR'S PASS — aesthetics only ════════ */
+
+    /* 1 · typographic finish: old-style figures in prose, tabular in tables */
+    body { font-variant-numeric: oldstyle-nums; font-variant-ligatures: common-ligatures; }
+    .lv-tally, .poll-num, .poll-pct, .money-num, .stat-num, .count-num,
+    .ec-count-num, .policy-num, .corr-stat, .feed-rank, .lv-stat .n
+      { font-variant-numeric: tabular-nums lining-nums; }
+    .lede-deck::first-letter, .bill-explanation p:first-of-type::first-letter {
+      font-family: 'Playfair Display', serif; font-weight: 900;
+      font-size: 3.1em; line-height: 0.82; float: left;
+      padding: 0.06em 0.12em 0 0; color: var(--accent); }
+
+    /* 2 · end marks: the tombstone that says an item is complete */
+    .lede-deck::after, .bill-explanation p:last-of-type::after,
+    .poll-summary::after, .policy-disclaimer::after
+      { content: " ■"; font-size: 0.65em; color: var(--ink); vertical-align: 0.15em; }
+
+    /* 3 · engraved plate portraits (hedcut placeholder treatment) */
+    .rep-portrait, .portrait-photo, .rep-portrait.small {
+      background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,0.5), transparent 55%),
+        repeating-linear-gradient(45deg, transparent 0 2px, rgba(14,14,14,0.07) 2px 3px),
+        repeating-linear-gradient(-45deg, transparent 0 3px, rgba(14,14,14,0.05) 3px 4px),
+        var(--aged) !important;
+      border: 1px solid var(--ink) !important;
+      box-shadow: inset 0 0 0 2px var(--paper), inset 0 0 0 3px var(--rule);
+      color: var(--ink) !important;
+      font-family: 'Playfair Display', serif !important; font-weight: 900 !important; }
+
+    /* 4 · figures: hairline-bordered bars with crosshatch fills, captions below */
+    .policy-fill, .poll-fill, .issue-fill, .trend-bar {
+      background-image: repeating-linear-gradient(45deg,
+        transparent 0 3px, rgba(245,240,232,0.45) 3px 4px) !important;
+      outline: 1px solid var(--ink); outline-offset: -1px; }
+    .fig-cap { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.08em; color: var(--muted); border-top: 1px solid var(--ink);
+      margin-top: 0.6rem; padding-top: 0.35rem; }
+    .fig-cap b { color: var(--ink); letter-spacing: 0.18em; }
+
+    /* 5 · bylines: the trust system speaking in editorial voice */
+    .byline { font-family: 'Source Serif 4', serif; font-style: italic;
+      font-size: 0.9rem; color: var(--muted); margin: 0.25rem 0 0.6rem; }
+    .byline .by-rule { font-style: normal; font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); }
+
+    /* 6 · masthead ears: session status where a broadsheet keeps the weather */
+    .masthead-wrap { position: relative; }
+    .masthead-ear { position: absolute; top: 1.1rem; width: 12rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.56rem;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+      line-height: 1.7; }
+    .masthead-ear.left { left: 2rem; text-align: left; }
+    .masthead-ear.right { right: 2rem; text-align: right; }
+    .masthead-ear b { color: var(--ink); font-weight: 500; }
+    .masthead-ear .in-session { color: #2d5c2d; }
+    @media (max-width: 900px) { .masthead-ear { display: none; } }
+
+    /* 7 · folio lines: sections hand off like pages */
+    .folio { display: flex; justify-content: flex-end; border-top: 1px solid var(--ink);
+      margin-top: 2.2rem; padding-top: 0.4rem; }
+    .folio a { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink);
+      text-decoration: none; }
+    .folio a:hover { color: var(--accent); }
+
+    /* 8 · motion, used like ink: pages settle, underlines draw, nothing bounces */
+    main.page.active { animation: settle 0.22s ease-out; }
+    @keyframes settle { from { opacity: 0; transform: translateY(5px); } }
+    .lede-title, .story-title, .ec-name, .feed-title {
+      background-image: linear-gradient(var(--accent), var(--accent));
+      background-size: 0% 1px; background-repeat: no-repeat; background-position: 0 100%;
+      transition: background-size 0.25s ease; }
+    .lede-title:hover, .story:hover .story-title, .election-card:hover .ec-name,
+    .feed-row:hover .feed-title { background-size: 100% 1px; }
+    .story, .election-card, .rep-card { transition: background 0.2s ease, transform 0.2s ease; }
+    .story:hover, .election-card:hover, .rep-card:hover
+      { background: var(--card-bg); transform: translateY(-1px); }
+
+    /* 9 · skeleton galleys while the live ledger sets type */
+    .lv-skel { animation: galley 1.6s ease-in-out infinite; }
+    @keyframes galley { 50% { opacity: 0.45; } }
+    .lv-skel .slug { height: 0.7rem; background: var(--aged); margin: 0.55rem 0;
+      border: 1px solid var(--rule); }
+
+    /* 10 · night edition: same paper, different hour */
+    body.night {
+      --ink: #e9e2d0; --paper: #17140e; --card-bg: #1e1a12; --aged: #2b2519;
+      --accent: #d4664f; --accent-light: #e07b60; --muted: #a89e88; --rule: #4a4335;
+      background-image: repeating-linear-gradient(0deg, transparent, transparent 27px,
+        rgba(255,255,255,0.02) 27px, rgba(255,255,255,0.02) 28px); }
+    body.night .lv-head { background: var(--aged); color: var(--ink); }
+    body.night .masthead-ear .in-session { color: #7cb87c; }
+    .edition-toggle { cursor: pointer; text-decoration: underline; background: none;
+      border: none; font: inherit; color: inherit; letter-spacing: inherit;
+      text-transform: inherit; }
+  </style>
+</head>
+<body>
+
+<!-- ── DATELINE STRIP ── -->
+<div class="dateline-strip">
+  <span class="dateline-vol">Vol. CXVIII · No. 168</span>
+  <span class="dateline-date" id="dateline-date">Wednesday, June 17, 2026</span>
+  <span class="dateline-price">Free for the People ·
+    <button class="edition-toggle" id="edition-toggle">Night Edition</button></span>
+</div>
+
+<!-- ── MASTHEAD ── -->
+<header class="masthead-wrap">
+  <div class="masthead-ear left">
+    <b>Washington</b><br>House: <span class="in-session">in session</span><br>Senate: <span class="in-session">in session</span>
+  </div>
+  <div class="masthead-ear right">
+    <b>Virginia · Loudoun</b><br>Gen. Assembly: adjourned<br>Board: <span class="in-session">meets Tue</span>
+  </div>
+  <div class="masthead-rule top"></div>
+  <h1 class="masthead" onclick="nav('home')">Nos<span>Populi</span></h1>
+  <div class="tagline">Law for the People · Federal, State &amp; County in Plain English</div>
+  <div class="masthead-rule bottom"></div>
+</header>
+
+<!-- ── NAV ── -->
+<nav class="top-nav">
+  <a class="nav-link" href="#" data-route="home"      onclick="nav('home');return false">Front Page</a>
+  <a class="nav-link" href="#" data-route="county"    onclick="nav('county');return false">My County</a>
+  <a class="nav-link" href="#" data-route="money"     onclick="nav('money');return false">Money</a>
+  <a class="nav-link" href="#" data-route="elections" onclick="nav('elections');return false">Elections</a>
+  <span class="nav-spacer"></span>
+  <a class="nav-link nav-util" href="#" data-route="correspondence" onclick="nav('correspondence');return false">My Desk</a>
+  <a class="nav-link nav-util" href="#" data-route="onboarding" onclick="nav('onboarding');return false" title="Location & topics">Settings</a>
+</nav>
+
+<!-- ── COMMAND BAR (sticky) ── -->
+<div class="command-bar">
+  <div class="command-inner">
+    <span class="command-label">Ask the Record</span>
+    <div class="command-row">
+      <input class="command-input" type="text"
+        placeholder="Try: 'housing affordability bills', 'Ted Kennedy', 'what passed this week?'" />
+      <button class="command-jurisdiction active" id="jur-federal">Federal</button>
+      <div class="command-state" id="state-picker" tabindex="0">
+        <span class="state-cur" id="state-cur">VA</span>
+        <div class="state-pop" id="state-pop" role="listbox" aria-label="Choose state">
+          <button class="state-pop-arrow" id="state-up" aria-label="Scroll up">▲</button>
+          <div class="state-pop-cells">
+            <div class="state-cell state-prev" data-rel="-1"></div>
+            <div class="state-cell state-cur-cell" data-rel="0"></div>
+            <div class="state-cell state-next" data-rel="1"></div>
+          </div>
+          <button class="state-pop-arrow" id="state-down" aria-label="Scroll down">▼</button>
+        </div>
+      </div>
+      <button class="command-jurisdiction" id="jur-county" onclick="nav('county')" title="County records via the Foundry pipeline">Loudoun Co.</button>
+      <button class="command-go" id="search-go">Search →</button>
+    </div>
+    <div class="search-dropdown" id="search-dropdown" hidden>
+      <div class="search-drop-head">
+        <span class="search-drop-title">Results</span>
+        <span class="search-drop-meta" id="search-drop-meta">12 bills · sorted by stage · 119th Congress</span>
+        <button class="search-drop-close" id="search-drop-close" aria-label="Close">✕</button>
+      </div>
+      <a class="search-drop-row" onclick="nav('bill')">
+        <span class="sd-id">H.R. 4838</span>
+        <span class="sd-title">Medicaid Eligibility Streamlining Act</span>
+        <span class="sd-meta">Sponsored by Rep. Spanberger · 38 cosponsors</span>
+        <span class="feed-status status-passed">Passed House</span>
+      </a>
+      <a class="search-drop-row" onclick="nav('bill')">
+        <span class="sd-id">S. 1402</span>
+        <span class="sd-title">Interstate Pharmacy Practice Act</span>
+        <span class="sd-meta">Sponsored by Sen. Warner (D-VA) · 12 cosponsors</span>
+        <span class="feed-status status-active">In Committee</span>
+      </a>
+      <a class="search-drop-row" onclick="nav('bill')">
+        <span class="sd-id">H.R. 217</span>
+        <span class="sd-title">Veteran Disability Backlog Reduction</span>
+        <span class="sd-meta">Now Public Law 119-61 · Signed June 13, 2026</span>
+        <span class="feed-status status-enacted">P.L. 119-61</span>
+      </a>
+      <a class="search-drop-row" onclick="nav('bill')">
+        <span class="sd-id">H.R. 992</span>
+        <span class="sd-title">Insulin Affordability Act of 2026</span>
+        <span class="sd-meta">Sponsored by Rep. DeLauro (D-CT) · Energy &amp; Commerce</span>
+        <span class="feed-status status-muted">Introduced</span>
+      </a>
+      <a class="search-drop-row" onclick="nav('bill')">
+        <span class="sd-id">HJRES 27</span>
+        <span class="sd-title">CRA Resolution on HUD Rental Assistance Rule</span>
+        <span class="sd-meta">House Rules Committee · Vote expected Thursday</span>
+        <span class="feed-status status-active">Vote Scheduled</span>
+      </a>
+      <a class="search-drop-row" onclick="nav('bill')">
+        <span class="sd-id">S. 2208</span>
+        <span class="sd-title">Rural Hospital Stabilization Act</span>
+        <span class="sd-meta">Sponsored by Sen. Tester (D-MT) · Reported by Finance</span>
+        <span class="feed-status status-active">Reported</span>
+      </a>
+      <div class="search-drop-foot">
+        <a class="search-drop-more" onclick="nav('bill')">View all 12 results →</a>
+        <span class="search-drop-tip">Tip: refine with quoted phrases, e.g. <em>"public housing"</em></span>
+      </div>
+    </div>
+    <div class="command-pills">
+      <span class="pills-label">Suggestions</span>
+      <button class="pill" onclick="nav('bill')">Housing affordability</button>
+      <button class="pill" onclick="nav('bill')">A passed law</button>
+      <button class="pill" onclick="nav('member')">Ted Kennedy</button>
+      <button class="pill" onclick="nav('member')">Bernie Sanders</button>
+      <button class="pill">340B drug pricing</button>
+      <button class="pill">Title VIII</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ── HOME (Front Page)                              ── -->
+<!-- ═══════════════════════════════════════════════════ -->
+<main class="page active" id="route-home">
+
+  <section class="lede">
+    <div class="lede-kicker">
+      <span class="kicker-tag">Front Page</span>
+      <span class="kicker-update">Updated 22 minutes ago</span>
+    </div>
+    <h2 class="lede-title" onclick="nav('bill')" style="cursor:pointer">
+      A Quiet Vote Reshapes Medicaid Eligibility — and Almost No One Read the Bill
+    </h2>
+    <div class="byline"><span class="by-rule">From the record</span> — roll call 218–209,
+      read against the engrossed text; plain English by machine, badged as such</div>
+    <p class="lede-deck">
+      H.R. 4838 cleared the House this morning by a 9-vote margin.
+      Three plain paragraphs explain who is now covered, who is not,
+      and what the Senate is expected to do tomorrow.
+    </p>
+    <div class="lede-meta">
+      <span class="lede-stage stage-passed">Passed House</span>
+      <span class="lede-meta-sep">·</span>
+      <span>119th Congress · H.R. 4838</span>
+      <span class="lede-meta-sep">·</span>
+      <span>Sponsored by Rep. Castor (D-FL)</span>
+    </div>
+    <div class="lede-actions">
+      <button class="btn-primary" onclick="nav('bill')">Read the explanation →</button>
+      <button class="btn-ghost">Notify me when this moves</button>
+      <button class="btn-ghost">Write to my reps</button>
+    </div>
+  </section>
+
+  <section class="grid-3up">
+    <article class="story" onclick="nav('bill')">
+      <div class="story-section-tag">Federal · Senate</div>
+      <h3 class="story-title">Senate Returns to Pharmacy Reform After 14-Year Pause</h3>
+      <p class="story-deck">
+        S. 1402 would let pharmacists fill prescriptions across state lines.
+        Two pages, one carve-out, broad bipartisan support.
+      </p>
+      <div class="story-meta">
+        <span class="story-status status-active">In Committee</span>
+        <span>·</span><span>3 days ago</span>
+      </div>
+    </article>
+    <article class="story" onclick="nav('bill')">
+      <div class="story-section-tag">State · Richmond</div>
+      <h3 class="story-title">Data-Center Siting Bill Reaches the Governor's Desk</h3>
+      <p class="story-deck">
+        HB 1601 lets counties demand noise and grid studies before approving
+        new data centers. Your two Richmond legislators voted opposite ways.
+      </p>
+      <div class="story-meta">
+        <span class="story-status status-active">Awaiting signature</span>
+        <span>·</span><span>Aug 1 deadline</span>
+      </div>
+    </article>
+    <article class="story" onclick="nav('county')">
+      <div class="story-section-tag">County · Loudoun — live record</div>
+      <h3 class="story-title">The Board Is 94% Unanimous. The Story Is the Other 6%.</h3>
+      <p class="story-deck">
+        Straight from the county's own documents: every vote, every dissent,
+        every consent item unpacked — cross-checked against the clerk's minutes.
+      </p>
+      <div class="story-meta">
+        <span class="story-status status-enacted">Certified · cross-source</span>
+        <span>·</span><span>next meeting Jul 14</span>
+      </div>
+    </article>
+  </section>
+
+  <div class="section-divider"><span>The Briefing</span></div>
+
+  <section class="two-col">
+    <div class="col-reps">
+      <div class="col-head">
+        <span class="col-label">Your Delegation</span>
+        <a class="col-action" onclick="nav('onboarding')">Change zip →</a>
+      </div>
+      <div class="rep-card" onclick="nav('member')">
+        <div class="rep-portrait">TK</div>
+        <div class="rep-body">
+          <div class="rep-name">Tim Kaine</div>
+          <div class="rep-role">U.S. Senate · Virginia</div>
+          <div class="rep-line">Party: Democratic · Term: 2024–2030</div>
+          <div class="rep-recent">Last vote: <strong>Yea</strong> on H.R. 4838 (Medicaid eligibility)</div>
+        </div>
+      </div>
+      <div class="rep-card" onclick="nav('member')">
+        <div class="rep-portrait">MW</div>
+        <div class="rep-body">
+          <div class="rep-name">Mark Warner</div>
+          <div class="rep-role">U.S. Senate · Virginia</div>
+          <div class="rep-line">Party: Democratic · Term: 2020–2026</div>
+          <div class="rep-recent">Last sponsored: S. 1402 (Cross-state pharmacy)</div>
+        </div>
+      </div>
+      <div class="rep-card" onclick="nav('member')">
+        <div class="rep-portrait">AS</div>
+        <div class="rep-body">
+          <div class="rep-name">Abigail Spanberger</div>
+          <div class="rep-role">U.S. House · VA-7</div>
+          <div class="rep-line">Party: Democratic · Term: 2024–2026</div>
+          <div class="rep-recent">No floor activity this week</div>
+        </div>
+      </div>
+      <div class="rep-card" onclick="nav('member')">
+        <div class="rep-portrait">SF</div>
+        <div class="rep-body">
+          <div class="rep-name">Suhail Farooqi</div>
+          <div class="rep-role">Senate of Virginia · 32nd</div>
+          <div class="rep-line">Party: Democratic · Richmond</div>
+          <div class="rep-recent">Last vote: <strong>Yea</strong> on HB 1601 (data-center siting)</div>
+        </div>
+      </div>
+      <div class="rep-card" onclick="nav('county')">
+        <div class="rep-portrait">PR</div>
+        <div class="rep-body">
+          <div class="rep-name">Phyllis Randall</div>
+          <div class="rep-role">Board of Supervisors · Chair (at-large)</div>
+          <div class="rep-line">Loudoun County · live record via Foundry</div>
+          <div class="rep-recent">Voting record → <strong>My County</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-elections">
+      <div class="col-head">
+        <span class="col-label">Upcoming Elections</span>
+        <a class="col-action" onclick="nav('elections')">All elections →</a>
+      </div>
+      <div class="election-row urgent" onclick="nav('election-detail')">
+        <div class="election-countdown">
+          <div class="count-num">48</div><div class="count-unit">days</div>
+        </div>
+        <div class="election-body">
+          <div class="election-name">Virginia Primary Election</div>
+          <div class="election-date">Tuesday, August 4, 2026 · State, Federal</div>
+          <div class="election-line">Register by July 12 · 1 contest on ballot</div>
+        </div>
+      </div>
+      <div class="election-row near" onclick="nav('election-detail')">
+        <div class="election-countdown">
+          <div class="count-num">141</div><div class="count-unit">days</div>
+        </div>
+        <div class="election-body">
+          <div class="election-name">Virginia General Election</div>
+          <div class="election-date">Tuesday, November 3, 2026 · Federal, Local</div>
+          <div class="election-line">Governor, House district 7, 4 ballot measures</div>
+        </div>
+      </div>
+      <div class="election-row far" onclick="nav('election-detail')">
+        <div class="election-countdown">
+          <div class="count-num">505</div><div class="count-unit">days</div>
+        </div>
+        <div class="election-body">
+          <div class="election-name">Presidential General</div>
+          <div class="election-date">Tuesday, November 7, 2028 · National</div>
+          <div class="election-line">Polls open ~14 months</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"><span>What's Moving</span></div>
+
+  <section class="feed">
+    <div class="feed-toolbar">
+      <span class="feed-tag">Personalized · Virginia · Healthcare, Housing, Veterans</span>
+      <button class="feed-edit" onclick="nav('onboarding')">Edit topics</button>
+    </div>
+    <a class="feed-row" onclick="nav('bill')">
+      <span class="feed-rank">01</span>
+      <div class="feed-body">
+        <div class="feed-line"><span class="feed-id">H.R. 4838</span><span class="feed-sep">·</span><span class="feed-title">Medicaid Eligibility Streamlining Act</span></div>
+        <div class="feed-sub"><span class="feed-reason">Why: your topic — Healthcare · Action today</span></div>
+      </div>
+      <span class="feed-status status-passed">Passed House</span>
+    </a>
+    <a class="feed-row" onclick="nav('bill')">
+      <span class="feed-rank">02</span>
+      <div class="feed-body">
+        <div class="feed-line"><span class="feed-id">S. 1402</span><span class="feed-sep">·</span><span class="feed-title">Interstate Pharmacy Practice Act</span></div>
+        <div class="feed-sub"><span class="feed-reason">Why: your senator (Warner) is the lead sponsor</span></div>
+      </div>
+      <span class="feed-status status-active">In Committee</span>
+    </a>
+    <a class="feed-row" onclick="nav('bill')">
+      <span class="feed-rank">03</span>
+      <div class="feed-body">
+        <div class="feed-line"><span class="feed-id">H.R. 992</span><span class="feed-sep">·</span><span class="feed-title">Insulin Affordability Act of 2026</span></div>
+        <div class="feed-sub"><span class="feed-reason">Why: your topic — Healthcare</span></div>
+      </div>
+      <span class="feed-status status-introduced">Introduced</span>
+    </a>
+    <a class="feed-row" onclick="nav('bill')">
+      <span class="feed-rank">04</span>
+      <div class="feed-body">
+        <div class="feed-line"><span class="feed-id">H.R. 217</span><span class="feed-sep">·</span><span class="feed-title">Veteran Disability Backlog Reduction</span></div>
+        <div class="feed-sub"><span class="feed-reason">Why: your topic — Veterans · Now public law</span></div>
+      </div>
+      <span class="feed-status status-enacted">P.L. 119-61</span>
+    </a>
+    <a class="feed-row" onclick="nav('bill')">
+      <span class="feed-rank">05</span>
+      <div class="feed-body">
+        <div class="feed-line"><span class="feed-id">HJRES 27</span><span class="feed-sep">·</span><span class="feed-title">CRA Resolution on HUD Rental Assistance Rule</span></div>
+        <div class="feed-sub"><span class="feed-reason">Why: your topic — Housing</span></div>
+      </div>
+      <span class="feed-status status-active">House Vote Scheduled</span>
+    </a>
+    <a class="feed-row" onclick="nav('county')">
+      <span class="feed-rank">06</span>
+      <div class="feed-body">
+        <div class="feed-line"><span class="feed-id">Loudoun BOS</span><span class="feed-sep">·</span><span class="feed-title">Data-center siting standards on Tuesday's agenda</span></div>
+        <div class="feed-sub"><span class="feed-reason">Why: your county · next meeting Jul 14 · live record</span></div>
+      </div>
+      <span class="feed-status status-active">Meets Jul 14</span>
+    </a>
+    <a class="feed-row" onclick="nav('money')">
+      <span class="feed-rank">07</span>
+      <div class="feed-body">
+        <div class="feed-line"><span class="feed-id">Money</span><span class="feed-sep">·</span><span class="feed-title">Data centers now pay more Loudoun tax than every household combined</span></div>
+        <div class="feed-sub"><span class="feed-reason">Why: follows the dollar behind items 01 and 06</span></div>
+      </div>
+      <span class="feed-status status-muted">Explainer</span>
+    </a>
+    <button class="feed-more">Show more →</button>
+  </section>
+
+  <div class="folio"><a href="#" onclick="nav('county');return false">The record continues on My County →</a></div>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ── ONBOARDING                                     ── -->
+<!-- ═══════════════════════════════════════════════════ -->
+<main class="page" id="route-onboarding">
+  <a class="back-link" href="#" onclick="nav('home');return false">← Back to Front Page</a>
+
+  <div class="onboard-shell">
+    <div class="onboard-step-tag">Step 1 of 2 · Where you live</div>
+    <h2 class="onboard-title">Set your delegation</h2>
+    <p class="onboard-deck">
+      A zip code is all we need to find your senators and house representative.
+      Nothing is stored on our servers — preferences live in your browser only.
+    </p>
+
+    <div class="onboard-zip-row">
+      <input class="onboard-zip-input" type="text" placeholder="23220" maxlength="5" value="23220" />
+      <button class="btn-primary onboard-zip-btn">Look up →</button>
+    </div>
+
+    <div class="onboard-preview">
+      <div class="onboard-preview-label">Your Representatives · Virginia · District 7</div>
+      <div class="onboard-rep">
+        <div class="rep-portrait small">TK</div>
+        <div>
+          <div class="onboard-rep-name">Tim Kaine</div>
+          <div class="onboard-rep-meta">U.S. Senate · Democratic · 2024–2030</div>
+        </div>
+      </div>
+      <div class="onboard-rep">
+        <div class="rep-portrait small">MW</div>
+        <div>
+          <div class="onboard-rep-name">Mark Warner</div>
+          <div class="onboard-rep-meta">U.S. Senate · Democratic · 2020–2026</div>
+        </div>
+      </div>
+      <div class="onboard-rep">
+        <div class="rep-portrait small">AS</div>
+        <div>
+          <div class="onboard-rep-name">Abigail Spanberger</div>
+          <div class="onboard-rep-meta">U.S. House · VA-7 · Democratic · 2024–2026</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="onboard-rule" />
+
+    <div class="onboard-step-tag">Step 2 of 2 · Issues that matter</div>
+    <h2 class="onboard-title">Build your feed</h2>
+    <p class="onboard-deck">
+      Pick the topics that matter to you. We'll surface legislation that touches them.
+    </p>
+
+    <div class="interests-grid">
+      <button class="interest-card selected"><span class="interest-rule"></span>Healthcare</button>
+      <button class="interest-card selected"><span class="interest-rule"></span>Housing</button>
+      <button class="interest-card"><span class="interest-rule"></span>Climate</button>
+      <button class="interest-card"><span class="interest-rule"></span>Education</button>
+      <button class="interest-card selected"><span class="interest-rule"></span>Veterans</button>
+      <button class="interest-card"><span class="interest-rule"></span>Economy</button>
+      <button class="interest-card"><span class="interest-rule"></span>Immigration</button>
+      <button class="interest-card"><span class="interest-rule"></span>Gun Policy</button>
+      <button class="interest-card"><span class="interest-rule"></span>Foreign Policy</button>
+      <button class="interest-card"><span class="interest-rule"></span>Criminal Justice</button>
+      <button class="interest-card"><span class="interest-rule"></span>Small Business</button>
+      <button class="interest-card"><span class="interest-rule"></span>Agriculture</button>
+    </div>
+
+    <div class="onboard-actions">
+      <button class="btn-primary" onclick="nav('home')">Build my feed →</button>
+      <button class="btn-ghost">Skip for now</button>
+    </div>
+  </div>
+</main>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ── BILL DETAIL                                    ── -->
+<!-- ═══════════════════════════════════════════════════ -->
+<main class="page" id="route-bill">
+  <a class="back-link" href="#" onclick="nav('home');return false">← Back to Front Page</a>
+
+  <header class="bill-header">
+    <div class="bill-id-row">
+      <span class="bill-id">H.R. 4838</span>
+      <span class="bill-cong">119th Congress · 2025–2026</span>
+      <span class="lede-stage stage-passed">Passed House</span>
+    </div>
+    <h1 class="bill-title">Medicaid Eligibility Streamlining Act</h1>
+    <p class="bill-deck">
+      Modernizes how states determine Medicaid eligibility by replacing
+      quarterly income reviews with a single annual review, and requires
+      states to accept federal verification of citizenship status.
+    </p>
+    <div class="bill-meta-row">
+      <span>Introduced May 3, 2026</span><span class="dot">·</span>
+      <span>1 sponsor · 41 cosponsors</span><span class="dot">·</span>
+      <span>Referred to Energy &amp; Commerce</span>
+    </div>
+    <div class="lede-actions">
+      <button class="btn-primary">Notify me when this moves</button>
+      <button class="btn-ghost">✉ Write to my reps</button>
+      <button class="btn-ghost">Flag inaccuracy</button>
+    </div>
+  </header>
+
+  <!-- Plain English -->
+  <section class="bill-section">
+    <div class="bill-section-label">Plain English Explanation</div>
+    <div class="bill-explanation">
+      <p><strong>What it does.</strong> Today, states recheck Medicaid eligibility every three months. This bill makes it once a year, and forces states to trust the federal government's verification that someone is a citizen instead of requiring extra paperwork from the enrollee.</p>
+      <p><strong>Who it affects.</strong> An estimated 14 million Medicaid enrollees who lose coverage temporarily each year due to paperwork churn. State Medicaid offices in 36 states that currently do quarterly reviews. Federal CMS, which would absorb verification costs.</p>
+      <p><strong>Costs, trade-offs, and obligations.</strong> Annual reviews cost states less to administer but the federal share of Medicaid spending rises by an estimated $4.2B over 10 years (CBO). States lose discretion to verify citizenship independently. People who become ineligible mid-year stay enrolled until annual review — a trade-off the sponsor calls "fewer paperwork dropoffs" and critics call "improper payments."</p>
+      <p><strong>What's next.</strong> Now in the Senate, where Finance Committee chair has not yet scheduled a hearing. A companion bill (S. 2104) has 12 cosponsors.</p>
+    </div>
+  </section>
+
+  <!-- Sponsors -->
+  <section class="bill-section">
+    <div class="bill-section-label">Sponsors</div>
+    <div class="sponsor-row">
+      <span class="sponsor-role">Sponsor</span>
+      <div class="sponsor-chips">
+        <button class="sponsor-chip party-d" onclick="nav('member')">
+          <span class="sponsor-party">D</span><span>Castor, Kathy (FL-14)</span>
+        </button>
+      </div>
+    </div>
+    <div class="sponsor-row">
+      <span class="sponsor-role">Cosponsors · 41</span>
+      <div class="sponsor-chips">
+        <button class="sponsor-chip party-d"><span class="sponsor-party">D</span>Jayapal, Pramila (WA-7)</button>
+        <button class="sponsor-chip party-d"><span class="sponsor-party">D</span>Schakowsky, Jan (IL-9)</button>
+        <button class="sponsor-chip party-d"><span class="sponsor-party">D</span>Pocan, Mark (WI-2)</button>
+        <button class="sponsor-chip party-d"><span class="sponsor-party">D</span>DeLauro, Rosa (CT-3)</button>
+        <button class="sponsor-chip party-d"><span class="sponsor-party">D</span>Pallone, Frank (NJ-6)</button>
+        <button class="sponsor-chip party-i"><span class="sponsor-party">I</span>Khanna, Ro (CA-17)</button>
+        <button class="sponsor-chip party-d"><span class="sponsor-party">D</span>Lee, Barbara (CA-12)</button>
+        <button class="sponsor-chip party-d"><span class="sponsor-party">D</span>Eshoo, Anna (CA-16)</button>
+        <button class="sponsor-chip party-d"><span class="sponsor-party">D</span>Tlaib, Rashida (MI-12)</button>
+        <button class="sponsor-chip party-d"><span class="sponsor-party">D</span>Bowman, Jamaal (NY-16)</button>
+        <button class="sponsor-show-more">+ 31 more cosponsors</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Timeline -->
+  <section class="bill-section">
+    <div class="bill-section-label">Legislative Timeline</div>
+    <ol class="timeline">
+      <li class="tl-event tl-done">
+        <div class="tl-date">May 3, 2026</div>
+        <div class="tl-body">
+          <div class="tl-title">Introduced in the House</div>
+          <div class="tl-detail">Referred to the Committee on Energy and Commerce, Subcommittee on Health</div>
+        </div>
+      </li>
+      <li class="tl-event tl-done">
+        <div class="tl-date">May 19, 2026</div>
+        <div class="tl-body">
+          <div class="tl-title">Subcommittee Hearing</div>
+          <div class="tl-detail">3 witnesses heard; markup scheduled.</div>
+        </div>
+      </li>
+      <li class="tl-event tl-done">
+        <div class="tl-date">June 8, 2026</div>
+        <div class="tl-body">
+          <div class="tl-title">Reported by Committee</div>
+          <div class="tl-detail">Voted out 28–22 along party lines.</div>
+        </div>
+      </li>
+      <li class="tl-event tl-current">
+        <div class="tl-date">June 17, 2026 · Today</div>
+        <div class="tl-body">
+          <div class="tl-title">Passed House</div>
+          <div class="tl-detail">218–209. See vote breakdown below.</div>
+        </div>
+      </li>
+      <li class="tl-event tl-future">
+        <div class="tl-date">Pending</div>
+        <div class="tl-body">
+          <div class="tl-title">Senate Action</div>
+          <div class="tl-detail">Senate Finance Committee has not yet scheduled.</div>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- Recorded votes -->
+  <section class="bill-section">
+    <div class="bill-section-label">Recorded Votes</div>
+    <div class="vote-grid">
+      <div class="vote-chamber">
+        <div class="vote-head">
+          <div class="vote-chamber-name">House</div>
+          <div class="vote-tally"><span class="tally-yea">218 Yea</span> · <span class="tally-nay">209 Nay</span> · <span class="tally-other">7 NV</span></div>
+        </div>
+        <div class="vote-grid-dots" id="vote-house"></div>
+        <div class="vote-callout">
+          Your reps voted: <strong>Spanberger (D-VA-7)</strong> — Yea
+        </div>
+      </div>
+      <div class="vote-chamber">
+        <div class="vote-head">
+          <div class="vote-chamber-name">Senate</div>
+          <div class="vote-tally"><em>Not yet voted</em></div>
+        </div>
+        <div class="vote-grid-dots vote-empty" id="vote-senate"></div>
+        <div class="vote-callout muted">
+          Awaiting Senate action.
+        </div>
+      </div>
+    </div>
+    <div class="vote-legend">
+      <div class="legend-item"><div class="legend-dot dot-yea"></div>Yea</div>
+      <div class="legend-item"><div class="legend-dot dot-nay"></div>Nay</div>
+      <div class="legend-item"><div class="legend-dot dot-present"></div>Present / Other</div>
+      <div class="legend-item"><div class="legend-dot dot-absent"></div>Not Voting</div>
+    </div>
+  </section>
+
+  <!-- Connections -->
+  <section class="bill-section">
+    <div class="bill-section-label">Connections</div>
+    <div class="conn-row">
+      <div class="conn-tag">Amends</div>
+      <div class="conn-detail">Section 1902 of the Social Security Act (Medicaid State Plans)</div>
+    </div>
+    <div class="conn-row">
+      <div class="conn-tag">Companion</div>
+      <div class="conn-detail">
+        <a onclick="nav('bill')">S. 2104</a> — Identical Senate version, 12 cosponsors
+      </div>
+    </div>
+    <div class="conn-row">
+      <div class="conn-tag">Related</div>
+      <div class="conn-detail">
+        <a onclick="nav('bill')">H.R. 3201</a> — Medicaid IT Modernization Grants<br/>
+        <a onclick="nav('bill')">H.R. 4501</a> — Medicaid Renewal Notification Standards
+      </div>
+    </div>
+  </section>
+
+  <!-- Full Text Toggle -->
+  <section class="bill-section">
+    <button class="full-text-toggle">
+      <span class="bill-section-label" style="margin:0">Full Text</span>
+      <span class="chevron">▾</span>
+    </button>
+    <div class="full-text-preview">
+      Show the official engrossed bill text from GovInfo. Three pages, redlines preserved.
+    </div>
+  </section>
+</main>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ── MEMBER PROFILE                                 ══ -->
+<!-- ═══════════════════════════════════════════════════ -->
+<main class="page" id="route-member">
+  <a class="back-link" href="#" onclick="nav('home');return false">← Back to Front Page</a>
+
+  <div class="member-hero">
+    <div class="member-portrait">
+      <div class="portrait-photo">TK</div>
+    </div>
+    <div class="member-id">
+      <div class="member-party-tag">Democratic · U.S. Senate · Virginia</div>
+      <h1 class="member-name">Timothy M. Kaine</h1>
+      <div class="member-meta">2013–present · Born 1958 · Junior senator from Virginia</div>
+      <div class="member-status">
+        <span class="status-dot status-active-light"></span>
+        Currently serving · Term ends January 3, 2030
+      </div>
+      <div class="member-quick-actions">
+        <button class="btn-ghost">✉ Write to Sen. Kaine</button>
+        <button class="btn-ghost">Voting record →</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="member-stats">
+    <div class="stat-block">
+      <div class="stat-num">847</div>
+      <div class="stat-label">Bills Sponsored</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num">3,142</div>
+      <div class="stat-label">Cosponsored</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num">94<span class="stat-unit">%</span></div>
+      <div class="stat-label">Floor Attendance</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num">28</div>
+      <div class="stat-label">Now Public Law</div>
+    </div>
+  </section>
+
+  <section class="bill-section">
+    <div class="bill-section-label">Legislation by Topic</div>
+    <div class="policy-chart">
+      <div class="policy-bar"><span class="policy-label">Foreign Policy</span><span class="policy-track"><span class="policy-fill" style="width:82%"></span></span><span class="policy-num">82</span></div>
+      <div class="policy-bar"><span class="policy-label">Veterans</span><span class="policy-track"><span class="policy-fill" style="width:68%"></span></span><span class="policy-num">68</span></div>
+      <div class="policy-bar"><span class="policy-label">Healthcare</span><span class="policy-track"><span class="policy-fill" style="width:54%"></span></span><span class="policy-num">54</span></div>
+      <div class="policy-bar"><span class="policy-label">Education</span><span class="policy-track"><span class="policy-fill" style="width:41%"></span></span><span class="policy-num">41</span></div>
+      <div class="policy-bar"><span class="policy-label">Labor &amp; Employment</span><span class="policy-track"><span class="policy-fill" style="width:36%"></span></span><span class="policy-num">36</span></div>
+      <div class="policy-bar"><span class="policy-label">Housing</span><span class="policy-track"><span class="policy-fill" style="width:22%"></span></span><span class="policy-num">22</span></div>
+    </div>
+    <p class="policy-disclaimer">Based on the 250 most recent sponsored bills. Does not include cosponsored legislation.</p>
+  </section>
+
+  <section class="bill-section">
+    <div class="bill-section-label">Recent Sponsored Bills</div>
+    <a class="member-bill-row" onclick="nav('bill')">
+      <div>
+        <div class="mb-id">S. 1402</div>
+        <div class="mb-title">Interstate Pharmacy Practice Act</div>
+        <div class="mb-meta">Introduced 14 days ago · Referred to Committee on Health, Education, Labor, and Pensions</div>
+      </div>
+      <span class="feed-status status-active">In Committee</span>
+    </a>
+    <a class="member-bill-row" onclick="nav('bill')">
+      <div>
+        <div class="mb-id">S. 1188</div>
+        <div class="mb-title">Veterans Mental Health Continuity Act</div>
+        <div class="mb-meta">Introduced 38 days ago · Reported by Committee</div>
+      </div>
+      <span class="feed-status status-passed">Reported</span>
+    </a>
+    <a class="member-bill-row" onclick="nav('bill')">
+      <div>
+        <div class="mb-id">S. 904</div>
+        <div class="mb-title">Foreign Assistance Transparency Act of 2026</div>
+        <div class="mb-meta">Introduced 72 days ago · Cleared Senate, awaiting House action</div>
+      </div>
+      <span class="feed-status status-passed">Passed Senate</span>
+    </a>
+    <a class="member-bill-row" onclick="nav('bill')">
+      <div>
+        <div class="mb-id">S. 661</div>
+        <div class="mb-title">Rural Hospital Stabilization Grants</div>
+        <div class="mb-meta">Introduced 104 days ago · Cleared HELP, on calendar</div>
+      </div>
+      <span class="feed-status status-active">On Calendar</span>
+    </a>
+  </section>
+</main>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ── CORRESPONDENCE (My Letters)                    ── -->
+<!-- ═══════════════════════════════════════════════════ -->
+<main class="page" id="route-correspondence">
+  <a class="back-link" href="#" onclick="nav('home');return false">← Back to Front Page</a>
+
+  <div class="desk-tabs">
+    <a class="on" href="#" onclick="return false">My Letters</a>
+    <a href="#" onclick="nav('notifications');return false">My Notifications</a>
+  </div>
+
+  <header class="page-header">
+    <div class="page-kicker">My Desk · Letters</div>
+    <h1 class="page-title">Civic Correspondence</h1>
+    <p class="page-deck">
+      Every letter you've sent, every reply you've received. Stored locally, exportable, deletable.
+    </p>
+    <div class="corr-summary">
+      <div class="corr-stat"><strong>8</strong> letters sent</div>
+      <div class="corr-stat"><strong>3</strong> replies received</div>
+      <div class="corr-stat"><strong>2</strong> on 3 bills</div>
+    </div>
+  </header>
+
+  <section class="bill-section">
+    <article class="letter-card replied">
+      <div class="letter-meta">
+        <span class="letter-date">June 12, 2026</span>
+        <span class="letter-sep">·</span>
+        <span class="letter-to">To: <strong>Sen. Mark Warner</strong></span>
+        <span class="letter-sep">·</span>
+        <span class="letter-bill">Re: H.R. 4838</span>
+        <span class="letter-status replied">Replied · 2 days later</span>
+      </div>
+      <h3 class="letter-subject">Concerns about the annual-review provision in H.R. 4838</h3>
+      <p class="letter-body">
+        Senator Warner — As a Virginia voter and constituent in district 7, I am writing
+        to ask you to support H.R. 4838 with the amendment offered in committee that
+        preserves states' ability to verify citizenship independently…
+      </p>
+      <div class="letter-reply">
+        <div class="reply-meta">Reply received June 14 — preview:</div>
+        <p class="reply-preview">
+          "Thank you for writing. I share your interest in modernizing Medicaid administration
+          while ensuring program integrity. I plan to vote in favor of H.R. 4838 when it
+          reaches the Senate floor and will work to…"
+        </p>
+      </div>
+      <div class="letter-actions">
+        <button class="btn-ghost">View full reply</button>
+        <button class="btn-ghost">Resend follow-up</button>
+      </div>
+    </article>
+
+    <article class="letter-card">
+      <div class="letter-meta">
+        <span class="letter-date">May 28, 2026</span>
+        <span class="letter-sep">·</span>
+        <span class="letter-to">To: <strong>Rep. Abigail Spanberger</strong></span>
+        <span class="letter-sep">·</span>
+        <span class="letter-bill">Re: HJRES 27</span>
+        <span class="letter-status awaiting">Awaiting reply</span>
+      </div>
+      <h3 class="letter-subject">Please oppose the CRA resolution on HUD rental assistance</h3>
+      <p class="letter-body">
+        Representative Spanberger — The Congressional Review Act resolution scheduled
+        for floor action this week would roll back HUD's recent rule guaranteeing
+        rental assistance portability across state lines…
+      </p>
+      <div class="letter-actions">
+        <button class="btn-ghost">View full letter</button>
+        <button class="btn-ghost">Send follow-up</button>
+      </div>
+    </article>
+
+    <article class="letter-card">
+      <div class="letter-meta">
+        <span class="letter-date">May 14, 2026</span>
+        <span class="letter-sep">·</span>
+        <span class="letter-to">To: <strong>Sen. Tim Kaine</strong></span>
+        <span class="letter-sep">·</span>
+        <span class="letter-bill">Re: S. 1188</span>
+        <span class="letter-status awaiting">Awaiting reply</span>
+      </div>
+      <h3 class="letter-subject">Thank you for sponsoring the Veterans Mental Health Continuity Act</h3>
+      <p class="letter-body">
+        Senator Kaine — Writing to thank you for introducing S. 1188. My brother served
+        two tours in Afghanistan and the continuity-of-care problem you describe is exactly
+        what he experienced after…
+      </p>
+      <div class="letter-actions">
+        <button class="btn-ghost">View full letter</button>
+      </div>
+    </article>
+  </section>
+</main>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ── MY COUNTY (live via Foundry)                   ── -->
+<!-- ═══════════════════════════════════════════════════ -->
+<main class="page" id="route-county">
+  <a class="back-link" href="#" onclick="nav('home');return false">← Back to Front Page</a>
+
+  <header class="page-header">
+    <div class="page-kicker">My County · Loudoun, Virginia</div>
+    <h1 class="page-title">The Board of Supervisors, On the Record</h1>
+    <div class="byline"><span class="by-rule">From the record</span> — extracted by the
+      Foundry pipeline from the county's own documents; certification by cross-source
+      reconciliation against the clerk's minutes</div>
+    <p class="page-deck">
+      Every meeting, vote, and dissent — read from the county's own documents and
+      cross-checked against the clerk's minutes by the Foundry pipeline. Records that
+      two sources confirm say <em>certified</em>; everything else says so too.
+    </p>
+  </header>
+
+  <div class="lv-wrap">
+    <div class="lv-head">
+      <span class="lv-dot"></span>
+      <span>Live — actual records, not mock copy</span>
+      <span id="lv-status" style="opacity:0.7">connecting…</span>
+      <a href="/foundry" style="margin-left:auto; color:inherit; text-decoration:underline">full lab console →</a>
+    </div>
+    <div class="lv-body" id="lv-county">
+      <div class="lv-skel">
+        <div class="slug" style="width:38%"></div>
+        <div class="slug" style="width:86%"></div>
+        <div class="slug" style="width:74%"></div>
+        <div class="slug" style="width:81%"></div>
+        <div class="slug" style="width:52%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span>How to read the badges</span></div>
+  <section class="bill-section">
+    <p class="poll-summary" style="margin-top:0">
+      <span class="lvb lvb-ok">certified</span> two independent official sources agree ·
+      <span class="lvb lvb-warn">⚠ uncertified</span> read from one source, shown but never published as fact ·
+      <span class="lvb lvb-der">machine-derived</span> plain-English aid, never part of the record.
+    </p>
+  </section>
+
+  <div class="folio"><a href="#" onclick="nav('money');return false">The record continues in Money →</a></div>
+</main>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ── MONEY                                          ── -->
+<!-- ═══════════════════════════════════════════════════ -->
+<main class="page" id="route-money">
+  <a class="back-link" href="#" onclick="nav('home');return false">← Back to Front Page</a>
+
+  <header class="page-header">
+    <div class="page-kicker">Follow the Money</div>
+    <h1 class="page-title">Two Ledgers: The Public's Money, and the Money Around Politicians</h1>
+    <div class="byline"><span class="by-rule">Figures desk</span> — public-money flows from
+      adopted budgets; political money from FEC and VPAP disclosures; alignment analysis
+      machine-derived and badged</div>
+    <p class="page-deck">
+      Read the flow left to right — where money comes from, the budget it pools into,
+      what it buys. Then the other ledger: who funds the people voting on it.
+    </p>
+  </header>
+
+  <div class="section-divider"><span>① Public money — where your dollar goes (illustrative)</span></div>
+  <section class="bill-section">
+    <div class="lv-sankey">
+      <svg viewBox="0 0 1100 380" width="100%" style="min-width:820px" font-family="IBM Plex Mono, monospace">
+        <defs>
+          <pattern id="hatch2" width="5" height="5" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+            <rect width="5" height="5" fill="#0e0e0e" opacity="0.2"/>
+            <line x1="0" y1="0" x2="0" y2="5" stroke="#f5f0e8" stroke-width="1.6"/>
+          </pattern>
+        </defs>
+        <rect x="10" y="30"  width="14" height="150" fill="#8b1a1a"/>
+        <rect x="10" y="200" width="14" height="60"  fill="#4a5c1a"/>
+        <rect x="10" y="280" width="14" height="30"  fill="#1a3a5c"/>
+        <text x="32" y="60"  font-size="13" font-weight="bold">Local taxes &amp; fees — $3.34B</text>
+        <text x="32" y="78"  font-size="11" fill="#6b6355">property $2.1B · data centers $896M · other $344M</text>
+        <text x="32" y="228" font-size="13" font-weight="bold">State of Virginia — $498M</text>
+        <text x="32" y="303" font-size="13" font-weight="bold">Federal — $221M</text>
+        <path d="M24,105 C250,105 250,150 480,150 L480,230 C250,230 250,180 24,180 Z" fill="#8b1a1a" opacity="0.22"/>
+        <path d="M24,200 C250,200 250,235 480,235 L480,262 C250,262 250,260 24,260 Z" fill="#4a5c1a" opacity="0.30"/>
+        <path d="M24,280 C250,280 250,268 480,268 L480,282 C250,282 250,310 24,310 Z" fill="#1a3a5c" opacity="0.32"/>
+        <rect x="480" y="140" width="16" height="150" fill="#0e0e0e"/>
+        <text x="470" y="128" font-size="13" font-weight="bold">Loudoun County budget — $4.06B</text>
+        <path d="M496,145 C700,145 700,45  920,45  L920,120 C700,120 700,210 496,210 Z" fill="url(#hatch2)"/>
+        <path d="M496,212 C700,212 700,150 920,150 L920,190 C700,190 700,244 496,244 Z" fill="url(#hatch2)"/>
+        <path d="M496,246 C700,246 700,212 920,212 L920,240 C700,240 700,266 496,266 Z" fill="url(#hatch2)"/>
+        <path d="M496,268 C700,268 700,258 920,258 L920,280 C700,280 700,282 496,282 Z" fill="url(#hatch2)"/>
+        <path d="M496,284 C700,284 700,296 920,296 L920,340 C700,340 700,290 496,290 Z" fill="url(#hatch2)"/>
+        <rect x="920" y="40"  width="12" height="82"  fill="#0e0e0e"/>
+        <rect x="920" y="148" width="12" height="44"  fill="#0e0e0e"/>
+        <rect x="920" y="210" width="12" height="32"  fill="#0e0e0e"/>
+        <rect x="920" y="256" width="12" height="26"  fill="#0e0e0e"/>
+        <rect x="920" y="294" width="12" height="48"  fill="#0e0e0e"/>
+        <text x="940" y="70"  font-size="13" font-weight="bold">Schools — $2.47B (61%)</text>
+        <text x="940" y="172" font-size="13" font-weight="bold">Public safety — $486M</text>
+        <text x="940" y="232" font-size="13" font-weight="bold">Roads &amp; transit — $312M</text>
+        <text x="940" y="274" font-size="13" font-weight="bold">Health &amp; welfare — $268M</text>
+        <text x="940" y="318" font-size="13" font-weight="bold">Everything else — $524M</text>
+      </svg>
+      <div class="fig-cap"><b>FIG. 1</b> — How a dollar reaches Loudoun services, FY 2026.
+        Sources: county adopted budget; state &amp; federal shares per CAFR. Illustrative.</div>
+    </div>
+    <p class="poll-summary">In the real build every ribbon links: schools → the budget-adoption vote → who voted how → the certified record. Money and votes are one ledger.</p>
+  </section>
+
+  <div class="section-divider"><span>② Political money — who funds your reps (illustrative)</span></div>
+  <section class="bill-section">
+    <div class="bill-section-label">Top sectors · your U.S. House rep · 2026 cycle</div>
+    <div class="policy-chart">
+      <div class="policy-bar"><span class="policy-label">Technology</span><span class="policy-track"><span class="policy-fill" style="width:88%"></span></span><span class="policy-num">$412K</span></div>
+      <div class="policy-bar"><span class="policy-label">Legal</span><span class="policy-track"><span class="policy-fill" style="width:54%"></span></span><span class="policy-num">$251K</span></div>
+      <div class="policy-bar"><span class="policy-label">Real estate</span><span class="policy-track"><span class="policy-fill" style="width:41%"></span></span><span class="policy-num">$194K</span></div>
+      <div class="policy-bar"><span class="policy-label">Health</span><span class="policy-track"><span class="policy-fill" style="width:33%"></span></span><span class="policy-num">$155K</span></div>
+      <div class="fig-cap"><b>FIG. 2</b> — Itemized receipts by donor sector, 2026 cycle
+        through Q2. Source: FEC filings. Illustrative.</div>
+    </div>
+    <p class="policy-disclaimer">FEC filings. Vote-alignment analysis is machine-derived: of 7 tech-regulation roll calls this cycle, your rep voted the sector's stated position on 5 — and against it twice. A receipt, not an accusation.</p>
+  </section>
+  <section class="bill-section">
+    <div class="bill-section-label">County level · VPAP filings</div>
+    <p class="poll-summary" style="margin-top:0">
+      Virginia allows unlimited local campaign donations. Data-center developers and their
+      attorneys gave <strong>$184K</strong> across the nine supervisors' last campaigns;
+      the board has voted on 23 data-center land-use items since. Every one of those votes
+      is on the <a href="#" onclick="nav('county');return false">My County</a> page.
+    </p>
+  </section>
+
+  <div class="section-divider"><span>③ Lobbying — who's paid to influence it</span></div>
+  <section class="bill-section">
+    <p class="poll-summary" style="margin-top:0">
+      The third ledger: registered lobbying disclosures — which firms are paid, by whom,
+      to work which bills. Cross-referenced against the votes and money above.
+    </p>
+    <div class="lede-actions" style="margin-top:0.8rem">
+      <button class="btn-primary" onclick="nav('lobbying')">Open the lobbying ledger →</button>
+    </div>
+  </section>
+
+  <div class="folio"><a href="#" onclick="nav('elections');return false">The record continues in Elections →</a></div>
+</main>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ── ELECTIONS                                      ── -->
+<!-- ═══════════════════════════════════════════════════ -->
+<main class="page" id="route-elections">
+  <a class="back-link" href="#" onclick="nav('home');return false">← Back to Front Page</a>
+
+  <header class="page-header">
+    <div class="page-kicker">Elections</div>
+    <h1 class="page-title">When and Where Virginia Votes</h1>
+    <p class="page-deck">
+      Federal, state, and local. Countdown, registration deadlines, voter info,
+      and ballotpedia links. Source: Google Civic API + curated by NosPopuli.
+    </p>
+  </header>
+
+  <div class="section-divider"><span>Your Ballots</span></div>
+
+  <section class="elections-list">
+    <article class="election-card urgent" onclick="nav('election-detail')">
+      <div class="ec-countdown">
+        <div class="ec-count-num">48</div>
+        <div class="ec-count-unit">days</div>
+      </div>
+      <div class="ec-body">
+        <div class="ec-tag">Primary · State + Federal</div>
+        <h3 class="ec-name">Virginia Primary Election</h3>
+        <div class="ec-date">Tuesday, August 4, 2026</div>
+        <div class="ec-detail">
+          On your ballot: U.S. Senate primary (D), House of Delegates (HD-68), County Sheriff.
+        </div>
+        <div class="ec-deadlines">
+          <span class="deadline-tag">Register by July 12</span>
+          <span class="deadline-tag">Absentee request by July 25</span>
+        </div>
+      </div>
+      <div class="ec-actions">
+        <button class="btn-ghost">Ballot info →</button>
+        <button class="btn-ghost">Track</button>
+      </div>
+    </article>
+
+    <article class="election-card near" onclick="nav('election-detail')">
+      <div class="ec-countdown">
+        <div class="ec-count-num">141</div>
+        <div class="ec-count-unit">days</div>
+      </div>
+      <div class="ec-body">
+        <div class="ec-tag">General · Federal + Local</div>
+        <h3 class="ec-name">Virginia General Election</h3>
+        <div class="ec-date">Tuesday, November 3, 2026</div>
+        <div class="ec-detail">
+          On your ballot: Governor, Lt. Governor, U.S. House district 7, 4 statewide ballot measures.
+        </div>
+        <div class="ec-deadlines">
+          <span class="deadline-tag">Register by October 12</span>
+        </div>
+      </div>
+      <div class="ec-actions">
+        <button class="btn-ghost">Ballot info →</button>
+        <button class="btn-ghost">Track</button>
+      </div>
+    </article>
+  </section>
+
+  <div class="section-divider"><span>Other Elections of Interest</span></div>
+
+  <section class="elections-list">
+    <article class="election-card far">
+      <div class="ec-countdown">
+        <div class="ec-count-num">505</div>
+        <div class="ec-count-unit">days</div>
+      </div>
+      <div class="ec-body">
+        <div class="ec-tag">National</div>
+        <h3 class="ec-name">Presidential General Election</h3>
+        <div class="ec-date">Tuesday, November 7, 2028</div>
+        <div class="ec-detail">President &amp; Vice President of the United States.</div>
+      </div>
+    </article>
+    <article class="election-card far">
+      <div class="ec-countdown">
+        <div class="ec-count-num">202</div>
+        <div class="ec-count-unit">days</div>
+      </div>
+      <div class="ec-body">
+        <div class="ec-tag">Special · NJ</div>
+        <h3 class="ec-name">New Jersey 6th District Special Election</h3>
+        <div class="ec-date">Tuesday, January 12, 2027</div>
+        <div class="ec-detail">U.S. House special to fill seat vacated by death of Rep. Pallone.</div>
+      </div>
+    </article>
+  </section>
+
+  <div class="section-divider"><span>Recent Results</span></div>
+
+  <section class="elections-list">
+    <article class="election-card past">
+      <div class="ec-countdown">
+        <div class="ec-count-num past">14</div>
+        <div class="ec-count-unit">days ago</div>
+      </div>
+      <div class="ec-body">
+        <div class="ec-tag">Special · OH</div>
+        <h3 class="ec-name">Ohio 11th District Special Election</h3>
+        <div class="ec-date">Tuesday, June 3, 2026</div>
+        <div class="ec-detail">Result: Joyce Beatty Jr. (D) elected with 64.2%.</div>
+      </div>
+    </article>
+  </section>
+</main>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ── ELECTION DETAIL                                ── -->
+<!-- ═══════════════════════════════════════════════════ -->
+<main class="page" id="route-election-detail">
+  <a class="back-link" href="#" onclick="nav('elections');return false">← Back to Elections</a>
+
+  <header class="bill-header">
+    <div class="bill-id-row">
+      <span class="bill-id">VA · Primary</span>
+      <span class="bill-cong">Stage: Primary</span>
+      <span class="lede-stage stage-passed urgent">In 48 days</span>
+    </div>
+    <h1 class="bill-title">Virginia Primary Election</h1>
+    <p class="bill-deck">
+      Polls open 6:00 AM to 7:00 PM. Three contests on your ballot:
+      U.S. Senate primary (D), House of Delegates HD-68, County Sheriff.
+    </p>
+    <div class="bill-meta-row">
+      <span>Tuesday, August 4, 2026</span><span class="dot">·</span>
+      <span>Register by July 12</span><span class="dot">·</span>
+      <span>Absentee request by July 25</span>
+    </div>
+    <div class="lede-actions">
+      <button class="btn-primary">Track this election</button>
+      <button class="btn-ghost">Find my polling place →</button>
+      <button class="btn-ghost">Request absentee ballot</button>
+    </div>
+  </header>
+
+  <section class="bill-section">
+    <div class="bill-section-label">Polling Snapshot · U.S. Senate (D)</div>
+    <div class="poll-card">
+      <div class="poll-leader">
+        <span class="poll-label">Aggregate leader</span>
+        <span class="poll-leader-name">Mark Warner</span>
+        <span class="poll-margin">+11.4</span>
+        <span class="poll-leader-sub">avg. of 6 polls · last 30 days</span>
+      </div>
+      <div class="poll-rows">
+        <div class="poll-row"><span class="poll-cand">Warner (i)</span><div class="poll-bar"><div class="poll-fill party-d" style="width:48%"></div></div><span class="poll-pct">48.2%</span></div>
+        <div class="poll-row"><span class="poll-cand">Connolly</span><div class="poll-bar"><div class="poll-fill party-d" style="width:36%"></div></div><span class="poll-pct">36.8%</span></div>
+        <div class="poll-row"><span class="poll-cand">Undecided</span><div class="poll-bar"><div class="poll-fill" style="width:15%;background:var(--rule)"></div></div><span class="poll-pct">15.0%</span></div>
+      </div>
+      <p class="poll-summary">Warner leads by 11 points in the rolling aggregate. Connolly has narrowed the gap by 3 points over the last 14 days; race remains competitive in NoVA suburbs.</p>
+    </div>
+
+    <div class="poll-sources-head">
+      <span class="poll-sources-title">Recent polls · 6 sources</span>
+      <span class="poll-sources-note">±MoE shown where reported · methodology varies</span>
+    </div>
+    <div class="poll-table">
+      <div class="poll-thead">
+        <span>Pollster</span><span>Released</span><span>Sample</span><span>Method</span><span>Warner</span><span>Connolly</span><span>Margin</span>
+      </div>
+      <div class="poll-trow">
+        <span class="poll-source"><span class="poll-grade grade-a">A</span>NYT / Siena</span>
+        <span>Jun 14</span><span>812 LV · ±3.4</span><span>Live phone</span>
+        <span class="poll-num">49</span><span class="poll-num">37</span><span class="poll-mar party-d">D +12</span>
+      </div>
+      <div class="poll-trow">
+        <span class="poll-source"><span class="poll-grade grade-a">A−</span>Marist</span>
+        <span>Jun 11</span><span>914 RV · ±3.2</span><span>Live phone</span>
+        <span class="poll-num">48</span><span class="poll-num">38</span><span class="poll-mar party-d">D +10</span>
+      </div>
+      <div class="poll-trow">
+        <span class="poll-source"><span class="poll-grade grade-b">B+</span>Emerson</span>
+        <span>Jun 9</span><span>650 LV · ±3.8</span><span>IVR + online</span>
+        <span class="poll-num">47</span><span class="poll-num">36</span><span class="poll-mar party-d">D +11</span>
+      </div>
+      <div class="poll-trow">
+        <span class="poll-source"><span class="poll-grade grade-b">B</span>Roanoke College</span>
+        <span>Jun 6</span><span>721 LV · ±3.6</span><span>Live phone</span>
+        <span class="poll-num">48</span><span class="poll-num">35</span><span class="poll-mar party-d">D +13</span>
+      </div>
+      <div class="poll-trow">
+        <span class="poll-source"><span class="poll-grade grade-b">B</span>Public Policy Polling</span>
+        <span>Jun 2</span><span>698 RV · ±3.7</span><span>IVR</span>
+        <span class="poll-num">46</span><span class="poll-num">38</span><span class="poll-mar party-d">D +8</span>
+      </div>
+      <div class="poll-trow">
+        <span class="poll-source"><span class="poll-grade grade-c">C+</span>Trafalgar Group</span>
+        <span>May 30</span><span>1,022 LV · ±2.9</span><span>Mixed mode</span>
+        <span class="poll-num">45</span><span class="poll-num">39</span><span class="poll-mar party-d">D +6</span>
+      </div>
+    </div>
+
+    <div class="poll-trend">
+      <div class="poll-trend-head">
+        <span class="poll-trend-title">Margin trend · last 90 days</span>
+        <span class="poll-trend-key"><span class="trend-dot party-d"></span> Warner lead (pts)</span>
+      </div>
+      <div class="poll-trend-chart">
+        <div class="trend-col"><div class="trend-bar" style="height:62%"></div><div class="trend-x">Mar</div></div>
+        <div class="trend-col"><div class="trend-bar" style="height:70%"></div><div class="trend-x">·</div></div>
+        <div class="trend-col"><div class="trend-bar" style="height:74%"></div><div class="trend-x">Apr</div></div>
+        <div class="trend-col"><div class="trend-bar" style="height:78%"></div><div class="trend-x">·</div></div>
+        <div class="trend-col"><div class="trend-bar" style="height:82%"></div><div class="trend-x">May</div></div>
+        <div class="trend-col"><div class="trend-bar" style="height:76%"></div><div class="trend-x">·</div></div>
+        <div class="trend-col"><div class="trend-bar" style="height:68%"></div><div class="trend-x">·</div></div>
+        <div class="trend-col"><div class="trend-bar" style="height:60%"></div><div class="trend-x">Jun</div></div>
+        <div class="trend-col"><div class="trend-bar" style="height:57%;background:var(--accent)"></div><div class="trend-x">Now</div></div>
+      </div>
+      <p class="poll-trend-note">Warner peaked at +16 in mid-May after the Roanoke debate. Connolly's post-Memorial Day ad buy in DMA-511 has closed the margin to single digits in two of the last three surveys.</p>
+    </div>
+  </section>
+
+  <section class="bill-section">
+    <div class="bill-section-label">Money &amp; Momentum · Q2 FEC filings</div>
+    <div class="money-grid">
+      <div class="money-card party-d">
+        <div class="money-name">Mark Warner</div>
+        <div class="money-stats">
+          <div><span class="money-num">$8.4M</span><span class="money-label">Raised this cycle</span></div>
+          <div><span class="money-num">$5.1M</span><span class="money-label">Cash on hand</span></div>
+          <div><span class="money-num">$2.9M</span><span class="money-label">Ad spend (90d)</span></div>
+          <div><span class="money-num">62%</span><span class="money-label">In-state donors</span></div>
+        </div>
+      </div>
+      <div class="money-card party-d">
+        <div class="money-name">Gerald Connolly</div>
+        <div class="money-stats">
+          <div><span class="money-num">$3.7M</span><span class="money-label">Raised this cycle</span></div>
+          <div><span class="money-num">$1.8M</span><span class="money-label">Cash on hand</span></div>
+          <div><span class="money-num">$1.4M</span><span class="money-label">Ad spend (90d)</span></div>
+          <div><span class="money-num">48%</span><span class="money-label">In-state donors</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="poll-summary">Outside spending: $2.1M in pro-Warner ads from SMP-affiliated PACs; $640K in anti-Warner ads from Working Families–aligned group "Virginians for Bold Change."</p>
+  </section>
+
+  <section class="bill-section">
+    <div class="bill-section-label">Where They Stand · Senate (D) primary</div>
+    <div class="stance-table">
+      <div class="stance-head">
+        <span>Issue</span><span>Warner</span><span>Connolly</span>
+      </div>
+      <div class="stance-row">
+        <span class="stance-issue">Medicare expansion to age 60</span>
+        <span class="stance-cell stance-mixed">Studying</span>
+        <span class="stance-cell stance-for">Supports</span>
+      </div>
+      <div class="stance-row">
+        <span class="stance-issue">Federal codification of <em>Roe</em></span>
+        <span class="stance-cell stance-for">Supports</span>
+        <span class="stance-cell stance-for">Supports</span>
+      </div>
+      <div class="stance-row">
+        <span class="stance-issue">Ban on congressional stock trading</span>
+        <span class="stance-cell stance-against">Opposes</span>
+        <span class="stance-cell stance-for">Supports</span>
+      </div>
+      <div class="stance-row">
+        <span class="stance-issue">Filibuster reform (talking filibuster)</span>
+        <span class="stance-cell stance-mixed">Open</span>
+        <span class="stance-cell stance-for">Supports</span>
+      </div>
+      <div class="stance-row">
+        <span class="stance-issue">$15 federal minimum wage</span>
+        <span class="stance-cell stance-for">Supports</span>
+        <span class="stance-cell stance-for">Supports</span>
+      </div>
+      <div class="stance-row">
+        <span class="stance-issue">Continued Ukraine aid package</span>
+        <span class="stance-cell stance-for">Supports</span>
+        <span class="stance-cell stance-mixed">Conditional</span>
+      </div>
+    </div>
+    <p class="poll-summary">Sources: candidates' public statements, ProPublica vote history (Warner), and 2025 candidate questionnaires from VA League of Conservation Voters &amp; AFSCME Local 3001.</p>
+  </section>
+
+  <section class="bill-section">
+    <div class="bill-section-label">Endorsements</div>
+    <div class="endorse-grid">
+      <div class="endorse-card party-d">
+        <div class="endorse-name">Mark Warner</div>
+        <div class="endorse-count">47 endorsements</div>
+        <ul class="endorse-list">
+          <li>Gov. Ralph Northam (former)</li>
+          <li>Sen. Tim Kaine</li>
+          <li>VA AFL-CIO</li>
+          <li>Planned Parenthood Virginia</li>
+          <li>Brady Campaign</li>
+          <li class="endorse-more">+ 42 more</li>
+        </ul>
+      </div>
+      <div class="endorse-card party-d">
+        <div class="endorse-name">Gerald Connolly</div>
+        <div class="endorse-count">19 endorsements</div>
+        <ul class="endorse-list">
+          <li>Rep. Don Beyer</li>
+          <li>SEIU Local 512</li>
+          <li>Working Families Party — VA</li>
+          <li>Sunrise Movement Virginia</li>
+          <li>Sierra Club VA Chapter</li>
+          <li class="endorse-more">+ 14 more</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="bill-section">
+    <div class="bill-section-label">Voter Sentiment · Top issues, VA Democrats</div>
+    <div class="issue-bars">
+      <div class="issue-row"><span class="issue-name">Cost of living &amp; inflation</span><div class="issue-bar"><div class="issue-fill" style="width:72%"></div></div><span class="issue-pct">72%</span></div>
+      <div class="issue-row"><span class="issue-name">Healthcare access</span><div class="issue-bar"><div class="issue-fill" style="width:61%"></div></div><span class="issue-pct">61%</span></div>
+      <div class="issue-row"><span class="issue-name">Abortion rights</span><div class="issue-bar"><div class="issue-fill" style="width:58%"></div></div><span class="issue-pct">58%</span></div>
+      <div class="issue-row"><span class="issue-name">Public schools &amp; education</span><div class="issue-bar"><div class="issue-fill" style="width:44%"></div></div><span class="issue-pct">44%</span></div>
+      <div class="issue-row"><span class="issue-name">Gun violence</span><div class="issue-bar"><div class="issue-fill" style="width:39%"></div></div><span class="issue-pct">39%</span></div>
+      <div class="issue-row"><span class="issue-name">Climate &amp; energy</span><div class="issue-bar"><div class="issue-fill" style="width:31%"></div></div><span class="issue-pct">31%</span></div>
+    </div>
+    <p class="poll-summary">Wason Center / CNU Judy Ford Wason Center for Public Policy, May 22–28, 2026 (n=1,104 likely D primary voters). Respondents picked up to 3.</p>
+  </section>
+
+  <section class="bill-section">
+    <div class="bill-section-label">Recent Events &amp; News</div>
+    <div class="news-feed">
+      <div class="news-row">
+        <div class="news-date">Jun 15</div>
+        <div class="news-body">
+          <div class="news-headline">Connolly outraises Warner in 48 hours after Roanoke debate clip goes viral</div>
+          <div class="news-src">Virginia Mercury · 2 days ago</div>
+        </div>
+      </div>
+      <div class="news-row">
+        <div class="news-date">Jun 13</div>
+        <div class="news-body">
+          <div class="news-headline">Roanoke College debate: candidates clash on Medicare expansion, congressional stock ban</div>
+          <div class="news-src">WSLS-10 · 4 days ago</div>
+        </div>
+      </div>
+      <div class="news-row">
+        <div class="news-date">Jun 9</div>
+        <div class="news-body">
+          <div class="news-headline">Brady Campaign endorses Warner, citing 2024 background-check bill cosponsorship</div>
+          <div class="news-src">AP · 8 days ago</div>
+        </div>
+      </div>
+      <div class="news-row upcoming">
+        <div class="news-date">Jun 22</div>
+        <div class="news-body">
+          <div class="news-headline upcoming-tag">Upcoming · Norfolk debate (WHRO, 7:00 PM)</div>
+          <div class="news-src">Final scheduled debate before the August primary</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bill-section">
+    <div class="bill-section-label">On Your Ballot</div>
+
+    <div class="ballot-contest">
+      <div class="contest-header">
+        <span class="contest-office">U.S. Senate</span>
+        <span class="contest-tag">Democratic Primary</span>
+      </div>
+      <div class="candidate-grid">
+        <article class="candidate-card party-d">
+          <div class="cand-portrait">MW</div>
+          <div class="cand-info">
+            <div class="cand-name">Mark Warner</div>
+            <div class="cand-party">Democratic · Incumbent</div>
+            <div class="cand-line">Senator since 2009 · Former Governor of Virginia</div>
+            <div class="cand-actions">
+              <a class="cand-link">Campaign site ↗</a>
+              <a class="cand-link">Volunteer ↗</a>
+            </div>
+          </div>
+        </article>
+        <article class="candidate-card party-d">
+          <div class="cand-portrait">GC</div>
+          <div class="cand-info">
+            <div class="cand-name">Gerald Connolly</div>
+            <div class="cand-party">Democratic · Challenger</div>
+            <div class="cand-line">Currently represents VA-11 in U.S. House</div>
+            <div class="cand-actions">
+              <a class="cand-link">Campaign site ↗</a>
+              <a class="cand-link">Volunteer ↗</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="ballot-contest">
+      <div class="contest-header">
+        <span class="contest-office">House of Delegates · HD-68</span>
+        <span class="contest-tag">Open Primary</span>
+      </div>
+      <div class="candidate-grid">
+        <article class="candidate-card party-d">
+          <div class="cand-portrait">DH</div>
+          <div class="cand-info">
+            <div class="cand-name">Dawn Higgins</div>
+            <div class="cand-party">Democratic</div>
+            <div class="cand-line">Henrico County Board of Supervisors, 2018–present</div>
+          </div>
+        </article>
+        <article class="candidate-card party-r">
+          <div class="cand-portrait">RL</div>
+          <div class="cand-info">
+            <div class="cand-name">Roger Lewis</div>
+            <div class="cand-party">Republican</div>
+            <div class="cand-line">Owner, Lewis &amp; Sons Construction · First-time candidate</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="bill-section">
+    <div class="bill-section-label">Get Involved</div>
+    <div class="involve-grid">
+      <div class="involve-card">
+        <div class="involve-tag">Volunteer</div>
+        <div class="involve-text">Most campaigns recruit canvassers up to a week before election day.</div>
+        <button class="btn-ghost">See volunteer links</button>
+      </div>
+      <div class="involve-card">
+        <div class="involve-tag">Vote-by-mail</div>
+        <div class="involve-text">Virginia mails ballots on request through July 25 at 5:00 PM.</div>
+        <button class="btn-ghost">Request absentee →</button>
+      </div>
+      <div class="involve-card">
+        <div class="involve-tag">Register</div>
+        <div class="involve-text">Same-day registration is permitted in Virginia at your polling place.</div>
+        <button class="btn-ghost">Check registration →</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ── LOBBYING DIRECTORY                             ── -->
+<!-- ═══════════════════════════════════════════════════ -->
+<main class="page" id="route-lobbying">
+  <a class="back-link" href="#" onclick="nav('home');return false">← Back to Front Page</a>
+
+  <header class="page-header">
+    <div class="page-kicker">Money in Politics</div>
+    <h1 class="page-title">Lobbying Directory</h1>
+    <p class="page-deck">
+      Every entity registered to lobby Congress under the Lobbying Disclosure Act.
+      Spend, clients, members targeted, and contributions — all the public record,
+      laid side-by-side.
+    </p>
+    <div class="corr-summary">
+      <div class="corr-stat"><strong>14,238</strong> registered entities</div>
+      <div class="corr-stat"><strong>$1.04B</strong> reported · Q2 2026</div>
+      <div class="corr-stat">Source: <strong>LDA filings</strong> · <strong>FEC</strong> · <strong>OpenSecrets</strong></div>
+    </div>
+  </header>
+
+  <section class="bill-section">
+    <div class="lobby-toolbar">
+      <input class="lobby-search" type="text" placeholder="Search 14,238 entities — try 'PhRMA', 'Lockheed', 'AFL-CIO'..." />
+      <div class="lobby-filters">
+        <button class="lobby-pill active">All sectors</button>
+        <button class="lobby-pill">Healthcare</button>
+        <button class="lobby-pill">Defense</button>
+        <button class="lobby-pill">Energy</button>
+        <button class="lobby-pill">Tech</button>
+        <button class="lobby-pill">Finance</button>
+        <button class="lobby-pill">Labor</button>
+        <button class="lobby-pill">Education</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="bill-section">
+    <div class="bill-section-label">Top spenders · Q2 2026</div>
+    <div class="lobby-table">
+      <div class="lobby-thead">
+        <span>Rank</span><span>Entity</span><span>Sector</span><span>Q2 Spend</span><span>Bills lobbied</span><span>Top recipient (PAC + employee)</span>
+      </div>
+      <a class="lobby-trow" onclick="nav('lobby-entity')">
+        <span class="lobby-rank">01</span>
+        <span class="lobby-entity"><strong>U.S. Chamber of Commerce</strong></span>
+        <span class="lobby-sector">Business</span>
+        <span class="lobby-spend">$24.8M</span>
+        <span class="lobby-bills">142</span>
+        <span class="lobby-recipient">Sen. Tim Scott (R-SC) · $84,200</span>
+      </a>
+      <a class="lobby-trow" onclick="nav('lobby-entity')">
+        <span class="lobby-rank">02</span>
+        <span class="lobby-entity"><strong>PhRMA</strong></span>
+        <span class="lobby-sector">Healthcare</span>
+        <span class="lobby-spend">$8.2M</span>
+        <span class="lobby-bills">61</span>
+        <span class="lobby-recipient">Rep. Frank Pallone (D-NJ) · $72,100</span>
+      </a>
+      <a class="lobby-trow" onclick="nav('lobby-entity')">
+        <span class="lobby-rank">03</span>
+        <span class="lobby-entity"><strong>National Association of Realtors</strong></span>
+        <span class="lobby-sector">Real estate</span>
+        <span class="lobby-spend">$7.6M</span>
+        <span class="lobby-bills">38</span>
+        <span class="lobby-recipient">Sen. Bill Cassidy (R-LA) · $58,400</span>
+      </a>
+      <a class="lobby-trow" onclick="nav('lobby-entity')">
+        <span class="lobby-rank">04</span>
+        <span class="lobby-entity"><strong>Blue Cross Blue Shield Association</strong></span>
+        <span class="lobby-sector">Healthcare</span>
+        <span class="lobby-spend">$6.9M</span>
+        <span class="lobby-bills">47</span>
+        <span class="lobby-recipient">Sen. Mark Warner (D-VA) · $51,800</span>
+      </a>
+      <a class="lobby-trow" onclick="nav('lobby-entity')">
+        <span class="lobby-rank">05</span>
+        <span class="lobby-entity"><strong>Lockheed Martin</strong></span>
+        <span class="lobby-sector">Defense</span>
+        <span class="lobby-spend">$6.4M</span>
+        <span class="lobby-bills">22</span>
+        <span class="lobby-recipient">Rep. Mike Rogers (R-AL) · $46,500</span>
+      </a>
+      <a class="lobby-trow" onclick="nav('lobby-entity')">
+        <span class="lobby-rank">06</span>
+        <span class="lobby-entity"><strong>American Medical Association</strong></span>
+        <span class="lobby-sector">Healthcare</span>
+        <span class="lobby-spend">$5.9M</span>
+        <span class="lobby-bills">53</span>
+        <span class="lobby-recipient">Rep. Larry Bucshon (R-IN) · $44,300</span>
+      </a>
+      <a class="lobby-trow" onclick="nav('lobby-entity')">
+        <span class="lobby-rank">07</span>
+        <span class="lobby-entity"><strong>Meta Platforms</strong></span>
+        <span class="lobby-sector">Tech</span>
+        <span class="lobby-spend">$5.4M</span>
+        <span class="lobby-bills">29</span>
+        <span class="lobby-recipient">Sen. Maria Cantwell (D-WA) · $42,100</span>
+      </a>
+      <a class="lobby-trow" onclick="nav('lobby-entity')">
+        <span class="lobby-rank">08</span>
+        <span class="lobby-entity"><strong>AFL-CIO</strong></span>
+        <span class="lobby-sector">Labor</span>
+        <span class="lobby-spend">$4.1M</span>
+        <span class="lobby-bills">73</span>
+        <span class="lobby-recipient">Rep. Bobby Scott (D-VA) · $39,200</span>
+      </a>
+    </div>
+    <a class="search-drop-more" onclick="nav('lobby-entity')">View all 14,238 entities →</a>
+  </section>
+
+  <section class="bill-section">
+    <div class="bill-section-label">Where the money is flowing · Q2 2026</div>
+    <div class="lobby-grid">
+      <div class="lobby-card">
+        <div class="lobby-card-label">By sector</div>
+        <div class="lobby-card-rows">
+          <div class="lobby-card-row"><span>Healthcare</span><div class="lobby-bar"><div class="lobby-fill" style="width:78%"></div></div><span>$184M</span></div>
+          <div class="lobby-card-row"><span>Finance</span><div class="lobby-bar"><div class="lobby-fill" style="width:64%"></div></div><span>$152M</span></div>
+          <div class="lobby-card-row"><span>Tech</span><div class="lobby-bar"><div class="lobby-fill" style="width:51%"></div></div><span>$121M</span></div>
+          <div class="lobby-card-row"><span>Defense</span><div class="lobby-bar"><div class="lobby-fill" style="width:43%"></div></div><span>$102M</span></div>
+          <div class="lobby-card-row"><span>Energy</span><div class="lobby-bar"><div class="lobby-fill" style="width:36%"></div></div><span>$86M</span></div>
+          <div class="lobby-card-row"><span>Real estate</span><div class="lobby-bar"><div class="lobby-fill" style="width:24%"></div></div><span>$58M</span></div>
+        </div>
+      </div>
+      <div class="lobby-card">
+        <div class="lobby-card-label">Most-lobbied bills · this quarter</div>
+        <div class="lobby-card-rows">
+          <a class="lobby-card-row" onclick="nav('bill')"><span>H.R. 4838 <em>· Medicaid Eligibility Streamlining</em></span><span>92 entities</span></a>
+          <a class="lobby-card-row" onclick="nav('bill')"><span>S. 1402 <em>· Interstate Pharmacy Practice</em></span><span>61 entities</span></a>
+          <a class="lobby-card-row" onclick="nav('bill')"><span>HJRES 27 <em>· CRA on HUD Rental Assistance</em></span><span>54 entities</span></a>
+          <a class="lobby-card-row" onclick="nav('bill')"><span>H.R. 9260 <em>· Labor/HHS/Ed Appropriations '27</em></span><span>48 entities</span></a>
+          <a class="lobby-card-row" onclick="nav('bill')"><span>S. 2208 <em>· Rural Hospital Stabilization</em></span><span>33 entities</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <p class="poll-summary" style="margin-top:1rem">
+    Quarterly figures from Senate Office of Public Records LD-2 filings.
+    Contribution totals combine PAC and individual employee donations via OpenSecrets normalization.
+    Sector labels derived from registered entity description; some entities span multiple sectors.
+    Last updated: June 19, 2026.
+  </p>
+</main>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ── LOBBYING ENTITY DETAIL                         ── -->
+<!-- ═══════════════════════════════════════════════════ -->
+<main class="page" id="route-lobby-entity">
+  <a class="back-link" href="#" onclick="nav('lobbying');return false">← Back to Lobbying Directory</a>
+
+  <header class="bill-header">
+    <div class="bill-id-row">
+      <span class="bill-id">Entity #02</span>
+      <span class="bill-cong">Healthcare · Trade association</span>
+      <span class="lede-stage stage-passed">Active filer</span>
+    </div>
+    <h1 class="bill-title">Pharmaceutical Research and Manufacturers of America (PhRMA)</h1>
+    <p class="bill-deck">
+      Industry trade group representing 33 member companies developing prescription medicines.
+      Registered to lobby Congress since 1958. Eighth-largest single-quarter spender in 2026 to date.
+    </p>
+    <div class="bill-meta-row">
+      <span>Founded: 1958</span><span class="dot">·</span>
+      <span>HQ: Washington, DC</span><span class="dot">·</span>
+      <span>Member companies: 33</span><span class="dot">·</span>
+      <span>Filings since 1998: 1,142</span>
+    </div>
+    <div class="lede-actions">
+      <button class="btn-primary">Track this entity</button>
+      <button class="btn-ghost">View all filings ↗</button>
+      <button class="btn-ghost">LDA disclosure ↗</button>
+    </div>
+  </header>
+
+  <section class="bill-section">
+    <div class="bill-section-label">Spend over time</div>
+    <div class="poll-trend">
+      <div class="poll-trend-head">
+        <span class="poll-trend-title">Quarterly lobbying spend · 8 quarters</span>
+        <span class="poll-trend-key"><span class="trend-dot party-d"></span> $ reported</span>
+      </div>
+      <div class="poll-trend-chart" style="grid-template-columns:repeat(8,1fr)">
+        <div class="trend-col"><div class="trend-bar" style="height:48%"></div><div class="trend-x">Q3 '24</div></div>
+        <div class="trend-col"><div class="trend-bar" style="height:55%"></div><div class="trend-x">Q4 '24</div></div>
+        <div class="trend-col"><div class="trend-bar" style="height:62%"></div><div class="trend-x">Q1 '25</div></div>
+        <div class="trend-col"><div class="trend-bar" style="height:60%"></div><div class="trend-x">Q2 '25</div></div>
+        <div class="trend-col"><div class="trend-bar" style="height:71%"></div><div class="trend-x">Q3 '25</div></div>
+        <div class="trend-col"><div class="trend-bar" style="height:74%"></div><div class="trend-x">Q4 '25</div></div>
+        <div class="trend-col"><div class="trend-bar" style="height:80%"></div><div class="trend-x">Q1 '26</div></div>
+        <div class="trend-col"><div class="trend-bar" style="height:85%;background:var(--accent)"></div><div class="trend-x">Q2 '26</div></div>
+      </div>
+      <p class="poll-trend-note">
+        Spend has trended upward since the introduction of Medicare drug-price-negotiation expansion bills in Q3 '24.
+        Q2 2026 total of $8.2M is PhRMA's largest reported quarter on record.
+      </p>
+    </div>
+  </section>
+
+  <section class="bill-section">
+    <div class="bill-section-label">Lobbyists registered to act</div>
+    <div class="stance-table">
+      <div class="stance-head">
+        <span>Lobbyist</span><span>Prior gov't role</span><span>Reg. since</span>
+      </div>
+      <div class="stance-row">
+        <span class="stance-issue">Stephen J. Ubl</span>
+        <span class="stance-cell stance-mixed">CEO, PhRMA</span>
+        <span class="stance-cell stance-mixed">2015</span>
+      </div>
+      <div class="stance-row">
+        <span class="stance-issue">Anne G. Esposito</span>
+        <span class="stance-cell stance-against">Sen. Finance Committee staff (R)</span>
+        <span class="stance-cell stance-mixed">2019</span>
+      </div>
+      <div class="stance-row">
+        <span class="stance-issue">Marcus Thompson</span>
+        <span class="stance-cell stance-for">HHS, ASPE (Obama admin)</span>
+        <span class="stance-cell stance-mixed">2021</span>
+      </div>
+      <div class="stance-row">
+        <span class="stance-issue">Priya Krishnan</span>
+        <span class="stance-cell stance-against">House E&amp;C Committee staff (R)</span>
+        <span class="stance-cell stance-mixed">2023</span>
+      </div>
+      <div class="stance-row">
+        <span class="stance-issue">+ 14 more registered</span>
+        <span class="stance-cell stance-mixed">—</span>
+        <span class="stance-cell stance-mixed">—</span>
+      </div>
+    </div>
+    <p class="poll-summary">Revolving-door tagging based on OpenSecrets normalization of prior federal employment fields.</p>
+  </section>
+
+  <section class="bill-section">
+    <div class="bill-section-label">Bills lobbied · Q2 2026</div>
+    <div class="lobby-bills-list">
+      <a class="search-drop-row" onclick="nav('bill')">
+        <span class="sd-id">H.R. 4838</span>
+        <span class="sd-title">Medicaid Eligibility Streamlining Act</span>
+        <span class="sd-meta">Position: Oppose · Spend allocation: $1.84M (22%)</span>
+        <span class="feed-status status-passed">Passed House</span>
+      </a>
+      <a class="search-drop-row" onclick="nav('bill')">
+        <span class="sd-id">S. 1402</span>
+        <span class="sd-title">Interstate Pharmacy Practice Act</span>
+        <span class="sd-meta">Position: Support · Spend allocation: $920K (11%)</span>
+        <span class="feed-status status-active">In Committee</span>
+      </a>
+      <a class="search-drop-row" onclick="nav('bill')">
+        <span class="sd-id">S. 2814</span>
+        <span class="sd-title">Patent Reform and Generic Entry Act</span>
+        <span class="sd-meta">Position: Oppose · Spend allocation: $1.21M (15%)</span>
+        <span class="feed-status status-active">In Committee</span>
+      </a>
+      <a class="search-drop-row" onclick="nav('bill')">
+        <span class="sd-id">H.R. 992</span>
+        <span class="sd-title">Insulin Affordability Act of 2026</span>
+        <span class="sd-meta">Position: Oppose · Spend allocation: $640K (8%)</span>
+        <span class="feed-status status-muted">Introduced</span>
+      </a>
+      <div class="search-drop-foot">
+        <a class="search-drop-more">View all 61 bills →</a>
+        <span class="search-drop-tip">Positions inferred from LD-203 filings and lobbyist communications.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="bill-section">
+    <div class="bill-section-label">Top recipients · combined PAC + employee contributions, current cycle</div>
+    <div class="poll-table" style="grid-template-columns:1.5fr 1fr 0.8fr 0.8fr 1fr">
+      <div class="poll-thead">
+        <span>Member</span><span>Chamber</span><span>Party</span><span>State</span><span>Total received</span>
+      </div>
+      <a class="poll-trow" onclick="nav('member')">
+        <span class="poll-source">Rep. Frank Pallone</span>
+        <span>House E&amp;C Chair</span>
+        <span class="poll-num">D</span>
+        <span class="poll-num">NJ</span>
+        <span class="poll-mar party-d">$72,100</span>
+      </a>
+      <a class="poll-trow" onclick="nav('member')">
+        <span class="poll-source">Sen. Bill Cassidy</span>
+        <span>Sen. HELP Chair</span>
+        <span class="poll-num">R</span>
+        <span class="poll-num">LA</span>
+        <span class="poll-mar party-r">$68,400</span>
+      </a>
+      <a class="poll-trow" onclick="nav('member')">
+        <span class="poll-source">Sen. Bernie Sanders</span>
+        <span>Sen. HELP Member</span>
+        <span class="poll-num">I</span>
+        <span class="poll-num">VT</span>
+        <span class="poll-mar party-d">$54,800</span>
+      </a>
+      <a class="poll-trow" onclick="nav('member')">
+        <span class="poll-source">Rep. Cathy McMorris Rodgers</span>
+        <span>House E&amp;C Member</span>
+        <span class="poll-num">R</span>
+        <span class="poll-num">WA</span>
+        <span class="poll-mar party-r">$51,200</span>
+      </a>
+      <a class="poll-trow" onclick="nav('member')">
+        <span class="poll-source">Sen. Ron Wyden</span>
+        <span>Sen. Finance Chair</span>
+        <span class="poll-num">D</span>
+        <span class="poll-num">OR</span>
+        <span class="poll-mar party-d">$48,600</span>
+      </a>
+      <a class="poll-trow" onclick="nav('member')">
+        <span class="poll-source">Rep. Larry Bucshon</span>
+        <span>House E&amp;C Member · MD</span>
+        <span class="poll-num">R</span>
+        <span class="poll-num">IN</span>
+        <span class="poll-mar party-r">$44,300</span>
+      </a>
+    </div>
+    <p class="poll-summary">
+      Pattern: contributions concentrate on members of committees with jurisdiction over the entity's bills.
+      Causation is not implied — members of these committees receive contributions from many sources.
+      Source: OpenSecrets aggregation of FEC filings, current cycle.
+    </p>
+  </section>
+
+  <section class="bill-section">
+    <div class="bill-section-label">Coalition view · entities lobbying the same bills</div>
+    <p class="page-deck" style="margin-bottom:1rem">
+      Entities whose Q2 filings overlap with PhRMA's on three or more bills.
+      Useful for spotting industry-wide coordination versus issue-specific lobbying.
+    </p>
+    <div class="endorse-grid">
+      <div class="endorse-card party-d">
+        <div class="endorse-name">Aligned with PhRMA</div>
+        <div class="endorse-count">12 entities on 4+ shared bills</div>
+        <ul class="endorse-list">
+          <li>Biotechnology Innovation Organization · 7 shared bills</li>
+          <li>Pfizer · 6 shared bills</li>
+          <li>Merck &amp; Co. · 6 shared bills</li>
+          <li>Eli Lilly · 5 shared bills</li>
+          <li>Johnson &amp; Johnson · 4 shared bills</li>
+          <li class="endorse-more">+ 7 more</li>
+        </ul>
+      </div>
+      <div class="endorse-card party-r">
+        <div class="endorse-name">Opposed positions on shared bills</div>
+        <div class="endorse-count">8 entities on 3+ shared bills</div>
+        <ul class="endorse-list">
+          <li>AARP · 6 shared bills (opposing on 5)</li>
+          <li>Patients For Affordable Drugs Now · 5 shared bills</li>
+          <li>AFSCME · 4 shared bills</li>
+          <li>Public Citizen · 4 shared bills</li>
+          <li>Doctors for America · 3 shared bills</li>
+          <li class="endorse-more">+ 3 more</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="bill-section">
+    <div class="bill-section-label">Sources &amp; methodology</div>
+    <ul class="endorse-list" style="font-family:'Source Serif 4',Georgia,serif;font-size:0.9rem">
+      <li><strong>Filings:</strong> Senate Office of Public Records LD-2 quarterly filings (lda.senate.gov)</li>
+      <li><strong>Contributions:</strong> FEC API, combined PAC + employee individual donations</li>
+      <li><strong>Entity normalization:</strong> OpenSecrets entity-resolution layer</li>
+      <li><strong>Revolving door:</strong> OpenSecrets prior-employment fields, manually verified for top 50 entities</li>
+      <li><strong>Coalition matching:</strong> deterministic bill-ID overlap across same-quarter LD-2 filings</li>
+      <li><strong>Position labels:</strong> derived from LD-203 narrative fields when explicit, otherwise <em>"engaged"</em></li>
+    </ul>
+    <p class="poll-summary">Last refresh: June 19, 2026. Filings appear with up to a 45-day lag from end of quarter.</p>
+  </section>
+</main>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ── NOTIFICATIONS                                  ── -->
+<!-- ═══════════════════════════════════════════════════ -->
+<main class="page" id="route-notifications">
+  <a class="back-link" href="#" onclick="nav('home');return false">← Back to Front Page</a>
+
+  <div class="desk-tabs">
+    <a href="#" onclick="nav('correspondence');return false">My Letters</a>
+    <a class="on" href="#" onclick="return false">My Notifications</a>
+  </div>
+
+  <header class="page-header">
+    <div class="page-kicker">My Notifications</div>
+    <h1 class="page-title">Watchlist</h1>
+    <p class="page-deck">
+      Bills you've asked to be notified about. We email you when a watched bill
+      advances, gets voted on, is signed into law, or dies in committee.
+    </p>
+    <div class="corr-summary">
+      <div class="corr-stat"><strong>5</strong> bills watched</div>
+      <div class="corr-stat"><strong>2</strong> updates this week</div>
+      <div class="corr-stat">Email: <strong>aaditpanse@pm.me</strong></div>
+    </div>
+  </header>
+
+  <section class="bill-section">
+    <div class="bill-section-label">Recent Activity</div>
+
+    <article class="notif-card unread">
+      <div class="notif-dot"></div>
+      <div class="notif-body">
+        <div class="notif-bill" onclick="nav('bill')">
+          <span class="notif-id">H.R. 4838</span>
+          <span class="notif-title">Medicaid Eligibility Streamlining Act</span>
+        </div>
+        <div class="notif-event">
+          <strong>Passed House</strong> — today, 9:43 AM
+        </div>
+        <div class="notif-summary">
+          218–209. Now headed to Senate Finance Committee. Your senator (Warner) is a cosponsor.
+        </div>
+      </div>
+      <button class="btn-ghost">Stop notifying</button>
+    </article>
+
+    <article class="notif-card unread">
+      <div class="notif-dot"></div>
+      <div class="notif-body">
+        <div class="notif-bill" onclick="nav('bill')">
+          <span class="notif-id">H.R. 217</span>
+          <span class="notif-title">Veteran Disability Backlog Reduction</span>
+        </div>
+        <div class="notif-event">
+          <strong>Signed into law</strong> — June 13, 2026 · Public Law 119-61
+        </div>
+        <div class="notif-summary">
+          VA has 18 months to implement. New appeals track effective immediately.
+        </div>
+      </div>
+      <button class="btn-ghost">Stop notifying</button>
+    </article>
+  </section>
+
+  <section class="bill-section">
+    <div class="bill-section-label">All Watched Bills</div>
+
+    <a class="notif-row" onclick="nav('bill')">
+      <div>
+        <div class="mb-id">H.R. 4838</div>
+        <div class="mb-title">Medicaid Eligibility Streamlining Act</div>
+        <div class="mb-meta">Watched since June 1 · Last update: today</div>
+      </div>
+      <span class="feed-status status-passed">Passed House</span>
+    </a>
+    <a class="notif-row" onclick="nav('bill')">
+      <div>
+        <div class="mb-id">S. 1402</div>
+        <div class="mb-title">Interstate Pharmacy Practice Act</div>
+        <div class="mb-meta">Watched since May 28 · Last update: 3 days ago</div>
+      </div>
+      <span class="feed-status status-active">In Committee</span>
+    </a>
+    <a class="notif-row" onclick="nav('bill')">
+      <div>
+        <div class="mb-id">H.R. 992</div>
+        <div class="mb-title">Insulin Affordability Act of 2026</div>
+        <div class="mb-meta">Watched since May 16 · Last update: yesterday</div>
+      </div>
+      <span class="feed-status status-introduced">Introduced</span>
+    </a>
+    <a class="notif-row" onclick="nav('bill')">
+      <div>
+        <div class="mb-id">H.R. 217</div>
+        <div class="mb-title">Veteran Disability Backlog Reduction</div>
+        <div class="mb-meta">Watched since April 4 · Now law</div>
+      </div>
+      <span class="feed-status status-enacted">P.L. 119-61</span>
+    </a>
+    <a class="notif-row" onclick="nav('bill')">
+      <div>
+        <div class="mb-id">HJRES 27</div>
+        <div class="mb-title">CRA Resolution on HUD Rental Assistance</div>
+        <div class="mb-meta">Watched since June 8 · Last update: 4 days ago</div>
+      </div>
+      <span class="feed-status status-active">House Vote Scheduled</span>
+    </a>
+  </section>
+</main>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="footer-rule"></div>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-label">NosPopuli</div>
+      <p class="footer-text">A reading room for federal law. Every bill in plain English, every vote traceable, every representative accountable.</p>
+    </div>
+    <div>
+      <div class="footer-label">Sources</div>
+      <p class="footer-text">GovInfo · Congress.gov API · Google Civic · OpenStates · RealClearPolling</p>
+    </div>
+    <div>
+      <div class="footer-label">Today</div>
+      <p class="footer-text">Vol. CXVIII · No. 168 · Free for the People</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('dateline-date').textContent = new Date().toLocaleDateString('en-US', {
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+  });
+
+  function nav(route) {
+    document.querySelectorAll('main.page').forEach(p => p.classList.remove('active'));
+    const el = document.getElementById('route-' + route);
+    if (el) el.classList.add('active');
+    document.querySelectorAll('.nav-link').forEach(n => {
+      n.classList.toggle('active', n.dataset.route === route);
+    });
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  // Initialize home as active in nav
+  nav('home');
+
+  // Generate dot matrices for House votes
+  function makeDots(host, total, yea, nay, other) {
+    if (!host) return;
+    host.innerHTML = '';
+    const counts = [
+      { cls: 'dot-yea',     n: yea },
+      { cls: 'dot-nay',     n: nay },
+      { cls: 'dot-present', n: Math.floor(other / 2) },
+      { cls: 'dot-absent',  n: other - Math.floor(other / 2) },
+    ];
+    counts.forEach(c => {
+      for (let i = 0; i < c.n; i++) {
+        const d = document.createElement('div');
+        d.className = 'vote-dot ' + c.cls;
+        host.appendChild(d);
+      }
+    });
+  }
+  makeDots(document.getElementById('vote-house'), 434, 218, 209, 7);
+
+  // ── State picker ──────────────────────────────────────────────
+  const STATES = ['ALL','AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'];
+  const $fed = document.getElementById('jur-federal');
+  function setJurisdiction(which) {
+    $fed.classList.toggle('active', which === 'federal');
+    document.getElementById('state-picker').classList.toggle('active', which === 'state');
+  }
+  $fed.addEventListener('click', () => setJurisdiction('federal'));
+
+  // ── Search dropdown ──
+  const $go    = document.getElementById('search-go');
+  const $drop  = document.getElementById('search-dropdown');
+  const $close = document.getElementById('search-drop-close');
+  const $meta  = document.getElementById('search-drop-meta');
+  function openSearchDrop() {
+    const jur = $fed.classList.contains('active')
+      ? 'Federal · 119th Congress'
+      : `${STATES[stateIdx]} legislature`;
+    $meta.textContent = `12 bills · sorted by stage · ${jur}`;
+    $drop.hidden = false;
+    $drop.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function closeSearchDrop() { $drop.hidden = true; }
+  $go.addEventListener('click',    e => { e.preventDefault(); openSearchDrop(); });
+  $close.addEventListener('click', e => { e.preventDefault(); closeSearchDrop(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSearchDrop(); });
+  let stateIdx = STATES.indexOf('VA');
+  const $picker = document.getElementById('state-picker');
+  const $cur    = document.getElementById('state-cur');
+  const $up     = document.getElementById('state-up');
+  const $down   = document.getElementById('state-down');
+  const $cells  = $picker.querySelectorAll('.state-cell');
+
+  function renderPicker() {
+    $cur.textContent = STATES[stateIdx];
+    $cells.forEach(c => {
+      const rel = parseInt(c.dataset.rel);
+      const i = stateIdx + rel;
+      if (i < 0 || i >= STATES.length) {
+        c.textContent = '';
+        c.classList.add('empty');
+        c.dataset.idx = '';
+      } else {
+        c.textContent = STATES[i];
+        c.classList.remove('empty');
+        c.dataset.idx = String(i);
+      }
+    });
+    $up.classList.toggle('disabled', stateIdx <= 0);
+    $down.classList.toggle('disabled', stateIdx >= STATES.length - 1);
+  }
+  renderPicker();
+
+  function shift(delta) {
+    const next = Math.max(0, Math.min(STATES.length - 1, stateIdx + delta));
+    if (next === stateIdx) return;
+    stateIdx = next;
+    renderPicker();
+    setJurisdiction('state');
+  }
+  $cur.addEventListener('click', () => setJurisdiction('state'));
+
+  $up.addEventListener('click',   e => { e.stopPropagation(); shift(-1); });
+  $down.addEventListener('click', e => { e.stopPropagation(); shift(1); });
+
+  $picker.addEventListener('wheel', e => {
+    if (!$picker.matches(':hover, :focus-within')) return;
+    e.preventDefault();
+    shift(e.deltaY > 0 ? 1 : -1);
+  }, { passive: false });
+
+  $cells.forEach(c => c.addEventListener('click', e => {
+    e.stopPropagation();
+    if (!c.dataset.idx) return;
+    stateIdx = parseInt(c.dataset.idx);
+    renderPicker();
+    setJurisdiction('state');
+  }));
+
+  $picker.addEventListener('keydown', e => {
+    if (e.key === 'ArrowUp')   { e.preventDefault(); shift(-1); return; }
+    if (e.key === 'ArrowDown') { e.preventDefault(); shift(1);  return; }
+    if (!/^[a-zA-Z]$/.test(e.key)) return;
+    const letter = e.key.toUpperCase();
+    const start = (stateIdx + 1) % STATES.length;
+    const order = [...STATES.slice(start), ...STATES.slice(0, start)];
+    const hit = order.findIndex(s => s !== 'ALL' && s.startsWith(letter));
+    if (hit < 0) return;
+    stateIdx = STATES.indexOf(order[hit]);
+    renderPicker();
+  });
+</script>
+
+<script>
+// ── test2 addition: live county ledger via the Foundry pipeline ──
+(function () {
+  function el(t, c, h) { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; }
+  function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
+  function certStatus(r) { return (r.certification && r.certification.status) || "quarantined"; }
+  function lvBadge(r) {
+    const s = certStatus(r);
+    if (s === "certified") return '<span class="lvb lvb-ok">certified</span>';
+    return '<span class="lvb lvb-warn">⚠ uncertified</span>';
+  }
+  function tally(c) { return ["aye","no","abstain","absent","recused"].filter(k => c[k]).map(k => `${c[k]} ${k}`).join(" · ") || "—"; }
+  function lastKey(n) {
+    const t = (n || "").replace(/[.,]/g, " ").trim().split(/\s+/);
+    while (t.length > 1 && ["JR","SR","II","III","IV"].includes(t[t.length-1].toUpperCase())) t.pop();
+    return (t[t.length-1] || "").toUpperCase();
+  }
+  function voteLabel(v, store, summaries) {
+    const it = (store.agenda_items || {})[v.item_id] || {};
+    const s = summaries[v.item_id] || summaries[v.vote_id];
+    return (s && s.plain_english) || it.title || v.motion || v.vote_id;
+  }
+
+  async function liveCounty() {
+    const box = document.getElementById("lv-county");
+    const status = document.getElementById("lv-status");
+    if (!box) return;
+    let data;
+    try { data = await (await fetch("/api/foundry/data")).json(); }
+    catch (e) { status.textContent = "api offline — nothing shown rather than fakes"; return; }
+    const store = data.sources["loudoun-bos"];
+    if (!store) { status.textContent = "loudoun store not found"; return; }
+    const summaries = data.item_summaries || {};
+    const digests = data.meeting_digests || {};
+    box.innerHTML = "";
+    status.textContent = "connected · loudoun-bos";
+
+    const meetings = Object.values(store.meetings).sort((a,b) => b.date.localeCompare(a.date));
+    const votes = Object.values(store.vote_events);
+    const all = [...meetings, ...votes, ...Object.values(store.agenda_items || {})];
+    const certified = all.filter(r => certStatus(r) === "certified").length;
+
+    const next = ((data.upcoming || {})["loudoun-bos"] || {}).next;
+    if (next) {
+      const when = new Date(next.date + "T12:00:00").toLocaleDateString("en-US",
+        { weekday: "long", month: "long", day: "numeric" });
+      box.appendChild(el("div", "lv-next",
+        `<span class="lv-label">next meeting <span class="lvb lvb-der">machine-derived</span></span>
+         <div class="when">${esc(when)}${next.time ? " · " + esc(next.time) : ""}</div>
+         <div style="font-size:0.9rem">${esc(next.body)}</div>`));
+    }
+
+    const stats = el("div", "lv-stats");
+    for (const [n, l] of [[meetings.length, "meetings"], [votes.length, "recorded votes"],
+                          [certified, "certified records"], [all.length - certified, "uncertified"]])
+      stats.appendChild(el("div", "lv-stat", `<div class="n">${n}</div><div class="l">${l}</div>`));
+    box.appendChild(stats);
+
+    const mdates = {}; for (const m of meetings) mdates[m.meeting_id] = m.date;
+    const attn = [];
+    for (const v of votes) {
+      const nos = (v.positions || []).filter(p => p.position === "no").map(p => p.member);
+      const abst = (v.positions || []).filter(p => p.position === "abstain").map(p => p.member);
+      if (v.result === "fail") attn.push({ v, why: "motion FAILED" });
+      else if (nos.length) attn.push({ v, why: nos.join(", ") + " voted no" });
+      else if (abst.length) attn.push({ v, why: abst.join(", ") + " abstained" });
+    }
+    attn.sort((a,b) => (mdates[b.v.meeting_id]||"").localeCompare(mdates[a.v.meeting_id]||""));
+    if (attn.length) {
+      box.appendChild(el("div", "lv-attn",
+        `<span class="lv-label" style="color:var(--accent,#8b1a1a)">worth your attention — where the board didn't just agree (${attn.length} of ${votes.length} votes)</span>` +
+        attn.slice(0, 5).map(({v, why}) =>
+          `<div class="lv-fact"><span class="lv-why">${esc(mdates[v.meeting_id]||"")}</span>
+           ${esc(voteLabel(v, store, summaries).slice(0, 100))} <span class="lv-why">— ${esc(why)}</span></div>`).join("")));
+    }
+
+    const chips = el("div", null, `<span class="lv-label">board members — click for voting record: </span>`);
+    const slot = el("div");
+    let open = null;
+    for (const name of Object.keys(store.members || {}).sort()) {
+      const chip = el("button", "lv-chip", esc(name));
+      chip.addEventListener("click", () => {
+        slot.innerHTML = "";
+        if (open === name) { open = null; return; }
+        open = name;
+        const key = lastKey(name);
+        const rows = [];
+        for (const v of votes) {
+          const p = (v.positions || []).find(p => lastKey(p.member) === key);
+          if (p) rows.push({ v, position: p.position, date: mdates[v.meeting_id] || "" });
+        }
+        rows.sort((a,b) => b.date.localeCompare(a.date));
+        const t = {}; rows.forEach(r => t[r.position] = (t[r.position]||0)+1);
+        const dev = rows.filter(r => r.position !== "aye");
+        slot.appendChild(el("div", "lv-panel",
+          `<div class="name">${esc(name)}</div>
+           <div class="lv-label">${rows.length} votes · ${Object.entries(t).map(([p,n]) => `${n} ${p}`).join(" · ")}</div>
+           ${dev.length ? `<div class="lv-label" style="margin-top:0.5rem">where they broke from the board</div>` +
+             dev.slice(0, 6).map(r => `<div class="lv-fact"><span class="lv-why">${esc(r.date)}</span>
+               ${esc(voteLabel(r.v, store, summaries).slice(0, 90))}
+               <span class="lv-why">— ${esc(r.position.toUpperCase())}</span></div>`).join("")
+             : `<div style="font-style:italic;color:var(--muted,#6b6355)">every recorded position is an aye — on a real board, that pattern is itself information.</div>`}`));
+      });
+      chips.appendChild(chip);
+    }
+    chips.appendChild(slot);
+    box.appendChild(chips);
+
+    for (const m of meetings.slice(0, 3)) {
+      const mv = votes.filter(v => v.meeting_id === m.meeting_id)
+        .sort((a,b) => a.vote_id.localeCompare(b.vote_id, undefined, { numeric: true }));
+      const uncert = mv.filter(v => certStatus(v) !== "certified").length
+        + (certStatus(m) !== "certified" ? 1 : 0);
+      const d = el("details", "lv-meeting");
+      d.innerHTML = `<summary>
+          <span class="lv-mdate">${esc(m.date)}</span>
+          <span class="lv-label">${esc(m.body || "")} · ${mv.length} votes</span>
+          ${uncert ? `<span class="lvb lvb-warn">⚠ ${uncert} uncertified</span>`
+                   : `<span class="lvb lvb-ok">all certified</span>`}</summary>`;
+      const dg = digests[m.meeting_id];
+      if (dg && dg.digest)
+        d.appendChild(el("div", "lv-digest",
+          `<span class="lv-label">in plain english <span class="lvb lvb-der">machine-derived</span></span><br>${esc(dg.digest)}`));
+      const table = el("table", "lv-votes");
+      table.innerHTML = `<tr><th>what was voted on</th><th>tally</th><th>result</th><th>trust</th></tr>` +
+        mv.slice(0, 8).map(v => `<tr>
+          <td>${esc(voteLabel(v, store, summaries).slice(0, 120))}</td>
+          <td class="lv-tally">${tally(v.counts || {})}</td>
+          <td class="lv-tally ${v.result === "fail" ? "lv-fail" : ""}">${esc((v.result || "?").toUpperCase())}</td>
+          <td>${lvBadge(v)}</td></tr>`).join("") +
+        (mv.length > 8 ? `<tr><td colspan="4" class="lv-label">+ ${mv.length - 8} more —
+          <a href="/foundry">full ledger</a></td></tr>` : "");
+      d.appendChild(table);
+      box.appendChild(d);
+    }
+  }
+  liveCounty();
+})();
+
+// ── the compositor's pass: night edition + countdown roll-up ──
+(function () {
+  const toggle = document.getElementById("edition-toggle");
+  if (toggle) toggle.addEventListener("click", () => {
+    const night = document.body.classList.toggle("night");
+    toggle.textContent = night ? "Day Edition" : "Night Edition";
+  });
+
+  // numbers set themselves like type: countdowns roll up once on load
+  document.querySelectorAll(".count-num, .ec-count-num").forEach(n => {
+    const target = parseInt(n.textContent, 10);
+    if (!Number.isFinite(target) || target <= 0) return;
+    const t0 = performance.now(), dur = 700;
+    (function tick(t) {
+      const p = Math.min((t - t0) / dur, 1);
+      n.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(tick);
+    })(t0);
+  });
+})();
+</script>
+
+</body>
+</html>

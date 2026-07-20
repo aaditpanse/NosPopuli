@@ -26,7 +26,19 @@ import re
 # 1.2: file_number OPTIONAL (format-checked when present) — Loudoun and
 # Fairfax have no file-number system at all; requiring one made whole
 # jurisdictions unrepresentable.
-SCHEMA_VERSION = "1.2"
+# 1.3: optional `evidence` on vote_event — the verbatim source passage the
+# vote was derived from. Lesson of the Fairfax phantom votes: a quote that
+# must literally appear in the fetched document is the cheapest fabrication
+# check there is, and it makes every dispute auditable by reading.
+# 1.4: new record type `capital_project` — a funded capital works project
+# from a county Capital Improvement Program (CIP). The meetings/votes types
+# capture what a body DECIDED; this captures what is being BUILT (budget,
+# timeline, funding source, location). Separate spine, same provenance and
+# certification discipline.
+# 1.5: new record type `contest` — one local election (mayor, school board,
+# council seat) with its candidate results. Closes the civic loop: the
+# election that seated an official, alongside their votes and what's built.
+SCHEMA_VERSION = "1.5"
 
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 FILE_NUMBER_RE = re.compile(r"^\d{2,4}-\d{4}(-S\d+)?$")
@@ -43,7 +55,14 @@ REQUIRED_FIELDS = {
     "agenda_item": ["item_id", "meeting_id", "title", "action"],
     "vote_event": ["vote_id", "meeting_id", "positions", "counts", "result"],
     "member": ["name"],
+    "capital_project": ["project_id", "title", "function", "fiscal_years",
+                        "total", "source_url"],
+    "contest": ["contest_id", "office", "jurisdiction", "year", "candidates"],
 }
+
+# Funding-source codes a capital_project may cite (CIP legend). Extractors
+# normalize into this vocabulary; anything else is a parse overrun.
+FUNDING_CODES = {"B", "F", "G", "HTF", "R", "S", "SF", "SR", "U", "X"}
 
 
 def structural_errors(record_type, record):
@@ -100,5 +119,49 @@ def structural_errors(record_type, record):
                     errs.append(f"counts key '{key}' not in vocabulary")
                 if not isinstance(n, int) or n < 0:
                     errs.append(f"counts[{key}]={n!r} not a non-negative int")
+        ev = record.get("evidence")
+        if ev is not None and (
+                not isinstance(ev, dict)
+                or not isinstance(ev.get("quote"), str) or not ev["quote"].strip()
+                or not all(k in ("quote", "doc_url") for k in ev)):
+            errs.append("evidence must be {quote: nonempty str, doc_url?: str}")
+
+    elif record_type == "capital_project":
+        fy = record["fiscal_years"]
+        if not isinstance(fy, dict) or not fy:
+            errs.append("fiscal_years is not a non-empty {year -> amount} object")
+        else:
+            for y, amt in fy.items():
+                if not re.match(r"^\d{4}$", str(y)):
+                    errs.append(f"fiscal_years key {y!r} is not a 4-digit year")
+                if not isinstance(amt, int) or amt < 0:
+                    errs.append(f"fiscal_years[{y}]={amt!r} not a non-negative int")
+        if not isinstance(record["total"], int) or record["total"] < 0:
+            errs.append(f"total {record['total']!r} not a non-negative int")
+        # funding_sources vocabulary is jurisdiction-specific (Fairfax uses
+        # letter codes; other counties write "General Funds", "GO Bond"), so
+        # the field must be a list of strings but its values are not policed.
+        fs = record.get("funding_sources", [])
+        if not isinstance(fs, list) or not all(isinstance(s, str) for s in fs):
+            errs.append("funding_sources must be a list of strings")
+        if not isinstance(record.get("districts", []), list):
+            errs.append("districts is not a list")
+
+    elif record_type == "contest":
+        if not re.match(r"^\d{4}$", str(record["year"])):
+            errs.append(f"year {record['year']!r} is not a 4-digit year")
+        cands = record["candidates"]
+        if not isinstance(cands, list) or not cands:
+            errs.append("candidates is not a non-empty list")
+        else:
+            for c in cands:
+                if not isinstance(c, dict) or not c.get("name"):
+                    errs.append("a candidate is missing a name")
+                v = c.get("votes")
+                if v is not None and (not isinstance(v, int) or v < 0):
+                    errs.append(f"candidate votes {v!r} not a non-negative int/null")
+        tv = record.get("total_votes")
+        if tv is not None and (not isinstance(tv, int) or tv < 0):
+            errs.append(f"total_votes {tv!r} not a non-negative int/null")
 
     return errs

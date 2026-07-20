@@ -1,0 +1,1468 @@
+{
+ "capital_projects": [
+  {
+   "project_id": "princewilliam-cip-building-facility-capital-program",
+   "title": "Building & Facility Capital Program",
+   "function": "Community Development",
+   "funding_sources": [
+    "General Fund"
+   ],
+   "fiscal_years": {
+    "2026": 5200,
+    "2027": 5200,
+    "2028": 5200,
+    "2029": 5200,
+    "2030": 5200,
+    "2031": 5200
+   },
+   "five_year_total": 31200,
+   "total": 32400,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-doves-landing-park",
+   "title": "Doves Landing Park",
+   "function": "Community Development",
+   "funding_sources": [
+    "General Fund",
+    "Proffers"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 3900,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   },
+   "lat": 38.685263,
+   "lon": -77.474852,
+   "geocode": {
+    "confidence": "high",
+    "osm_type": "nature_reserve",
+    "matched": "Doves Landing Park, 9305, Brentsville, Manassas, Prince William County, Virginia, 20112, United States"
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-american-rescue-plan-act-facility-improvements",
+   "title": "American Rescue Plan Act Facility Improvements",
+   "function": "Community Development",
+   "funding_sources": [
+    "General Fund"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 33200,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-fuller-heights-park-expansion",
+   "title": "Fuller Heights Park Expansion",
+   "function": "Community Development",
+   "funding_sources": [
+    "General Fund"
+   ],
+   "fiscal_years": {
+    "2026": 5400,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 5400,
+   "total": 6000,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   },
+   "lat": 38.546623,
+   "lon": -77.328439,
+   "geocode": {
+    "confidence": "high",
+    "osm_type": "park",
+    "matched": "Fuller Heights Park, Triangle, Prince William County, Virginia, United States"
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-locust-shade-park-maintenance-shop",
+   "title": "Locust Shade Park Maintenance Shop",
+   "function": "Community Development",
+   "funding_sources": [
+    "General Fund"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 1700,
+   "districts": [
+    "Neabsco"
+   ],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-neabsco-district-park",
+   "title": "Neabsco District Park",
+   "function": "Community Development",
+   "funding_sources": [
+    "General Fund"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 5250,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 5250,
+   "total": 6000,
+   "districts": [
+    "Neabsco"
+   ],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-neabsco-greenway",
+   "title": "Neabsco Greenway",
+   "function": "Community Development",
+   "funding_sources": [
+    "General Fund",
+    "Proffers"
+   ],
+   "fiscal_years": {
+    "2026": 2500,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 2500,
+   "total": 3600,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-occoquan-greenway",
+   "title": "Occoquan Greenway",
+   "function": "Community Development",
+   "funding_sources": [
+    "General Fund",
+    "Proffers"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 6000,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-open-space-and-accessibility-projects",
+   "title": "Open Space and Accessibility Projects",
+   "function": "Community Development",
+   "funding_sources": [
+    "General Fund",
+    "Proffers",
+    "Federal Revenue"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 2400,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-powells-creek-crossing",
+   "title": "Powells Creek Crossing",
+   "function": "Community Development",
+   "funding_sources": [
+    "General Fund"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 9500,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-landfill-caps",
+   "title": "Landfill Caps",
+   "function": "Community Development",
+   "funding_sources": [
+    "General Fund"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 7060,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 7060,
+   "total": 12900,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-landfill-disposal-cell-construction-and-liner-systems",
+   "title": "Landfill Disposal Cell Construction and Liner Systems",
+   "function": "Community Development",
+   "funding_sources": [
+    "General Fund"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 9760,
+    "2028": 0,
+    "2029": 0,
+    "2030": 28960,
+    "2031": 0
+   },
+   "five_year_total": 38720,
+   "total": 38700,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-solid-waste-facility-infrastructure",
+   "title": "Solid Waste Facility Infrastructure",
+   "function": "Community Development",
+   "funding_sources": [
+    "General Fund"
+   ],
+   "fiscal_years": {
+    "2026": 3330,
+    "2027": 0,
+    "2028": 2000,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 5330,
+   "total": 17700,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-county-watersheds",
+   "title": "County Watersheds",
+   "function": "Community Development",
+   "funding_sources": [
+    "General Fund",
+    "Stormwater"
+   ],
+   "fiscal_years": {
+    "2026": 5792,
+    "2027": 4988,
+    "2028": 4988,
+    "2029": 3736,
+    "2030": 3850,
+    "2031": 4620
+   },
+   "five_year_total": 27974,
+   "total": 40000,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-environmental-sustainability",
+   "title": "Environmental Sustainability",
+   "function": "Human Services",
+   "funding_sources": [
+    "General Fund",
+    "Federal Revenue"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 4500,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-homeless-navigation-center-east",
+   "title": "Homeless Navigation Center \u2013 East",
+   "function": "Human Services",
+   "funding_sources": [
+    "General Fund",
+    "Federal Revenue"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 26300,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-homeless-navigation-center-west",
+   "title": "Homeless Navigation Center \u2013 West",
+   "function": "Human Services",
+   "funding_sources": [
+    "General Fund"
+   ],
+   "fiscal_years": {
+    "2026": 4000,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 4000,
+   "total": 4000,
+   "districts": [
+    "Countywide"
+   ],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-countywide-space",
+   "title": "Countywide Space",
+   "function": "Human Services",
+   "funding_sources": [
+    "General Fund"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 0,
+   "districts": [
+    "Countywide"
+   ],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-fire-rescue-system-station-replacement-renovation",
+   "title": "Fire & Rescue System Station Replacement & Renovation",
+   "function": "Public Safety",
+   "funding_sources": [
+    "General Fund",
+    "Fire Levy"
+   ],
+   "fiscal_years": {
+    "2026": 4000,
+    "2027": 4000,
+    "2028": 4000,
+    "2029": 4000,
+    "2030": 4000,
+    "2031": 4000
+   },
+   "five_year_total": 24000,
+   "total": 28000,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-station-27-fire-rescue",
+   "title": "Station 27 Fire & Rescue",
+   "function": "Public Safety",
+   "funding_sources": [
+    "General Fund",
+    "Fire Levy"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 19900,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-station-30-fire-rescue-and-emergency-operations-center",
+   "title": "Station 30 Fire & Rescue and Emergency Operations Center",
+   "function": "Public Safety",
+   "funding_sources": [
+    "General Fund",
+    "Fire Levy",
+    "Proffers"
+   ],
+   "fiscal_years": {
+    "2026": 3000,
+    "2027": 0,
+    "2028": 32000,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 35000,
+   "total": 36800,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-station-3-fire-rescue-replacement",
+   "title": "Station 3 Fire & Rescue Replacement",
+   "function": "Public Safety",
+   "funding_sources": [
+    "General Fund",
+    "Fire Levy"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 4500,
+    "2028": 0,
+    "2029": 28500,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 33000,
+   "total": 33000,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-station-29-fire-rescue",
+   "title": "Station 29 Fire & Rescue",
+   "function": "Public Safety",
+   "funding_sources": [
+    "General Fund",
+    "Fire Levy"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 3000,
+    "2030": 0,
+    "2031": 27000
+   },
+   "five_year_total": 30000,
+   "total": 30000,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-station-2-fire-rescue-replacement",
+   "title": "Station 2 Fire & Rescue Replacement",
+   "function": "Public Safety",
+   "funding_sources": [
+    "General Fund",
+    "Fire Levy"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 3000,
+    "2031": 0
+   },
+   "five_year_total": 3000,
+   "total": 30000,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-judicial-center-expansion",
+   "title": "Judicial Center Expansion",
+   "function": "Public Safety",
+   "funding_sources": [
+    "General Fund"
+   ],
+   "fiscal_years": {
+    "2026": 35000,
+    "2027": 148717,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 183717,
+   "total": 200000,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-judicial-center-renovation",
+   "title": "Judicial Center Renovation",
+   "function": "Public Safety",
+   "funding_sources": [
+    "General Fund"
+   ],
+   "fiscal_years": {
+    "2026": 3800,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 3800,
+   "total": 33100,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-public-safety-training-center-expansion",
+   "title": "Public Safety Training Center Expansion",
+   "function": "Public Safety",
+   "funding_sources": [
+    "General Fund"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 29800,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   },
+   "lat": 38.663661,
+   "lon": -77.585819,
+   "geocode": {
+    "confidence": "high",
+    "osm_type": "police",
+    "matched": "Prince William County Public Safety Training Center, 13101, Public Safety Drive, Nokesville, Prince William County, Virg"
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-911-call-handling-equipment",
+   "title": "911 Call-Handling Equipment",
+   "function": "Technology Improvement",
+   "funding_sources": [
+    "General Fund",
+    "Federal Revenue"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 3200,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-real-estate-assessments-computer-assisted-mass-appraisal",
+   "title": "Real Estate Assessments Computer-Assisted Mass Appraisal",
+   "function": "Technology Improvement",
+   "funding_sources": [
+    "General Fund"
+   ],
+   "fiscal_years": {
+    "2026": 3570,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 3570,
+   "total": 3600,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-devlin-road-widening",
+   "title": "Devlin Road Widening",
+   "function": "Transportation",
+   "funding_sources": [
+    "General Fund",
+    "NVTA",
+    "Proffers",
+    "State Revenue"
+   ],
+   "fiscal_years": {
+    "2026": 28700,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 28700,
+   "total": 69600,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-ellicott-street-sidewalk-occoquan-greenway-connector",
+   "title": "Ellicott Street Sidewalk (Occoquan Greenway Connector)",
+   "function": "Transportation",
+   "funding_sources": [
+    "General Fund",
+    "Proffers",
+    "Federal Revenue"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 2900,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-minnieville-road-prince-william-parkway-interchange",
+   "title": "Minnieville Road/Prince William Parkway Interchange",
+   "function": "Transportation",
+   "funding_sources": [
+    "General Fund",
+    "NVTA",
+    "Proffers"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 80200,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-north-woodbridge-mobility-improvements-marina-way-ext",
+   "title": "North Woodbridge Mobility Improvements (Marina Way Ext.)",
+   "function": "Transportation",
+   "funding_sources": [
+    "General Fund",
+    "NVTA",
+    "Federal Revenue"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 25100,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-old-bridge-road-gordon-boulevard-intersection-improvement",
+   "title": "Old Bridge Road/Gordon Boulevard Intersection Improvement",
+   "function": "Transportation",
+   "funding_sources": [
+    "General Fund",
+    "NVTA"
+   ],
+   "fiscal_years": {
+    "2026": 9232,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 9232,
+   "total": 9232,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-old-bridge-road-occoquan-road-intersection-improvement",
+   "title": "Old Bridge Road/Occoquan Road Intersection Improvement",
+   "function": "Transportation",
+   "funding_sources": [
+    "General Fund",
+    "Federal Revenue",
+    "Service Authority"
+   ],
+   "fiscal_years": {
+    "2026": 4000,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 4000,
+   "total": 15800,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-prince-william-pkwy-old-bridge-rd-intersection-improvement",
+   "title": "Prince William Pkwy./Old Bridge Rd. Intersection Improvement",
+   "function": "Transportation",
+   "funding_sources": [
+    "General Fund",
+    "Federal Revenue",
+    "Stormwater"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 33500,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-rollins-ford-road-roundabouts",
+   "title": "Rollins Ford Road Roundabouts",
+   "function": "Transportation",
+   "funding_sources": [
+    "General Fund",
+    "NVTA",
+    "Federal Revenue"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 9500,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-route-1-brady-s-hill-road-to-route-234",
+   "title": "Route 1 (Brady\u2019s Hill Road to Route 234)",
+   "function": "Transportation",
+   "funding_sources": [
+    "General Fund",
+    "NVTA",
+    "Proffers",
+    "State Revenue"
+   ],
+   "fiscal_years": {
+    "2026": 10600,
+    "2027": 118000,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 128600,
+   "total": 177700,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-route-234-business-battleview-to-godwin-improvements",
+   "title": "Route 234 Business (Battleview to Godwin) Improvements",
+   "function": "Transportation",
+   "funding_sources": [
+    "General Fund",
+    "Proffers",
+    "Federal Revenue"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 19800,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-summit-school-road-ext-telegraph-road-widening",
+   "title": "Summit School Road Ext. & Telegraph Road Widening",
+   "function": "Transportation",
+   "funding_sources": [
+    "General Fund",
+    "NVTA",
+    "Proffers",
+    "Service Authority"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 40000,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-transportation-roadway-improvement-program",
+   "title": "Transportation & Roadway Improvement Program",
+   "function": "Transportation",
+   "funding_sources": [
+    "General Fund",
+    "Recordation Tax"
+   ],
+   "fiscal_years": {
+    "2026": 3150,
+    "2027": 3150,
+    "2028": 3150,
+    "2029": 3150,
+    "2030": 3150,
+    "2031": 3150
+   },
+   "five_year_total": 18900,
+   "total": 20500,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-university-blvd-extension-devlin-rd-to-wellington-rd",
+   "title": "University Blvd. Extension (Devlin Rd. to Wellington Rd.)",
+   "function": "Transportation",
+   "funding_sources": [
+    "General Fund",
+    "NVTA",
+    "State Revenue",
+    "Federal Revenue"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 93500,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  },
+  {
+   "project_id": "princewilliam-cip-van-buren-road-north-extension",
+   "title": "Van Buren Road North Extension",
+   "function": "Transportation",
+   "funding_sources": [
+    "General Fund",
+    "NVTA",
+    "Recordation Tax"
+   ],
+   "fiscal_years": {
+    "2026": 0,
+    "2027": 0,
+    "2028": 0,
+    "2029": 0,
+    "2030": 0,
+    "2031": 0
+   },
+   "five_year_total": 0,
+   "total": 193300,
+   "districts": [],
+   "unit": "usd_thousands",
+   "source_url": "https://www.pwcva.gov/cip",
+   "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+   "provenance": {
+    "source_id": "princewilliam-cip",
+    "extractor_version": "1",
+    "run_id": "princewilliam-cip-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from the county's published CIP; single-source, no oracle wired \u2014 ingested, never certifiable as-is. Reconciles per-project against the CIP's printed subtotals."
+   }
+  }
+ ],
+ "meta": {
+  "title": "Prince William County, Virginia \u2014 Capital Projects",
+  "sub": "FY2026-2031 Capital Improvement Program \u00b7 43 funded projects \u00b7 auto-synthesized (5/6 categories), single-source",
+  "kind": "capital_projects",
+  "jurisdiction": "Prince William County, Virginia",
+  "edition": "FY2026-2031 Capital Improvement Program",
+  "unit": "usd_thousands",
+  "extractor": "extractors/princewilliam-cip/v1_attempt1.py",
+  "source_url": "https://www.pwcva.gov/cip",
+  "data_source_url": "https://www.pwcva.gov/assets/2025-06/aFY26--16--CIP00--CIP.pdf",
+  "generated": "2026-07-19T16:41:11",
+  "coverage_note": "Auto-synthesized extractor; covers 5 of the CIPs 6 functional categories. General Government (~2 projects, $8.2M) not yet captured. All landed projects reconcile to the CIPs printed subtotals."
+ }
+}

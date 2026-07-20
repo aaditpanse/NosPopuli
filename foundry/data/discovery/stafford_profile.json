@@ -1,0 +1,91 @@
+{
+ "jurisdiction": "Stafford County, Virginia \u2014 Board of Supervisors",
+ "primary_source": {
+  "system": "CivicClerk (CivicPlus Meetings Select)",
+  "base_urls": [
+   "https://staffordcova.api.civicclerk.com/v1/Events?%24filter=startDateTime%20ge%20{today}T00:00:00Z%20and%20categoryName%20eq%20%27Board%20of%20Supervisors%27&%24orderby=startDateTime&%24top=10",
+   "https://staffordcova.portal.civicclerk.com/",
+   "https://staffordcountyva.gov/government/elected_and_appointed_officials/board_of_supervisors/agenda_and_minutes.php"
+  ],
+  "rung": "json api (OData) \u2014 discovered during extractor synthesis, correcting this profile's original 'no public REST API' finding: https://staffordcova.api.civicclerk.com/v1/Events supports $filter/$orderby/$top (server caps pages at 15 rows, follow @odata.nextLink); documents stream from https://staffordcova.api.civicclerk.com/v1/Meetings/GetMeetingFileStream(fileId=N,plainText=false). publishedFiles on each event carries type (Agenda/Agenda Packet/Minutes) and fileId.",
+  "how_to_enumerate_meetings": "Scroll/paginate the event list at https://staffordcova.portal.civicclerk.com/ (JS-rendered); individual meetings at https://staffordcova.portal.civicclerk.com/event/{id}/overview; file attachments at https://staffordcova.portal.civicclerk.com/event/{id}/files/{file_id}. Era covered: ~July 2019 \u2013 present (county website states 'Agendas & Minutes from January 2006 \u2013 July 2019 can be found in the Agenda Center').",
+  "sample_document_urls": [
+   "https://staffordcova.portal.civicclerk.com/event/2366/overview  (March 4, 2025 Board of Supervisors meeting)",
+   "https://staffordcova.portal.civicclerk.com/event/2366/files/attachment/25909  (March 4, 2025 agenda packet)",
+   "https://staffordcova.portal.civicclerk.com/event/1417/files/21253  (November 14, 2023 agenda packet)"
+  ]
+ },
+ "second_source": {
+  "exists": true,
+  "system": "Hyland OnBase \u2014 Stafford County Government Public Records Online Portal",
+  "urls": [
+   "https://pob.staffordcountyva.gov/PublicAccess/"
+  ],
+  "what_it_affirms": "Independently hosts scanned/stored copies of adopted Board of Supervisors Minutes, Ordinances, Resolutions, and Proclamations going back in time, searchable by document type and date range. County website confirms: 'To perform a Search for Adopted Ordinances, Resolutions, Proclamations, and Minutes, please click here to access the Stafford County OnBase Public Access Viewer.' Minutes in OnBase would contain per-item vote records. Interface is form/JS-based; no unauthenticated REST API found. Note: Serving as a cross-check against CivicClerk agendas."
+ },
+ "votes_located": "Votes appear in two places: (1) Within CivicClerk meeting records \u2014 each event page (e.g. /event/2366/overview) includes agenda items and their disposition; vote details live inside the rendered SPA and attached PDF packets. (2) In approved Board of Supervisors Minutes stored in OnBase (pob.staffordcountyva.gov/PublicAccess/), which per the county's own By-Laws (adopted March 4, 2025, cdn.staffordcountyva.gov) must include 'A summary of the discussion on matters proposed, deliberated, or decided' and record 'the presence or absence of each member of the Board.' The By-Laws PDF itself is a verifiable document at https://cdn.staffordcountyva.gov/By-laws%20and%20Rules%20of%20Procedure%20dtd%204-Mar-2025.pdf \u2014 quoted line: 'A summary of the discussion on matters proposed, deliberated, or decided.'",
+ "systems_surveyed": [
+  {
+   "system": "Legistar API (slug: stafford)",
+   "url": "https://webapi.legistar.com/v1/stafford/bodies",
+   "status": "HTTP 500 \u2014 not a tenant",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "Legistar API (slug: staffordcounty)",
+   "url": "https://webapi.legistar.com/v1/staffordcounty/bodies",
+   "status": "HTTP 500 \u2014 not a tenant",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "CivicClerk (CivicPlus Meetings Select) \u2014 Public Portal",
+   "url": "https://staffordcova.portal.civicclerk.com/",
+   "status": "HTTP 200 \u2014 confirmed active, JavaScript SPA. Event pages confirmed (IDs 1417, 2212, 2366). REST API paths /api/v1/events, /api/v2/events, /api/events all returned 404/400.",
+   "era_covered": "~July 2019 \u2013 present"
+  },
+  {
+   "system": "Hyland OnBase \u2014 Public Access Viewer",
+   "url": "https://pob.staffordcountyva.gov/PublicAccess/",
+   "status": "HTTP 200 \u2014 confirmed active, form/JS-based document search for Minutes, Ordinances, Resolutions, Proclamations",
+   "era_covered": "Unspecified historical depth; covers approved Board minutes"
+  },
+  {
+   "system": "County Website CMS (Revize) \u2014 Agenda & Minutes page",
+   "url": "https://staffordcountyva.gov/government/elected_and_appointed_officials/board_of_supervisors/agenda_and_minutes.php",
+   "status": "HTTP 200 \u2014 active landing page; links out to CivicClerk portal and OnBase",
+   "era_covered": "Current (links to live systems)"
+  },
+  {
+   "system": "County Website \u2014 Old CivicPlus AgendaCenter",
+   "url": "https://staffordcountyva.gov/AgendaCenter",
+   "status": "HTTP 404 \u2014 path not found; county website notes this archive covers Jan 2006 \u2013 July 2019 but the canonical URL is unclear",
+   "era_covered": "January 2006 \u2013 July 2019 (referenced in county website)"
+  },
+  {
+   "system": "Stafford County CDN",
+   "url": "https://cdn.staffordcountyva.gov/government/elected_and_appointed_officials/board_of_supervisors/",
+   "status": "HTTP 403 \u2014 directory listing forbidden; individual PDFs (e.g. By-Laws) are accessible at direct URLs",
+   "era_covered": "Supporting documents only"
+  },
+  {
+   "system": "PrimeGov (probed implicitly via search \u2014 not found)",
+   "url": "N/A",
+   "status": "No evidence of PrimeGov tenancy",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "Granicus (probed implicitly via search \u2014 not found)",
+   "url": "N/A",
+   "status": "No evidence of Granicus tenancy; video streaming via regionalwebtv.com/staffordbos",
+   "era_covered": "N/A"
+  }
+ ],
+ "access_constraints": "1. CivicClerk portal (staffordcova.portal.civicclerk.com) is a JavaScript single-page application \u2014 records cannot be scraped with a plain HTTP GET; a headless browser or Playwright-style renderer is required. No public machine-readable REST API was found (all /api/v1/ and /api/v2/ paths 404'd or 400'd). 2. OnBase Public Access Viewer (pob.staffordcountyva.gov/PublicAccess/) requires JavaScript form interactions to query and retrieve documents; no unauthenticated JSON endpoint was found. 3. CDN directory listing (cdn.staffordcountyva.gov) returns HTTP 403; only known direct PDF URLs are accessible. 4. No Cloudflare or CAPTCHA blocking was encountered; the primary constraint is JavaScript rendering.",
+ "open_questions": [
+  "What is the live canonical URL for the 2006\u20132019 Agenda Center archive? The county references it but /AgendaCenter returns 404 \u2014 it may live on a separate subdomain or was migrated into OnBase.",
+  "Does CivicClerk expose a private/partner API or a hidden JSON endpoint that could be used for bulk enumeration without a headless browser? (All tested paths failed.)",
+  "Do CivicClerk event pages include structured, per-member vote roll-call data (JSON or HTML table), or are votes only available as narrative text inside PDF attachments?",
+  "How far back does the OnBase Public Access Viewer hold minutes \u2014 does it cover the pre-2006 era, or only post-2006?",
+  "Is meeting video (regionalwebtv.com/staffordbos) archived and searchable, and does it retain timestamped vote moments?"
+ ]
+}
