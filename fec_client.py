@@ -335,6 +335,97 @@ def top_pac_contributors(candidate_id, cycle, candidate_name=None, limit=8):
     return rows
 
 
+# Employer strings that carry no industry — donors' non-jobs. FEC is full of
+# them (they're the biggest "employers" by dollars); they'd swamp any industry
+# ranking, so they're dropped before classification.
+_NON_INDUSTRY = {
+    "NOT EMPLOYED", "RETIRED", "SELF", "SELF EMPLOYED", "SELF-EMPLOYED",
+    "NONE", "N/A", "NA", "NULL", "HOMEMAKER", "UNEMPLOYED", "NOT APPLICABLE",
+    "INFORMATION REQUESTED", "REQUESTED", "NOT PROVIDED", "", "NONE LISTED",
+}
+
+
+def top_employers(candidate_id, cycle, limit=40):
+    """Top donor employers for a candidate (FEC by_employer aggregate, scoped to
+    the member's committee), minus the non-employer buckets. [{employer, total}]."""
+    if not candidate_id or not cycle:
+        return []
+    cm = _principal_committee(candidate_id)
+    if not cm:
+        return []
+    try:
+        data = _get("schedules/schedule_a/by_employer/", {
+            "committee_id": cm, "cycle": int(cycle), "sort": "-total", "per_page": 100})
+    except Exception as e:
+        print(f"[FEC] by_employer {candidate_id}: {e}")
+        return []
+    out = []
+    for r in data.get("results", []):
+        emp = (r.get("employer") or "").strip()
+        if emp.upper() in _NON_INDUSTRY:
+            continue
+        tot = r.get("total") or 0
+        if tot > 0:
+            out.append({"employer": emp, "total": round(tot, 2)})
+        if len(out) >= limit:
+            break
+    return out
+
+
+def _industries_for_cycle(candidate_id, cycle):
+    """Aggregate a cycle's donor employers into {industry: dollars}, plus the
+    total dollars that landed in a *recognized* industry (the signal strength)."""
+    emps = top_employers(candidate_id, cycle, 40)
+    if not emps:
+        return {}, 0.0
+    import industry_classifier
+    labels = industry_classifier.classify([e["employer"] for e in emps])
+    agg = {}
+    for e in emps:
+        ind = labels.get(e["employer"].upper()) or "Other"
+        agg[ind] = agg.get(ind, 0.0) + e["total"]
+    classified = sum(v for k, v in agg.items() if k != "Other")
+    return agg, classified
+
+
+def member_industries(candidate_id, cycle, limit=10):
+    """Estimated industry breakdown of a member's individual donors — the
+    OpenSecrets-style rollup, reconstructed from raw FEC by classifying each
+    donor employer (industry_classifier) and summing dollars by industry.
+
+    A current cycle is often too early to be meaningful, so we also look at the
+    prior cycle and show whichever has more classified money. Returns
+    {"cycle": <used>, "industries": [{industry, total, share}]}."""
+    if not candidate_id or not cycle:
+        return {"cycle": cycle, "industries": []}
+    ck = f"fec:ind:v3:{candidate_id}:{cycle}"
+    cached = _cache_get(ck)
+    if cached is not None:
+        return cached
+
+    agg_c, cls_c = _industries_for_cycle(candidate_id, int(cycle))
+    agg_p, cls_p = _industries_for_cycle(candidate_id, int(cycle) - 2)
+    agg, used = (agg_p, int(cycle) - 2) if cls_p > cls_c else (agg_c, int(cycle))
+
+    if not agg:
+        out = {"cycle": used, "industries": []}
+        _cache_set(ck, out)
+        return out
+
+    total = sum(agg.values()) or 1
+    # Recognized industries lead; the unclassified remainder sits at the bottom
+    # so it doesn't crowd out the real signal.
+    other = agg.pop("Other", 0.0)
+    rows = [{"industry": k, "total": round(v, 2), "share": round(v / total, 3)}
+            for k, v in sorted(agg.items(), key=lambda kv: kv[1], reverse=True)][:limit]
+    if other > 0:
+        rows.append({"industry": "Unclassified employers",
+                     "total": round(other, 2), "share": round(other / total, 3)})
+    out = {"cycle": used, "industries": rows}
+    _cache_set(ck, out)
+    return out
+
+
 def race_candidates(office, state, cycle, limit=10):
     """Every FEC-registered candidate for a federal race, with finance — used
     when we have no candidate roster from elsewhere (Google Civic voterinfo is

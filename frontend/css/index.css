@@ -1791,6 +1791,17 @@ body {
 .mf-pac-name { font-family: 'Source Serif 4', Georgia, serif; font-size: 0.88rem; color: var(--ink); }
 .mf-pac-amt { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--accent);
   white-space: nowrap; font-weight: 500; }
+.mf-ind-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.28rem 0.2rem;
+  border-bottom: 1px solid var(--rule); }
+.mf-ind-row:last-child { border-bottom: none; }
+.mf-ind-name { font-family: 'Source Serif 4', Georgia, serif; font-size: 0.85rem; color: var(--ink);
+  min-width: 150px; flex-shrink: 0; }
+.mf-ind-bar { flex: 1; height: 7px; background: var(--aged); border-radius: 2px; overflow: hidden; }
+.mf-ind-fill { display: block; height: 100%; background: #2457a0; }
+.mf-ind-pct { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--muted);
+  min-width: 2.2rem; text-align: right; }
+.mf-ind-amt { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--ink);
+  min-width: 3.2rem; text-align: right; font-weight: 500; }
 
 /* Resolved-references block, streamed in under the plain-English explanation
    after the core translation has already rendered. */

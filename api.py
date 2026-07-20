@@ -1951,6 +1951,20 @@ async def member_finance_endpoint(
         return {}
 
 
+@app.get("/member/industries")
+@limiter.limit("15/minute")
+async def member_industries_endpoint(request: Request, cid: str, cycle: int):
+    """Estimated industry breakdown of a member's individual donors — raw FEC
+    employers classified by a cached LLM pass. Lazy: called after the finance
+    section renders, keyed by the candidate_id it already resolved."""
+    import fec_client
+    try:
+        return await asyncio.to_thread(fec_client.member_industries, cid, cycle)
+    except Exception as e:
+        print(f"[API] Member industries error for {cid}: {e}")
+        return {"industries": [], "cycle": cycle}
+
+
 @app.get("/api/elections")
 @limiter.limit("10/minute")
 async def elections_endpoint(request: Request, zip: Optional[str] = None, state: Optional[str] = None):

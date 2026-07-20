@@ -1126,11 +1126,40 @@ function _renderMemberFinance(fin) {
     <div class="mf-bar">${bar}</div>
     <div class="mf-legend">${rows}</div>
     ${pacHtml}
-    <p class="pushing-note">Source composition and named PAC contributors are from FEC filings; the
-      candidate's own joint-fundraising committees and pass-through conduits (ActBlue, WinRed) are
-      removed. Individual donors' <em>industries</em> aren't shown — that needed OpenSecrets, which
-      retired its public API in 2025, and the FEC's raw employer fields aren't reliable enough.</p>`;
+    <div id="mf-industries"></div>
+    <p class="pushing-note">Source composition and named PAC contributors are from FEC filings
+      (the candidate's own joint-fundraising committees and pass-through conduits like ActBlue and
+      WinRed are removed). Top industries are <em>estimated</em> — each donor's self-reported employer
+      is sorted into an industry automatically, the way OpenSecrets once did by hand; approximate,
+      not authoritative.</p>`;
   section.style.display = 'block';
+}
+
+// Estimated industry breakdown of a member's donors — loads a moment after the
+// finance section, since it runs a (cached) classification pass.
+function _renderMemberIndustries(data) {
+  const host = document.getElementById('mf-industries');
+  if (!host) return;
+  const inds = (data && data.industries || []).filter(i => i.total > 0);
+  if (!inds.length) { host.innerHTML = ''; return; }
+  const max = Math.max(...inds.map(i => i.share));
+  const cyc = data.cycle ? `estimated · ${data.cycle} cycle` : 'estimated';
+  host.innerHTML = `
+    <div class="mf-pac-head">Top industries <span class="mf-sub">${cyc}</span></div>
+    <div class="mf-ind-list">${inds.map(i => `
+      <div class="mf-ind-row">
+        <span class="mf-ind-name">${escapeHtml(i.industry)}</span>
+        <span class="mf-ind-bar"><span class="mf-ind-fill" style="width:${Math.max(4, 100 * i.share / max)}%"></span></span>
+        <span class="mf-ind-pct">${Math.round(i.share * 100)}%</span>
+        <span class="mf-ind-amt">${_mfMoney(i.total)}</span>
+      </div>`).join('')}</div>`;
+}
+
+async function loadMemberIndustries(cid, cycle) {
+  try {
+    const res = await fetch(`/member/industries?cid=${encodeURIComponent(cid)}&cycle=${encodeURIComponent(cycle)}`);
+    _renderMemberIndustries(await res.json());
+  } catch { /* leave industries empty on error */ }
 }
 
 async function loadMemberFinance(name, state, chamber) {
@@ -1141,7 +1170,9 @@ async function loadMemberFinance(name, state, chamber) {
     if (state) q.set('state', state);
     if (chamber) q.set('chamber', chamber);
     const res = await fetch('/member/finance?' + q.toString());
-    _renderMemberFinance(await res.json());
+    const fin = await res.json();
+    _renderMemberFinance(fin);
+    if (fin && fin.candidate_id && fin.cycle) loadMemberIndustries(fin.candidate_id, fin.cycle);
   } catch { /* leave the section hidden on any error */ }
 }
 
