@@ -1470,6 +1470,41 @@ body {
   font-size: 0.58rem;
   color: var(--muted);
 }
+.zip-rep-chamber { width: auto; min-width: 50px; }
+.zip-rep-empty {
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--muted);
+  padding: 0.35rem 0;
+}
+#district-badge { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+  letter-spacing: 0.08em; color: var(--accent); }
+
+/* Find-your-district controls + map */
+.onboard-locrow { display: flex; align-items: center; gap: 0.75rem; margin: 0.6rem 0 0.2rem; }
+.onboard-loc-btn {
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 0.4rem 0.75rem; border: 1px solid var(--rule);
+  background: var(--card-bg); color: var(--ink); cursor: pointer;
+}
+.onboard-loc-btn:hover { border-color: var(--accent); color: var(--accent); }
+.onboard-loc-hint { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+  color: var(--muted); letter-spacing: 0.04em; }
+#district-map { margin: 1rem 0 1.25rem; }
+.cd-maphead { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 0.4rem; }
+.cd-maptitle { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+.cd-back { margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent);
+  background: none; border: none; cursor: pointer; padding: 0; }
+.cd-svg { width: 100%; height: auto; display: block; background: var(--card-bg);
+  border: 1px solid var(--rule); }
+.cd-area { fill: var(--aged); stroke: var(--paper); stroke-width: 0.35;
+  cursor: pointer; transition: fill 0.12s, opacity 0.12s; }
+.cd-area:hover { opacity: 0.7; }
+.cd-area.selected { fill: var(--accent); }
+.onboard-zipfallback { margin-top: 1.25rem; border-top: 1px solid var(--rule); padding-top: 0.75rem; }
+.onboard-zipfallback > summary { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); cursor: pointer; }
+.onboard-zipfallback-note { font-size: 0.8rem; color: var(--muted); margin: 0.5rem 0; }
 
 .onboard-rule {
   border: none;

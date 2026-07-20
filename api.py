@@ -31,6 +31,7 @@ from analyst_agent import analyze
 from flag_logger import log_search_flag, log_bill_flag, get_flags
 from feed_agent import fetch_feed
 from civic_resolver import resolve_zip
+from district_resolver import resolve_address, resolve_point, resolve_geoid
 import search_cache
 import httpx
 import asyncio
@@ -192,7 +193,7 @@ class BillRequest(BaseModel):
 class LawRequest(BaseModel):
     congress: int
     law_number: int
-    user_context: dict = None
+    user_context: Optional[dict] = None
 
 
 class MemberSearchRequest(BaseModel):
@@ -208,6 +209,19 @@ class FeedRequest(BaseModel):
 
 class ZipRequest(BaseModel):
     zip_code: str
+
+
+class AddressRequest(BaseModel):
+    address: str
+
+
+class PointRequest(BaseModel):
+    lat: float
+    lon: float
+
+
+class GeoidRequest(BaseModel):
+    geoid: str
 
 
 class StateBillRequest(BaseModel):
@@ -1120,6 +1134,42 @@ async def resolve_zip_endpoint(request: Request, body: ZipRequest):
     if not result:
         raise HTTPException(status_code=404, detail="Could not resolve zip code")
 
+    return result
+
+
+@app.post("/resolve-address")
+@limiter.limit("10/minute")
+async def resolve_address_endpoint(request: Request, body: AddressRequest):
+    """Geocode an address to its exact congressional district + representatives.
+    Precise where /resolve-zip is only state-level."""
+    loop = asyncio.get_event_loop()
+    result = await loop.run_in_executor(None, resolve_address, body.address)
+    if result.get("error"):
+        raise HTTPException(status_code=404, detail=result["error"])
+    return result
+
+
+@app.post("/resolve-point")
+@limiter.limit("20/minute")
+async def resolve_point_endpoint(request: Request, body: PointRequest):
+    """Resolve a lat/lon (browser geolocation or a click on the district map)
+    to its congressional district + representatives."""
+    loop = asyncio.get_event_loop()
+    result = await loop.run_in_executor(None, resolve_point, body.lat, body.lon)
+    if result.get("error"):
+        raise HTTPException(status_code=404, detail=result["error"])
+    return result
+
+
+@app.post("/resolve-district")
+@limiter.limit("30/minute")
+async def resolve_district_endpoint(request: Request, body: GeoidRequest):
+    """Resolve a district GEOID (from clicking a district on the map) to its
+    representatives — no geocoding, just the district-to-member lookup."""
+    loop = asyncio.get_event_loop()
+    result = await loop.run_in_executor(None, resolve_geoid, body.geoid)
+    if result.get("error"):
+        raise HTTPException(status_code=404, detail=result["error"])
     return result
 
 

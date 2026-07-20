@@ -100,27 +100,48 @@
   <div class="onboard-shell">
     <a class="back-link" href="#" onclick="goHome();return false">← Back to Front Page</a>
 
-    <!-- Step 1: Zip code -->
+    <!-- Step 1: Find your district -->
     <div class="onboarding-step active" id="step-1">
       <div class="onboard-step-tag">Step 1 of 2 · Where you live</div>
       <h2 class="onboard-title">Set your delegation</h2>
       <p class="onboard-deck">
-        A zip code is all we need to find your senators and house representative.
-        Nothing is stored on our servers — preferences live in your browser only.
+        Enter your address, use your location, or click your district on the map —
+        we find the district that <em>actually</em> represents you, not just your state.
+        Nothing is stored on our servers; your address never leaves this step.
       </p>
 
       <div class="onboard-zip-row">
-        <input class="onboard-zip-input" id="zip-input" type="text"
-          placeholder="Enter your zip code" maxlength="5"
-          oninput="handleZipInput(this.value)"
-          onkeydown="if(event.key==='Enter') lookupZip()"/>
-        <button class="btn-primary" onclick="lookupZip()">Look up →</button>
+        <input class="onboard-zip-input" id="address-input" type="text"
+          placeholder="Street address, city, state"
+          onkeydown="if(event.key==='Enter') lookupAddress()"/>
+        <button class="btn-primary" onclick="lookupAddress()">Find →</button>
+      </div>
+      <div class="onboard-locrow">
+        <button class="onboard-loc-btn" id="loc-btn" onclick="useMyLocation()">Use my location</button>
+        <span class="onboard-loc-hint" id="addr-hint"></span>
       </div>
 
+      <div id="district-map"></div>
+
       <div id="zip-result" class="onboard-preview">
-        <div class="onboard-preview-label">Your Representatives</div>
+        <div class="onboard-preview-label">Your Representatives <span id="district-badge"></span></div>
         <div id="zip-reps"></div>
       </div>
+
+      <details class="onboard-zipfallback">
+        <summary>Only have a zip code? (state-level, approximate)</summary>
+        <p class="onboard-zipfallback-note">
+          A zip can't pin your congressional district — zips cross district lines —
+          so this finds your senators and a best-guess representative only.
+        </p>
+        <div class="onboard-zip-row">
+          <input class="onboard-zip-input" id="zip-input" type="text"
+            placeholder="Enter your zip code" maxlength="5"
+            oninput="handleZipInput(this.value)"
+            onkeydown="if(event.key==='Enter') lookupZip()"/>
+          <button class="btn-secondary" onclick="lookupZip()">Look up →</button>
+        </div>
+      </details>
 
       <button class="btn-primary" id="step1-btn" onclick="goToStep2()" disabled
               style="width:100%;margin-top:1.5rem">

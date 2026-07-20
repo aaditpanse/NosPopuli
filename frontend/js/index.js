@@ -2474,11 +2474,12 @@ async function runSearch() {
 }
 
 // ── Onboarding ──
-let onboardingData = { zip: null, state: null, senators: [], representative: null, interests: [] };
+let onboardingData = { zip: null, state: null, district: null, geoid: null, senators: [], representative: null, interests: [] };
 
 function showStep(n) {
   document.querySelectorAll('.onboarding-step').forEach(s => s.classList.remove('active'));
   document.getElementById(`step-${n}`).classList.add('active');
+  if (n === 1) ensureDistrictMap();  // lazy-load the ~290KB boundary file only when needed
 }
 
 async function handleZipInput(val) {
@@ -2490,46 +2491,210 @@ async function handleZipInput(val) {
   }
 }
 
+// Every resolution path (address, location, map click, zip fallback) funnels
+// through here so the reps preview + onboarding state are populated the same
+// way and, when we know the exact district, the map highlights it.
+function renderResolution(data) {
+  onboardingData.state = data.state;
+  onboardingData.senators = data.senators || [];
+  onboardingData.representative = data.representative;
+  onboardingData.district = data.district_label || null;
+  onboardingData.geoid = data.geoid || null;
+
+  const badge = document.getElementById('district-badge');
+  if (badge) badge.textContent = data.district_label ? `· ${data.district_label}` : '';
+
+  const all = [
+    ...(data.senators || []).map(s => ({ ...s, label: 'Senator' })),
+    data.representative ? { ...data.representative, label: 'Rep.' } : null
+  ].filter(Boolean);
+  document.getElementById('zip-reps').innerHTML = all.map(p => `
+    <div class="zip-rep-row">
+      <div class="zip-rep-chamber">${p.label}${p.district ? ' · Dist. ' + p.district : ''}</div>
+      <div class="zip-rep-name">${p.name}</div>
+      <div class="zip-rep-party">${p.party}</div>
+    </div>`).join('') ||
+    '<div class="zip-rep-empty">No representative on file for this district.</div>';
+
+  document.getElementById('zip-result').classList.add('visible');
+  document.getElementById('step1-btn').disabled = false;
+  if (data.geoid) highlightDistrict(data.geoid, true);
+}
+
+function resolveError(msg) {
+  document.getElementById('zip-reps').innerHTML =
+    `<div class="zip-rep-empty" style="color:var(--accent)">${msg}</div>`;
+  document.getElementById('zip-result').classList.add('visible');
+}
+
 async function lookupZip(zip) {
   zip = zip || document.getElementById('zip-input').value;
   if (!/^\d{5}$/.test(zip)) return;
-
   try {
     const res = await fetch('/resolve-zip', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ zip_code: zip })
-    });
-
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ zip_code: zip }) });
     if (!res.ok) throw new Error('Not found');
     const data = await res.json();
-
     onboardingData.zip = zip;
-    onboardingData.state = data.state;
-    onboardingData.senators = data.senators || [];
-    onboardingData.representative = data.representative;
-
-    const repsEl = document.getElementById('zip-reps');
-    const all = [
-      ...data.senators.map(s => ({ ...s, label: 'Senator' })),
-      data.representative ? { ...data.representative, label: 'Rep.' } : null
-    ].filter(Boolean);
-
-    repsEl.innerHTML = all.map(p => `
-      <div class="zip-rep-row">
-        <div class="zip-rep-chamber">${p.label}</div>
-        <div class="zip-rep-name">${p.name}</div>
-        <div class="zip-rep-party">${p.party}</div>
-      </div>
-    `).join('');
-
-    document.getElementById('zip-result').classList.add('visible');
-    document.getElementById('step1-btn').disabled = false;
-
-  } catch(e) {
-    document.getElementById('zip-result').innerHTML = '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:0.7rem;color:var(--accent)">Could not find representatives for this zip code.</div>';
-    document.getElementById('zip-result').classList.add('visible');
+    renderResolution(data);
+  } catch (e) {
+    resolveError('Could not find representatives for this zip code.');
   }
+}
+
+async function lookupAddress() {
+  const address = document.getElementById('address-input').value.trim();
+  if (address.length < 6) return;
+  const hint = document.getElementById('addr-hint');
+  hint.textContent = 'Locating your district…';
+  try {
+    const res = await fetch('/resolve-address', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ address }) });
+    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || 'not found');
+    const data = await res.json();
+    hint.textContent = data.matched_address ? `Matched: ${data.matched_address}` : '';
+    renderResolution(data);
+  } catch (e) {
+    hint.textContent = '';
+    resolveError('Could not find that address. Check it, or try the zip fallback below.');
+  }
+}
+
+function useMyLocation() {
+  const hint = document.getElementById('addr-hint');
+  if (!navigator.geolocation) { hint.textContent = 'Location is not available in this browser.'; return; }
+  hint.textContent = 'Requesting your location…';
+  navigator.geolocation.getCurrentPosition(async pos => {
+    try {
+      const res = await fetch('/resolve-point', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lat: pos.coords.latitude, lon: pos.coords.longitude }) });
+      if (!res.ok) throw new Error('not found');
+      hint.textContent = '';
+      renderResolution(await res.json());
+    } catch (e) { hint.textContent = ''; resolveError('Could not resolve your location to a district.'); }
+  }, () => { hint.textContent = 'Location permission denied — type an address instead.'; },
+     { enableHighAccuracy: false, timeout: 10000 });
+}
+
+async function resolveGeoid(geoid) {
+  try {
+    const res = await fetch('/resolve-district', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ geoid }) });
+    if (!res.ok) throw new Error('not found');
+    renderResolution(await res.json());
+  } catch (e) { resolveError('Could not load that district.'); }
+}
+
+// --- Congressional-district map. Boundaries are the Census 119th-Congress
+// cartographic file (vendored TopoJSON); d3-geo projects them. Like the
+// Foundry map, the overview is STATES: click a state to zoom into its
+// districts, then click a district for its reps. State shapes are merged
+// from the district topology so their borders line up exactly.
+const CD_NS = 'http://www.w3.org/2000/svg';
+let _cdTopo = null, _cdScope = null, _stateFeats = null;
+
+const CD_FIPS_USPS = {
+  "01":"AL","02":"AK","04":"AZ","05":"AR","06":"CA","08":"CO","09":"CT","10":"DE",
+  "11":"DC","12":"FL","13":"GA","15":"HI","16":"ID","17":"IL","18":"IN","19":"IA",
+  "20":"KS","21":"KY","22":"LA","23":"ME","24":"MD","25":"MA","26":"MI","27":"MN",
+  "28":"MS","29":"MO","30":"MT","31":"NE","32":"NV","33":"NH","34":"NJ","35":"NM",
+  "36":"NY","37":"NC","38":"ND","39":"OH","40":"OK","41":"OR","42":"PA","44":"RI",
+  "45":"SC","46":"SD","47":"TN","48":"TX","49":"UT","50":"VT","51":"VA","53":"WA",
+  "54":"WV","55":"WI","56":"WY","72":"PR"
+};
+
+function cdFeatures() {
+  return topojson.feature(_cdTopo, Object.values(_cdTopo.objects)[0]).features;
+}
+
+// state polygons, merged once from the district geometries (shared borders)
+function stateFeatures() {
+  if (_stateFeats) return _stateFeats;
+  const geoms = Object.values(_cdTopo.objects)[0].geometries;
+  const byState = {};
+  for (const gm of geoms) {
+    const s = String(gm.id).slice(0, 2);
+    (byState[s] = byState[s] || []).push(gm);
+  }
+  _stateFeats = Object.entries(byState).map(([fips, grp]) =>
+    ({ type: "Feature", id: fips, geometry: topojson.merge(_cdTopo, grp) }));
+  return _stateFeats;
+}
+
+function cdMapShell(title, backTo) {
+  const host = document.getElementById('district-map');
+  host.innerHTML = `<div class="cd-maphead">
+    <span class="cd-maptitle">${title}</span>
+    ${backTo ? `<button class="cd-back" onclick="drawStates()">all states</button>` : ''}</div>`;
+  const svg = document.createElementNS(CD_NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 960 560');
+  svg.setAttribute('class', 'cd-svg');
+  host.appendChild(svg);
+  return svg;
+}
+
+function drawStates() {
+  const host = document.getElementById('district-map');
+  if (!host || typeof d3 === 'undefined' || !_cdTopo) return;
+  _cdScope = null;
+  const feats = stateFeatures();
+  const path = d3.geoPath(d3.geoAlbersUsa().fitSize([960, 560],
+    { type: "FeatureCollection", features: feats }));
+  const svg = cdMapShell('Click your state', false);
+  for (const f of feats) {
+    const d = path(f);
+    if (!d) continue;
+    const p = document.createElementNS(CD_NS, 'path');
+    p.setAttribute('d', d);
+    p.setAttribute('class', 'cd-area');
+    const title = document.createElementNS(CD_NS, 'title');
+    title.textContent = CD_FIPS_USPS[f.id] || f.id;
+    p.appendChild(title);
+    p.addEventListener('click', () => drawDistricts(f.id));
+    svg.appendChild(p);
+  }
+}
+
+function drawDistricts(stateFips) {
+  const host = document.getElementById('district-map');
+  if (!host || typeof d3 === 'undefined' || !_cdTopo) return;
+  _cdScope = stateFips;
+  const feats = cdFeatures().filter(f => String(f.id).slice(0, 2) === stateFips);
+  const path = d3.geoPath(d3.geoAlbersUsa().fitSize([960, 560],
+    { type: "FeatureCollection", features: feats }));
+  const svg = cdMapShell(`Click your district — ${CD_FIPS_USPS[stateFips] || stateFips}`, true);
+  for (const f of feats) {
+    const d = path(f);
+    if (!d) continue;
+    const p = document.createElementNS(CD_NS, 'path');
+    p.setAttribute('d', d);
+    p.setAttribute('class', 'cd-area' + (String(f.id) === onboardingData.geoid ? ' selected' : ''));
+    p.dataset.geoid = f.id;
+    p.addEventListener('click', () => resolveGeoid(String(f.id)));
+    svg.appendChild(p);
+  }
+}
+
+function highlightDistrict(geoid, zoom) {
+  const stateFips = String(geoid).slice(0, 2);
+  if (zoom && _cdScope !== stateFips) { drawDistricts(stateFips); return; }  // zoom then highlight
+  for (const p of document.querySelectorAll('#district-map .cd-area'))
+    p.classList.toggle('selected', p.dataset.geoid === String(geoid));
+}
+
+async function ensureDistrictMap() {
+  if (_cdTopo || typeof d3 === 'undefined' || typeof topojson === 'undefined') {
+    if (_cdTopo) return;
+  }
+  try {
+    _cdTopo = await (await fetch('/static/geo/cd119-10m.json')).json();
+    if (onboardingData.geoid) drawDistricts(onboardingData.geoid.slice(0, 2));
+    else drawStates();
+  } catch (e) { /* map is an aid; the address/zip inputs still work without it */ }
 }
 
 function goToStep2() {
