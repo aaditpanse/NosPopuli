@@ -40,6 +40,34 @@ _BILL_TYPE_OFFICE = {
     "s": "S", "sres": "S", "sjres": "S", "sconres": "S",
 }
 
+# Full state name -> USPS code. FEC's candidate search only accepts the 2-letter
+# code, but callers hand us either form (a member's state is the full name).
+_STATE_TO_USPS = {
+    "alabama": "AL", "alaska": "AK", "arizona": "AZ", "arkansas": "AR",
+    "california": "CA", "colorado": "CO", "connecticut": "CT", "delaware": "DE",
+    "district of columbia": "DC", "florida": "FL", "georgia": "GA", "hawaii": "HI",
+    "idaho": "ID", "illinois": "IL", "indiana": "IN", "iowa": "IA", "kansas": "KS",
+    "kentucky": "KY", "louisiana": "LA", "maine": "ME", "maryland": "MD",
+    "massachusetts": "MA", "michigan": "MI", "minnesota": "MN", "mississippi": "MS",
+    "missouri": "MO", "montana": "MT", "nebraska": "NE", "nevada": "NV",
+    "new hampshire": "NH", "new jersey": "NJ", "new mexico": "NM", "new york": "NY",
+    "north carolina": "NC", "north dakota": "ND", "ohio": "OH", "oklahoma": "OK",
+    "oregon": "OR", "pennsylvania": "PA", "rhode island": "RI", "south carolina": "SC",
+    "south dakota": "SD", "tennessee": "TN", "texas": "TX", "utah": "UT",
+    "vermont": "VT", "virginia": "VA", "washington": "WA", "west virginia": "WV",
+    "wisconsin": "WI", "wyoming": "WY", "puerto rico": "PR",
+}
+
+
+def _usps(state):
+    """A 2-letter USPS code from either a code ('VA') or a full name ('Virginia')."""
+    s = (state or "").strip()
+    if not s:
+        return None
+    if len(s) == 2:
+        return s.upper()
+    return _STATE_TO_USPS.get(s.lower(), s.upper())
+
 
 def _cache_get(key):
     try:
@@ -147,8 +175,9 @@ def candidate_finance(name, state=None, office=None, cycle=None):
     if not name:
         return None
     query = clean_name(name) or name
+    usps = _usps(state)
 
-    ck = f"fec:cand:v2:{query.lower()}:{(state or '').upper()}:{office or ''}:{cycle or 'latest'}"
+    ck = f"fec:cand:v2:{query.lower()}:{usps or ''}:{office or ''}:{cycle or 'latest'}"
     cached = _cache_get(ck)
     if cached is not None:
         return cached or None  # cached {} (a confirmed miss) -> None
@@ -156,8 +185,8 @@ def candidate_finance(name, state=None, office=None, cycle=None):
     base = {"per_page": 8, "sort": "-election_years"}
     if office:
         base["office"] = office
-    if state and office != "P":
-        base["state"] = state.upper()
+    if usps and office != "P":
+        base["state"] = usps
 
     def _search(q):
         try:
