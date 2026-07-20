@@ -1806,6 +1806,25 @@ body {
 .mf-ind-other .mf-ind-name { color: var(--muted); font-style: italic; }
 .mf-ind-other .mf-ind-fill { background: var(--rule); }
 
+/* Member stock trades (STOCK Act PTRs) */
+.stk-buy { color: #2a6e2a; } .stk-sell { color: var(--accent); }
+.stk-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.85rem; }
+.stk-chip { font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; letter-spacing: 0.04em;
+  color: var(--ink); background: var(--aged); border-radius: 3px; padding: 0.15rem 0.45rem; }
+.stk-chip-n { color: var(--muted); margin-left: 0.35rem; }
+.stk-list { display: flex; flex-direction: column; }
+.stk-row { display: grid; grid-template-columns: 5.2rem 4.4rem 1fr auto; align-items: baseline;
+  gap: 0.6rem; padding: 0.32rem 0.2rem; border-bottom: 1px solid var(--rule); }
+.stk-row:last-child { border-bottom: none; }
+.stk-date { font-family: 'IBM Plex Mono', monospace; font-size: 0.64rem; color: var(--muted); }
+.stk-dir { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; letter-spacing: 0.04em;
+  text-transform: uppercase; }
+.stk-dir.stk-buy { color: #2a6e2a; } .stk-dir.stk-sell { color: var(--accent); }
+.stk-dir.stk-exch { color: var(--muted); }
+.stk-tkr { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; font-weight: 500; color: var(--ink); }
+.stk-amt { font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; color: var(--muted);
+  white-space: nowrap; text-align: right; }
+
 /* Resolved-references block, streamed in under the plain-English explanation
    after the core translation has already rendered. */
 .detail-background {

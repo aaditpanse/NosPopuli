@@ -1965,6 +1965,58 @@ async def member_industries_endpoint(request: Request, cid: str, cycle: int):
         return {"industries": [], "cycle": cycle}
 
 
+_house_stocks = None
+
+
+def _load_house_stocks():
+    """Load + cache the pre-built House stock-trade dataset (read-only)."""
+    global _house_stocks
+    if _house_stocks is None:
+        try:
+            with open("data/house_stocks.json") as f:
+                _house_stocks = json.load(f)
+        except Exception:
+            _house_stocks = {"members": {}, "generated": None, "cycles": []}
+    return _house_stocks
+
+
+@app.get("/member/stocks")
+@limiter.limit("30/minute")
+async def member_stocks_endpoint(request: Request, bioguide: str):
+    """Disclosed House stock trades for a member (STOCK Act PTRs), served from a
+    pre-built dataset. Empty when the member hasn't filed trades, is a senator
+    (House-only for now), or paper-files (unparseable)."""
+    data = _load_house_stocks()
+    rec = (data.get("members") or {}).get((bioguide or "").upper()) \
+        or (data.get("members") or {}).get(bioguide or "")
+    if not rec:
+        return {"trades": [], "generated": data.get("generated")}
+
+    trades = rec.get("trades", [])
+    # Top tickers by trade frequency (equities only — skip bonds/funds w/o ticker).
+    freq = {}
+    buys = sells = 0
+    for t in trades:
+        if t.get("type", "").startswith("buy"):
+            buys += 1
+        elif t.get("type", "").startswith("sell"):
+            sells += 1
+        tk = t.get("ticker")
+        if tk:
+            freq[tk] = freq.get(tk, 0) + 1
+    top = [{"ticker": k, "count": v} for k, v in
+           sorted(freq.items(), key=lambda kv: kv[1], reverse=True)[:8]]
+    return {
+        "name": rec.get("name"),
+        "trade_count": rec.get("trade_count", len(trades)),
+        "buys": buys, "sells": sells,
+        "top_tickers": top,
+        "trades": trades[:40],
+        "generated": data.get("generated"),
+        "cycles": data.get("cycles"),
+    }
+
+
 @app.get("/api/elections")
 @limiter.limit("10/minute")
 async def elections_endpoint(request: Request, zip: Optional[str] = None, state: Optional[str] = None):

@@ -1187,6 +1187,53 @@ async function loadMemberFinance(name, state, chamber) {
   } catch { /* leave the section hidden on any error */ }
 }
 
+// Disclosed House stock trades (STOCK Act PTRs). Hidden when none — absence is
+// ambiguous (no trades / senator / paper filer), so we don't assert "none."
+function _renderMemberStocks(data) {
+  const section = document.getElementById('member-stocks-section');
+  const body = document.getElementById('member-stocks-body');
+  if (!section || !body) return;
+  const trades = (data && data.trades) || [];
+  if (!trades.length) { section.style.display = 'none'; return; }
+
+  const chips = (data.top_tickers || []).map(t =>
+    `<span class="stk-chip">${escapeHtml(t.ticker)}<span class="stk-chip-n">${t.count}</span></span>`).join('');
+  const rows = trades.map(t => {
+    const dir = t.type.startsWith('buy') ? 'buy' : t.type.startsWith('sell') ? 'sell' : 'exch';
+    const label = t.ticker ? escapeHtml(t.ticker) : escapeHtml((t.asset || '').slice(0, 32));
+    const who = t.owner && t.owner !== '' ? ` · ${escapeHtml(t.owner)}` : '';
+    return `<div class="stk-row">
+      <span class="stk-date">${escapeHtml(t.date || '')}</span>
+      <span class="stk-dir stk-${dir}">${escapeHtml(t.type)}</span>
+      <span class="stk-tkr" title="${escapeHtml(t.asset || '')}">${label}</span>
+      <span class="stk-amt">${escapeHtml(t.amount || '')}${who}</span>
+    </div>`;
+  }).join('');
+  const cyc = (data.cycles || []).join(', ');
+  body.innerHTML = `
+    <div class="mf-head">
+      <div class="mf-headline"><span class="mf-big">${data.trade_count}</span> disclosed trades
+        · <span class="stk-buy">${data.buys} buys</span> / <span class="stk-sell">${data.sells} sells</span></div>
+      <div class="mf-cyc">${cyc ? cyc + ' · ' : ''}House STOCK Act filings</div>
+    </div>
+    ${chips ? `<div class="stk-chips">${chips}</div>` : ''}
+    <div class="stk-list">${rows}</div>
+    <p class="pushing-note">Trades the member (or their spouse/dependent) disclosed under the STOCK Act,
+      from U.S. House filings. Amounts are the reported <strong>ranges</strong>, not exact figures, with a
+      ~45-day filing lag. This is trading activity, not a full holdings snapshot; senators and members who
+      paper-file aren't covered yet.</p>`;
+  section.style.display = 'block';
+}
+
+async function loadMemberStocks(bioguide) {
+  const section = document.getElementById('member-stocks-section');
+  if (section) section.style.display = 'none';
+  try {
+    const res = await fetch('/member/stocks?bioguide=' + encodeURIComponent(bioguide));
+    _renderMemberStocks(await res.json());
+  } catch { /* leave hidden on error */ }
+}
+
 function renderMemberPage(data) {
   const activeMemberPage = document.querySelector('.page.active').id;
   if (activeMemberPage !== 'page-member') previousPage = activeMemberPage;
@@ -1251,9 +1298,12 @@ function renderMemberPage(data) {
   // Federal campaign finance (FEC). State legislators have none.
   const _finSection = document.getElementById('member-finance-section');
   if (_finSection) _finSection.style.display = 'none';
+  const _stkSection = document.getElementById('member-stocks-section');
+  if (_stkSection) _stkSection.style.display = 'none';
   if (!isState && m.name) {
     loadMemberFinance(m.name, m.state, (m.chambers && m.chambers.join(' ')) || m.chamber || '');
   }
+  if (!isState && m.bioguide_id) loadMemberStocks(m.bioguide_id);
 
   const policyChart = document.getElementById('policy-chart');
   if (!isState) {
