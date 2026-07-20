@@ -193,19 +193,20 @@ body {
 
 /* ── EXPERIMENTAL FEATURE BANNER (link to Foundry) ── */
 .lab-banner {
-  max-width: var(--content-width);
-  margin: 0.55rem auto 0;
-  padding: 0.4rem 1rem;
+  width: fit-content;
+  max-width: calc(100% - 1.5rem);
+  margin: 0.9rem auto 0.2rem;
+  padding: 0.3rem 0.85rem 0.3rem 0.35rem;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.65rem;
+  gap: 0.6rem;
   background: var(--card-bg);
-  border: 1px solid var(--rule);
+  border-radius: 3px;
   text-decoration: none;
-  transition: background 0.15s, border-color 0.15s;
+  transition: background 0.15s;
 }
-.lab-banner:hover { background: var(--aged); border-color: var(--accent); }
+.lab-banner:hover { background: var(--aged); }
+.lab-banner:hover .lab-banner-arrow { transform: translateX(3px); }
 .lab-banner-tag {
   flex-shrink: 0;
   font-family: 'IBM Plex Mono', monospace;
@@ -228,9 +229,10 @@ body {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.85rem;
   color: var(--accent);
+  transition: transform 0.15s;
 }
 @media (max-width: 640px) {
-  .lab-banner { margin: 0.4rem 0.75rem 0; }
+  .lab-banner { margin: 0.6rem auto 0.2rem; }
   .lab-banner-text { font-size: 0.74rem; }
 }
 
