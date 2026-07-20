@@ -30,14 +30,10 @@ main { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
   font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
   color: var(--accent); text-decoration: none; margin-bottom: 0.65rem; }
 .foundry-back:hover { color: var(--ink); }
-.labnotice { border-left: 3px solid var(--accent); background: var(--card-bg);
-  padding: 0.7rem 1rem 0.75rem; margin: 1.5rem 0 2.5rem;
-  font-family: 'Source Serif 4', serif; font-size: 0.82rem; line-height: 1.6;
-  color: var(--muted); }
-.labnotice-label { display: block; margin-bottom: 0.25rem;
-  font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; font-weight: 500;
+.labnotice { border: 1px solid var(--accent); background: var(--card-bg);
+  padding: 0.75rem 1rem; margin: 1.5rem 0 2.5rem;
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
   letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); }
-.labnotice b { color: var(--ink); font-weight: 600; }
 section.region { margin-bottom: 2.5rem; }
 h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700;
   border-bottom: 1px solid var(--rule); padding-bottom: 0.5rem; }
@@ -265,7 +261,8 @@ a { color: var(--accent); }
 .legend-swatch { width: 13px; height: 13px; display: inline-block; border: 1px solid var(--rule); }
 #usmap svg { width: 100%; height: auto; display: block; background: var(--card-bg);
   border: 1px solid var(--rule); }
-.geo-area { stroke: var(--paper); stroke-width: 0.4; transition: opacity 0.12s; }
+.geo-area { stroke: var(--muted); stroke-width: 0.7; vector-effect: non-scaling-stroke;
+  transition: opacity 0.12s; }
 .geo-area.clickable { cursor: pointer; }
 .geo-area.clickable:hover { opacity: 0.72; }
 .map-tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--paper);
@@ -281,12 +278,10 @@ a { color: var(--accent); }
     <h1>The Municipal Ledger</h1>
     <div class="tag">Self-built pipelines · Pittsburgh, PA · Los Angeles, CA · Loudoun County, VA</div>
   </header>
-  <div class="labnotice">
-    <span class="labnotice-label">⚠ Lab-grade data</span>
-    Records marked <b>uncertified</b> have not been affirmed by an independent second
-    source and are never published — shown here for operator review only. Plain-English
-    descriptions are machine-derived from the official titles and are not part of the
-    certified record.</div>
+  <div class="labnotice">⚠ Lab-grade data. Records marked <b>uncertified</b> have not been
+    affirmed by an independent second source and are never published — shown here for
+    operator review only. Plain-English descriptions are machine-derived from the
+    official titles and are not part of the certified record.</div>
   <form id="searchform" autocomplete="off">
     <input id="searchbox" type="text" placeholder="Type a county or city — e.g. “Alexandria, VA” — and press Enter to run the pipeline"
       aria-label="Search or onboard a jurisdiction">
