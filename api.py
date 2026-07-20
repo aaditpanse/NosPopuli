@@ -1533,10 +1533,32 @@ def _bill_detail_stream(bill_data, meta_extra, user_context, *, log_kind, noun="
                 rows = []
             entities = [
                 {"name": r["entity_name"], "kind": r["entity_kind"],
-                 "mentions": r["mentions"], "spend": r["entity_spend"]}
+                 "mentions": r["mentions"], "spend": r["entity_spend"],
+                 "bill_spend": r.get("bill_spend")}
                 for r in (rows or [])
             ]
             return {"section": "lobbying", "entities": entities}
+
+        async def sec_sponsor_money():
+            # "Money behind the sponsors" — the FEC campaign totals for whoever
+            # introduced this bill, shown beside "Who's pushing this." Facts
+            # side by side, no implied link (that's the OpenSecrets layer). FEC
+            # is federal-only, so state-bill sponsors return nothing.
+            import fec_client
+            out = []
+            for s in (sponsors or [])[:3]:
+                try:
+                    fin = await ex(fec_client.sponsor_finance,
+                                   s.get("name"), s.get("state"), bill_type)
+                except Exception as e:
+                    print(f"[API] sponsor finance error {s.get('name')!r}: {e}")
+                    fin = None
+                if fin and (fin.get("receipts") or fin.get("disbursements")):
+                    out.append({
+                        "name": s.get("name"), "party": s.get("party"),
+                        "state": s.get("state"), "finance": fin,
+                    })
+            return {"section": "sponsor_money", "sponsors": out}
 
         producers = [
             asyncio.ensure_future(sec_meta()),
@@ -1548,6 +1570,7 @@ def _bill_detail_stream(bill_data, meta_extra, user_context, *, log_kind, noun="
             asyncio.ensure_future(sec_votes()),
             asyncio.ensure_future(sec_connections()),
             asyncio.ensure_future(sec_lobbying()),
+            asyncio.ensure_future(sec_sponsor_money()),
         ]
 
         for fut in asyncio.as_completed(producers):

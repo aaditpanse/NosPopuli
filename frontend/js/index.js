@@ -501,14 +501,54 @@ function renderLobbying(entities) {
     const kind = e.kind === 'registrant' ? 'firm' : 'client';
     const nameArg = JSON.stringify(e.name).replace(/"/g, '&quot;');
     const filings = e.mentions ? `${e.mentions} filing${e.mentions > 1 ? 's' : ''}` : '';
-    const spend = e.spend ? `${money(e.spend)} total lobbying` : '';
+    // Prefer the bill-specific figure (spend on filings that named this bill)
+    // over the entity's lifetime total — it's the more honest "on this bill".
+    const spend = e.bill_spend
+      ? `${money(e.bill_spend)} on filings naming this bill`
+      : (e.spend ? `${money(e.spend)} total lobbying` : '');
     const meta = [filings, spend].filter(Boolean).join(' · ');
     return `<div class="pushing-row" onclick="openLobbyFromBill('${e.kind}', ${nameArg})">
       <span class="pushing-name">${escapeHtml(e.name)}<span class="pushing-kind">${kind}</span></span>
       <span class="pushing-meta">${escapeHtml(meta)}</span>
     </div>`;
   }).join('') +
-  `<p class="pushing-note">Organizations that named this bill in their Senate LDA lobbying filings, ranked by frequency. Spend is the entity's total reported lobbying, not bill-specific. Click any to see its full profile.</p>`;
+  `<p class="pushing-note">Organizations that named this bill in their Senate LDA lobbying filings, ranked by frequency. Dollar figures are the spend reported on the filings that named this bill — a ceiling, since a filing covers all of an entity's activity, not one bill. Click any to see its full profile.</p>`;
+  section.style.display = 'block';
+}
+
+// "Money behind the sponsors" — FEC campaign totals for whoever introduced the
+// bill, shown beside the lobbying panel. Empty payload → keep it hidden.
+function renderSponsorMoney(sponsors) {
+  const section = document.getElementById('sponsor-money-section');
+  const body = document.getElementById('sponsor-money-body');
+  if (!section || !body) return;
+  sponsors = sponsors || [];
+  if (!sponsors.length) { section.style.display = 'none'; return; }
+
+  const money = (n) => {
+    n = Number(n) || 0;
+    if (n >= 1e6) return '$' + (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M';
+    if (n >= 1e3) return '$' + Math.round(n / 1e3) + 'K';
+    return '$' + Math.round(n);
+  };
+
+  body.innerHTML = sponsors.map(s => {
+    const f = s.finance || {};
+    const pacPct = f.receipts ? Math.round(100 * (f.from_pacs || 0) / f.receipts) : null;
+    const cycle = f.cycle ? `${f.cycle} cycle` : 'most recent filing';
+    const bits = [
+      f.cash_on_hand != null ? `<b>${money(f.cash_on_hand)}</b> cash on hand` : '',
+      pacPct != null ? `<b>${pacPct}%</b> from PACs` : '',
+      cycle,
+    ].filter(Boolean).join(' · ');
+    const link = f.fec_url ? ` <a href="${f.fec_url}" target="_blank" rel="noopener">FEC ↗</a>` : '';
+    return `<div class="sponsor-money-row">
+      <span class="pushing-name">${escapeHtml(s.name || '')}</span>
+      <span class="pushing-meta">${money(f.receipts)} raised</span>
+      <div class="sponsor-money-stats">${bits}${link}</div>
+    </div>`;
+  }).join('') +
+  `<p class="pushing-note">The sponsor's campaign receipts this cycle, reported to the FEC — shown next to who's lobbying, not as a link between them. Which of these organizations gave to the sponsor requires entity-to-PAC resolution (the OpenSecrets layer), a planned addition.</p>`;
   section.style.display = 'block';
 }
 
@@ -825,7 +865,7 @@ function _revealDetail(title) {
   // section's render fn when that section arrives, so a section the new stream
   // never emits (a producer erroring, or the /law not-indexed path) would
   // otherwise leave the PREVIOUS bill's sponsors/text/votes/connections visible.
-  ['sponsors-section', 'full-text-section', 'connections-section', 'votes-section', 'lobbying-section'].forEach(id => {
+  ['sponsors-section', 'full-text-section', 'connections-section', 'votes-section', 'lobbying-section', 'sponsor-money-section'].forEach(id => {
     const s = document.getElementById(id);
     if (s) s.style.display = 'none';
   });
@@ -984,6 +1024,10 @@ async function openDetail(bill) {
         case 'lobbying':
           ensureRevealed();
           renderLobbying(msg.entities);
+          break;
+        case 'sponsor_money':
+          ensureRevealed();
+          renderSponsorMoney(msg.sponsors);
           break;
         case 'done':
           break;

@@ -244,11 +244,13 @@ def _fetch_entity_filings(kind, name, years):
 def _aggregate_profile(kind, name, filings, years):
     total = 0.0
     by_quarter, counterparties, issues, lobbyists, bill_refs = {}, {}, {}, {}, {}
+    bill_spend = {}
     activities = []
 
     for f in filings:
         spend = _spend(f)
         total += spend
+        filing_bills = set()  # unique bills named anywhere in this filing
 
         congress = _congress_for_year(f.get("filing_year"))
         qlabel = f"{f.get('filing_year')} {_QUARTER.get(f.get('filing_period'), f.get('filing_period', ''))}".strip()
@@ -276,6 +278,13 @@ def _aggregate_profile(kind, name, filings, years):
                     continue
                 key = (congress, btype, bnum, label)
                 bill_refs[key] = bill_refs.get(key, 0) + 1
+                filing_bills.add(key)
+
+        # Attribute this filing's spend to each distinct bill it named. A filing
+        # covers all of its activity, not one bill, so this is "spend reported
+        # on filings that named the bill" — a ceiling, labeled as such in the UI.
+        for key in filing_bills:
+            bill_spend[key] = bill_spend.get(key, 0.0) + spend
 
         if len(activities) < 12:
             desc = "; ".join(a.get("description", "") for a in acts if a.get("description"))[:300]
@@ -304,7 +313,8 @@ def _aggregate_profile(kind, name, filings, years):
         "lobbyists": [k for k, _ in sorted(lobbyists.items(), key=lambda kv: kv[1], reverse=True)][:20],
         "bills_lobbied": [
             {"congress": c, "type": t, "number": n,
-             "display": f"{label} {n}", "count": v}
+             "display": f"{label} {n}", "count": v,
+             "bill_spend": round(bill_spend.get((c, t, n, label), 0.0), 2)}
             for (c, t, n, label), v in
             sorted(bill_refs.items(), key=lambda kv: kv[1], reverse=True)[:24]
         ],
@@ -319,7 +329,8 @@ def _bill_mention_rows(profile):
     return [
         {"congress": b["congress"], "bill_type": b["type"], "bill_number": b["number"],
          "entity_name": profile["name"], "entity_kind": profile["kind"],
-         "mentions": b["count"], "entity_spend": profile["total_spend"]}
+         "mentions": b["count"], "entity_spend": profile["total_spend"],
+         "bill_spend": b.get("bill_spend", 0.0)}
         for b in profile.get("bills_lobbied", [])
     ]
 
@@ -384,7 +395,7 @@ def get_entity_profile(kind, name, years=None):
         y = datetime.date.today().year
         years = [y, y - 1]
 
-    ck = f"lda:profile:v2:{kind}:{name.lower()}:{'-'.join(map(str, years))}"
+    ck = f"lda:profile:v3:{kind}:{name.lower()}:{'-'.join(map(str, years))}"
     cached = get_disk_cache(ck, _PROFILE_TTL)
     if cached is not None:
         return cached

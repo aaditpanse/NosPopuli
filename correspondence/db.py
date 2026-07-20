@@ -145,11 +145,16 @@ def init_db():
                 entity_kind  TEXT NOT NULL,
                 mentions     INTEGER NOT NULL DEFAULT 0,
                 entity_spend DOUBLE PRECISION NOT NULL DEFAULT 0,
+                bill_spend   DOUBLE PRECISION NOT NULL DEFAULT 0,
                 updated_at   DOUBLE PRECISION NOT NULL,
                 PRIMARY KEY (congress, bill_type, bill_number, entity_name, entity_kind)
             );
             CREATE INDEX IF NOT EXISTS idx_lbm_bill
                 ON lobbying_bill_mentions (congress, bill_type, bill_number);
+            -- bill_spend was added after the table shipped; ensure it exists on
+            -- pre-existing deployments (no-op where the column is already there).
+            ALTER TABLE lobbying_bill_mentions
+                ADD COLUMN IF NOT EXISTS bill_spend DOUBLE PRECISION NOT NULL DEFAULT 0;
         """)
     _bootstrap_known_elections_from_file()
 
@@ -516,8 +521,9 @@ def clear_disk_cache(prefix=None):
 def record_bill_mentions(rows):
     """Upsert (bill → entity) lobbying mentions. Each row is a dict with
     congress, bill_type, bill_number, entity_name, entity_kind, mentions,
-    entity_spend. Powers the per-bill 'Who's pushing this' panel; populated
-    lazily as entity profiles are viewed."""
+    entity_spend, and bill_spend (spend on the filings that named this bill).
+    Powers the per-bill 'Who's pushing this' panel; populated lazily as entity
+    profiles are viewed."""
     if not rows:
         return
     import time
@@ -528,17 +534,19 @@ def record_bill_mentions(rows):
                 """
                 INSERT INTO lobbying_bill_mentions
                     (congress, bill_type, bill_number, entity_name, entity_kind,
-                     mentions, entity_spend, updated_at)
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+                     mentions, entity_spend, bill_spend, updated_at)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
                 ON CONFLICT (congress, bill_type, bill_number, entity_name, entity_kind)
                 DO UPDATE SET mentions=excluded.mentions,
                               entity_spend=excluded.entity_spend,
+                              bill_spend=excluded.bill_spend,
                               updated_at=excluded.updated_at
                 """,
                 (
                     int(r["congress"]), str(r["bill_type"]).lower(), int(r["bill_number"]),
                     r["entity_name"], r["entity_kind"],
-                    int(r.get("mentions") or 0), float(r.get("entity_spend") or 0), now,
+                    int(r.get("mentions") or 0), float(r.get("entity_spend") or 0),
+                    float(r.get("bill_spend") or 0), now,
                 ),
             )
 
@@ -546,18 +554,22 @@ def record_bill_mentions(rows):
 def get_bill_lobbying(congress, bill_type, bill_number, limit=12):
     """Return entities recorded lobbying a bill, ranked by mention intensity then
     entity size. Rows for the same entity under both filing roles (client +
-    registrant) are merged into one, keeping the role with the most mentions for
-    the click-through. Each row: entity_name, entity_kind, mentions, entity_spend."""
+    registrant) OR differing name casing ("Pfizer Inc." vs "PFIZER INC.") are
+    merged into one — grouped case-insensitively, displaying the casing from the
+    highest-mention row. Each row: entity_name, entity_kind, mentions,
+    entity_spend, bill_spend. Spend fields use MAX (not SUM) across the merged
+    variants so a single entity's dollars aren't double-counted."""
     with _cursor() as cur:
         cur.execute(
             """
-            SELECT entity_name,
+            SELECT (array_agg(entity_name ORDER BY mentions DESC))[1] AS entity_name,
                    (array_agg(entity_kind ORDER BY mentions DESC))[1] AS entity_kind,
                    SUM(mentions) AS mentions,
-                   MAX(entity_spend) AS entity_spend
+                   MAX(entity_spend) AS entity_spend,
+                   MAX(bill_spend) AS bill_spend
             FROM lobbying_bill_mentions
             WHERE congress=%s AND bill_type=%s AND bill_number=%s
-            GROUP BY entity_name
+            GROUP BY UPPER(entity_name)
             ORDER BY mentions DESC, entity_spend DESC
             LIMIT %s
             """,

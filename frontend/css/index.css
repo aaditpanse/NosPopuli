@@ -1696,6 +1696,16 @@ body {
 .pushing-meta { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--accent); white-space: nowrap; text-align: right; }
 .pushing-note { font-family: 'Source Serif 4', Georgia, serif; font-size: 0.82rem; font-style: italic; color: var(--muted); margin-top: 0.75rem; line-height: 1.5; }
 
+/* "Money behind the sponsors" panel (FEC) on the bill detail page */
+.sponsor-money-row { display: grid; grid-template-columns: 1fr auto; gap: 0.15rem 1rem;
+  padding: 0.6rem 0.3rem; border-bottom: 1px solid var(--rule); }
+.sponsor-money-row .pushing-meta { color: var(--ink); font-weight: 500; }
+.sponsor-money-stats { grid-column: 1 / -1; font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem; color: var(--muted); letter-spacing: 0.03em; }
+.sponsor-money-stats b { color: var(--ink); font-weight: 500; }
+.sponsor-money-stats a { color: var(--accent); text-decoration: none; }
+.sponsor-money-stats a:hover { color: var(--ink); }
+
 /* Resolved-references block, streamed in under the plain-English explanation
    after the core translation has already rendered. */
 .detail-background {
