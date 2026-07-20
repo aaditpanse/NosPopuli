@@ -266,6 +266,75 @@ def member_finance(name, state, chamber, cycle=None):
     return candidate_finance(name, state=state, office=office, cycle=cycle)
 
 
+_CONDUITS = ("ACTBLUE", "WINRED")  # pass-throughs for individual donors, not org donors
+
+
+def _principal_committee(cid):
+    try:
+        r = _get(f"candidate/{cid}/committees/", {"designation": "P", "per_page": 5})
+        cms = r.get("results", [])
+        return cms[0]["committee_id"] if cms else None
+    except Exception as e:
+        print(f"[FEC] committee lookup {cid}: {e}")
+        return None
+
+
+def _pac_title(name):
+    """Title-case an ALL-CAPS FEC committee name, keeping PAC/JFC uppercase."""
+    t = " ".join(w.capitalize() for w in (name or "").split())
+    for a in ("Pac", "Jfc", "Llc", "Inc", "Pc"):
+        t = re.sub(rf"\b{a}\b", a.upper(), t)
+    return t
+
+
+def top_pac_contributors(candidate_id, cycle, candidate_name=None, limit=8):
+    """Named PAC/committee contributors to a candidate, aggregated and cleaned —
+    the "from whom" for organizational money. OpenSecrets (which added industry
+    rollups) shut its API down in April 2025, so this reads FEC Schedule A
+    committee receipts directly. We drop what isn't an outside donor: the
+    candidate's own committees, conduits (ActBlue/WinRed), and joint-fundraising
+    vehicles bearing the candidate's name. Returns [{name, amount}] or []."""
+    if not candidate_id or not cycle:
+        return []
+    ck = f"fec:pac:v2:{candidate_id}:{cycle}"
+    cached = _cache_get(ck)
+    if cached is not None:
+        return cached
+    # The candidate's own name tokens catch "<First> Victory Fund" JFCs.
+    name_tokens = {t.upper() for t in clean_name(candidate_name).split() if len(t) > 2}
+
+    cm = _principal_committee(candidate_id)
+    if not cm:
+        _cache_set(ck, [])
+        return []
+    try:
+        data = _get("schedules/schedule_a/", {
+            "committee_id": cm, "two_year_transaction_period": int(cycle),
+            "contributor_type": "committee", "sort": "-contribution_receipt_amount",
+            "per_page": 100,
+        })
+    except Exception as e:
+        print(f"[FEC] pac contributors {candidate_id}: {e}")
+        return []
+
+    agg = {}
+    for r in data.get("results", []):
+        nm = (r.get("contributor_name") or "").strip()
+        up = nm.upper()
+        if not nm or r.get("entity_type") == "CAN":       # the candidate's own money
+            continue
+        if any(c in up for c in _CONDUITS):                # pass-through conduits
+            continue
+        if any(t in up for t in name_tokens):              # JFCs named for the candidate
+            continue
+        agg[nm] = agg.get(nm, 0.0) + (r.get("contribution_receipt_amount") or 0)
+
+    rows = [{"name": _pac_title(k), "amount": round(v, 2)}
+            for k, v in sorted(agg.items(), key=lambda kv: kv[1], reverse=True) if v > 0][:limit]
+    _cache_set(ck, rows)
+    return rows
+
+
 def race_candidates(office, state, cycle, limit=10):
     """Every FEC-registered candidate for a federal race, with finance — used
     when we have no candidate roster from elsewhere (Google Civic voterinfo is

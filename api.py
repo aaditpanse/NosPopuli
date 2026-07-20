@@ -1939,7 +1939,13 @@ async def member_finance_endpoint(
     import fec_client
     try:
         fin = await asyncio.to_thread(fec_client.member_finance, name, state, chamber)
-        return fin or {}
+        if not fin:
+            return {}
+        if fin.get("candidate_id") and fin.get("cycle"):
+            fin["top_pacs"] = await asyncio.to_thread(
+                fec_client.top_pac_contributors,
+                fin["candidate_id"], fin["cycle"], fin.get("name"))
+        return fin
     except Exception as e:
         print(f"[API] Member finance error for {name!r}: {e}")
         return {}

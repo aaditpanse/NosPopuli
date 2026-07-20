@@ -1108,6 +1108,15 @@ function _renderMemberFinance(fin) {
     </div>`).join('');
   const cyc = fin.cycle ? `${fin.cycle} cycle` : 'most recent filing';
 
+  const pacs = (fin.top_pacs || []).filter(p => p.amount > 0);
+  const pacHtml = pacs.length ? `
+    <div class="mf-pac-head">Top PAC contributors <span class="mf-sub">${cyc}</span></div>
+    <div class="mf-pac-list">${pacs.map(p => `
+      <div class="mf-pac-row">
+        <span class="mf-pac-name">${escapeHtml(p.name)}</span>
+        <span class="mf-pac-amt">${_mfMoney(p.amount)}</span>
+      </div>`).join('')}</div>` : '';
+
   body.innerHTML = `
     <div class="mf-head">
       <div class="mf-headline"><span class="mf-big">${_mfMoney(R)}</span> raised
@@ -1116,10 +1125,11 @@ function _renderMemberFinance(fin) {
     </div>
     <div class="mf-bar">${bar}</div>
     <div class="mf-legend">${rows}</div>
-    <p class="pushing-note">Where this campaign's money comes from, by source, as reported to the FEC.
-      Which specific companies, industries, and PACs give — the named “from whom” — needs donor-name
-      normalization (the OpenSecrets layer), a planned addition; the FEC's raw employer fields aren't
-      reliable enough to show.</p>`;
+    ${pacHtml}
+    <p class="pushing-note">Source composition and named PAC contributors are from FEC filings; the
+      candidate's own joint-fundraising committees and pass-through conduits (ActBlue, WinRed) are
+      removed. Individual donors' <em>industries</em> aren't shown — that needed OpenSecrets, which
+      retired its public API in 2025, and the FEC's raw employer fields aren't reliable enough.</p>`;
   section.style.display = 'block';
 }
 
