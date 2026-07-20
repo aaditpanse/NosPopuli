@@ -1143,7 +1143,12 @@ function _renderMemberIndustries(data) {
   const inds = (data && data.industries || []).filter(i => i.total > 0);
   if (!inds.length) { host.innerHTML = ''; return; }
   const max = Math.max(...inds.map(i => i.share));
-  const cyc = data.cycle ? `estimated · ${data.cycle} cycle` : 'estimated';
+  // FEC cycles are named by their even election year but span the two prior
+  // years — show the full span so "2024" doesn't read as stale on a member who
+  // took office in 2025 (elected in the Nov 2024 cycle).
+  const cyc = data.cycle
+    ? `estimated · ${data.cycle - 1}–${String(data.cycle).slice(-2)} election cycle`
+    : 'estimated';
   host.innerHTML = `
     <div class="mf-pac-head">Top industries <span class="mf-sub">${cyc}</span></div>
     <div class="mf-ind-list">${inds.map(i => `
