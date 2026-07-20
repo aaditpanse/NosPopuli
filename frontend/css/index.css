@@ -1802,6 +1802,9 @@ body {
   min-width: 2.2rem; text-align: right; }
 .mf-ind-amt { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--ink);
   min-width: 3.2rem; text-align: right; font-weight: 500; }
+/* the residual bucket reads as leftover, not a headline industry */
+.mf-ind-other .mf-ind-name { color: var(--muted); font-style: italic; }
+.mf-ind-other .mf-ind-fill { background: var(--rule); }
 
 /* Resolved-references block, streamed in under the plain-English explanation
    after the core translation has already rendered. */

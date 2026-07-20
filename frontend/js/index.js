@@ -1142,7 +1142,6 @@ function _renderMemberIndustries(data) {
   if (!host) return;
   const inds = (data && data.industries || []).filter(i => i.total > 0);
   if (!inds.length) { host.innerHTML = ''; return; }
-  const max = Math.max(...inds.map(i => i.share));
   // FEC cycles are named by their even election year but span the two prior
   // years — show the full span so "2024" doesn't read as stale on a member who
   // took office in 2025 (elected in the Nov 2024 cycle).
@@ -1151,13 +1150,17 @@ function _renderMemberIndustries(data) {
     : 'estimated';
   host.innerHTML = `
     <div class="mf-pac-head">Top industries <span class="mf-sub">${cyc}</span></div>
-    <div class="mf-ind-list">${inds.map(i => `
-      <div class="mf-ind-row">
+    <div class="mf-ind-list">${inds.map(i => {
+      const other = i.industry === 'Unclassified employers';
+      // Bar = share of the total, so 27% reads as 27% — not scaled to the max
+      // category (which made the biggest bar look like 100%).
+      return `<div class="mf-ind-row${other ? ' mf-ind-other' : ''}">
         <span class="mf-ind-name">${escapeHtml(i.industry)}</span>
-        <span class="mf-ind-bar"><span class="mf-ind-fill" style="width:${Math.max(4, 100 * i.share / max)}%"></span></span>
+        <span class="mf-ind-bar"><span class="mf-ind-fill" style="width:${Math.min(100, Math.max(2, 100 * i.share))}%"></span></span>
         <span class="mf-ind-pct">${Math.round(i.share * 100)}%</span>
         <span class="mf-ind-amt">${_mfMoney(i.total)}</span>
-      </div>`).join('')}</div>`;
+      </div>`;
+    }).join('')}</div>`;
 }
 
 async function loadMemberIndustries(cid, cycle) {
