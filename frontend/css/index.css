@@ -1806,6 +1806,12 @@ body {
 .mf-ind-other .mf-ind-name { color: var(--muted); font-style: italic; }
 .mf-ind-other .mf-ind-fill { background: var(--rule); }
 
+/* Member page: record (topics + bills) beside the money (finance + stocks) */
+.member-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 2.5rem; align-items: start; }
+.member-col { min-width: 0; }
+.member-cols.single { grid-template-columns: 1fr; }
+@media (max-width: 900px) { .member-cols { grid-template-columns: 1fr; gap: 0; } }
+
 /* Member stock trades (STOCK Act PTRs) */
 .stk-buy { color: #2a6e2a; } .stk-sell { color: var(--accent); }
 .stk-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.85rem; }

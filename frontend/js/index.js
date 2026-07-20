@@ -1296,6 +1296,9 @@ function renderMemberPage(data) {
   `).join('');
 
   // Federal campaign finance (FEC). State legislators have none.
+  // State legislators have no money column — collapse to a single column.
+  const _cols = document.getElementById('member-cols');
+  if (_cols) _cols.classList.toggle('single', isState);
   const _finSection = document.getElementById('member-finance-section');
   if (_finSection) _finSection.style.display = 'none';
   const _stkSection = document.getElementById('member-stocks-section');
