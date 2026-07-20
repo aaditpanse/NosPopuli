@@ -428,10 +428,14 @@ body {
 #page-home #results-section { max-width: 880px; margin: 0 auto; }
 
 /* Reading pages stay narrower than chrome */
-#page-detail, #page-member,
+#page-detail,
 #page-correspondence, #page-elections, #page-notifications {
   max-width: 880px;
 }
+/* The member page runs two columns (record | money), so it needs the full
+   content width; the single-column (state) view stays at a readable width. */
+#page-member { max-width: var(--content-width); }
+.member-cols.single { max-width: 780px; }
 
 /* ── SHARED BUTTONS ── */
 .btn-primary, .btn-ghost {
