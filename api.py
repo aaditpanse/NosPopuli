@@ -1828,21 +1828,25 @@ async def member_search(request: MemberSearchRequest):
 async def member_photo(bioguide_id: str):
     from fastapi.responses import Response
 
-    url = f"https://www.congress.gov/img/member/{bioguide_id.lower()}_200.jpg"
-
-    async with httpx.AsyncClient() as client_http:
-        response = await client_http.get(
-            url,
-            headers={
-                "Referer": "https://www.congress.gov/",
-                "User-Agent": "Mozilla/5.0",
-            },
-        )
-
-    if response.status_code == 200:
-        return Response(content=response.content, media_type="image/jpeg")
-    else:
-        raise HTTPException(status_code=404, detail="Photo not found")
+    bg = bioguide_id.strip()
+    # The unitedstates/images repo is community-maintained and covers newer
+    # members that congress.gov's /img/member/*_200.jpg path is missing (e.g.
+    # Suhas Subramanyam) — try it first, then fall back to congress.gov.
+    sources = [
+        f"https://unitedstates.github.io/images/congress/225x275/{bg.upper()}.jpg",
+        f"https://www.congress.gov/img/member/{bg.lower()}_200.jpg",
+    ]
+    headers = {"Referer": "https://www.congress.gov/", "User-Agent": "Mozilla/5.0"}
+    async with httpx.AsyncClient(timeout=15, follow_redirects=True) as client_http:
+        for url in sources:
+            try:
+                r = await client_http.get(url, headers=headers)
+            except Exception:
+                continue
+            if r.status_code == 200 and r.headers.get("content-type", "").startswith("image"):
+                return Response(content=r.content, media_type="image/jpeg",
+                                headers={"Cache-Control": "public, max-age=604800"})
+    raise HTTPException(status_code=404, detail="Photo not found")
 
 
 @app.get("/api/elections")
