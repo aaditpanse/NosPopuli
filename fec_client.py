@@ -212,6 +212,13 @@ def _finance_dict(cand, t):
         "cash_on_hand": t.get("last_cash_on_hand_end_period"),
         "from_individuals": t.get("individual_itemized_contributions"),
         "from_pacs": t.get("other_political_committee_contributions"),
+        # Composition — where the money comes from. FEC reports these cleanly;
+        # named donors/industries do not (self-reported employer fields are
+        # unusable), so that's the OpenSecrets layer, not this.
+        "indiv_itemized": t.get("individual_itemized_contributions"),
+        "indiv_unitemized": t.get("individual_unitemized_contributions"),
+        "from_party": t.get("political_party_committee_contributions"),
+        "self_funding": t.get("candidate_contribution"),
         "fec_url": f"https://www.fec.gov/data/candidate/{cid}/",
     }
 
@@ -221,6 +228,13 @@ def sponsor_finance(sponsor_name, state, bill_type, cycle=None):
     return candidate_finance(
         sponsor_name, state=state, office=office_for_bill_type(bill_type), cycle=cycle
     )
+
+
+def member_finance(name, state, chamber, cycle=None):
+    """FEC campaign finance for a sitting federal member, scoped by chamber."""
+    c = (chamber or "").lower()
+    office = "S" if "senate" in c or "senator" in c else "H" if "house" in c or "rep" in c else None
+    return candidate_finance(name, state=state, office=office, cycle=cycle)
 
 
 def race_candidates(office, state, cycle, limit=10):

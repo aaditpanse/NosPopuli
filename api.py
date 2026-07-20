@@ -1925,6 +1925,26 @@ async def member_photo(bioguide_id: str):
     raise HTTPException(status_code=404, detail="Photo not found")
 
 
+@app.get("/member/finance")
+@limiter.limit("20/minute")
+async def member_finance_endpoint(
+    request: Request,
+    name: str,
+    state: Optional[str] = None,
+    chamber: Optional[str] = None,
+):
+    """FEC campaign finance for a sitting federal member: totals + the source
+    composition (individuals/PACs/party/self). Empty object when there's no
+    confident FEC match (e.g. state legislators, whom the FEC doesn't cover)."""
+    import fec_client
+    try:
+        fin = await asyncio.to_thread(fec_client.member_finance, name, state, chamber)
+        return fin or {}
+    except Exception as e:
+        print(f"[API] Member finance error for {name!r}: {e}")
+        return {}
+
+
 @app.get("/api/elections")
 @limiter.limit("10/minute")
 async def elections_endpoint(request: Request, zip: Optional[str] = None, state: Optional[str] = None):

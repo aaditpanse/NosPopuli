@@ -1070,6 +1070,71 @@ function openDetailFromBill(bill) {
 }
 
 // ── Member profile ──
+function _mfMoney(n) {
+  n = Number(n) || 0;
+  if (n >= 1e6) return '$' + (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M';
+  if (n >= 1e3) return '$' + Math.round(n / 1e3) + 'K';
+  return '$' + Math.round(n);
+}
+
+// Campaign-finance composition for a federal member (FEC). Answers "what
+// funding, and from whom" at the source level — named donors/industries are
+// the OpenSecrets layer, called out honestly in the note.
+function _renderMemberFinance(fin) {
+  const section = document.getElementById('member-finance-section');
+  const body = document.getElementById('member-finance-body');
+  if (!section || !body) return;
+  const R = fin && fin.receipts || 0;
+  if (!R && !(fin && fin.disbursements)) { section.style.display = 'none'; return; }
+
+  const segs = [
+    { label: 'Small-dollar donors', sub: 'individuals under $200', val: fin.indiv_unitemized || 0, cls: 'mf-small' },
+    { label: 'Larger individuals', sub: 'itemized, $200+', val: fin.indiv_itemized || 0, cls: 'mf-indiv' },
+    { label: 'PACs', sub: 'political action committees', val: fin.from_pacs || 0, cls: 'mf-pac' },
+    { label: 'Party committees', sub: '', val: fin.from_party || 0, cls: 'mf-party' },
+    { label: 'Self-funded', sub: 'the candidate’s own money', val: fin.self_funding || 0, cls: 'mf-self' },
+  ].filter(s => s.val > 0);
+  const known = segs.reduce((a, s) => a + s.val, 0);
+  const other = Math.max(0, R - known);
+  if (other > R * 0.02) segs.push({ label: 'Other', sub: 'transfers, loans, etc.', val: other, cls: 'mf-other' });
+
+  const bar = segs.map(s =>
+    `<div class="mf-seg ${s.cls}" style="width:${(100 * s.val / R).toFixed(1)}%" title="${s.label}: ${_mfMoney(s.val)}"></div>`).join('');
+  const rows = segs.map(s => `<div class="mf-row">
+      <span class="mf-swatch ${s.cls}"></span>
+      <span class="mf-label">${s.label}${s.sub ? `<span class="mf-sub">${s.sub}</span>` : ''}</span>
+      <span class="mf-pct">${Math.round(100 * s.val / R)}%</span>
+      <span class="mf-amt">${_mfMoney(s.val)}</span>
+    </div>`).join('');
+  const cyc = fin.cycle ? `${fin.cycle} cycle` : 'most recent filing';
+
+  body.innerHTML = `
+    <div class="mf-head">
+      <div class="mf-headline"><span class="mf-big">${_mfMoney(R)}</span> raised
+        · <span class="mf-big">${_mfMoney(fin.cash_on_hand || 0)}</span> cash on hand</div>
+      <div class="mf-cyc">${cyc}${fin.fec_url ? ` · <a href="${fin.fec_url}" target="_blank" rel="noopener">FEC ↗</a>` : ''}</div>
+    </div>
+    <div class="mf-bar">${bar}</div>
+    <div class="mf-legend">${rows}</div>
+    <p class="pushing-note">Where this campaign's money comes from, by source, as reported to the FEC.
+      Which specific companies, industries, and PACs give — the named “from whom” — needs donor-name
+      normalization (the OpenSecrets layer), a planned addition; the FEC's raw employer fields aren't
+      reliable enough to show.</p>`;
+  section.style.display = 'block';
+}
+
+async function loadMemberFinance(name, state, chamber) {
+  const section = document.getElementById('member-finance-section');
+  if (section) section.style.display = 'none';
+  try {
+    const q = new URLSearchParams({ name });
+    if (state) q.set('state', state);
+    if (chamber) q.set('chamber', chamber);
+    const res = await fetch('/member/finance?' + q.toString());
+    _renderMemberFinance(await res.json());
+  } catch { /* leave the section hidden on any error */ }
+}
+
 function renderMemberPage(data) {
   const activeMemberPage = document.querySelector('.page.active').id;
   if (activeMemberPage !== 'page-member') previousPage = activeMemberPage;
@@ -1130,6 +1195,13 @@ function renderMemberPage(data) {
       <div class="stat-label">${s.label}</div>
     </div>
   `).join('');
+
+  // Federal campaign finance (FEC). State legislators have none.
+  const _finSection = document.getElementById('member-finance-section');
+  if (_finSection) _finSection.style.display = 'none';
+  if (!isState && m.name) {
+    loadMemberFinance(m.name, m.state, (m.chambers && m.chambers.join(' ')) || m.chamber || '');
+  }
 
   const policyChart = document.getElementById('policy-chart');
   if (!isState) {
