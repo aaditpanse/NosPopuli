@@ -652,6 +652,22 @@ def _federal_races_for(name, state, date_str):
     return races
 
 
+_NAME_TO_STATE = {v.lower(): k for k, v in STATE_NAMES.items()}
+
+
+def _state_from_name(name):
+    """The state a named election belongs to, from its title ('Florida Primary
+    Election' -> FL). These national primary listings carry no state field and
+    numeric ids, so the title is the only authoritative source — without this,
+    finance falls back to the *viewer's* home state and shows the wrong race.
+    Longest name first so 'West Virginia' wins over 'Virginia'."""
+    n = (name or "").lower()
+    for full, code in sorted(_NAME_TO_STATE.items(), key=lambda kv: -len(kv[0])):
+        if full in n:
+            return code
+    return None
+
+
 def _primary_party(name):
     """The party of a partisan primary, as an FEC-party substring, or None for
     general elections and open/nonpartisan primaries. A 'Republican Primary'
@@ -672,7 +688,11 @@ async def _finance_from_fec_roster(detail, state):
     candidate registry for the race the election name implies. For a partisan
     primary, the field is narrowed to that party."""
     import fec_client
-    races = _federal_races_for(detail.get("name"), state, detail.get("date"))
+    # The election's own state (from its title) beats the state passed in, which
+    # is only the viewer's home state — a "Florida Primary" must resolve to FL
+    # even for a Virginia user.
+    eff_state = _state_from_name(detail.get("name")) or state
+    races = _federal_races_for(detail.get("name"), eff_state, detail.get("date"))
     party = _primary_party(detail.get("name"))
     out_contests = []
     for office, st, cycle in races:
