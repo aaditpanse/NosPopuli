@@ -1108,9 +1108,12 @@ function _renderMemberFinance(fin) {
     </div>`).join('');
   const cyc = fin.cycle ? `${fin.cycle} cycle` : 'most recent filing';
 
+  // PAC money spans the current + prior cycle (~4 years), so an off-cycle view
+  // doesn't hide election-year money.
+  const pacCyc = fin.cycle ? `${fin.cycle - 3}–${String(fin.cycle).slice(-2)}` : 'recent cycles';
   const pacs = (fin.top_pacs || []).filter(p => p.amount > 0);
   const pacHtml = pacs.length ? `
-    <div class="mf-pac-head">Top PAC contributors <span class="mf-sub">${cyc}</span></div>
+    <div class="mf-pac-head">Top PAC contributors <span class="mf-sub">${pacCyc}</span></div>
     <div class="mf-pac-list">${pacs.map(p => `
       <div class="mf-pac-row">
         <span class="mf-pac-name">${escapeHtml(p.name)}</span>
@@ -1209,7 +1212,7 @@ function _renderPacInterests(data) {
     </div>`;
   }).join('');
   host.innerHTML = `
-    <div class="mf-pac-head">Funded by these interests <span class="mf-sub">PAC money</span></div>
+    <div class="mf-pac-head">Funded by these interests <span class="mf-sub">PAC money · recent cycles</span></div>
     <div class="mf-ind-list">${rows}</div>
     <p class="pushing-note">The member's PAC money grouped by what each PAC <em>is</em> — its industry
       or cause (hover a row for examples). This is the money's <strong>source</strong>, not a claim about

@@ -297,28 +297,32 @@ def _pac_totals(candidate_id, cycle, candidate_name=None):
     cm = _principal_committee(candidate_id)
     if not cm:
         return {}
-    try:
-        data = _get("schedules/schedule_a/", {
-            "committee_id": cm, "two_year_transaction_period": int(cycle),
-            "line_number": "F3-11C", "sort": "-contribution_receipt_amount",
-            "per_page": 100,
-        })
-    except Exception as e:
-        print(f"[FEC] pac contributors {candidate_id}: {e}")
-        return {}
+    # Span the current + prior cycle (~4 years). A senator's real PAC money —
+    # including causes like pro-Israel — often lands in their election cycle, so
+    # an off-cycle current view alone hides it.
     agg = {}
-    for r in data.get("results", []):
-        nm = (r.get("contributor_name") or "").strip()
-        up = nm.upper()
-        if not nm or r.get("entity_type") == "CAN":
+    for cy in (int(cycle), int(cycle) - 2):
+        try:
+            data = _get("schedules/schedule_a/", {
+                "committee_id": cm, "two_year_transaction_period": cy,
+                "line_number": "F3-11C", "sort": "-contribution_receipt_amount",
+                "per_page": 100,
+            })
+        except Exception as e:
+            print(f"[FEC] pac contributors {candidate_id} {cy}: {e}")
             continue
-        if any(c in up for c in _CONDUITS):
-            continue
-        if any(t in up for t in name_tokens):
-            continue
-        amt = r.get("contribution_receipt_amount") or 0
-        if amt > 0:
-            agg[nm] = agg.get(nm, 0.0) + amt
+        for r in data.get("results", []):
+            nm = (r.get("contributor_name") or "").strip()
+            up = nm.upper()
+            if not nm or r.get("entity_type") == "CAN":
+                continue
+            if any(c in up for c in _CONDUITS):
+                continue
+            if any(t in up for t in name_tokens):
+                continue
+            amt = r.get("contribution_receipt_amount") or 0
+            if amt > 0:
+                agg[nm] = agg.get(nm, 0.0) + amt
     return agg
 
 
@@ -326,7 +330,7 @@ def top_pac_contributors(candidate_id, cycle, candidate_name=None, limit=8):
     """Named PAC/committee contributors to a candidate, ranked. [{name, amount}]."""
     if not candidate_id or not cycle:
         return []
-    ck = f"fec:pac:v3:{candidate_id}:{cycle}"
+    ck = f"fec:pac:v4:{candidate_id}:{cycle}"
     cached = _cache_get(ck)
     if cached is not None:
         return cached
@@ -344,7 +348,7 @@ def member_pac_interests(candidate_id, cycle, candidate_name=None, limit=12):
     {"cycle", "total", "interests": [{interest, total, share, top: [names]}]}."""
     if not candidate_id or not cycle:
         return {"cycle": cycle, "interests": []}
-    ck = f"fec:pacint:v2:{candidate_id}:{cycle}"
+    ck = f"fec:pacint:v3:{candidate_id}:{cycle}"
     cached = _cache_get(ck)
     if cached is not None:
         return cached
