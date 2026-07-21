@@ -74,6 +74,11 @@ POPULAR_NAMES = {
     "save act":                {"congress": 119, "type": "hr", "number": 7296, "title": "SAVE America Act"},
     "save america act":        {"congress": 119, "type": "hr", "number": 7296, "title": "SAVE America Act"},
     "safeguard american voter eligibility act": {"congress": 119, "type": "hr", "number": 7296, "title": "SAVE America Act"},
+    # STOCK Act — the congressional-trading disclosure law (Pub. L. 112-105,
+    # S.2038, 112th Congress, 2012). "STOCK Act" is too generic for phrase
+    # search and predates the recent-Congress scan, so pin it explicitly.
+    "stock act":               {"congress": 112, "type": "s",  "number": 2038, "title": "STOCK Act"},
+    "stop trading on congressional knowledge act": {"congress": 112, "type": "s", "number": 2038, "title": "STOCK Act"},
 }
 
 # ---------------------------------------------------------------------------
