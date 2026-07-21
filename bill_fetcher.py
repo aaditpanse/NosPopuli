@@ -336,10 +336,26 @@ def parse_amends_from_title(title: str, summary: str = "") -> dict | None:
 
 
 def _strip_html_to_text(html_str: str, max_chars: int) -> str:
+    """Extract readable bill text from a Congress.gov / GovInfo page.
+
+    The bill is served as a single <pre> block whose whitespace *is* the
+    structure — section headings, subsection indentation, alignment. Keep that
+    verbatim (the frontend renders it monospace, pre-wrap); only fall back to a
+    flat extraction when there's no <pre>. Previously all runs of spaces were
+    collapsed, which flattened the bill into an unreadable wall."""
     soup = BeautifulSoup(html_str, "html.parser")
-    text = soup.get_text(separator="\n")
-    text = re.sub(r'\n{3,}', '\n\n', text)
-    text = re.sub(r' {2,}', ' ', text)
+    pre = soup.find("pre")
+    text = pre.get_text() if pre else soup.get_text(separator="\n")
+
+    # Drop the GPO boilerplate header ("[Congressional Bills 118th Congress]",
+    # "[From the U.S. Government Publishing Office]", "[H.R. 815 Enrolled ...]").
+    lines = text.split("\n")
+    while lines and (not lines[0].strip() or lines[0].lstrip().startswith("[")):
+        lines.pop(0)
+    text = "\n".join(lines)
+
+    text = re.sub(r"[ \t]+\n", "\n", text)   # trailing whitespace per line
+    text = re.sub(r"\n{3,}", "\n\n", text)   # collapse oversized gaps
     return text.strip()[:max_chars]
 
 
@@ -416,8 +432,13 @@ def _fetch_bill_text_uncached(congress, bill_type, bill_number, max_chars=8000):
     if not versions:
         return _govinfo_text_fallback(congress, bill_type, bill_number, max_chars)
 
-    # Pick most recent version; prefer Enrolled > Engrossed > Introduced
-    FORMAT_PRIORITY = ["Enrolled Bill", "Engrossed in Senate", "Engrossed in House", "Introduced in Senate", "Introduced in House"]
+    # Prefer the most authoritative/current version, most-final first. Matched as
+    # a substring of the version type, so "Enrolled" catches "Enrolled Bill", etc.
+    FORMAT_PRIORITY = [
+        "Public Law", "Enrolled", "Engrossed Amendment", "Engrossed in Senate",
+        "Engrossed in House", "Placed on Calendar", "Reported in Senate",
+        "Reported in House", "Referred in", "Introduced in Senate", "Introduced in House",
+    ]
     selected_url = None
 
     for priority in FORMAT_PRIORITY:

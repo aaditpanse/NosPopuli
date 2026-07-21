@@ -1440,7 +1440,9 @@ def _bill_detail_stream(bill_data, meta_extra, user_context, *, log_kind, noun="
         # Shared upstream tasks — kicked off once, awaited by whichever
         # sections need them. Actions feed both the timeline and the votes;
         # bill text feeds both the full-text section and the translation.
-        text_task    = asyncio.ensure_future(ex(fetch_bill_text, congress, bill_type, number))
+        # Fetch a generous slice for the on-page reader (the full bill lives one
+        # click away on Congress.gov); the translator uses a bounded head of it.
+        text_task    = asyncio.ensure_future(ex(fetch_bill_text, congress, bill_type, number, 50000))
         actions_task = asyncio.ensure_future(ex(fetch_bill_actions, congress, bill_type, number))
         cospon_task  = asyncio.ensure_future(ex(fetch_cosponsors, congress, bill_type, number))
         related_task = asyncio.ensure_future(ex(fetch_related_bills, congress, bill_type, number))
@@ -1453,7 +1455,8 @@ def _bill_detail_stream(bill_data, meta_extra, user_context, *, log_kind, noun="
         async def _translate_core():
             txt = await text_task
             translation, refs = await ex(
-                translate_bill_core, bill_data, get_client(), user_context, txt
+                translate_bill_core, bill_data, get_client(), user_context,
+                txt[:8000] if txt else txt,
             )
             return (translation or f"Translation unavailable for this {noun}.", refs or [])
         translate_core_task = asyncio.ensure_future(_translate_core())
