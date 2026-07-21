@@ -1196,14 +1196,21 @@ function _renderMemberStocks(data, isSenator) {
   if (!section || !body) return;
   const trades = (data && data.trades) || [];
   if (!trades.length) {
+    const yrs = (data && data.cycles || []).join('–');
     if (isSenator) {
       body.innerHTML = `<p class="pushing-note">Senate stock disclosures live in a separate,
         agreement-gated system (the Senate eFD) that isn't machine-readable the way the House's
         filings are — so we can't show a senator's trades yet. This is our gap, not a sign the
         senator doesn't trade. House members only for now.</p>`;
       section.style.display = 'block';
+    } else if (data && data.filed === false) {
+      // We checked the House filing index: this member reported no trades.
+      body.innerHTML = `<p class="pushing-note">No stock trades disclosed${yrs ? ` in ${yrs}` : ''}.
+        This member filed no Periodic Transaction Reports — many hold only funds, blind trusts, or
+        no reportable securities. Under the STOCK Act, individual trades over $1,000 must be reported.</p>`;
+      section.style.display = 'block';
     } else {
-      section.style.display = 'none';
+      section.style.display = 'none';  // filed but unparseable (paper) — a silent gap
     }
     return;
   }

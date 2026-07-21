@@ -1990,7 +1990,13 @@ async def member_stocks_endpoint(request: Request, bioguide: str):
     rec = (data.get("members") or {}).get((bioguide or "").upper()) \
         or (data.get("members") or {}).get(bioguide or "")
     if not rec:
-        return {"trades": [], "generated": data.get("generated")}
+        filed = set(data.get("filed") or [])
+        return {
+            "trades": [],
+            # filed a PTR we couldn't parse (paper) vs. filed nothing (no trades)
+            "filed": bool({(bioguide or "").upper(), bioguide or ""} & filed),
+            "generated": data.get("generated"), "cycles": data.get("cycles"),
+        }
 
     trades = rec.get("trades", [])
     # Top tickers by trade frequency (equities only — skip bonds/funds w/o ticker).

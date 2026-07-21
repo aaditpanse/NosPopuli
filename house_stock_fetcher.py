@@ -179,7 +179,7 @@ def _parse_ptr(year, doc):
 
 def build(years, limit=None, delay=0.25, verbose=True):
     idx = _bioguide_index()
-    members, seen_docs = {}, set()
+    members, seen_docs, filed = {}, set(), set()
     matched = unmatched = scanned = 0
 
     for year in years:
@@ -192,12 +192,16 @@ def build(years, limit=None, delay=0.25, verbose=True):
             if f["doc"] in seen_docs:
                 continue
             seen_docs.add(f["doc"])
+            # Record that this member filed *something*, even if its PDF won't
+            # parse — that's what separates "no trades" from "we couldn't read it."
+            hit = _match(f["last"], f["state_dst"], idx)
+            if hit:
+                filed.add(hit["bioguide"])
             txns = _parse_ptr(year, f["doc"])
             time.sleep(delay)
             if not txns:
                 scanned += 1
                 continue
-            hit = _match(f["last"], f["state_dst"], idx)
             key = hit["bioguide"] if hit else None
             if key:
                 matched += 1
@@ -224,6 +228,7 @@ def build(years, limit=None, delay=0.25, verbose=True):
         "source": "U.S. House Clerk — Periodic Transaction Reports",
         "cycles": years,
         "members": members,
+        "filed": sorted(filed),  # every House member who filed a PTR (parsed or not)
     }
     OUT.write_text(json.dumps(payload, separators=(",", ":")))
     if verbose:
