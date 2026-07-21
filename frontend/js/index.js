@@ -736,7 +736,24 @@ let _currentBill = null;
 // must not render over the newer bill's page.
 let _detailToken = 0;
 
-function renderFullText(text) {
+// True once the shown text is the complete bill (not just the streamed preview).
+let _fullTextComplete = true;
+
+// When the reader is expanded and we only have the preview, fetch the whole bill.
+async function _ensureFullBillText() {
+  if (_fullTextComplete) return;
+  const b = _currentBill;
+  if (!b || b.is_state_bill || !b.congress || !b.type || !b.number) return;
+  _fullTextComplete = true;  // guard against a second fetch while this runs
+  const content = document.getElementById('full-text-content');
+  try {
+    const url = `/api/bill/${b.congress}/${String(b.type).toLowerCase()}/${b.number}/text`;
+    const d = await (await fetch(url)).json();
+    if (d && d.text && d.text.length > content.textContent.length) content.textContent = d.text;
+  } catch { _fullTextComplete = false; }  // let a later expand retry
+}
+
+function renderFullText(text, truncated) {
   const section = document.getElementById('full-text-section');
   const content = document.getElementById('full-text-content');
   const cta     = document.getElementById('read-bill-text-btn');
@@ -747,9 +764,10 @@ function renderFullText(text) {
     content.textContent = text;
     content.classList.remove('full-text-empty');
     section.style.display = 'block';
+    _fullTextComplete = !truncated;  // preview only? load the rest on expand
     if (cta) {
       cta.style.display = 'inline-flex';
-      cta.textContent = 'Read bill text →';
+      cta.textContent = truncated ? 'Read the full bill text →' : 'Read bill text →';
       cta.disabled = false;
     }
     return;
@@ -817,6 +835,7 @@ function openBillText() {
     body.style.display = 'block';
     chevron.classList.add('open');
   }
+  _ensureFullBillText();
   section.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -826,6 +845,7 @@ function toggleFullText() {
   const isOpen = body.style.display !== 'none';
   body.style.display = isOpen ? 'none' : 'block';
   chevron.classList.toggle('open', !isOpen);
+  if (!isOpen) _ensureFullBillText();
 }
 
 function renderSponsors(sponsors, cosponsors) {
@@ -1104,7 +1124,7 @@ async function openDetail(bill, opts = {}) {
           break;
         case 'bill_text':
           ensureRevealed();
-          renderFullText(msg.bill_text);
+          renderFullText(msg.bill_text, msg.truncated);
           break;
         case 'connections':
           ensureRevealed();

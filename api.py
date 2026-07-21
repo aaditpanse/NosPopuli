@@ -1470,7 +1470,10 @@ def _bill_detail_stream(bill_data, meta_extra, user_context, *, log_kind, noun="
 
         async def sec_text():
             txt = await text_task
-            return {"section": "bill_text", "bill_text": txt or None}
+            # Stream a fast 50k preview; flag when there's more so the reader can
+            # lazy-load the complete bill on expand (see /api/bill/.../text).
+            return {"section": "bill_text", "bill_text": txt or None,
+                    "truncated": bool(txt) and len(txt) >= 50000}
 
         async def sec_sponsors():
             cos = await cospon_task
@@ -1914,6 +1917,17 @@ async def member_by_bioguide(request: Request, bioguide: str):
     if not profile:
         return {"found": False, "member": None}
     return {"found": True, "member": profile, "legislation": legislation}
+
+
+@app.get("/api/bill/{congress}/{bill_type}/{number}/text")
+@limiter.limit("30/minute")
+async def bill_full_text(request: Request, congress: int, bill_type: str, number: int):
+    """The complete bill text, fetched on demand when the reader is expanded
+    (the streamed detail carries only a fast 50k preview)."""
+    loop = asyncio.get_event_loop()
+    txt = await loop.run_in_executor(
+        None, fetch_bill_text, congress, bill_type.lower(), number, 1_000_000)
+    return {"text": txt or None}
 
 
 @app.get("/member/photo/{bioguide_id}")
