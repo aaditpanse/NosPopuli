@@ -1900,6 +1900,19 @@ async def member_search(request: MemberSearchRequest):
     }
 
 
+@app.get("/api/member/{bioguide}")
+async def member_by_bioguide(request: Request, bioguide: str):
+    """Federal member profile by bioguide id — powers deep links to /member/{id}."""
+    loop = asyncio.get_event_loop()
+    profile, legislation = await asyncio.gather(
+        loop.run_in_executor(None, fetch_member_profile, bioguide),
+        loop.run_in_executor(None, fetch_member_legislation, bioguide, 10),
+    )
+    if not profile:
+        return {"found": False, "member": None}
+    return {"found": True, "member": profile, "legislation": legislation}
+
+
 @app.get("/member/photo/{bioguide_id}")
 async def member_photo(bioguide_id: str):
     from fastapi.responses import Response
@@ -2666,3 +2679,13 @@ async def foundry_onboard_cancel(job_id: str, request: Request):
         job["cancel"] = True
         job["progress"]["stage"] = "cancelling — stops at the next stage"
     return {"status": job["status"], "cancelling": bool(job.get("cancel"))}
+
+
+@app.get("/{full_path:path}", include_in_schema=False)
+async def spa_fallback(full_path: str):
+    """Serve the single-page app for client-side routes (/bill/..., /member/...,
+    /trades, /lobbying, /notifications) so deep links and refresh work. Paths
+    that look like an API call or a file 404 normally instead of returning HTML."""
+    if full_path.startswith(("api/", "static/")) or "." in full_path.split("/")[-1]:
+        raise HTTPException(status_code=404, detail="Not found")
+    return FileResponse("frontend/index.html")

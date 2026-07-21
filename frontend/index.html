@@ -37,9 +37,9 @@
 <nav class="top-nav">
   <a class="nav-link top-nav-btn" href="#" onclick="goHome();return false">Front Page</a>
   <a class="nav-link top-nav-btn" href="#" onclick="showPage('page-elections');loadElections();return false">Elections</a>
-  <a class="nav-link top-nav-btn" href="#" onclick="showPage('page-lobbying');loadLobbying();return false">Lobbying</a>
-  <a class="nav-link top-nav-btn" href="#" onclick="showPage('page-trades');loadTrades();return false">Trades</a>
-  <a class="nav-link top-nav-btn" href="#" onclick="showPage('page-notifications');loadNotificationsPage();return false">My Notifications</a>
+  <a class="nav-link top-nav-btn" href="/lobbying" onclick="navTab('lobbying');return false">Lobbying</a>
+  <a class="nav-link top-nav-btn" href="/trades" onclick="navTab('trades');return false">Trades</a>
+  <a class="nav-link top-nav-btn" href="/notifications" onclick="navTab('notifications');return false">My Notifications</a>
 </nav>
 
 <!-- ── EXPERIMENTAL FEATURE BANNER ── -->
@@ -684,7 +684,7 @@
 <script defer src="/static/js/d3-array.min.js"></script>
 <script defer src="/static/js/d3-geo.min.js"></script>
 <script defer src="/static/js/topojson-client.min.js"></script>
-<script defer src="/static/js/index.js?v=25"></script>
+<script defer src="/static/js/index.js?v=26"></script>
 <script defer src="/static/js/correspondence.js?v=2"></script>
 <script defer src="/static/js/lobbying.js?v=5"></script>
 </body>

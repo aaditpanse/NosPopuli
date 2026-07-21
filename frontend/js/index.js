@@ -40,15 +40,79 @@ function showPage(id) {
 }
 
 function goHome() {
+  if (location.pathname !== '/') history.pushState({ v: 'home' }, '', '/');
   showPage('page-home');
   document.getElementById('results-section').innerHTML = '';
   clearStatus();
   if (typeof setCurrentBillContext === 'function') setCurrentBillContext(null);
 }
 
+// Back/forward is now real browser history; fall back to home when a deep link
+// left us with nowhere to go back to.
 function goBack() {
-  showPage(previousPage);
+  if (window.history.length > 1) window.history.back();
+  else goHome();
 }
+
+// ── Client-side routing (History API) — clean, shareable URLs ──
+function navTab(tab) {
+  if (location.pathname !== '/' + tab) history.pushState({ v: 'tab', tab }, '', '/' + tab);
+  _openTab(tab);
+}
+
+function _openTab(tab) {
+  const map = {
+    lobbying: 'loadLobbying', trades: 'loadTrades', notifications: 'loadNotificationsPage',
+  };
+  const page = 'page-' + tab;
+  if (!document.getElementById(page)) return;
+  showPage(page);
+  const fn = map[tab];
+  if (fn && typeof window[fn] === 'function') window[fn]();
+}
+
+// Turn a URL path into the right view. Called on load (deep link) and on
+// back/forward (popstate); these never push new history.
+function _renderRoute(path) {
+  const clean = (path || '/').split('?')[0].replace(/\/+$/, '') || '/';
+  const seg = clean.split('/').filter(Boolean);
+  if (!seg.length) { showPage('page-home'); return; }
+  if (seg[0] === 'bill' && seg.length === 4) {
+    openDetail({ congress: seg[1], type: seg[2], number: seg[3] }, { fromHistory: true });
+  } else if (seg[0] === 'law' && seg.length === 3) {
+    openDetail({ congress: seg[1], law_number: seg[2], is_law: true }, { fromHistory: true });
+  } else if (seg[0] === 'member' && seg.length === 2) {
+    openMemberByBioguide(seg[1]);
+  } else if (seg[0] === 'state' && seg[2] === 'bill' && seg.length === 4) {
+    openStateBill({ state: seg[1], ocd_id: seg[3] }, { fromHistory: true });
+  } else if (seg[0] === 'state' && seg[2] === 'member' && seg.length === 4) {
+    openStateMemberFromVote({ name: decodeURIComponent(seg[3]), state: seg[1], source: 'state' }, { fromHistory: true });
+  } else if (['lobbying', 'trades', 'notifications'].includes(seg[0]) && seg.length === 1) {
+    _openTab(seg[0]);
+  } else {
+    showPage('page-home');
+  }
+}
+
+// Open a federal member by bioguide — powers /member/{id} deep links.
+async function openMemberByBioguide(bioguide) {
+  if (memberLoadingInProgress) return;
+  memberLoadingInProgress = true;
+  const loadingEl = document.getElementById('member-loading');
+  const contentEl = document.getElementById('member-page-content');
+  previousPage = document.querySelector('.page.active').id;
+  loadingEl.style.display = 'block';
+  contentEl.style.display = 'none';
+  showPage('page-member');
+  try {
+    const data = await (await fetch('/api/member/' + encodeURIComponent(bioguide))).json();
+    if (data.found) renderMemberPage(data);
+    else { loadingEl.style.display = 'none'; contentEl.style.display = 'block'; }
+  } catch { loadingEl.style.display = 'none'; }
+  finally { memberLoadingInProgress = false; }
+}
+
+window.addEventListener('popstate', () => _renderRoute(location.pathname));
 
 // ── Search ──
 const input = document.getElementById('search-input');
@@ -219,7 +283,7 @@ function hideTooltip() { tooltip.classList.remove('visible'); }
 
 let memberLoadingInProgress = false;
 
-async function openStateMemberFromVote(seat) {
+async function openStateMemberFromVote(seat, opts = {}) {
   if (memberLoadingInProgress || !seat.name) return;
   memberLoadingInProgress = true;
   hideTooltip();
@@ -250,6 +314,15 @@ async function openStateMemberFromVote(seat) {
 
     if (data.found) {
       renderMemberPage(data);
+      // Shareable URL: /member/{bioguide} for federal, /state/{st}/member/{name}
+      // for state legislators (no bioguide). Skipped when we arrived via history.
+      const m = data.member || {};
+      const url = m.bioguide_id
+        ? '/member/' + m.bioguide_id
+        : '/state/' + (m.state || seat.state || 'x') + '/member/' + encodeURIComponent(seat.name);
+      if (!opts.fromHistory && location.pathname !== url) {
+        history.pushState({ v: 'member' }, '', url);
+      }
     } else {
       loadingEl.style.display = 'none';
       contentEl.style.display = 'block';
@@ -267,7 +340,7 @@ async function openStateMemberFromVote(seat) {
   }
 }
 
-async function openMemberFromVote(seat) {
+async function openMemberFromVote(seat, opts = {}) {
   if (memberLoadingInProgress) return;
   memberLoadingInProgress = true;
   hideTooltip();
@@ -298,6 +371,15 @@ async function openMemberFromVote(seat) {
 
     if (data.found) {
       renderMemberPage(data);
+      // Shareable URL: /member/{bioguide} for federal, /state/{st}/member/{name}
+      // for state legislators (no bioguide). Skipped when we arrived via history.
+      const m = data.member || {};
+      const url = m.bioguide_id
+        ? '/member/' + m.bioguide_id
+        : '/state/' + (m.state || seat.state || 'x') + '/member/' + encodeURIComponent(seat.name);
+      if (!opts.fromHistory && location.pathname !== url) {
+        history.pushState({ v: 'member' }, '', url);
+      }
     } else {
       loadingEl.style.display = 'none';
       contentEl.style.display = 'block';
@@ -926,7 +1008,7 @@ function _showDetailError(bill) {
   document.getElementById('detail-content').style.display = 'none';
 }
 
-async function openDetail(bill) {
+async function openDetail(bill, opts = {}) {
   const myToken = ++_detailToken;
   bill = {
     ...bill,
@@ -935,6 +1017,13 @@ async function openDetail(bill) {
     law_number: bill.law_number ? parseInt(bill.law_number) : null
   };
   _currentBill = bill;
+  // Give the bill a real, shareable URL (skip when we got here via history).
+  if (!opts.fromHistory) {
+    const url = bill.is_law
+      ? `/law/${bill.congress}/${bill.law_number}`
+      : `/bill/${bill.congress}/${bill.type}/${bill.number}`;
+    if (location.pathname !== url) history.pushState({ v: 'bill' }, '', url);
+  }
   const activePage = document.querySelector('.page.active').id;
   if (activePage !== 'page-detail') previousPage = activePage;
   const billId = bill.is_law
@@ -2710,10 +2799,14 @@ function _switchToFederalAndSearch() {
   runSearch();
 }
 
-async function openStateBill(bill) {
+async function openStateBill(bill, opts = {}) {
   const myToken = ++_detailToken;
   previousPage = document.querySelector('.page.active').id;
   _currentBill = { ...bill, is_state_bill: true };
+  if (!opts.fromHistory && bill.ocd_id) {
+    const url = `/state/${bill.state || 'x'}/bill/${bill.ocd_id}`;
+    if (location.pathname !== url) history.pushState({ v: 'statebill' }, '', url);
+  }
 
   const stateLabel = stateNameFromCode(bill.state) || bill.state || '';
   const billId = `${bill.identifier}${stateLabel ? ` · ${stateLabel}` : ''}`;
@@ -3839,4 +3932,10 @@ loadFeed();
     m.appendChild(tag);
     setTimeout(() => tag.remove(), 1150);
   });
+})();
+
+// ── Deep-link routing on load: open the view named by the URL ──
+(function () {
+  const path = location.pathname;
+  if (path && path !== '/') _renderRoute(path);
 })();
