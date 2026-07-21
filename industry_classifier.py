@@ -31,6 +31,19 @@ INDUSTRIES = [
     "Other",
 ]
 
+# Single-issue / ideological causes a PAC can represent (beyond an industry).
+_CAUSES = [
+    "Pro-Israel", "Gun Rights", "Gun Safety", "Abortion Rights", "Anti-Abortion",
+    "Environment", "LGBTQ Rights", "Immigration", "Fiscal Conservative",
+    "Progressive", "Civil Rights",
+]
+# PACs classify into an industry, a cause, or a political vehicle. "Leadership
+# PAC" (a politician's own PAC) and "Party Committee" aren't interests — they're
+# colleague/party money — but they're a big share of many members' PAC totals,
+# so they get their own buckets rather than being mislabeled.
+PAC_INTERESTS = [i for i in INDUSTRIES if i != "Other"] + _CAUSES + \
+    ["Leadership PAC", "Party Committee", "Other"]
+
 _client = None
 
 
@@ -46,94 +59,130 @@ def _chunks(seq, n):
         yield seq[i:i + n]
 
 
-def _classify_batch(employers):
+_EMPLOYER_INSTRUCTIONS = (
+    "You classify the employer of a US political donor into its primary "
+    "industry, the way OpenSecrets does. Infer from clear signals in the name, "
+    "even for firms you don't know:\n"
+    "- ...ENT / Medical / Health / Hospital / Clinic / Pharma / Bio / Care -> Health & Pharma\n"
+    "- Tech / Technologies / Software / Systems / Digital / Data / Cyber / Labs -> Technology\n"
+    "- Law / Legal / LLP / Attorneys / & Associates (law) -> Law & Lobbying\n"
+    "- Bank / Capital / Financial / Investments / Advisors / Insurance / Wealth -> Finance & Insurance\n"
+    "- Realty / Properties / Real Estate / Homes / Development -> Real Estate\n"
+    "- Construction / Builders / Contractors / Roofing / Electric -> Construction\n"
+    "- University / School / College / Academy / District / ISD -> Education\n"
+    "- Pipe / Steel / Manufacturing / Industries / Products / Mfg -> Manufacturing\n"
+    "- Farms / Agriculture / Grain / Dairy / Ranch -> Agriculture\n"
+    "- Airlines / Logistics / Freight / Trucking / Transit -> Transportation\n"
+    "- City of / County of / State / federal agency / Dept -> Government & Public Sector\n"
+    "- Union / Local ### / IBEW / AFSCME / Teamsters -> Labor Unions\n"
+    "Only use \"Other\" when the name gives no reasonable signal at all."
+)
+
+_PAC_INSTRUCTIONS = (
+    "You classify a US political action committee (PAC) by the interest it "
+    "represents. A PAC's interest is a matter of public record — use what you "
+    "know about the organization and clear signals in its name. This is about "
+    "the PAC's own identity, never a guess about individual donors.\n"
+    "- Corporate / trade PACs -> their industry: Exxon -> Energy & Natural "
+    "Resources; L3Harris/Lockheed -> Defense & Aerospace; a drug company -> "
+    "Health & Pharma; Realtors / Home Builders / Realty -> Real Estate; "
+    "Bankers / Credit Union / Investment -> Finance & Insurance; Cable/Telecom/"
+    "Broadcasters -> Telecom & Media.\n"
+    "- Single-issue / ideological PACs -> their cause: AIPAC / NORPAC / Jewish "
+    "-> Pro-Israel; NRA / Gun Owners -> Gun Rights; Everytown / Giffords / 'Gun "
+    "Safety' -> Gun Safety; NARAL / Planned Parenthood / Pro-Choice -> Abortion "
+    "Rights; SBA / Right to Life / Pro-Life -> Anti-Abortion; Conservation "
+    "Voters / Sierra / Environmental -> Environment; Human Rights Campaign / "
+    "Equality -> LGBTQ Rights; Club for Growth / Taxpayers / Freedom (fiscal) -> "
+    "Fiscal Conservative; Emily's List / Progressive -> Progressive.\n"
+    "- A politician's own leadership PAC or campaign committee -> \"Leadership "
+    "PAC\": this includes any 'Friends of <name>', '<name> for Congress/Senate', "
+    "'Committee to Elect', 'Re-elect <name>', or a vague/folksy PAC named for a "
+    "person with no interest signal.\n"
+    "- Party committees (RNC / DNC / DCCC / NRSC / state parties) -> \"Party Committee\".\n"
+    "Use \"Other\" only when the name is genuinely opaque AND doesn't look like a "
+    "leadership PAC. Recognizing a well-known organization is not guessing."
+)
+
+
+def _run_batch(items, taxonomy, instructions, item_key):
     schema = {
         "type": "object",
         "properties": {"items": {"type": "array", "items": {
             "type": "object",
             "properties": {
-                "employer": {"type": "string"},
-                "industry": {"type": "string", "enum": INDUSTRIES},
+                item_key: {"type": "string"},
+                "label": {"type": "string", "enum": taxonomy},
             },
-            "required": ["employer", "industry"],
+            "required": [item_key, "label"],
             "additionalProperties": False,
         }}},
         "required": ["items"],
         "additionalProperties": False,
     }
-    prompt = (
-        "You classify the employer of a US political donor into its primary "
-        "industry, the way OpenSecrets does. Return one entry per employer, "
-        "echoing the employer string exactly as given, using only the provided "
-        "industry labels.\n\n"
-        "Infer from clear signals in the name, even for firms you don't know:\n"
-        "- ...ENT / Medical / Health / Hospital / Clinic / Pharma / Bio / Care -> Health & Pharma\n"
-        "- Tech / Technologies / Software / Systems / Digital / Data / Cyber / Labs -> Technology\n"
-        "- Law / Legal / LLP / Attorneys / & Associates (law) -> Law & Lobbying\n"
-        "- Bank / Capital / Financial / Investments / Advisors / Insurance / Wealth -> Finance & Insurance\n"
-        "- Realty / Properties / Real Estate / Homes / Development -> Real Estate\n"
-        "- Construction / Builders / Contractors / Roofing / Electric -> Construction\n"
-        "- University / School / College / Academy / District / ISD -> Education\n"
-        "- Pipe / Steel / Manufacturing / Industries / Products / Mfg -> Manufacturing\n"
-        "- Farms / Agriculture / Grain / Dairy / Ranch -> Agriculture\n"
-        "- Airlines / Logistics / Freight / Trucking / Transit -> Transportation\n"
-        "- City of / County of / State / federal agency / Dept -> Government & Public Sector\n"
-        "- Union / Local ### / IBEW / AFSCME / Teamsters -> Labor Unions\n"
-        "Only use \"Other\" when the name gives no reasonable signal at all.\n\n"
-        "Employers:\n" + "\n".join(f"- {e}" for e in employers)
-    )
+    prompt = (instructions + "\n\nUse only the provided labels, and echo each "
+              "name exactly as given.\n\nNames:\n" + "\n".join(f"- {x}" for x in items))
     resp = _c().messages.create(
-        model=_MODEL, max_tokens=2000,
+        model=_MODEL, max_tokens=2200,
         output_config={"format": {"type": "json_schema", "schema": schema}},
         messages=[{"role": "user", "content": prompt}],
     )
     text = next(b.text for b in resp.content if b.type == "text")
     data = json.loads(text)
-    return {it["employer"].strip().upper(): it["industry"]
-            for it in data.get("items", [])}
+    return {it[item_key].strip().upper(): it["label"] for it in data.get("items", [])}
 
 
-def classify(employers):
-    """Map each employer string -> industry label. Per-employer disk-cached;
-    only the uncached ones hit the model (batched). Returns {EMPLOYER_UPPER: industry}."""
+def _classify(items, taxonomy, instructions, cache_prefix, item_key="name"):
+    """Map each name -> label. Per-name disk-cached; only uncached hit the model."""
     try:
         from correspondence.db import get_disk_cache, set_disk_cache
     except Exception:
         get_disk_cache = set_disk_cache = None
 
     out, todo, seen = {}, [], set()
-    for e in employers:
-        key = (e or "").strip().upper()
+    for x in items:
+        key = (x or "").strip().upper()
         if not key or key in seen:
             continue
         seen.add(key)
         cached = None
         if get_disk_cache:
             try:
-                cached = get_disk_cache(f"ind:v2:{key}", _CACHE_TTL)
+                cached = get_disk_cache(f"{cache_prefix}{key}", _CACHE_TTL)
             except Exception:
                 cached = None
         if cached is not None:
             out[key] = cached
         else:
-            todo.append(e.strip())
+            todo.append(x.strip())
 
     for batch in _chunks(todo, 40):
         try:
-            res = _classify_batch(batch)
+            res = _run_batch(batch, taxonomy, instructions, item_key)
         except Exception as ex:
-            print(f"[INDUSTRY] classify error: {ex}")
+            print(f"[CLASSIFY] {cache_prefix} error: {ex}")
             res = {}
-        for e in batch:
-            key = e.upper()
+        for x in batch:
+            key = x.upper()
             label = res.get(key) or "Other"
             out[key] = label
             if set_disk_cache:
                 try:
-                    set_disk_cache(f"ind:v2:{key}", label)
+                    set_disk_cache(f"{cache_prefix}{key}", label)
                 except Exception:
                     pass
     return out
+
+
+def classify(employers):
+    """Employer string -> industry label. Returns {EMPLOYER_UPPER: industry}."""
+    return _classify(employers, INDUSTRIES, _EMPLOYER_INSTRUCTIONS, "ind:v2:", "employer")
+
+
+def classify_pacs(names):
+    """PAC name -> interest (industry, cause, or political vehicle).
+    Returns {PAC_UPPER: interest}."""
+    return _classify(names, PAC_INTERESTS, _PAC_INSTRUCTIONS, "pac:v3:", "pac")
 
 
 if __name__ == "__main__":

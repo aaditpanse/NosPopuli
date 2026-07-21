@@ -287,31 +287,17 @@ def _pac_title(name):
     return t
 
 
-def top_pac_contributors(candidate_id, cycle, candidate_name=None, limit=8):
-    """Named PAC/committee contributors to a candidate, aggregated and cleaned —
-    the "from whom" for organizational money. OpenSecrets (which added industry
-    rollups) shut its API down in April 2025, so this reads FEC Schedule A
-    committee receipts directly. We drop what isn't an outside donor: the
-    candidate's own committees, conduits (ActBlue/WinRed), and joint-fundraising
-    vehicles bearing the candidate's name. Returns [{name, amount}] or []."""
-    if not candidate_id or not cycle:
-        return []
-    ck = f"fec:pac:v3:{candidate_id}:{cycle}"
-    cached = _cache_get(ck)
-    if cached is not None:
-        return cached
-    # The candidate's own name tokens catch "<First> Victory Fund" JFCs.
+def _pac_totals(candidate_id, cycle, candidate_name=None):
+    """Raw {pac_name: dollars} of committee (PAC) contributions to a candidate.
+    FEC Schedule A line F3-11C = "contributions from other political committees"
+    (actual PACs; the broad contributor_type=committee also returned entity_type
+    =ORG bank/processor rows). Drops the candidate's own committees, conduits
+    (ActBlue/WinRed), and joint-fundraising vehicles bearing the candidate name."""
     name_tokens = {t.upper() for t in clean_name(candidate_name).split() if len(t) > 2}
-
     cm = _principal_committee(candidate_id)
     if not cm:
-        _cache_set(ck, [])
-        return []
+        return {}
     try:
-        # line_number F3-11C = "contributions from other political committees"
-        # (actual PACs). The broad contributor_type=committee also returned
-        # entity_type=ORG rows — businesses/processors like banks, which aren't
-        # PAC gifts — so a no-PAC candidate (Sanders) wrongly showed M&T Bank.
         data = _get("schedules/schedule_a/", {
             "committee_id": cm, "two_year_transaction_period": int(cycle),
             "line_number": "F3-11C", "sort": "-contribution_receipt_amount",
@@ -319,24 +305,76 @@ def top_pac_contributors(candidate_id, cycle, candidate_name=None, limit=8):
         })
     except Exception as e:
         print(f"[FEC] pac contributors {candidate_id}: {e}")
-        return []
-
+        return {}
     agg = {}
     for r in data.get("results", []):
         nm = (r.get("contributor_name") or "").strip()
         up = nm.upper()
-        if not nm or r.get("entity_type") == "CAN":       # the candidate's own money
+        if not nm or r.get("entity_type") == "CAN":
             continue
-        if any(c in up for c in _CONDUITS):                # pass-through conduits
+        if any(c in up for c in _CONDUITS):
             continue
-        if any(t in up for t in name_tokens):              # JFCs named for the candidate
+        if any(t in up for t in name_tokens):
             continue
-        agg[nm] = agg.get(nm, 0.0) + (r.get("contribution_receipt_amount") or 0)
+        amt = r.get("contribution_receipt_amount") or 0
+        if amt > 0:
+            agg[nm] = agg.get(nm, 0.0) + amt
+    return agg
 
+
+def top_pac_contributors(candidate_id, cycle, candidate_name=None, limit=8):
+    """Named PAC/committee contributors to a candidate, ranked. [{name, amount}]."""
+    if not candidate_id or not cycle:
+        return []
+    ck = f"fec:pac:v3:{candidate_id}:{cycle}"
+    cached = _cache_get(ck)
+    if cached is not None:
+        return cached
+    agg = _pac_totals(candidate_id, cycle, candidate_name)
     rows = [{"name": _pac_title(k), "amount": round(v, 2)}
-            for k, v in sorted(agg.items(), key=lambda kv: kv[1], reverse=True) if v > 0][:limit]
+            for k, v in sorted(agg.items(), key=lambda kv: kv[1], reverse=True)][:limit]
     _cache_set(ck, rows)
     return rows
+
+
+def member_pac_interests(candidate_id, cycle, candidate_name=None, limit=12):
+    """A member's PAC money grouped by the interest each PAC represents — the
+    generalized "who funds this candidate," from factual PAC identity (industry,
+    cause, or political vehicle), never a guess about individual donors. Returns
+    {"cycle", "total", "interests": [{interest, total, share, top: [names]}]}."""
+    if not candidate_id or not cycle:
+        return {"cycle": cycle, "interests": []}
+    ck = f"fec:pacint:v2:{candidate_id}:{cycle}"
+    cached = _cache_get(ck)
+    if cached is not None:
+        return cached
+
+    agg = _pac_totals(candidate_id, cycle, candidate_name)
+    if not agg:
+        out = {"cycle": cycle, "total": 0, "interests": []}
+        _cache_set(ck, out)
+        return out
+
+    import industry_classifier
+    labels = industry_classifier.classify_pacs(list(agg))
+    buckets = {}
+    for name, amt in agg.items():
+        interest = labels.get(name.upper()) or "Other"
+        b = buckets.setdefault(interest, {"total": 0.0, "pacs": []})
+        b["total"] += amt
+        b["pacs"].append((name, amt))
+
+    total = sum(v["total"] for v in buckets.values()) or 1
+    rows = []
+    for interest, b in sorted(buckets.items(), key=lambda kv: kv[1]["total"], reverse=True):
+        top = [_pac_title(n) for n, _ in sorted(b["pacs"], key=lambda x: x[1], reverse=True)[:4]]
+        rows.append({"interest": interest, "total": round(b["total"], 2),
+                     "share": round(b["total"] / total, 3), "top": top})
+    # Push "Other"/leadership-style buckets after the real interests? Keep them —
+    # colleague money is real; but sort by dollars so the biggest lead.
+    out = {"cycle": cycle, "total": round(total, 2), "interests": rows[:limit]}
+    _cache_set(ck, out)
+    return out
 
 
 # Employer strings that carry no industry — donors' non-jobs. FEC is full of

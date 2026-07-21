@@ -1965,6 +1965,19 @@ async def member_industries_endpoint(request: Request, cid: str, cycle: int):
         return {"industries": [], "cycle": cycle}
 
 
+@app.get("/member/pac-interests")
+@limiter.limit("15/minute")
+async def member_pac_interests_endpoint(request: Request, cid: str, cycle: int, name: str = ""):
+    """A member's PAC money grouped by the interest each PAC represents —
+    industries and single-issue causes — from factual PAC identity."""
+    import fec_client
+    try:
+        return await asyncio.to_thread(fec_client.member_pac_interests, cid, cycle, name)
+    except Exception as e:
+        print(f"[API] Member PAC interests error for {cid}: {e}")
+        return {"cycle": cycle, "interests": []}
+
+
 _house_stocks = None
 
 

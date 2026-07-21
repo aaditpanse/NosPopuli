@@ -1126,6 +1126,7 @@ function _renderMemberFinance(fin) {
     <div class="mf-bar">${bar}</div>
     <div class="mf-legend">${rows}</div>
     ${pacHtml}
+    <div id="mf-pacint"></div>
     <div id="mf-industries"></div>
     <p class="pushing-note">Percentages above are shares of <strong>total money raised</strong> this
       cycle. Top PAC contributors are the largest names within the PAC share (not the full list).
@@ -1183,8 +1184,46 @@ async function loadMemberFinance(name, state, chamber) {
     const res = await fetch('/member/finance?' + q.toString());
     const fin = await res.json();
     _renderMemberFinance(fin);
-    if (fin && fin.candidate_id && fin.cycle) loadMemberIndustries(fin.candidate_id, fin.cycle);
+    if (fin && fin.candidate_id && fin.cycle) {
+      loadMemberIndustries(fin.candidate_id, fin.cycle);
+      loadPacInterests(fin.candidate_id, fin.cycle, fin.name || '');
+    }
   } catch { /* leave the section hidden on any error */ }
+}
+
+// PAC money grouped by the interest each PAC represents — industries and
+// single-issue causes. Factual PAC identity, never a guess about individuals.
+function _renderPacInterests(data) {
+  const host = document.getElementById('mf-pacint');
+  if (!host) return;
+  const items = (data && data.interests || []).filter(i => i.total > 0);
+  if (!items.length) { host.innerHTML = ''; return; }
+  const max = Math.max(...items.map(i => i.share));
+  const rows = items.map(i => {
+    const other = i.interest === 'Other';
+    return `<div class="mf-ind-row${other ? ' mf-ind-other' : ''}">
+      <span class="mf-ind-name" title="${escapeHtml((i.top || []).join(', '))}">${escapeHtml(i.interest)}</span>
+      <span class="mf-ind-bar"><span class="mf-ind-fill mf-pi-fill" style="width:${Math.min(100, Math.max(3, 100 * i.share / max))}%"></span></span>
+      <span class="mf-ind-pct">${Math.round(i.share * 100)}%</span>
+      <span class="mf-ind-amt">${_mfMoney(i.total)}</span>
+    </div>`;
+  }).join('');
+  host.innerHTML = `
+    <div class="mf-pac-head">Funded by these interests <span class="mf-sub">PAC money</span></div>
+    <div class="mf-ind-list">${rows}</div>
+    <p class="pushing-note">The member's PAC money grouped by what each PAC <em>is</em> — its industry
+      or cause (hover a row for examples). This is the money's <strong>source</strong>, not a claim about
+      anyone's beliefs, and not the same as "support." "Leadership PAC" is colleague money; "Other" is
+      PACs whose name reveals no interest. Individual donors aren't included here.</p>`;
+}
+
+async function loadPacInterests(cid, cycle, name) {
+  try {
+    const q = new URLSearchParams({ cid, cycle });
+    if (name) q.set('name', name);
+    const res = await fetch('/member/pac-interests?' + q.toString());
+    _renderPacInterests(await res.json());
+  } catch { /* leave empty on error */ }
 }
 
 // Disclosed House stock trades (STOCK Act PTRs). For senators we state the gap

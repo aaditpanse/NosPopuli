@@ -1802,6 +1802,7 @@ body {
   min-width: 150px; flex-shrink: 0; }
 .mf-ind-bar { flex: 1; height: 7px; background: var(--aged); border-radius: 2px; overflow: hidden; }
 .mf-ind-fill { display: block; height: 100%; background: #2457a0; }
+.mf-ind-fill.mf-pi-fill { background: #8b6a1a; }  /* PAC-interest bars, distinct from donor-industry blue */
 .mf-ind-pct { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--muted);
   min-width: 2.2rem; text-align: right; }
 .mf-ind-amt { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--ink);
