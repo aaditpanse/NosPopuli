@@ -1221,11 +1221,18 @@ function _renderMemberStocks(data, isSenator) {
     const dir = t.type.startsWith('buy') ? 'buy' : t.type.startsWith('sell') ? 'sell' : 'exch';
     const label = t.ticker ? escapeHtml(t.ticker) : escapeHtml((t.asset || '').slice(0, 32));
     const who = t.owner && t.owner !== '' ? ` · ${escapeHtml(t.owner)}` : '';
-    return `<div class="stk-row">
-      <span class="stk-date">${escapeHtml(t.date || '')}</span>
-      <span class="stk-dir stk-${dir}">${escapeHtml(t.type)}</span>
-      <span class="stk-tkr" title="${escapeHtml(t.asset || '')}">${label}</span>
-      <span class="stk-amt">${escapeHtml(t.amount || '')}${who}</span>
+    // Rows with a ticker are clickable — expand to show the stock's move after.
+    const click = t.ticker
+      ? ` stk-clickable" data-ticker="${escapeHtml(t.ticker)}" data-date="${escapeHtml(t.date || '')}" data-dir="${dir}" onclick="toggleStockPerf(this)`
+      : '';
+    return `<div class="stk-item">
+      <div class="stk-row${click}">
+        <span class="stk-date">${escapeHtml(t.date || '')}</span>
+        <span class="stk-dir stk-${dir}">${escapeHtml(t.type)}</span>
+        <span class="stk-tkr" title="${escapeHtml(t.asset || '')}">${label}${t.ticker ? '<span class="stk-caret">›</span>' : ''}</span>
+        <span class="stk-amt">${escapeHtml(t.amount || '')}${who}</span>
+      </div>
+      <div class="stk-perf" style="display:none"></div>
     </div>`;
   }).join('');
   const cyc = (data.cycles || []).join(', ');
@@ -1251,6 +1258,39 @@ async function loadMemberStocks(bioguide, isSenator) {
     const res = await fetch('/member/stocks?bioguide=' + encodeURIComponent(bioguide));
     _renderMemberStocks(await res.json(), isSenator);
   } catch { /* leave hidden on error */ }
+}
+
+// Click a trade → show how the stock moved 1wk / 1mo / 3mo after the trade date.
+function _renderStockPerf(d) {
+  const w = (d && d.windows) || [];
+  if (!w.length) return '<div class="stk-perf-note">No price history available for this ticker.</div>';
+  const cells = w.map(x => {
+    const up = x.pct >= 0;
+    return `<span class="stk-perf-cell">
+      <span class="stk-perf-lbl">${x.label} later</span>
+      <span class="stk-perf-pct ${up ? 'up' : 'down'}">${up ? '+' : ''}${x.pct}%</span>
+    </span>`;
+  }).join('');
+  return `<div class="stk-perf-cells">${cells}</div>
+    <div class="stk-perf-note">${escapeHtml(d.ticker)} closed at $${d.base_price} on ${d.base_date}; figures are the
+      stock's price change after the trade — not the member's realized gain, and not an accusation.</div>`;
+}
+
+async function toggleStockPerf(row) {
+  const box = row.nextElementSibling; // .stk-perf
+  if (!box) return;
+  if (box.style.display === 'block') { box.style.display = 'none'; row.classList.remove('open'); return; }
+  row.classList.add('open');
+  box.style.display = 'block';
+  if (box.dataset.loaded) return;
+  box.innerHTML = '<div class="stk-perf-note">Loading price history…</div>';
+  try {
+    const res = await fetch(`/stock/perf?ticker=${encodeURIComponent(row.dataset.ticker)}&date=${encodeURIComponent(row.dataset.date)}`);
+    box.innerHTML = _renderStockPerf(await res.json());
+    box.dataset.loaded = '1';
+  } catch {
+    box.innerHTML = '<div class="stk-perf-note">Couldn\'t load price history.</div>';
+  }
 }
 
 function renderMemberPage(data) {

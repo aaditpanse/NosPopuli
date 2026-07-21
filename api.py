@@ -2023,6 +2023,19 @@ async def member_stocks_endpoint(request: Request, bioguide: str):
     }
 
 
+@app.get("/stock/perf")
+@limiter.limit("40/minute")
+async def stock_perf_endpoint(request: Request, ticker: str, date: str):
+    """How a stock moved after a disclosed trade (Yahoo daily closes): the
+    percent change 1 week / 1 month / 3 months out. Empty when no price data."""
+    import stock_perf
+    try:
+        return await asyncio.to_thread(stock_perf.perf, ticker, date)
+    except Exception as e:
+        print(f"[API] stock perf error {ticker} {date}: {e}")
+        return {}
+
+
 @app.get("/api/elections")
 @limiter.limit("10/minute")
 async def elections_endpoint(request: Request, zip: Optional[str] = None, state: Optional[str] = None):

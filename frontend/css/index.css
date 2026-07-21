@@ -1834,6 +1834,20 @@ body {
 .stk-tkr { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; font-weight: 500; color: var(--ink); }
 .stk-amt { font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; color: var(--muted);
   white-space: nowrap; text-align: right; }
+.stk-clickable { cursor: pointer; }
+.stk-clickable:hover { background: var(--aged); }
+.stk-caret { color: var(--muted); margin-left: 0.4rem; font-size: 0.7rem; display: inline-block;
+  transition: transform 0.12s; }
+.stk-row.open .stk-caret { transform: rotate(90deg); }
+.stk-perf { padding: 0.5rem 0.4rem 0.7rem; border-bottom: 1px solid var(--rule); background: var(--card-bg); }
+.stk-perf-cells { display: flex; flex-wrap: wrap; gap: 1.4rem; }
+.stk-perf-cell { display: flex; flex-direction: column; gap: 0.1rem; }
+.stk-perf-lbl { font-family: 'IBM Plex Mono', monospace; font-size: 0.54rem; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted); }
+.stk-perf-pct { font-family: 'IBM Plex Mono', monospace; font-size: 0.95rem; font-weight: 500; }
+.stk-perf-pct.up { color: #2a6e2a; } .stk-perf-pct.down { color: var(--accent); }
+.stk-perf-note { font-family: 'Source Serif 4', Georgia, serif; font-size: 0.72rem; font-style: italic;
+  color: var(--muted); margin-top: 0.5rem; line-height: 1.45; }
 
 /* Resolved-references block, streamed in under the plain-English explanation
    after the core translation has already rendered. */
