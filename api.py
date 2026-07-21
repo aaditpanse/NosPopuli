@@ -2023,6 +2023,63 @@ async def member_stocks_endpoint(request: Request, bioguide: str):
     }
 
 
+_all_trades_flat = None
+
+
+def _flatten_trades():
+    """One-time flat, date-sorted list of every disclosed trade across members."""
+    global _all_trades_flat
+    if _all_trades_flat is None:
+        data = _load_house_stocks()
+        rows = []
+        for bg, m in (data.get("members") or {}).items():
+            name = m.get("name", "")
+            for t in m.get("trades", []):
+                rows.append({
+                    "member": name, "bioguide": bg,
+                    "ticker": t.get("ticker"), "asset": t.get("asset"),
+                    "type": t.get("type"), "date": t.get("date"),
+                    "amount": t.get("amount"), "owner": t.get("owner", ""),
+                })
+
+        def key(d):
+            try:
+                mm, dd, yy = d.split("/")
+                return (int(yy), int(mm), int(dd))
+            except Exception:
+                return (0, 0, 0)
+        rows.sort(key=lambda r: key(r["date"]), reverse=True)
+        _all_trades_flat = rows
+    return _all_trades_flat
+
+
+@app.get("/stocks/notable")
+@limiter.limit("30/minute")
+async def stocks_notable_endpoint(request: Request):
+    """The most dramatic trades: biggest post-trade moves in the trade's favor."""
+    try:
+        with open("data/notable_trades.json") as f:
+            return json.load(f)
+    except Exception:
+        return {"trades": []}
+
+
+@app.get("/stocks/all")
+@limiter.limit("30/minute")
+async def stocks_all_endpoint(request: Request, q: str = "", page: int = 0, page_size: int = 60):
+    """Every disclosed House trade, newest first — searchable by member or ticker."""
+    ql = (q or "").strip().lower()
+    rows = _flatten_trades()
+    if ql:
+        rows = [r for r in rows if ql in (r["member"] or "").lower()
+                or ql in (r["ticker"] or "").lower()]
+    page = max(0, page)
+    page_size = min(max(page_size, 10), 100)
+    start = page * page_size
+    return {"total": len(rows), "page": page, "page_size": page_size,
+            "trades": rows[start:start + page_size]}
+
+
 @app.get("/stock/perf")
 @limiter.limit("40/minute")
 async def stock_perf_endpoint(request: Request, ticker: str, date: str):

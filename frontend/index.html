@@ -6,7 +6,7 @@
   <title>NosPopuli — Law for the People</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/index.css?v=push15">
+  <link rel="stylesheet" href="/static/css/index.css?v=push16">
 </head>
 <body>
 
@@ -38,6 +38,7 @@
   <a class="nav-link top-nav-btn" href="#" onclick="goHome();return false">Front Page</a>
   <a class="nav-link top-nav-btn" href="#" onclick="showPage('page-elections');loadElections();return false">Elections</a>
   <a class="nav-link top-nav-btn" href="#" onclick="showPage('page-lobbying');loadLobbying();return false">Lobbying</a>
+  <a class="nav-link top-nav-btn" href="#" onclick="showPage('page-trades');loadTrades();return false">Trades</a>
   <a class="nav-link top-nav-btn" href="#" onclick="showPage('page-notifications');loadNotificationsPage();return false">My Notifications</a>
 </nav>
 
@@ -522,6 +523,26 @@
 </div>
 
 <!-- ══════════════════════════════════════════════ -->
+<!-- ── TRADES PAGE                              ── -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page" id="page-trades">
+  <a class="back-link" href="#" onclick="goHome();return false">← Back to Front Page</a>
+  <div class="trades-head">
+    <h1 class="trades-title">Congressional Stock Trades</h1>
+    <p class="trades-deck">House members disclose their trades under the STOCK Act. Here are the most
+      dramatic — trades a stock's move most favored soon after — and every filing we've parsed.</p>
+  </div>
+  <div id="trades-notable"></div>
+  <div class="trades-allhead">
+    <div class="bill-section-label">All filings</div>
+    <input id="trades-search" class="trades-search" type="text"
+      placeholder="Filter by member or ticker…" oninput="tradesSearch(this.value)"/>
+  </div>
+  <div id="trades-all"></div>
+  <div id="trades-more"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
 <!-- ── NOTIFICATIONS PAGE                       ── -->
 <!-- ══════════════════════════════════════════════ -->
 <div class="page" id="page-notifications">
@@ -663,7 +684,7 @@
 <script defer src="/static/js/d3-array.min.js"></script>
 <script defer src="/static/js/d3-geo.min.js"></script>
 <script defer src="/static/js/topojson-client.min.js"></script>
-<script defer src="/static/js/index.js?v=21"></script>
+<script defer src="/static/js/index.js?v=22"></script>
 <script defer src="/static/js/correspondence.js?v=2"></script>
 <script defer src="/static/js/lobbying.js?v=5"></script>
 </body>

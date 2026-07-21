@@ -69,17 +69,52 @@ def _closes(ticker, start, end):
     return out
 
 
-def perf(ticker, date_str):
-    """Post-trade performance for one trade. `date_str` is 'MM/DD/YYYY'.
-    Returns {ticker, base_date, base_price, windows:[{label, pct, price}]} or {}.
-    """
-    ticker = (ticker or "").strip().upper()
-    if not ticker:
-        return {}
+def _close_on_or_after(series, target):
+    for d, c in series:
+        if d >= target:
+            return d, c
+    return None
+
+
+def windows_after(series, trade):
+    """Given a sorted [(date, close)] series and a trade date, return
+    ((base_date, base_price), [{label, pct}]) or (None, []). Only windows that
+    have actually elapsed (have data) are included."""
+    base = _close_on_or_after(series, trade)
+    if not base or base[1] <= 0:
+        return None, []
+    base_date, base_price = base
+    windows = []
+    for days, label in _WINDOWS:
+        hit = _close_on_or_after(series, trade + datetime.timedelta(days=days))
+        if not hit or hit[0] < trade + datetime.timedelta(days=days):
+            continue
+        windows.append({"label": label, "pct": round((hit[1] / base_price - 1) * 100, 1)})
+    return (base_date, base_price), windows
+
+
+def parse_date(date_str):
     try:
         mm, dd, yy = date_str.split("/")
-        trade = datetime.date(int(yy), int(mm), int(dd))
+        return datetime.date(int(yy), int(mm), int(dd))
     except Exception:
+        return None
+
+
+def series(ticker, start_date, end_date):
+    """Daily closes for a ticker across a date range (used by batch callers)."""
+    return _closes(ticker,
+                   datetime.datetime.combine(start_date, datetime.time()),
+                   datetime.datetime.combine(end_date, datetime.time()))
+
+
+def perf(ticker, date_str):
+    """Post-trade performance for one trade. `date_str` is 'MM/DD/YYYY'.
+    Returns {ticker, base_date, base_price, windows:[{label, pct}]} or {}.
+    """
+    ticker = (ticker or "").strip().upper()
+    trade = parse_date(date_str)
+    if not ticker or not trade:
         return {}
 
     ck = f"stockperf:v1:{_yahoo_symbol(ticker)}:{trade.isoformat()}"
@@ -87,43 +122,16 @@ def perf(ticker, date_str):
     if cached is not None:
         return cached or {}
 
-    start = datetime.datetime.combine(trade - datetime.timedelta(days=6), datetime.time())
-    end = datetime.datetime.combine(trade + datetime.timedelta(days=100), datetime.time())
-    series = _closes(ticker, start, end)
-    if not series:
-        _cache_set(ck, {})
-        return {}
-
-    def close_on_or_after(target):
-        for d, c in series:
-            if d >= target:
-                return d, c
-        return None
-
-    base = close_on_or_after(trade)
+    ser = series(ticker, trade - datetime.timedelta(days=6),
+                 trade + datetime.timedelta(days=100))
+    base, windows = windows_after(ser, trade) if ser else (None, [])
     if not base:
         _cache_set(ck, {})
         return {}
-    base_date, base_price = base
-    if base_price <= 0:
-        _cache_set(ck, {})
-        return {}
-
-    windows = []
-    for days, label in _WINDOWS:
-        hit = close_on_or_after(trade + datetime.timedelta(days=days))
-        # Require the window to have actually elapsed (not future / no data yet).
-        if not hit or hit[0] < trade + datetime.timedelta(days=days):
-            continue
-        windows.append({
-            "label": label,
-            "pct": round((hit[1] / base_price - 1) * 100, 1),
-        })
-
     out = {
         "ticker": ticker,
-        "base_date": base_date.isoformat(),
-        "base_price": round(base_price, 2),
+        "base_date": base[0].isoformat(),
+        "base_price": round(base[1], 2),
         "windows": windows,
     }
     _cache_set(ck, out)

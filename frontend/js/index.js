@@ -1276,6 +1276,102 @@ function _renderStockPerf(d) {
       stock's price change after the trade — not the member's realized gain, and not an accusation.</div>`;
 }
 
+// ── Trades page: most dramatic timing + all filings ──
+let _tradesQuery = '', _tradesPage = 0, _tradesTotal = 0, _tradesDebounce = null;
+
+async function loadTrades() {
+  const nb = document.getElementById('trades-notable');
+  if (nb && !nb.dataset.loaded) {
+    nb.innerHTML = '<div class="stk-perf-note" style="padding:1rem 0">Loading notable trades…</div>';
+    try { _renderNotable(await (await fetch('/stocks/notable')).json()); nb.dataset.loaded = '1'; }
+    catch { nb.innerHTML = ''; }
+  }
+  const s = document.getElementById('trades-search'); if (s) s.value = '';
+  _tradesQuery = '';
+  _fetchAllFilings(true);
+}
+
+function _tradeDir(type) {
+  return type && type.startsWith('buy') ? 'buy' : type && type.startsWith('sell') ? 'sell' : 'exch';
+}
+
+function _renderNotable(data) {
+  const host = document.getElementById('trades-notable');
+  const ts = (data && data.trades) || [];
+  if (!ts.length) { host.innerHTML = ''; return; }
+  const cards = ts.map(t => {
+    const wins = (t.windows || []).map(w =>
+      `<span class="ntbl-w ${w.pct >= 0 ? 'up' : 'down'}">${w.pct >= 0 ? '+' : ''}${w.pct}%<em>${w.label}</em></span>`).join('');
+    const memArg = JSON.stringify(t.member);
+    return `<div class="stk-item">
+      <div class="ntbl-card stk-clickable" data-ticker="${escapeHtml(t.ticker)}" data-date="${escapeHtml(t.date)}" data-dir="${t.dir}" onclick="toggleStockPerf(this)">
+        <div class="ntbl-fav"><span class="ntbl-fav-num">+${t.favorable}%</span><span class="ntbl-fav-lbl">in their favor</span></div>
+        <div class="ntbl-body">
+          <div class="ntbl-line"><span class="stk-dir stk-${t.dir}">${escapeHtml(t.type)}</span>
+            <b class="ntbl-tkr">${escapeHtml(t.ticker)}</b>
+            <a class="trd-mem" onclick="event.stopPropagation();openMemberFromVote({name:${memArg}})">${escapeHtml(t.member)}</a></div>
+          <div class="ntbl-meta">${escapeHtml(t.date)} · ${escapeHtml(t.amount)}${t.owner ? ' · ' + escapeHtml(t.owner) : ''}</div>
+          <div class="ntbl-windows">${wins}</div>
+        </div>
+        <span class="stk-caret">›</span>
+      </div>
+      <div class="stk-perf" style="display:none"></div>
+    </div>`;
+  }).join('');
+  host.innerHTML = `<div class="bill-section-label">Most dramatic timing</div>
+    <p class="ntbl-note">Trades the stock's move most favored within three months — a buy before a jump,
+      a sale before a slide. It's the stock's move, not a realized gain, and not an accusation of anything.</p>
+    <div class="ntbl-list">${cards}</div>`;
+}
+
+function _tradeRowHtml(t) {
+  const dir = _tradeDir(t.type);
+  const label = t.ticker ? escapeHtml(t.ticker) : escapeHtml((t.asset || '').slice(0, 26));
+  const who = t.owner ? ` · ${escapeHtml(t.owner)}` : '';
+  const memArg = JSON.stringify(t.member);
+  const click = t.ticker
+    ? ` stk-clickable" data-ticker="${escapeHtml(t.ticker)}" data-date="${escapeHtml(t.date || '')}" data-dir="${dir}" onclick="toggleStockPerf(this)`
+    : '';
+  return `<div class="stk-item">
+    <div class="trd-row${click}">
+      <span class="stk-date">${escapeHtml(t.date || '')}</span>
+      <a class="trd-mem" onclick="event.stopPropagation();openMemberFromVote({name:${memArg}})">${escapeHtml(t.member)}</a>
+      <span class="stk-dir stk-${dir}">${escapeHtml(t.type || '')}</span>
+      <span class="stk-tkr">${label}${t.ticker ? '<span class="stk-caret">›</span>' : ''}</span>
+      <span class="stk-amt">${escapeHtml(t.amount || '')}${who}</span>
+    </div>
+    <div class="stk-perf" style="display:none"></div>
+  </div>`;
+}
+
+async function _fetchAllFilings(reset) {
+  if (reset) {
+    _tradesPage = 0;
+    document.getElementById('trades-all').innerHTML = '<div class="stk-perf-note" style="padding:0.8rem 0">Loading…</div>';
+  }
+  try {
+    const res = await fetch(`/stocks/all?q=${encodeURIComponent(_tradesQuery)}&page=${_tradesPage}&page_size=60`);
+    const d = await res.json();
+    _tradesTotal = d.total || 0;
+    const html = (d.trades || []).map(_tradeRowHtml).join('');
+    const host = document.getElementById('trades-all');
+    if (reset) host.innerHTML = html || '<div class="stk-perf-note">No filings match.</div>';
+    else host.insertAdjacentHTML('beforeend', html);
+    const shown = (_tradesPage + 1) * 60;
+    const more = document.getElementById('trades-more');
+    more.innerHTML = shown < _tradesTotal
+      ? `<button class="trd-more" onclick="loadMoreTrades()">Show more · ${(_tradesTotal - shown).toLocaleString()} left</button>`
+      : (_tradesTotal ? `<div class="stk-perf-note" style="text-align:center;padding:0.8rem">${_tradesTotal.toLocaleString()} filings shown</div>` : '');
+  } catch { /* ignore */ }
+}
+
+function loadMoreTrades() { _tradesPage++; _fetchAllFilings(false); }
+function tradesSearch(v) {
+  clearTimeout(_tradesDebounce);
+  _tradesQuery = (v || '').trim();
+  _tradesDebounce = setTimeout(() => _fetchAllFilings(true), 300);
+}
+
 async function toggleStockPerf(row) {
   const box = row.nextElementSibling; // .stk-perf
   if (!box) return;
