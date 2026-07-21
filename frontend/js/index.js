@@ -1302,14 +1302,14 @@ function _renderNotable(data) {
   const cards = ts.map(t => {
     const wins = (t.windows || []).map(w =>
       `<span class="ntbl-w ${w.pct >= 0 ? 'up' : 'down'}">${w.pct >= 0 ? '+' : ''}${w.pct}%<em>${w.label}</em></span>`).join('');
-    const memArg = JSON.stringify(t.member);
+    const memArg = JSON.stringify({ name: t.member }).replace(/"/g, '&quot;');
     return `<div class="stk-item">
       <div class="ntbl-card stk-clickable" data-ticker="${escapeHtml(t.ticker)}" data-date="${escapeHtml(t.date)}" data-dir="${t.dir}" onclick="toggleStockPerf(this)">
         <div class="ntbl-fav"><span class="ntbl-fav-num">+${t.favorable}%</span><span class="ntbl-fav-lbl">in their favor</span></div>
         <div class="ntbl-body">
           <div class="ntbl-line"><span class="stk-dir stk-${t.dir}">${escapeHtml(t.type)}</span>
             <b class="ntbl-tkr">${escapeHtml(t.ticker)}</b>
-            <a class="trd-mem" onclick="event.stopPropagation();openMemberFromVote({name:${memArg}})">${escapeHtml(t.member)}</a></div>
+            <a class="trd-mem" onclick="event.stopPropagation();openMemberFromVote(${memArg})">${escapeHtml(t.member)}</a></div>
           <div class="ntbl-meta">${escapeHtml(t.date)} · ${escapeHtml(t.amount)}${t.owner ? ' · ' + escapeHtml(t.owner) : ''}</div>
           <div class="ntbl-windows">${wins}</div>
         </div>
@@ -1328,14 +1328,14 @@ function _tradeRowHtml(t) {
   const dir = _tradeDir(t.type);
   const label = t.ticker ? escapeHtml(t.ticker) : escapeHtml((t.asset || '').slice(0, 26));
   const who = t.owner ? ` · ${escapeHtml(t.owner)}` : '';
-  const memArg = JSON.stringify(t.member);
+  const memArg = JSON.stringify({ name: t.member }).replace(/"/g, '&quot;');
   const click = t.ticker
     ? ` stk-clickable" data-ticker="${escapeHtml(t.ticker)}" data-date="${escapeHtml(t.date || '')}" data-dir="${dir}" onclick="toggleStockPerf(this)`
     : '';
   return `<div class="stk-item">
     <div class="trd-row${click}">
       <span class="stk-date">${escapeHtml(t.date || '')}</span>
-      <a class="trd-mem" onclick="event.stopPropagation();openMemberFromVote({name:${memArg}})">${escapeHtml(t.member)}</a>
+      <a class="trd-mem" onclick="event.stopPropagation();openMemberFromVote(${memArg})">${escapeHtml(t.member)}</a>
       <span class="stk-dir stk-${dir}">${escapeHtml(t.type || '')}</span>
       <span class="stk-tkr">${label}${t.ticker ? '<span class="stk-caret">›</span>' : ''}</span>
       <span class="stk-amt">${escapeHtml(t.amount || '')}${who}</span>
