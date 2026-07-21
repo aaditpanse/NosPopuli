@@ -1187,14 +1187,26 @@ async function loadMemberFinance(name, state, chamber) {
   } catch { /* leave the section hidden on any error */ }
 }
 
-// Disclosed House stock trades (STOCK Act PTRs). Hidden when none — absence is
-// ambiguous (no trades / senator / paper filer), so we don't assert "none."
-function _renderMemberStocks(data) {
+// Disclosed House stock trades (STOCK Act PTRs). For senators we state the gap
+// explicitly (Senate disclosures aren't machine-readable); for House members
+// with no trades we stay silent, since absence there is ambiguous.
+function _renderMemberStocks(data, isSenator) {
   const section = document.getElementById('member-stocks-section');
   const body = document.getElementById('member-stocks-body');
   if (!section || !body) return;
   const trades = (data && data.trades) || [];
-  if (!trades.length) { section.style.display = 'none'; return; }
+  if (!trades.length) {
+    if (isSenator) {
+      body.innerHTML = `<p class="pushing-note">Senate stock disclosures live in a separate,
+        agreement-gated system (the Senate eFD) that isn't machine-readable the way the House's
+        filings are — so we can't show a senator's trades yet. This is our gap, not a sign the
+        senator doesn't trade. House members only for now.</p>`;
+      section.style.display = 'block';
+    } else {
+      section.style.display = 'none';
+    }
+    return;
+  }
 
   const chips = (data.top_tickers || []).map(t =>
     `<span class="stk-chip">${escapeHtml(t.ticker)}<span class="stk-chip-n">${t.count}</span></span>`).join('');
@@ -1225,12 +1237,12 @@ function _renderMemberStocks(data) {
   section.style.display = 'block';
 }
 
-async function loadMemberStocks(bioguide) {
+async function loadMemberStocks(bioguide, isSenator) {
   const section = document.getElementById('member-stocks-section');
   if (section) section.style.display = 'none';
   try {
     const res = await fetch('/member/stocks?bioguide=' + encodeURIComponent(bioguide));
-    _renderMemberStocks(await res.json());
+    _renderMemberStocks(await res.json(), isSenator);
   } catch { /* leave hidden on error */ }
 }
 
@@ -1306,7 +1318,10 @@ function renderMemberPage(data) {
   if (!isState && m.name) {
     loadMemberFinance(m.name, m.state, (m.chambers && m.chambers.join(' ')) || m.chamber || '');
   }
-  if (!isState && m.bioguide_id) loadMemberStocks(m.bioguide_id);
+  if (!isState && m.bioguide_id) {
+    const _ch = (m.chambers && m.chambers.join(' ')) || m.chamber || '';
+    loadMemberStocks(m.bioguide_id, /sen/i.test(_ch));
+  }
 
   const policyChart = document.getElementById('policy-chart');
   if (!isState) {
