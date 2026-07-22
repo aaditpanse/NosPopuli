@@ -105,35 +105,47 @@ _PAC_INSTRUCTIONS = (
 )
 
 
-def _run_batch(items, taxonomy, instructions, item_key):
-    schema = {
-        "type": "object",
-        "properties": {"items": {"type": "array", "items": {
-            "type": "object",
-            "properties": {
-                item_key: {"type": "string"},
-                "label": {"type": "string", "enum": taxonomy},
-            },
-            "required": [item_key, "label"],
-            "additionalProperties": False,
-        }}},
-        "required": ["items"],
-        "additionalProperties": False,
-    }
-    prompt = (instructions + "\n\nUse only the provided labels, and echo each "
-              "name exactly as given.\n\nNames:\n" + "\n".join(f"- {x}" for x in items))
+def _run_batch(items, taxonomy, instructions, item_key=None):
+    """{ITEM_UPPER: label} for the items the model labeled — omitted items are
+    simply absent (the caller retries; it never caches a guessed 'Other').
+
+    Uses a plain-text NUMBERED listing ('N=Label') rather than a json_schema
+    array. Haiku silently truncates a constrained JSON array after a few items
+    (stop_reason end_turn), which was mislabeling the dropped ones as 'Other';
+    it completes a numbered text list reliably. Numbering (not echoing the name)
+    also dodges the model mangling long, messy employer strings."""
+    menu = ", ".join(taxonomy)
+    listing = "\n".join(f"{i}. {x}" for i, x in enumerate(items))
+    prompt = (
+        instructions
+        + "\n\nFor EACH numbered item below, output one line in the form "
+        "'N=Label' using only these labels:\n" + menu + "\n\nOutput one line "
+        "for every number and nothing else.\n\nItems:\n" + listing
+    )
     resp = _c().messages.create(
-        model=_MODEL, max_tokens=2200,
-        output_config={"format": {"type": "json_schema", "schema": schema}},
+        model=_MODEL, max_tokens=2000,
         messages=[{"role": "user", "content": prompt}],
     )
     text = next(b.text for b in resp.content if b.type == "text")
-    data = json.loads(text)
-    return {it[item_key].strip().upper(): it["label"] for it in data.get("items", [])}
+    canon = {t.lower(): t for t in taxonomy}
+    out = {}
+    for line in text.splitlines():
+        if "=" not in line:
+            continue
+        left, right = line.split("=", 1)
+        left = left.strip().rstrip(".").strip()
+        if not left.isdigit():
+            continue
+        idx = int(left)
+        label = canon.get(right.strip().lower())
+        if 0 <= idx < len(items) and label:
+            out[items[idx].strip().upper()] = label
+    return out
 
 
-def _classify(items, taxonomy, instructions, cache_prefix, item_key="name"):
-    """Map each name -> label. Per-name disk-cached; only uncached hit the model."""
+def _classify(items, taxonomy, instructions, cache_prefix, item_key="name", force=False):
+    """Map each name -> label. Per-name disk-cached; only uncached hit the model.
+    force=True re-classifies and overwrites (used to heal a poisoned cache)."""
     try:
         from correspondence.db import get_disk_cache, set_disk_cache
     except Exception:
@@ -146,7 +158,7 @@ def _classify(items, taxonomy, instructions, cache_prefix, item_key="name"):
             continue
         seen.add(key)
         cached = None
-        if get_disk_cache:
+        if get_disk_cache and not force:
             try:
                 cached = get_disk_cache(f"{cache_prefix}{key}", _CACHE_TTL)
             except Exception:
@@ -156,33 +168,40 @@ def _classify(items, taxonomy, instructions, cache_prefix, item_key="name"):
         else:
             todo.append(x.strip())
 
-    for batch in _chunks(todo, 40):
+    for batch in _chunks(todo, 30):
         try:
-            res = _run_batch(batch, taxonomy, instructions, item_key)
+            res = _run_batch(batch, taxonomy, instructions)
         except Exception as ex:
             print(f"[CLASSIFY] {cache_prefix} error: {ex}")
             res = {}
         for x in batch:
-            key = x.upper()
-            label = res.get(key) or "Other"
-            out[key] = label
-            if set_disk_cache:
-                try:
-                    set_disk_cache(f"{cache_prefix}{key}", label)
-                except Exception:
-                    pass
+            key = x.strip().upper()
+            if key in res:
+                out[key] = res[key]
+                if set_disk_cache:
+                    try:
+                        set_disk_cache(f"{cache_prefix}{key}", res[key])
+                    except Exception:
+                        pass
+            else:
+                # Model omitted it (or the call failed) — default in-memory for
+                # this request but DON'T cache, so a later run resolves it.
+                out.setdefault(key, "Other")
     return out
 
 
-def classify(employers):
-    """Employer string -> industry label. Returns {EMPLOYER_UPPER: industry}."""
-    return _classify(employers, INDUSTRIES, _EMPLOYER_INSTRUCTIONS, "ind:v2:", "employer")
+def classify(employers, force=False):
+    """Employer string -> industry label. Returns {EMPLOYER_UPPER: industry}.
+    Prefix bumped v2->v3 with the plain-text fix: old rows (some wrongly cached
+    as 'Other' from the truncated json_schema batches) are left behind and
+    re-classified correctly on next view — a non-destructive, self-healing heal."""
+    return _classify(employers, INDUSTRIES, _EMPLOYER_INSTRUCTIONS, "ind:v3:", "employer", force)
 
 
-def classify_pacs(names):
+def classify_pacs(names, force=False):
     """PAC name -> interest (industry, cause, or political vehicle).
-    Returns {PAC_UPPER: interest}."""
-    return _classify(names, PAC_INTERESTS, _PAC_INSTRUCTIONS, "pac:v3:", "pac")
+    Returns {PAC_UPPER: interest}. Prefix bumped v3->v4 (see classify)."""
+    return _classify(names, PAC_INTERESTS, _PAC_INSTRUCTIONS, "pac:v4:", "pac", force)
 
 
 if __name__ == "__main__":
