@@ -118,7 +118,17 @@ function voteRow(vote, items, summaries, meetingDate, factsByMeeting, sharedNote
   // source's affirming passage attached at certification time. Quotes are
   // verbatim from the source (the gate greps for them), so scrub any HTML
   // noise at render time only.
-  const clean = q => q.replace(/<[^>]+>/g, "").replace(/&[a-z]+;/g, " ")
+  // Quotes are stored verbatim from the source (often raw granicus HTML,
+  // truncated to a fixed length — so a quote can end mid-tag). Scrub at render
+  // time: strip complete tags AND a trailing tag cut off with no closing '>',
+  // replacing tags with a space so words across <br>/<p> boundaries don't glue
+  // (that bug showed dates like "May 19, 20261"). Then drop entities, tidy
+  // space-before-punctuation, and collapse whitespace.
+  const clean = q => q
+    .replace(/<[^>]+>/g, " ")        // complete tags
+    .replace(/<[^>]*$/, " ")         // a tag truncated with no closing '>'
+    .replace(/&[a-z]+;/gi, " ")      // entities (&nbsp; etc.)
+    .replace(/\s+([:;,.])/g, "$1")   // no space before punctuation
     .replace(/\s+/g, " ").trim();
   let evidence = "";
   if (vote.evidence && vote.evidence.quote)
@@ -332,6 +342,20 @@ function cpEmoji(p) {
   return "📍";
 }
 
+// The map-pin popup: what's being built, its status/type, and the money —
+// planned/recurring/completed, work type, completion FY, bond year, the FY27–31
+// programmed cost and the total. Shared by the full projects map AND the county
+// dashboard's corner map so the two can never drift (the dashboard one had been
+// stripped to just title + function, hiding status and cost).
+function cpPopupHtml(p) {
+  return `<b>${esc(p.title)}</b><br>`
+    + `${statusChip(p.status)} ${workTag(p)} ${doneTag(p)} ${bondTag(p)}<br>`
+    + `${esc(p.function || "")}`
+    + `${(p.districts || []).length ? " · " + esc(p.districts.join(", ")) : ""}<br>`
+    + `FY27–31 ${fmtK(p.five_year_total || 0)} · total ${fmtK(p.total || 0)}<br>`
+    + `<span style="color:#6b6355">${esc((p.funding_source_labels || []).join(", "))}</span>`;
+}
+
 function capitalProjectsSection(sourceId, store, opts = {}) {
   const meta = store.meta || { title: sourceId, sub: "" };
   const projects = store.capital_projects || [];
@@ -404,10 +428,7 @@ function capitalProjectsSection(sourceId, store, opts = {}) {
         html: `<span>${cpEmoji(p)}</span>`,
         iconSize: [26, 26], iconAnchor: [13, 13], popupAnchor: [0, -12] });
       const m = L.marker([p.lat, p.lon], { icon });
-      m.bindPopup(`<b>${esc(p.title)}</b><br>${statusChip(p.status)} ${workTag(p)} ${doneTag(p)} ${bondTag(p)}<br>${esc(p.function)}` +
-        `${(p.districts || []).length ? " · " + esc(p.districts.join(", ")) : ""}<br>` +
-        `FY27–31 ${fmtK(p.five_year_total || 0)} · total ${fmtK(p.total || 0)}<br>` +
-        `<span style="color:#6b6355">${esc((p.funding_source_labels || []).join(", "))}</span>`);
+      m.bindPopup(cpPopupHtml(p));
       _markers.addLayer(m);
     }
   }
@@ -923,6 +944,11 @@ function dashPublicWorks(c) {
   if (c.cip) {
     wrap.appendChild(el("div", "mmeta",
       `${projects.length} funded projects · ${pins.length} on the map`));
+    if (pins.length)
+      wrap.appendChild(el("div", "cplegend",
+        `<span class="cpstat cpstat-active">planned</span>
+         <span class="cpstat cpstat-ongoing">recurring</span>
+         <span class="cpstat cpstat-completed">completed</span> — click a pin for its cost & status`));
     // the corner IS the full map (all markers); "view all" is the LIST only,
     // opened in a modal so it never pushes the elections panel down
     wrap.appendChild(modalLink(`view all ${projects.length} projects →`,
@@ -958,8 +984,7 @@ function buildDashMap(canvas, center, pins) {
   for (const p of pins) {
     const icon = L.divIcon({ className: `cp-emoji cp-${p.status || "active"}`,
       html: `<span>${cpEmoji(p)}</span>`, iconSize: [22, 22], iconAnchor: [11, 11] });
-    L.marker([p.lat, p.lon], { icon }).addTo(layer)
-      .bindPopup(`<b>${esc(p.title)}</b><br>${esc(p.function)}`);
+    L.marker([p.lat, p.lon], { icon }).addTo(layer).bindPopup(cpPopupHtml(p));
   }
   if (pins.length) map.fitBounds(L.latLngBounds(pins.map(p => [p.lat, p.lon])).pad(0.2));
   setTimeout(() => map.invalidateSize(), 80);

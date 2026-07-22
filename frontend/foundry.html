@@ -127,6 +127,14 @@ td.code, span.code { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
 @media (max-width: 900px) { .dash { grid-template-columns: 1fr; }
   .dash-side { position: static; } }
 .dash-meet section.region > h2 { display: none; }
+.dash-meet section.region { min-width: 0; }
+/* An expanded meeting's vote table has nowrap cells (tallies, file numbers, the
+   trust badge) that can't shrink, so the table's min-content is wider than the
+   dashboard's left column. Making each table its OWN horizontal scroll area is
+   the one containment that holds regardless of grid/track sizing: the table can
+   never be wider than its column, so it can't bleed into the map sidebar (where
+   the positioned Leaflet map paints on top) or past the page's right edge. */
+details.meeting table { display: block; overflow-x: auto; max-width: 100%; }
 .dash-h { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; letter-spacing: 0.2em;
   text-transform: uppercase; color: var(--accent); border-bottom: 1px solid var(--rule);
   padding-bottom: 0.35rem; margin-bottom: 0.6rem; }
@@ -296,6 +304,6 @@ a { color: var(--accent); }
 <script src="/static/js/d3-geo.min.js"></script>
 <script src="/static/js/topojson-client.min.js"></script>
 <script src="/static/js/leaflet.js"></script>
-<script src="/static/js/foundry.js?v=32"></script>
+<script src="/static/js/foundry.js?v=34"></script>
 </body>
 </html>
