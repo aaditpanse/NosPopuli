@@ -279,6 +279,97 @@ def _split_source(body):
     return body, ""
 
 
+# High-signal passage cues. The first 8k chars of a long bill are just the
+# enacting clause, short title, and findings — the money, effective dates, and
+# scope live tens of thousands of chars deeper. Rather than feed the model more
+# of the *front* of the bill, we scan the whole thing for the passages that
+# actually answer "what does this cost and who's affected", and hand it those.
+_EVIDENCE_CUES = re.compile(
+    r"""(
+        \$[\d,]+                                   # dollar amounts
+      | authorized\s+to\s+be\s+appropriated
+      | appropriat(?:ed|ion)                       # appropriation(s)/appropriated
+      | such\s+sums\s+as\s+may\s+be\s+necessary
+      | (?:not\s+to\s+exceed|up\s+to)\s+\$?
+      | fiscal\s+year\s+20\d\d
+      | shall\s+be\s+available
+      | authorization\s+of\s+appropriations
+      | effective\s+date
+      | shall\s+take\s+effect
+      | (?:applies|shall\s+apply)\s+to
+      | (?:sunset|terminat)                         # sunset/terminate/termination
+      | civil\s+penalt|criminal\s+penalt|fine\s+of
+    )""",
+    re.IGNORECASE | re.VERBOSE,
+)
+
+
+def build_evidence_digest(full_text: str, head_chars: int = 3500,
+                          budget: int = 9000, window: int = 320) -> str:
+    """Assemble a bounded translation input focused on cost/scope evidence.
+
+    Keeps a head (short title + findings, for framing), then walks the WHOLE
+    bill collecting windows around funding/effective-date/penalty cues until a
+    character budget is spent. This lets the translator answer "what does this
+    cost and who pays" for a 300k-char bill while only ever seeing ~9k of it.
+    """
+    if not full_text:
+        return full_text
+    if len(full_text) <= budget:
+        return full_text
+
+    head = full_text[:head_chars]
+    remainder = full_text[head_chars:]
+    base = head_chars
+
+    # Every cue position in the body. In a dense appropriations bill these
+    # cluster on every line; in a sparse authorization bill they're rare and
+    # deep. Either way we want breadth — early, middle, and late provisions —
+    # so we sample cue positions evenly across the document rather than greedily
+    # taking the front until the budget is gone.
+    hits = [m.start() for m in _EVIDENCE_CUES.finditer(remainder)]
+    if not hits:
+        return full_text[:budget]
+
+    max_windows = max(1, (budget - head_chars) // (window * 2))
+    if len(hits) > max_windows:
+        step = len(hits) / max_windows
+        hits = [hits[int(i * step)] for i in range(max_windows)]
+
+    # Expand each sampled hit to a fixed window; merge only genuinely
+    # overlapping windows so one dense stretch can't swallow the budget.
+    spans: list[tuple[int, int]] = []
+    for pos in hits:
+        s = max(0, pos - window)
+        e = min(len(remainder), pos + window)
+        if spans and s <= spans[-1][1]:
+            spans[-1] = (spans[-1][0], max(spans[-1][1], e))
+        else:
+            spans.append((s, e))
+
+    picked: list[str] = []
+    used = head_chars
+    for s, e in spans:
+        chunk = remainder[s:e].strip()
+        if not chunk:
+            continue
+        used += len(chunk) + 20
+        if used > budget:
+            break
+        # Note the source offset so the model knows these are excerpts, not
+        # contiguous text, and roughly where in the bill they sit.
+        picked.append(f"[~char {base + s:,}] …{chunk}…")
+
+    if not picked:
+        return full_text[:budget]
+
+    return (
+        head.rstrip()
+        + "\n\n[KEY FUNDING / COST / SCOPE PROVISIONS EXTRACTED FROM LATER IN THE BILL:]\n\n"
+        + "\n\n".join(picked)
+    )
+
+
 def _format_background(items) -> str:
     """Render structured Background items back into markdown (used only by the
     one-shot translate_bill assembler; the streaming path renders them directly)."""
@@ -362,7 +453,10 @@ def translate_bill_core(bill_data, client, user_context=None, bill_text=None):
 
     text_section = ""
     if bill_text and len(bill_text) > 200:
-        text_section = f"\nActual bill text (excerpt):\n{bill_text[:8000]}"
+        # Feed a cost/scope-focused digest rather than just the front matter, so
+        # figures buried deep in a long bill actually reach the model.
+        digest = build_evidence_digest(bill_text)
+        text_section = f"\nActual bill text (excerpt — head plus key provisions pulled from throughout the bill):\n{digest}"
 
     prompt = f"""
 You are a plain English translator for legislation.
