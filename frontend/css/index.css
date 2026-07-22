@@ -1756,6 +1756,67 @@ body {
 .sponsor-money-stats a { color: var(--accent); text-decoration: none; }
 .sponsor-money-stats a:hover { color: var(--ink); }
 
+/* "Congress's stock trades & this bill" — legislation ↔ market juxtaposition */
+.mkt-intro { font-family: 'Source Serif 4', Georgia, serif; font-size: 0.86rem;
+  color: var(--muted); line-height: 1.55; margin: 0 0 0.9rem; }
+.mkt-stock { border: 1px solid var(--rule); border-left: 3px solid var(--accent);
+  padding: 0.6rem 0.75rem; margin-bottom: 0.7rem; background: var(--card-bg, #faf7f2); }
+.mkt-head { display: flex; align-items: baseline; gap: 0.55rem; flex-wrap: wrap; }
+.mkt-ticker { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 0.9rem;
+  letter-spacing: 0.05em; color: var(--ink); }
+.mkt-co { font-family: 'Source Serif 4', Georgia, serif; font-size: 0.86rem; color: var(--ink); }
+.mkt-sector { font-family: 'IBM Plex Mono', monospace; font-size: 0.54rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); border: 1px solid var(--rule);
+  padding: 0.05rem 0.35rem; margin-left: auto; white-space: nowrap; }
+.mkt-moves { display: flex; gap: 1.1rem; flex-wrap: wrap; margin: 0.45rem 0 0.15rem; }
+.mkt-win { display: inline-flex; align-items: baseline; gap: 0.35rem; }
+.mkt-winlab { font-family: 'IBM Plex Mono', monospace; font-size: 0.56rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted); }
+.mkt-winpct { font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+.mkt-winpct.mkt-up { color: #1a7a3a; }
+.mkt-winpct.mkt-down { color: var(--accent); }
+.mkt-nomove { font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; color: var(--muted); font-style: italic; }
+.mkt-near { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap;
+  padding: 0.3rem 0 0.15rem; border-top: 1px dotted var(--rule); margin-top: 0.4rem; }
+.mkt-mem { font-family: 'Source Serif 4', Georgia, serif; font-size: 0.9rem; color: var(--accent);
+  cursor: pointer; text-decoration: none; font-weight: 500; }
+.mkt-mem:hover { text-decoration: underline; }
+.mkt-neardet { font-family: 'IBM Plex Mono', monospace; font-size: 0.64rem; color: var(--muted); letter-spacing: 0.02em; }
+.mkt-others { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; color: var(--muted);
+  margin-top: 0.35rem; font-style: italic; }
+
+/* Stock-centric price + legislation chart (Trades page) */
+.stkchart-panel { border: 1px solid var(--rule); background: var(--card-bg, #faf7f2);
+  padding: 1rem 1.1rem 1.2rem; margin: 0 0 1.6rem; }
+.stkchart-deck { font-size: 0.86rem; color: var(--muted); line-height: 1.5; margin: 0.2rem 0 0.8rem; }
+.stkchart-picker { margin-bottom: 0.9rem; }
+.stkchart-search { width: 100%; max-width: 26rem; padding: 0.55rem 0.8rem;
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; color: var(--ink);
+  background: var(--paper, #f5f0e8); border: 1px solid var(--ink); outline: none; }
+.stkchart-search:focus { border-color: var(--accent); }
+.stk-charthead { display: flex; align-items: baseline; gap: 0.55rem; flex-wrap: wrap; margin-bottom: 0.3rem; }
+.stk-chartticker { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 1rem;
+  letter-spacing: 0.05em; color: var(--ink); }
+.stk-chartco { font-family: 'Source Serif 4', Georgia, serif; font-size: 0.95rem; color: var(--ink); }
+.stk-chart { width: 100%; height: auto; display: block; background: var(--paper, #f5f0e8);
+  border: 1px solid var(--rule); }
+.stk-grid { stroke: var(--rule); stroke-width: 0.5; opacity: 0.6; }
+.stk-axis { font-family: 'IBM Plex Mono', monospace; font-size: 10px; fill: var(--muted); }
+.stk-priceline { fill: none; stroke: var(--ink); stroke-width: 1.4; }
+.stk-lawline { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.55; cursor: pointer; }
+.stk-lawflag { fill: var(--accent); cursor: pointer; }
+a:hover > .stk-lawline { opacity: 1; stroke-width: 1.5; }
+.stk-dot { stroke: var(--paper, #f5f0e8); stroke-width: 0.8; cursor: default; }
+.stk-dot-buy { fill: #1a7a3a; }
+.stk-dot-sell { fill: var(--accent); }
+.stk-dot-exch { fill: var(--muted); }
+.stk-chartlegend { display: flex; gap: 1.2rem; flex-wrap: wrap; margin: 0.5rem 0 0.2rem;
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; color: var(--muted); }
+.stk-lg { display: inline-flex; align-items: center; gap: 0.35rem; }
+.stk-lgflag { width: 0; height: 0; border-left: 6px solid var(--accent);
+  border-top: 4px solid transparent; border-bottom: 4px solid transparent; display: inline-block; }
+.stk-lgdot { position: relative; display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+
 /* Member campaign-finance composition (FEC) */
 .mf-head { display: flex; align-items: baseline; justify-content: space-between;
   flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.7rem; }

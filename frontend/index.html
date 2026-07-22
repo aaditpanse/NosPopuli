@@ -6,7 +6,7 @@
   <title>NosPopuli — Law for the People</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/index.css?v=push17">
+  <link rel="stylesheet" href="/static/css/index.css?v=push19">
 </head>
 <body>
 
@@ -307,6 +307,14 @@
       <div id="sponsor-money-body"></div>
     </div>
 
+    <div class="bill-section" id="market-section" style="display:none">
+      <button class="full-text-toggle" id="market-toggle" onclick="toggleMarket()">
+        <span class="bill-section-label" style="margin:0;border:none;padding:0;flex:1">Congress's stock trades &amp; this bill</span>
+        <span class="chevron" id="market-chevron">▾</span>
+      </button>
+      <div id="market-body" style="display:none"></div>
+    </div>
+
     <div class="bill-section" id="votes-section" style="display:none">
       <div class="bill-section-label">Recorded Votes</div>
       <div class="chambers-grid" id="chambers-grid"></div>
@@ -532,6 +540,20 @@
     <p class="trades-deck">House members disclose their trades under the STOCK Act. Here are the most
       dramatic — trades a stock's move most favored soon after — and every filing we've parsed.</p>
   </div>
+
+  <div class="stkchart-panel" id="stkchart-panel">
+    <div class="bill-section-label">Price &amp; legislation</div>
+    <p class="stkchart-deck">Pick a stock to see its price with the enacted laws in its sector marked on the
+      timeline, and the dates members traded it. Placed side by side — never a claim a law moved the price.</p>
+    <div class="stkchart-picker">
+      <input id="stkchart-search" class="stkchart-search" type="text" list="stkchart-list"
+        placeholder="Type a ticker or company — e.g. NVDA" autocomplete="off"
+        onchange="stkChartPick(this.value)"/>
+      <datalist id="stkchart-list"></datalist>
+    </div>
+    <div id="stkchart-canvas"></div>
+  </div>
+
   <div id="trades-notable"></div>
   <div class="trades-allhead">
     <div class="bill-section-label">All filings</div>
@@ -684,7 +706,7 @@
 <script defer src="/static/js/d3-array.min.js"></script>
 <script defer src="/static/js/d3-geo.min.js"></script>
 <script defer src="/static/js/topojson-client.min.js"></script>
-<script defer src="/static/js/index.js?v=27"></script>
+<script defer src="/static/js/index.js?v=29"></script>
 <script defer src="/static/js/correspondence.js?v=2"></script>
 <script defer src="/static/js/lobbying.js?v=5"></script>
 </body>

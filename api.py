@@ -1442,7 +1442,10 @@ def _bill_detail_stream(bill_data, meta_extra, user_context, *, log_kind, noun="
         # bill text feeds both the full-text section and the translation.
         # Fetch a generous slice for the on-page reader (the full bill lives one
         # click away on Congress.gov); the translator uses a bounded head of it.
-        text_task    = asyncio.ensure_future(ex(fetch_bill_text, congress, bill_type, number, 50000))
+        # Fetch a deep slice server-side so the translator's cost/scope digest
+        # can reach appropriations buried late in long bills; the browser
+        # preview is sliced down to 50k in sec_text, full text lazy-loads.
+        text_task    = asyncio.ensure_future(ex(fetch_bill_text, congress, bill_type, number, 300000))
         actions_task = asyncio.ensure_future(ex(fetch_bill_actions, congress, bill_type, number))
         cospon_task  = asyncio.ensure_future(ex(fetch_cosponsors, congress, bill_type, number))
         related_task = asyncio.ensure_future(ex(fetch_related_bills, congress, bill_type, number))
@@ -1456,7 +1459,7 @@ def _bill_detail_stream(bill_data, meta_extra, user_context, *, log_kind, noun="
             txt = await text_task
             translation, refs = await ex(
                 translate_bill_core, bill_data, get_client(), user_context,
-                txt[:8000] if txt else txt,
+                txt,  # full slice; translate_bill_core digests it down itself
             )
             return (translation or f"Translation unavailable for this {noun}.", refs or [])
         translate_core_task = asyncio.ensure_future(_translate_core())
@@ -1472,8 +1475,11 @@ def _bill_detail_stream(bill_data, meta_extra, user_context, *, log_kind, noun="
             txt = await text_task
             # Stream a fast 50k preview; flag when there's more so the reader can
             # lazy-load the complete bill on expand (see /api/bill/.../text).
-            return {"section": "bill_text", "bill_text": txt or None,
-                    "truncated": bool(txt) and len(txt) >= 50000}
+            # txt itself is a deep 300k slice for the translator digest — slice
+            # it down here so the wire payload stays small.
+            preview = txt[:50000] if txt else txt
+            return {"section": "bill_text", "bill_text": preview or None,
+                    "truncated": bool(txt) and len(txt) > 50000}
 
         async def sec_sponsors():
             cos = await cospon_task
@@ -1928,6 +1934,93 @@ async def bill_full_text(request: Request, congress: int, bill_type: str, number
     txt = await loop.run_in_executor(
         None, fetch_bill_text, congress, bill_type.lower(), number, 1_000_000)
     return {"text": txt or None}
+
+
+@app.get("/api/bill/{congress}/{bill_type}/{number}/market")
+@limiter.limit("15/minute")
+async def bill_market_link(request: Request, congress: int, bill_type: str, number: int):
+    """Legislation ↔ market: the Congress-traded stocks this bill may touch, how
+    they moved around its key date, and which members traded them (flagging
+    trades near that action). Lazy-loaded — slow (sector classification + price
+    lookups) — and strictly juxtaposition, never a causal claim."""
+    import bill_market
+    loop = asyncio.get_event_loop()
+    bill_data = await loop.run_in_executor(
+        None, fetch_bill, congress, bill_type.lower(), number)
+    if not bill_data or not bill_data.get("bill"):
+        return {"found": False, "stocks": []}
+    bill = bill_data["bill"]
+    latest = bill.get("latestAction") or {}
+    # Anchor on the bill's latest action date (for an enacted bill this is the
+    # enactment; for a passed bill, passage). Fingerprint by that action so the
+    # sector tag re-evaluates as the bill advances.
+    event_date = latest.get("actionDate")
+    fingerprint = f"{event_date or ''}|{(latest.get('text') or '')[:40]}"
+    result = await loop.run_in_executor(
+        None, bill_market.linkage, bill, event_date, fingerprint)
+    result["found"] = True
+    result["event_action"] = latest.get("text")
+    return result
+
+
+@app.get("/api/stock/{ticker}/timeline")
+@limiter.limit("30/minute")
+async def stock_timeline(request: Request, ticker: str):
+    """Stock-centric chart data: a ticker's daily price history, the enacted laws
+    in its sector plotted as dated events, and the members who traded it.
+    Juxtaposition only — a law on the chart is a dated marker, not a cause."""
+    import bill_market, law_corpus, stock_perf, datetime
+    tk = (ticker or "").strip().upper()
+    loop = asyncio.get_event_loop()
+
+    def build():
+        sector = bill_market.sector_of_tickers([tk]).get(tk, "Other")
+        _, companies = bill_market._holdings()
+        laws = law_corpus.laws_in_sector(sector)
+        # Price window spans the plotted laws (with padding), min ~2 years.
+        today = datetime.date.today()
+        law_dates = [datetime.date.fromisoformat(l["date"]) for l in laws if l.get("date")]
+        start = min(law_dates) - datetime.timedelta(days=45) if law_dates \
+            else today - datetime.timedelta(days=730)
+        ser = stock_perf.series(tk, start, today)
+        idx, _c = bill_market._holdings()
+        trades = []
+        for rec in idx.get(tk, {}).values():
+            for t in rec["trades"]:
+                trades.append({"date": t["date"], "type": t["type"],
+                               "amount": t.get("amount"), "owner": t.get("owner"),
+                               "member": rec["name"]})
+        return {
+            "ticker": tk, "company": companies.get(tk, tk), "sector": sector,
+            "series": [[d.isoformat(), round(c, 2)] for d, c in ser],
+            "laws": laws, "trades": trades,
+            "disclaimer": bill_market._DISCLAIMER,
+        }
+
+    return await loop.run_in_executor(None, build)
+
+
+@app.get("/api/stocks/traded")
+async def stocks_traded():
+    """The tickers Congress has disclosed trading, with a company label — powers
+    the stock picker on the market chart. Excludes non-sector instruments."""
+    import bill_market
+    loop = asyncio.get_event_loop()
+
+    def build():
+        idx, companies = bill_market._holdings()
+        secs = bill_market.sector_of_tickers(list(idx.keys()))
+        out = []
+        for tk in idx:
+            if secs.get(tk, "Other") == "Other":
+                continue
+            out.append({"ticker": tk,
+                        "company": (companies.get(tk, tk) or "").replace(" - Common Stock", ""),
+                        "sector": secs.get(tk), "traders": len(idx[tk])})
+        out.sort(key=lambda x: -x["traders"])
+        return {"stocks": out}
+
+    return await loop.run_in_executor(None, build)
 
 
 @app.get("/member/photo/{bioguide_id}")

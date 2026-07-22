@@ -739,6 +739,9 @@ let _detailToken = 0;
 // True once the shown text is the complete bill (not just the streamed preview).
 let _fullTextComplete = true;
 
+// The bill↔market panel is lazy: fetched the first time the reader expands it.
+let _marketLoaded = false;
+
 // When the reader is expanded and we only have the preview, fetch the whole bill.
 async function _ensureFullBillText() {
   if (_fullTextComplete) return;
@@ -846,6 +849,105 @@ function toggleFullText() {
   body.style.display = isOpen ? 'none' : 'block';
   chevron.classList.toggle('open', !isOpen);
   if (!isOpen) _ensureFullBillText();
+}
+
+// Bill ↔ market: reveal the collapsed panel for federal bills (state bills have
+// no federal-disclosure link). Content is fetched only when the reader expands.
+function showMarketSection() {
+  const b = _currentBill;
+  const section = document.getElementById('market-section');
+  if (!section) return;
+  if (!b || b.is_state_bill || !b.congress || !b.type || !b.number) {
+    section.style.display = 'none';
+    return;
+  }
+  section.style.display = 'block';
+}
+
+function toggleMarket() {
+  const body = document.getElementById('market-body');
+  const chevron = document.getElementById('market-chevron');
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  if (chevron) chevron.classList.toggle('open', !isOpen);
+  if (!isOpen) _ensureMarket();
+}
+
+async function _ensureMarket() {
+  if (_marketLoaded) return;
+  const b = _currentBill;
+  if (!b || b.is_state_bill || !b.congress || !b.type || !b.number) return;
+  _marketLoaded = true;
+  const body = document.getElementById('market-body');
+  body.innerHTML = '<div class="section-loading">Linking to Congress’s disclosed trades…</div>';
+  try {
+    const url = `/api/bill/${b.congress}/${String(b.type).toLowerCase()}/${b.number}/market`;
+    const d = await (await fetch(url)).json();
+    renderMarket(d);
+  } catch {
+    _marketLoaded = false;  // let a later expand retry
+    body.innerHTML = '<div class="pushing-note">Couldn’t load market data right now — reopen to retry.</div>';
+  }
+}
+
+function renderMarket(d) {
+  const body = document.getElementById('market-body');
+  if (!body) return;
+  const stocks = (d && d.stocks) || [];
+  const pct = (p) => (p > 0 ? '+' : '') + p.toFixed(1) + '%';
+  const moveHtml = (mv) => {
+    const ws = (mv && mv.windows) || [];
+    if (!ws.length) return '<span class="mkt-nomove">no price data around this date</span>';
+    return ws.map(w => {
+      const cls = w.pct > 0 ? 'mkt-up' : w.pct < 0 ? 'mkt-down' : '';
+      return `<span class="mkt-win"><span class="mkt-winlab">${escapeHtml(w.label)}</span>
+        <span class="mkt-winpct ${cls}">${pct(w.pct)}</span></span>`;
+    }).join('');
+  };
+
+  if (!stocks.length) {
+    const secs = (d && d.sectors) || [];
+    body.innerHTML = secs.length
+      ? `<p class="pushing-note">This bill plausibly touches ${secs.map(escapeHtml).join(', ')}, but no member of Congress has disclosed trading a stock in ${secs.length > 1 ? 'those sectors' : 'that sector'}.</p>`
+      : `<p class="pushing-note">No clear market sector links to this bill, or the stock-sector index isn’t warmed yet.</p>`;
+    return;
+  }
+
+  const rows = stocks.map(s => {
+    // members who traded NEAR the bill's key action lead — the sharper signal
+    const near = s.traders.filter(t => (t.near || []).length);
+    const nearHtml = near.map(t => {
+      const memArg = JSON.stringify({ name: t.name }).replace(/"/g, '&quot;');
+      const nt = t.near[0];
+      const dir = (nt.type || '').includes('sell') ? 'sold' : 'bought';
+      return `<div class="mkt-near">
+        <a class="mkt-mem" onclick="openMemberFromVote(${memArg})">${escapeHtml(t.name)}</a>
+        <span class="mkt-neardet">${escapeHtml(dir)} ${escapeHtml(nt.date)}${nt.amount ? ' · ' + escapeHtml(nt.amount) : ''}${nt.owner ? ' · ' + escapeHtml(nt.owner) : ''}</span>
+      </div>`;
+    }).join('');
+    const others = s.traders.length - near.length;
+    const othersHtml = others > 0
+      ? `<div class="mkt-others">${others} other member${others > 1 ? 's' : ''} traded ${escapeHtml(s.ticker)} (not near this action)</div>`
+      : '';
+    return `<div class="mkt-stock">
+      <div class="mkt-head">
+        <span class="mkt-ticker">${escapeHtml(s.ticker)}</span>
+        <span class="mkt-co">${escapeHtml((s.company || '').replace(/ - Common Stock$/, ''))}</span>
+        <span class="mkt-sector">${escapeHtml(s.sector || '')}</span>
+      </div>
+      <div class="mkt-moves">${moveHtml(s.move)}</div>
+      ${nearHtml || (othersHtml ? '' : `<div class="mkt-others">${s.trader_count} member${s.trader_count > 1 ? 's' : ''} traded ${escapeHtml(s.ticker)}</div>`)}
+      ${nearHtml ? othersHtml : (near.length ? othersHtml : '')}
+    </div>`;
+  }).join('');
+
+  const action = d.event_action ? ` (${escapeHtml(d.event_action)})` : '';
+  body.innerHTML =
+    `<p class="mkt-intro">Of the stocks members of Congress have disclosed trading, these fall in
+      the sector(s) this bill plausibly affects. Price moves are measured from the bill’s key
+      date${d.event_date ? ' — ' + escapeHtml(d.event_date) + action : ''}. Members who traded near that date are listed first.</p>` +
+    rows +
+    `<p class="pushing-note">${escapeHtml(d.disclaimer || '')}</p>`;
 }
 
 function renderSponsors(sponsors, cosponsors) {
@@ -967,10 +1069,16 @@ function _revealDetail(title) {
   // section's render fn when that section arrives, so a section the new stream
   // never emits (a producer erroring, or the /law not-indexed path) would
   // otherwise leave the PREVIOUS bill's sponsors/text/votes/connections visible.
-  ['sponsors-section', 'full-text-section', 'connections-section', 'votes-section', 'lobbying-section', 'sponsor-money-section'].forEach(id => {
+  ['sponsors-section', 'full-text-section', 'connections-section', 'votes-section', 'lobbying-section', 'sponsor-money-section', 'market-section'].forEach(id => {
     const s = document.getElementById(id);
     if (s) s.style.display = 'none';
   });
+  // Reset the lazy market panel to its collapsed, unloaded state for the new bill.
+  _marketLoaded = false;
+  const mktBody = document.getElementById('market-body');
+  if (mktBody) { mktBody.innerHTML = ''; mktBody.style.display = 'none'; }
+  const mktChev = document.getElementById('market-chevron');
+  if (mktChev) mktChev.classList.remove('open');
   // Drop any enacted-law banner / expand button left over from a prior bill —
   // they're siblings of #detail-explanation, so resetting its innerHTML above
   // doesn't remove them.
@@ -987,6 +1095,8 @@ function _setBillContext(billId, bill, title, translation) {
       _reopen: { type: 'federal', congress: bill.congress, billType: bill.type, number: bill.number, title },
     });
   }
+  // Federal bill confirmed — reveal the collapsed market panel (loads on expand).
+  showMarketSection();
 }
 
 // Background is the resolved-references block under the explanation — a list of
@@ -1440,6 +1550,134 @@ async function loadTrades() {
   const s = document.getElementById('trades-search'); if (s) s.value = '';
   _tradesQuery = '';
   _fetchAllFilings(true);
+  _loadStockPicker();
+}
+
+// ── Stock-centric chart: price history with sector laws + trades marked ──
+let _stockPickerLoaded = false;
+let _stockList = [];
+async function _loadStockPicker() {
+  if (_stockPickerLoaded) return;
+  _stockPickerLoaded = true;
+  try {
+    const d = await (await fetch('/api/stocks/traded')).json();
+    _stockList = d.stocks || [];
+    const dl = document.getElementById('stkchart-list');
+    if (dl) dl.innerHTML = _stockList.slice(0, 400)
+      .map(s => `<option value="${escapeHtml(s.ticker)}">${escapeHtml(s.company)} · ${escapeHtml(s.sector)}</option>`).join('');
+  } catch { _stockPickerLoaded = false; }
+}
+
+function stkChartPick(raw) {
+  // The datalist value is the ticker; tolerate a pasted "NVDA — Company" too.
+  const tk = (raw || '').trim().toUpperCase().split(/[\s—-]/)[0];
+  if (!tk) return;
+  const canvas = document.getElementById('stkchart-canvas');
+  canvas.innerHTML = '<div class="stk-perf-note" style="padding:1rem 0">Loading price &amp; legislation…</div>';
+  fetch(`/api/stock/${encodeURIComponent(tk)}/timeline`)
+    .then(r => r.json())
+    .then(renderStockChart)
+    .catch(() => { canvas.innerHTML = '<div class="pushing-note">Couldn’t load this stock.</div>'; });
+}
+
+function renderStockChart(d) {
+  const canvas = document.getElementById('stkchart-canvas');
+  if (!canvas) return;
+  const series = (d && d.series) || [];
+  if (series.length < 2) {
+    canvas.innerHTML = `<div class="pushing-note">No price history available for ${escapeHtml(d && d.ticker || '')}.</div>`;
+    return;
+  }
+  const laws = (d.laws || []).filter(l => l.date);
+  const trades = (d.trades || []).filter(t => t.date);
+
+  // geometry
+  const W = 900, H = 360, PL = 52, PR = 16, PT = 16, PB = 34;
+  const iw = W - PL - PR, ih = H - PT - PB;
+  const toDay = s => Date.parse(s) / 86400000;
+  const xs = series.map(p => toDay(p[0]));
+  const ys = series.map(p => p[1]);
+  const x0 = xs[0], x1 = xs[xs.length - 1];
+  const yMin = Math.min(...ys), yMax = Math.max(...ys);
+  const yPad = (yMax - yMin) * 0.08 || 1;
+  const lo = yMin - yPad, hi = yMax + yPad;
+  const X = day => PL + (day - x0) / (x1 - x0 || 1) * iw;
+  const Y = v => PT + (1 - (v - lo) / (hi - lo || 1)) * ih;
+  const mdY = s => { const p = new Date(s); return `${p.getUTCMonth() + 1}/${p.getUTCDate()}/${p.getUTCFullYear()}`; };
+
+  const line = series.map((p, i) => `${i ? 'L' : 'M'}${X(xs[i]).toFixed(1)} ${Y(p[1]).toFixed(1)}`).join(' ');
+
+  // price on a trade date (nearest close on/after) for placing trade dots
+  const closeAt = day => {
+    for (let i = 0; i < xs.length; i++) if (xs[i] >= day) return series[i][1];
+    return series[series.length - 1][1];
+  };
+
+  // y gridlines
+  const ticks = 4, grid = [];
+  for (let i = 0; i <= ticks; i++) {
+    const v = lo + (hi - lo) * i / ticks, y = Y(v);
+    grid.push(`<line class="stk-grid" x1="${PL}" y1="${y.toFixed(1)}" x2="${W - PR}" y2="${y.toFixed(1)}"/>
+      <text class="stk-axis" x="${PL - 6}" y="${(y + 3).toFixed(1)}" text-anchor="end">$${v.toFixed(0)}</text>`);
+  }
+  // x year labels
+  const yearLabels = [];
+  let curYear = null;
+  for (let i = 0; i < series.length; i++) {
+    const yr = series[i][0].slice(0, 4);
+    if (yr !== curYear) { curYear = yr;
+      yearLabels.push(`<text class="stk-axis" x="${X(xs[i]).toFixed(1)}" y="${H - 8}" text-anchor="middle">${yr}</text>`); }
+  }
+
+  // law markers (vertical), only those within the price window
+  const lawMarks = laws.filter(l => { const dd = toDay(l.date); return dd >= x0 && dd <= x1; }).map(l => {
+    const x = X(toDay(l.date)).toFixed(1);
+    const url = `/bill/${l.congress}/${l.bill_type}/${l.bill_number}`;
+    const tip = `${l.title.replace(/"/g, '&quot;')} — Public Law ${l.law || ''} · ${l.date}`;
+    return `<a href="${url}" onclick="event.preventDefault();openBillFromChart(${l.congress},'${l.bill_type}',${l.bill_number})">
+      <line class="stk-lawline" x1="${x}" y1="${PT}" x2="${x}" y2="${PT + ih}"><title>${tip}</title></line>
+      <polygon class="stk-lawflag" points="${x},${PT} ${(+x + 6)},${PT + 6} ${x},${PT + 12}"><title>${tip}</title></polygon>
+    </a>`;
+  }).join('');
+
+  // trade dots
+  const tradeMarks = trades.filter(t => { const dd = toDay(mdISO(t.date)); return dd >= x0 && dd <= x1; }).map(t => {
+    const iso = mdISO(t.date); const dd = toDay(iso);
+    const cx = X(dd).toFixed(1), cy = Y(closeAt(dd)).toFixed(1);
+    const dir = (t.type || '').startsWith('buy') ? 'buy' : (t.type || '').startsWith('sell') ? 'sell' : 'exch';
+    const tip = `${t.member} — ${t.type} ${t.date}${t.amount ? ' · ' + t.amount : ''}`;
+    return `<circle class="stk-dot stk-dot-${dir}" cx="${cx}" cy="${cy}" r="3.4"><title>${tip.replace(/"/g, '&quot;')}</title></circle>`;
+  }).join('');
+
+  canvas.innerHTML =
+    `<div class="stk-charthead"><span class="stk-chartticker">${escapeHtml(d.ticker)}</span>
+       <span class="stk-chartco">${escapeHtml((d.company || '').replace(/ - Common Stock$/, ''))}</span>
+       <span class="mkt-sector">${escapeHtml(d.sector || '')}</span></div>
+     <svg viewBox="0 0 ${W} ${H}" class="stk-chart" preserveAspectRatio="xMidYMid meet">
+       ${grid.join('')}
+       <path class="stk-priceline" d="${line}"/>
+       ${lawMarks}
+       ${tradeMarks}
+       ${yearLabels.join('')}
+     </svg>
+     <div class="stk-chartlegend">
+       <span class="stk-lg"><span class="stk-lgflag"></span> enacted law in this sector (hover / click)</span>
+       <span class="stk-lg"><span class="stk-dot stk-dot-buy stk-lgdot"></span> member bought</span>
+       <span class="stk-lg"><span class="stk-dot stk-dot-sell stk-lgdot"></span> member sold</span>
+     </div>
+     <p class="pushing-note">${escapeHtml(d.disclaimer || '')}</p>`;
+}
+
+// PTR dates are MM/DD/YYYY; convert to ISO for the day math.
+function mdISO(s) {
+  const m = (s || '').split('/');
+  return m.length === 3 ? `${m[2]}-${m[0].padStart(2, '0')}-${m[1].padStart(2, '0')}` : s;
+}
+
+function openBillFromChart(congress, type, number) {
+  // Open the underlying bill (it carries the became-law banner); simpler and
+  // more robust than resolving the Public Law number.
+  openDetail({ congress, type, number });
 }
 
 function _tradeDir(type) {
