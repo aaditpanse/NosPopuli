@@ -164,7 +164,7 @@ def main():
     load_env()
     # Work dirs (http caches, run outputs) are gitignored, so a fresh checkout
     # (CI) doesn't have them; the extractors write into them unconditionally.
-    for sub in ("m4", "onboard"):
+    for sub in ("m4", "onboard", "oracle"):
         (FOUNDRY / "data" / sub).mkdir(parents=True, exist_ok=True)
     today = datetime.date.today().isoformat()
 
