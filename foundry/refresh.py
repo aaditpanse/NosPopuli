@@ -162,6 +162,10 @@ def main():
     parser.add_argument("--all", action="store_true")
     args = parser.parse_args()
     load_env()
+    # Work dirs (http caches, run outputs) are gitignored, so a fresh checkout
+    # (CI) doesn't have them; the extractors write into them unconditionally.
+    for sub in ("m4", "onboard"):
+        (FOUNDRY / "data" / sub).mkdir(parents=True, exist_ok=True)
     today = datetime.date.today().isoformat()
 
     if args.all:
@@ -184,7 +188,9 @@ def main():
                   or sid in ("pittsburgh-legistar", "la-primegov", "loudoun-bos")
                   else refresh_generic(sid, store, print))
             results[sid] = "ok" if ok else "drift-or-skipped"
-        except Exception as exc:
+        except (Exception, SystemExit) as exc:
+            # backfill raises SystemExit on extractor failure — contain it so
+            # one bad source never kills the rest of the cycle.
             print(f"  ERROR: {exc}")
             results[sid] = f"error: {str(exc)[:120]}"
     # History deepening rides the same cycle: deterministic, $0, and merges
