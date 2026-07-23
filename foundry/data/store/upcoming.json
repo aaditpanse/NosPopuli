@@ -2,76 +2,46 @@
  "la-primegov": {
   "upcoming": [
    {
-    "date": "2026-07-21",
-    "time": "10:00 AM",
-    "body": "City Council Meeting"
-   },
-   {
-    "date": "2026-07-22",
-    "time": "10:00 AM",
-    "body": "City Council Meeting"
-   },
-   {
     "date": "2026-07-24",
     "time": "10:00 AM",
     "body": "City Council Meeting"
    }
   ],
   "next": {
-   "date": "2026-07-21",
+   "date": "2026-07-24",
    "time": "10:00 AM",
    "body": "City Council Meeting"
   },
-  "checked": "2026-07-19",
+  "checked": "2026-07-23",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "loudoun-bos": {
-  "upcoming": [
-   {
-    "date": "2026-07-22",
-    "time": "4:00 PM",
-    "body": "Transportation and Land Use Committee"
-   }
-  ],
-  "next": {
-   "date": "2026-07-22",
-   "time": "4:00 PM",
-   "body": "Transportation and Land Use Committee"
-  },
-  "checked": "2026-07-19",
+  "upcoming": [],
+  "next": null,
+  "checked": "2026-07-23",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "pittsburgh-legistar": {
   "upcoming": [
    {
-    "date": "2026-07-21",
-    "time": "10:00 AM",
-    "body": "City Council"
-   },
-   {
-    "date": "2026-07-21",
-    "time": "10:01 AM",
-    "body": "City Council"
+    "date": "2026-07-28",
+    "time": "1:30 PM",
+    "body": "Committee on Hearings and Policy"
    }
   ],
   "next": {
-   "date": "2026-07-21",
-   "time": "10:00 AM",
-   "body": "City Council"
+   "date": "2026-07-28",
+   "time": "1:30 PM",
+   "body": "Committee on Hearings and Policy"
   },
-  "checked": "2026-07-19",
+  "checked": "2026-07-23",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "princewilliam-bos": {
   "upcoming": [
-   {
-    "date": "2026-07-21",
-    "time": "02:00 pm",
-    "body": "Board of County Supervisors Meeting"
-   },
    {
     "date": "2026-09-01",
     "time": "02:00 pm",
@@ -89,11 +59,11 @@
    }
   ],
   "next": {
-   "date": "2026-07-21",
+   "date": "2026-09-01",
    "time": "02:00 pm",
    "body": "Board of County Supervisors Meeting"
   },
-  "checked": "2026-07-19",
+  "checked": "2026-07-23",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -101,36 +71,36 @@
   "upcoming": [
    {
     "date": "2026-08-25",
-    "time": null,
-    "body": "Full Board of Supervisors Meeting"
+    "time": "9:30 a.m.",
+    "body": "Fairfax County Board of Supervisors"
    },
    {
     "date": "2026-09-15",
-    "time": null,
-    "body": "Full Board of Supervisors Meeting"
+    "time": "9:30 a.m.",
+    "body": "Fairfax County Board of Supervisors"
    },
    {
     "date": "2026-09-29",
-    "time": null,
-    "body": "Full Board of Supervisors Meeting"
+    "time": "9:30 a.m.",
+    "body": "Fairfax County Board of Supervisors"
    },
    {
     "date": "2026-10-13",
-    "time": null,
-    "body": "Full Board of Supervisors Meeting"
+    "time": "9:30 a.m.",
+    "body": "Fairfax County Board of Supervisors"
    },
    {
     "date": "2026-10-27",
-    "time": null,
-    "body": "Full Board of Supervisors Meeting"
+    "time": "9:30 a.m.",
+    "body": "Fairfax County Board of Supervisors"
    }
   ],
   "next": {
    "date": "2026-08-25",
-   "time": null,
-   "body": "Full Board of Supervisors Meeting"
+   "time": "9:30 a.m.",
+   "body": "Fairfax County Board of Supervisors"
   },
-  "checked": "2026-07-19",
+  "checked": "2026-07-23",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -167,7 +137,7 @@
    "time": "17:00",
    "body": "August 18, 2026 Board of Supervisors Meeting"
   },
-  "checked": "2026-07-19",
+  "checked": "2026-07-23",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -204,46 +174,71 @@
    "time": "1:30 PM",
    "body": "City Council Stated Meeting"
   },
-  "checked": "2026-07-19",
+  "checked": "2026-07-23",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "fairfax-cip": {
-  "upcoming": [],
-  "next": null,
-  "checked": "2026-07-19",
+  "upcoming": [
+   {
+    "date": "2026-08-25",
+    "time": null,
+    "body": "Board of Supervisors Meeting"
+   },
+   {
+    "date": "2026-09-15",
+    "time": null,
+    "body": "Board of Supervisors Meeting"
+   },
+   {
+    "date": "2026-09-29",
+    "time": null,
+    "body": "Board of Supervisors Meeting"
+   },
+   {
+    "date": "2026-10-13",
+    "time": null,
+    "body": "Board of Supervisors Meeting"
+   },
+   {
+    "date": "2026-10-27",
+    "time": null,
+    "body": "Board of Supervisors Meeting"
+   }
+  ],
+  "next": {
+   "date": "2026-08-25",
+   "time": null,
+   "body": "Board of Supervisors Meeting"
+  },
+  "checked": "2026-07-23",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "princewilliam-cip": {
   "upcoming": [
    {
-    "date": "2026-07-21",
-    "time": "02:00 pm",
-    "body": "Board of County Supervisors Meeting"
-   },
-   {
     "date": "2026-09-01",
-    "time": "02:00 pm",
+    "time": "14:00",
     "body": "Board of County Supervisors Meeting"
    },
    {
     "date": "2026-09-15",
-    "time": "02:00 pm",
+    "time": "14:00",
     "body": "Board of County Supervisors Meeting - Work Session"
    },
    {
     "date": "2026-09-22",
-    "time": "02:00 pm",
+    "time": "14:00",
     "body": "Board of County Supervisors Meeting"
    }
   ],
   "next": {
-   "date": "2026-07-21",
-   "time": "02:00 pm",
+   "date": "2026-09-01",
+   "time": "14:00",
    "body": "Board of County Supervisors Meeting"
   },
-  "checked": "2026-07-19",
+  "checked": "2026-07-23",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  }

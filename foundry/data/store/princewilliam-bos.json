@@ -29,7 +29,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": "no second-source assertions for this meeting"
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-06-23": {
@@ -760,7 +760,39 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": "no second-source assertions for this meeting"
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21": {
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "body": "Board of County Supervisors Meeting",
+   "date": "2026-07-21",
+   "attendance": {
+    "Jefferson": "present",
+    "Angry": "present",
+    "Bailey": "present",
+    "Boddye": "present",
+    "Stewart": "present",
+    "Gordy": "present",
+    "Vega": "present",
+    "LaCroix": "present"
+   },
+   "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   }
  },
@@ -808,7 +840,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-item-6": {
@@ -831,7 +863,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-item-7": {
@@ -854,7 +886,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-item-9-A": {
@@ -877,7 +909,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-item-11-A": {
@@ -900,7 +932,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-item-11-B": {
@@ -923,7 +955,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-item-11-C": {
@@ -946,7 +978,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-item-11-D": {
@@ -969,7 +1001,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-item-11-D-2": {
@@ -992,7 +1024,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-item-12-A": {
@@ -1015,7 +1047,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-item-12-F": {
@@ -1038,7 +1070,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-item-i13": {
@@ -1061,7 +1093,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-item-13-A": {
@@ -1084,7 +1116,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-item-i15": {
@@ -1107,7 +1139,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-item-i16": {
@@ -1130,7 +1162,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-item-14-A": {
@@ -1153,7 +1185,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-06-23-item-3": {
@@ -7501,7 +7533,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-14-item-8-A": {
@@ -7524,7 +7556,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-14-item-8-B": {
@@ -7547,7 +7579,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-14-item-8-E": {
@@ -7570,7 +7602,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-14-item-9-A": {
@@ -7593,7 +7625,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-14-item-10-A": {
@@ -7616,7 +7648,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-item-4": {
@@ -7639,7 +7671,329 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-item-3-A": {
+   "item_id": "princewilliam-bos-2026-07-21-item-3-A",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "title": "3.A) Approve a Request to Participate Remotely Through Electronic Communication Means (If Necessary)",
+   "action": "Approve Agenda Item",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-item-4-A": {
+   "item_id": "princewilliam-bos-2026-07-21-item-4-A",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "title": "4.A) Approve the Minutes of June 23, 2026",
+   "action": "Approve Agenda Item",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-item-5": {
+   "item_id": "princewilliam-bos-2026-07-21-item-5",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "title": "5) Commendations and Proclamations",
+   "action": "Approve Agenda Items",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-item-6-F": {
+   "item_id": "princewilliam-bos-2026-07-21-item-6-F",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "title": "6.F) Authorize Change Order #7 for the Design of the Judicial Center Expansion Capital Project to Incorporate Architectural Features and Historical Exhibits of the Bennett School Building - Brentsville Magisterial District - Matthew Villareale, Facilities and Fleet Management - Government Operations, Performance, and Innovation",
+   "action": "Approve Agenda Item",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-item-6": {
+   "item_id": "princewilliam-bos-2026-07-21-item-6",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "title": "6) Consent Agenda",
+   "action": "Approve Consent Agenda Item",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-item-8": {
+   "item_id": "princewilliam-bos-2026-07-21-item-8",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "title": "8) Public Hearings - Including Consolidated Land Use Cases",
+   "action": "Approve Agenda Items",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-item-10-A": {
+   "item_id": "princewilliam-bos-2026-07-21-item-10-A",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "title": "10.A) Authorize a Closed Meeting",
+   "action": "Approve Agenda Item",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-item-11-A": {
+   "item_id": "princewilliam-bos-2026-07-21-item-11-A",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "title": "11.A) Initiate Comprehensive Plan Amendment #CPA2026-00016, Manassas Preserve - Gainesville Magisterial District - Ahmad Behzad, Planning - Mobility, Economic Growth, and Resiliency",
+   "action": "Approve Item",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-item-11-B": {
+   "item_id": "princewilliam-bos-2026-07-21-item-11-B",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "title": "11.B) Initiate Comprehensive Plan Amendment #CPA2026-00003, Catharpin Valley Estates - Gainesville Magisterial District - Eric Griffitts, Planning - Mobility, Economic Growth, and Resiliency",
+   "action": "Approve Agenda Item",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-item-14-A": {
+   "item_id": "princewilliam-bos-2026-07-21-item-14-A",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "title": "14.A) Rezoning #REZ2025-00023, Attain at River Oaks - Woodbridge Magisterial District - Kobra Babaei, Planning - Mobility, Economic Growth, and Resiliency",
+   "action": "Approve Agenda Item",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-item-12": {
+   "item_id": "princewilliam-bos-2026-07-21-item-12",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "title": "12) Supervisors' Time",
+   "action": "Approve Agenda Item",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-item-13-A": {
+   "item_id": "princewilliam-bos-2026-07-21-item-13-A",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "title": "13.A) Certify the Closed Meeting",
+   "action": "Approve Agenda Item",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-item-i13": {
+   "item_id": "princewilliam-bos-2026-07-21-item-i13",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "title": "Action After Closed Meeting: Authorize Settlement of Acquisition of Property Interests - BCL Associates, LLC, Route 1 (Fraley Boulevard) Project",
+   "action": "Approve",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-item-16-A": {
+   "item_id": "princewilliam-bos-2026-07-21-item-16-A",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "title": "16.A) Adjourn the Meeting",
+   "action": "Adjourn the Meeting",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   }
  },
@@ -7760,7 +8114,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-vote-6": {
@@ -7819,7 +8173,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-vote-7": {
@@ -7878,7 +8232,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-vote-9-A": {
@@ -7937,7 +8291,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-vote-11-A": {
@@ -7996,7 +8350,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-vote-11-B": {
@@ -8055,7 +8409,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-vote-11-C": {
@@ -8114,7 +8468,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-vote-11-D": {
@@ -8174,7 +8528,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-vote-11-D-2": {
@@ -8233,7 +8587,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-vote-12-A": {
@@ -8293,7 +8647,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-vote-12-F": {
@@ -8353,7 +8707,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-vote-i13": {
@@ -8412,7 +8766,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-vote-13-A": {
@@ -8471,7 +8825,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-vote-i15": {
@@ -8530,7 +8884,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-vote-i16": {
@@ -8589,7 +8943,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-vote-14-A": {
@@ -8648,7 +9002,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-06-23-vote-3": {
@@ -25341,7 +25695,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-14-vote-8-A": {
@@ -25400,7 +25754,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-14-vote-8-B": {
@@ -25459,7 +25813,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-14-vote-8-E": {
@@ -25519,7 +25873,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-14-vote-9-A": {
@@ -25579,7 +25933,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-14-vote-10-A": {
@@ -25639,7 +25993,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   },
   "princewilliam-bos-2026-07-07-vote-4": {
@@ -25699,7 +26053,840 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-vote-3-A": {
+   "vote_id": "princewilliam-bos-2026-07-21-vote-3-A",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "item_id": "princewilliam-bos-2026-07-21-item-3-A",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "absent"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "absent"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "aye"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 6,
+    "absent": 2
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-vote-4-A": {
+   "vote_id": "princewilliam-bos-2026-07-21-vote-4-A",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "item_id": "princewilliam-bos-2026-07-21-item-4-A",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "aye"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 8
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-vote-5": {
+   "vote_id": "princewilliam-bos-2026-07-21-vote-5",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "item_id": "princewilliam-bos-2026-07-21-item-5",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "aye"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 8
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-vote-6-F": {
+   "vote_id": "princewilliam-bos-2026-07-21-vote-6-F",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "item_id": "princewilliam-bos-2026-07-21-item-6-F",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "no"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "aye"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "no": 1
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-vote-6": {
+   "vote_id": "princewilliam-bos-2026-07-21-vote-6",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "item_id": "princewilliam-bos-2026-07-21-item-6",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "aye"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 8
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-vote-8": {
+   "vote_id": "princewilliam-bos-2026-07-21-vote-8",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "item_id": "princewilliam-bos-2026-07-21-item-8",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "aye"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 8
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-vote-10-A": {
+   "vote_id": "princewilliam-bos-2026-07-21-vote-10-A",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "item_id": "princewilliam-bos-2026-07-21-item-10-A",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "aye"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 8
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-vote-11-A": {
+   "vote_id": "princewilliam-bos-2026-07-21-vote-11-A",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "item_id": "princewilliam-bos-2026-07-21-item-11-A",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "no"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "no"
+    },
+    {
+     "member": "Gordy",
+     "position": "no"
+    },
+    {
+     "member": "Vega",
+     "position": "aye"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "no": 3,
+    "aye": 5
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-vote-11-B": {
+   "vote_id": "princewilliam-bos-2026-07-21-vote-11-B",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "item_id": "princewilliam-bos-2026-07-21-item-11-B",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "no"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "no"
+    },
+    {
+     "member": "Gordy",
+     "position": "no"
+    },
+    {
+     "member": "Vega",
+     "position": "aye"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "no": 3,
+    "aye": 5
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-vote-14-A": {
+   "vote_id": "princewilliam-bos-2026-07-21-vote-14-A",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "item_id": "princewilliam-bos-2026-07-21-item-14-A",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "aye"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 8
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-vote-12": {
+   "vote_id": "princewilliam-bos-2026-07-21-vote-12",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "item_id": "princewilliam-bos-2026-07-21-item-12",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "aye"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 8
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-vote-13-A": {
+   "vote_id": "princewilliam-bos-2026-07-21-vote-13-A",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "item_id": "princewilliam-bos-2026-07-21-item-13-A",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "absent"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "aye"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 1
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-vote-i13": {
+   "vote_id": "princewilliam-bos-2026-07-21-vote-i13",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "item_id": "princewilliam-bos-2026-07-21-item-i13",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "absent"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "aye"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 1
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "princewilliam-bos-2026-07-21-vote-16-A": {
+   "vote_id": "princewilliam-bos-2026-07-21-vote-16-A",
+   "meeting_id": "princewilliam-bos-2026-07-21",
+   "item_id": "princewilliam-bos-2026-07-21-item-16-A",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "absent"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "aye"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 1
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
   }
  },

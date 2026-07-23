@@ -2290,5 +2290,65 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "newyork-bos-2026-07-16-Committee-on-Small-Business": {
+  "digest": "The Committee on Small Business unanimously approved a requirement for the mayor to create a program that coordinates inspections and plan reviews across city agencies to speed up the process for new businesses to open. This new coordination effort aims to reduce the timeline businesses currently face before they can begin operations.",
+  "notable": [
+   "Committee unanimously backed (7 aye) a new mayoral program to streamline business opening timelines through coordinated agency inspections and plan reviews"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-07-16-Committee-on-Cultural-Affairs-Libraries-": {
+  "digest": "The Committee unanimously approved two measures: one directing the Cultural Affairs Commissioner to study and propose public art or structures commemorating the draft riots, and another establishing August 6 as an annual recognition day for Fatman Scoop. Both passed with all seven committee members voting in favor.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-07-16-Committee-on-Aging-Susan-Zhuang-Chair-Me": {
+  "digest": "The Committee on Aging approved a requirement for the Department for the Aging to create a protocol for cold weather wellness checks on seniors, working with NYC Emergency Management and other agencies. The vote was 6 in favor with one member absent.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "pittsburgh-legistar-12039": {
+  "digest": "City Council approved nine motions totaling significant capital and operational spending: moving $52,854.68 from pool maintenance to play area improvements, authorizing up to $26,397.71 in litigation costs, extending a natural gas contract to $882,000 (with Councilwoman Deborah L. Gross dissenting), and transferring two vacant properties to the Pittsburgh Land Bank. The council also rezoned three Homewood West parcels from residential to industrial use and approved a public art licensing agreement with Larimer Consensus Group.",
+  "notable": [
+   "Contract extension with Compass Natural Gas for mobile CNG fueling passed 8-1, with Deborah L. Gross voting no.",
+   "Three vacant city properties transferred to Pittsburgh Land Bank at no cost, plus residential parcels rezoned to industrial in Homewood West.",
+   "$52,854 shifted from swimming pool maintenance to play area improvements in capital budget reallocation."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "princewilliam-bos-2026-07-21": {
+  "digest": "The Board of County Supervisors approved multiple land use amendments and a judicial center design change, with notable dissent on two Gainesville comprehensive plan updates (Manassas Preserve and Catharpin Valley Estates), where Jefferson, Stewart, and Gordy voted no. The board also authorized a Route 1 project property settlement and updated remote participation policies. Supervisor Angry was absent for several votes.",
+  "notable": [
+   "Two Gainesville land use amendments (Manassas Preserve and Catharpin Valley Estates) each failed to achieve unanimous support, with Jefferson, Stewart, and Gordy opposing both.",
+   "Judicial Center Expansion design change passed 7-1, with Stewart dissenting on the inclusion of Bennett School Building features.",
+   "Board authorized Route 1 (Fraley Boulevard) property settlement with BCL Associates, LLC."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }
