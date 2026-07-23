@@ -1,0 +1,74 @@
+# Scheduled Foundry refresh — closes the "refresh isn't automated on prod" gap.
+#
+# The prod store is committed static files served read-only by Railway, so
+# keeping it current means: run the deterministic refresh cycle here, and if
+# any store file changed, commit + push — which triggers the normal Railway
+# deploy. Steady state (nothing due) costs one cheap no-op run and no commit.
+#
+# Deliberate constraints:
+#   - FOUNDRY_AUTO_REPAIR=off: re-synthesis (Opus) stays an offline,
+#     human-visible event, never an unattended CI spend. A drifted source
+#     just logs DRIFT and is skipped, exactly like a local run.
+#   - Only foundry/data is committed; .gitignore already keeps http caches
+#     and run outputs out of the tree.
+#   - ANTHROPIC_API_KEY (repo secret) is only used by the Haiku enrichment
+#     layer (summaries / digests / upcoming) — pennies, and upcoming.json is
+#     what future runs use for due-detection.
+
+name: Foundry data refresh
+
+on:
+  schedule:
+    - cron: "30 11 * * *"   # daily 11:30 UTC ≈ 07:30 ET, same slot as the old local systemd timer
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: "Which sources to refresh"
+        type: choice
+        options: [due, all]
+        default: due
+
+concurrency:
+  group: foundry-refresh
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      FOUNDRY_AUTO_REPAIR: "off"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install pdftotext (poppler)
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends poppler-utils
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run refresh cycle
+        working-directory: foundry
+        run: python refresh.py ${{ github.event.inputs.scope == 'all' && '--all' || '--due' }}
+
+      - name: Commit and push if the store changed
+        run: |
+          git add foundry/data
+          if git diff --cached --quiet; then
+            echo "No data changes — nothing to deploy."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(foundry): scheduled data refresh"
+          git pull --rebase origin main
+          git push origin main
