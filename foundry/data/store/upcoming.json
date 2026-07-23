@@ -71,34 +71,34 @@
   "upcoming": [
    {
     "date": "2026-08-25",
-    "time": "9:30 a.m.",
-    "body": "Fairfax County Board of Supervisors"
+    "time": null,
+    "body": "Full Board of Supervisors Meeting"
    },
    {
     "date": "2026-09-15",
-    "time": "9:30 a.m.",
-    "body": "Fairfax County Board of Supervisors"
+    "time": null,
+    "body": "Full Board of Supervisors Meeting"
    },
    {
     "date": "2026-09-29",
-    "time": "9:30 a.m.",
-    "body": "Fairfax County Board of Supervisors"
+    "time": null,
+    "body": "Full Board of Supervisors Meeting"
    },
    {
     "date": "2026-10-13",
-    "time": "9:30 a.m.",
-    "body": "Fairfax County Board of Supervisors"
+    "time": null,
+    "body": "Full Board of Supervisors Meeting"
    },
    {
     "date": "2026-10-27",
-    "time": "9:30 a.m.",
-    "body": "Fairfax County Board of Supervisors"
+    "time": null,
+    "body": "Full Board of Supervisors Meeting"
    }
   ],
   "next": {
    "date": "2026-08-25",
-   "time": "9:30 a.m.",
-   "body": "Fairfax County Board of Supervisors"
+   "time": null,
+   "body": "Full Board of Supervisors Meeting"
   },
   "checked": "2026-07-23",
   "derived_by": "claude-haiku-4-5",
@@ -179,38 +179,8 @@
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "fairfax-cip": {
-  "upcoming": [
-   {
-    "date": "2026-08-25",
-    "time": null,
-    "body": "Board of Supervisors Meeting"
-   },
-   {
-    "date": "2026-09-15",
-    "time": null,
-    "body": "Board of Supervisors Meeting"
-   },
-   {
-    "date": "2026-09-29",
-    "time": null,
-    "body": "Board of Supervisors Meeting"
-   },
-   {
-    "date": "2026-10-13",
-    "time": null,
-    "body": "Board of Supervisors Meeting"
-   },
-   {
-    "date": "2026-10-27",
-    "time": null,
-    "body": "Board of Supervisors Meeting"
-   }
-  ],
-  "next": {
-   "date": "2026-08-25",
-   "time": null,
-   "body": "Board of Supervisors Meeting"
-  },
+  "upcoming": [],
+  "next": null,
   "checked": "2026-07-23",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
