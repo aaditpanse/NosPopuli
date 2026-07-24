@@ -9,6 +9,8 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 import json
 import re
+import html as html_lib
+import pathlib
 import hashlib
 import secrets
 from fastapi.staticfiles import StaticFiles
@@ -2334,10 +2336,115 @@ async def election_detail_page(election_id: str):
     return FileResponse("frontend/election_detail.html")
 
 
+# ── SEO / social meta ─────────────────────────────────────────
+# The SPA serves one index.html for every route, so link previews would all
+# show the homepage card. The head carries a <!-- meta:start/end --> block that
+# gets rewritten per route: bills/laws get their real title (bill_fetcher is
+# TTL-cached, and crawlers are the main consumers of these paths), tab routes
+# get static copy, everything else keeps the default.
+
+_SITE = "https://nospopuli.org"
+_META_BLOCK_RE = re.compile(r"<!-- meta:start.*?<!-- meta:end -->", re.S)
+_BILL_PATH_RE = re.compile(r"^bill/(\d{2,3})/([a-z]+)/(\d+)$")
+_LAW_PATH_RE = re.compile(r"^law/(\d{2,3})/(\d+)$")
+
+_TAB_META = {
+    "trades": ("Congressional Stock Trades — NosPopuli",
+               "House members' STOCK Act disclosures, ranked by how the stock "
+               "moved after the trade — juxtaposition, never accusation."),
+    "lobbying": ("Lobbying — NosPopuli",
+                 "Who lobbies Congress, on what, and what they spend — Senate "
+                 "LDA filings laid side-by-side with the legislation."),
+    "elections": ("Upcoming Elections — NosPopuli",
+                  "Upcoming federal, state, and local elections — dates, "
+                  "registration deadlines, and what's on your ballot."),
+}
+
+
+def _meta_block(title: str, desc: str, path: str) -> str:
+    t = html_lib.escape(title[:140], quote=True)
+    d = html_lib.escape(desc[:300], quote=True)
+    url = html_lib.escape(f"{_SITE}/{path.lstrip('/')}".rstrip("/") or _SITE)
+    return (
+        "<!-- meta:start -->\n"
+        f"  <title>{t}</title>\n"
+        f'  <meta name="description" content="{d}">\n'
+        f'  <link rel="canonical" href="{url}">\n'
+        '  <meta property="og:site_name" content="NosPopuli">\n'
+        '  <meta property="og:type" content="website">\n'
+        f'  <meta property="og:title" content="{t}">\n'
+        f'  <meta property="og:description" content="{d}">\n'
+        f'  <meta property="og:url" content="{url}">\n'
+        f'  <meta property="og:image" content="{_SITE}/static/og-card.png">\n'
+        '  <meta name="twitter:card" content="summary_large_image">\n'
+        "<!-- meta:end -->"
+    )
+
+
+async def _route_meta(path: str):
+    """(title, description) for a route, or None to keep the default block."""
+    if path in _TAB_META:
+        return _TAB_META[path]
+    m = _BILL_PATH_RE.match(path) or _LAW_PATH_RE.match(path)
+    if not m:
+        return None
+    try:
+        if len(m.groups()) == 3:
+            congress, btype, number = m.groups()
+            label = f"{btype.upper()} {number}"
+            bill = await asyncio.wait_for(
+                asyncio.to_thread(fetch_bill, congress, btype, number), 3.0)
+        else:
+            congress, number = m.groups()
+            label = f"Public Law {congress}-{number}"
+            bill = await asyncio.wait_for(
+                asyncio.to_thread(fetch_law, congress, number), 3.0)
+    except Exception:
+        bill = None
+    bill = (bill or {}).get("bill") or {}  # raw Congress.gov payload
+    title = (bill.get("title") or "").strip()
+    action = ((bill.get("latestAction") or {}).get("text") or "").strip()
+    if not title:
+        return (f"{label} · {congress}th Congress — NosPopuli",
+                "Read this bill in plain English on NosPopuli — votes, "
+                "sponsors, money, and how to write your representative.")
+    desc = f"{title} — in plain English, with votes, sponsors, and the money around it."
+    if action:
+        desc += f" Latest action: {action[:140]}"
+    return (f"{label}: {title} — NosPopuli", desc)
+
+
+async def _index_with_meta(path: str) -> HTMLResponse:
+    html = await asyncio.to_thread(
+        pathlib.Path("frontend/index.html").read_text)
+    meta = await _route_meta(path.strip("/"))
+    if meta:
+        html = _META_BLOCK_RE.sub(
+            lambda _: _meta_block(meta[0], meta[1], path), html, count=1)
+    return HTMLResponse(html)
+
+
 @app.get("/")
 @app.head("/")
 async def root():
-    return FileResponse("frontend/index.html")
+    return await _index_with_meta("")
+
+
+@app.get("/robots.txt", include_in_schema=False)
+async def robots_txt():
+    return Response(
+        "User-agent: *\nAllow: /\nDisallow: /monitor\nDisallow: /admin/\n"
+        f"Sitemap: {_SITE}/sitemap.xml\n", media_type="text/plain")
+
+
+@app.get("/sitemap.xml", include_in_schema=False)
+async def sitemap_xml():
+    pages = ["", "elections", "trades", "lobbying", "foundry"]
+    urls = "\n".join(f"  <url><loc>{_SITE}/{p}</loc></url>" for p in pages)
+    return Response(
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f"{urls}\n</urlset>\n", media_type="application/xml")
 
 
 @app.get("/favicon.ico", include_in_schema=False)
@@ -2798,4 +2905,4 @@ async def spa_fallback(full_path: str):
     that look like an API call or a file 404 normally instead of returning HTML."""
     if full_path.startswith(("api/", "static/")) or "." in full_path.split("/")[-1]:
         raise HTTPException(status_code=404, detail="Not found")
-    return FileResponse("frontend/index.html")
+    return await _index_with_meta(full_path)
