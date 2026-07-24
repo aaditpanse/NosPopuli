@@ -164,17 +164,12 @@ def sector_of_tickers(tickers, force=False):
 _SECTOR_CANON = {s.lower(): s for s in SECTORS + ["Other"]}
 
 
-def _batch_sector(pairs):
-    """{TICKER: sector} for the batch, or None if the call failed entirely.
-
-    Uses a plain-text 'TICKER=Sector' listing rather than a json_schema array:
-    Haiku reliably completes a text list, but truncates a constrained JSON array
-    after a few items (stop_reason end_turn at ~3-8 of 20). Tickers the model
-    omits simply aren't in the returned dict — the caller retries them, never
-    caches a guessed label."""
+def _sector_prompt(pairs):
+    """The shared classification prompt — one builder so the synchronous path
+    and the Batch API warm path can never drift apart."""
     sector_menu = ", ".join(SECTORS + ["Other"])
     listing = "\n".join(f"{tk} ({name})" for tk, name in pairs)
-    prompt = (
+    return (
         "For EACH ticker below, output exactly one line in the form "
         "TICKER=Sector, using only these sectors:\n" + sector_menu + "\n\n"
         "Output one line for every ticker and nothing else. Use 'Other' only "
@@ -182,16 +177,10 @@ def _batch_sector(pairs):
         "— for a real company, infer its sector from the name.\n\nTickers:\n"
         + listing
     )
-    try:
-        resp = _client().messages.create(
-            model=_MODEL, max_tokens=1600,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        text = next(b.text for b in resp.content if b.type == "text")
-    except Exception as ex:
-        print(f"[BILL_MARKET] sector classify error: {ex}")
-        return None  # signal failure so the caller doesn't cache a wrong label
 
+
+def _parse_sector_text(text):
+    """Parse 'TICKER=Sector' lines into {TICKER: canonical sector}."""
     out = {}
     for line in text.splitlines():
         if "=" not in line:
@@ -202,6 +191,99 @@ def _batch_sector(pairs):
         if tk and canon:
             out[tk] = canon
     return out
+
+
+def _batch_sector(pairs):
+    """{TICKER: sector} for the batch, or None if the call failed entirely.
+
+    Uses a plain-text 'TICKER=Sector' listing rather than a json_schema array:
+    Haiku reliably completes a text list, but truncates a constrained JSON array
+    after a few items (stop_reason end_turn at ~3-8 of 20). Tickers the model
+    omits simply aren't in the returned dict — the caller retries them, never
+    caches a guessed label."""
+    try:
+        resp = _client().messages.create(
+            model=_MODEL, max_tokens=1600,
+            messages=[{"role": "user", "content": _sector_prompt(pairs)}],
+        )
+        text = next(b.text for b in resp.content if b.type == "text")
+    except Exception as ex:
+        print(f"[BILL_MARKET] sector classify error: {ex}")
+        return None  # signal failure so the caller doesn't cache a wrong label
+    return _parse_sector_text(text)
+
+
+def sector_of_tickers_batchapi(tickers, force=False, poll_seconds=15,
+                               timeout_seconds=3600, log=print):
+    """Same contract as sector_of_tickers, but via the Message Batches API —
+    50% of synchronous token prices. Async (usually minutes, up to 24h), so
+    this is for offline warm scripts only, never the request path.
+
+    Cache semantics are identical: only labels the model actually returned are
+    cached; omissions/failures stay uncached for a later run."""
+    import time
+    from anthropic.types.message_create_params import MessageCreateParamsNonStreaming
+    from anthropic.types.messages.batch_create_params import Request
+
+    _, companies = _holdings()
+    out, todo = {}, []
+    for tk in {(t or "").strip().upper() for t in tickers if t}:
+        hit = None if force else _cache_get(f"tkrsec:v1:{tk}", _TTL_SECTOR)
+        if hit is not None:
+            out[tk] = hit
+        else:
+            todo.append(tk)
+    if not todo:
+        return out, {"submitted": 0, "cached": len(out)}
+
+    chunks = [sorted(todo)[i:i + 30] for i in range(0, len(todo), 30)]
+    requests = [
+        Request(
+            custom_id=f"sector-{i}",
+            params=MessageCreateParamsNonStreaming(
+                model=_MODEL, max_tokens=1600,
+                messages=[{"role": "user", "content": _sector_prompt(
+                    [(tk, companies.get(tk, tk)) for tk in chunk])}],
+            ),
+        )
+        for i, chunk in enumerate(chunks)
+    ]
+    client = _client()
+    batch = client.messages.batches.create(requests=requests)
+    log(f"[BATCH] submitted {len(requests)} requests ({len(todo)} tickers) "
+        f"as {batch.id} — 50% token pricing")
+
+    deadline = time.time() + timeout_seconds
+    while True:
+        batch = client.messages.batches.retrieve(batch.id)
+        if batch.processing_status == "ended":
+            break
+        if time.time() > deadline:
+            log(f"[BATCH] still {batch.processing_status} after "
+                f"{timeout_seconds}s — results stay retrievable for 29 days; "
+                f"re-run this script later to collect {batch.id}")
+            return out, {"submitted": len(requests), "batch_id": batch.id,
+                         "pending": True}
+        time.sleep(poll_seconds)
+
+    labeled = 0
+    for result in client.messages.batches.results(batch.id):
+        if result.result.type != "succeeded":
+            log(f"[BATCH] {result.custom_id}: {result.result.type} — "
+                "those tickers stay uncached for a later run")
+            continue
+        msg = result.result.message
+        text = next((b.text for b in msg.content if b.type == "text"), "")
+        asked = set(todo)
+        for tk, sector in _parse_sector_text(text).items():
+            if tk in asked:  # never cache a ticker the model invented
+                out[tk] = sector
+                _cache_set(f"tkrsec:v1:{tk}", sector)
+                labeled += 1
+    for tk in todo:
+        out.setdefault(tk, "Other")  # in-memory default, never cached
+    return out, {"submitted": len(requests), "labeled": labeled,
+                 "omitted": len(todo) - labeled, "batch_id": batch.id}
 
 
 def bill_sectors(bill, fingerprint=""):
