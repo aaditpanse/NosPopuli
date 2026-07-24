@@ -1,0 +1,12 @@
+{
+ "jurisdiction": "City of Chicago, Illinois",
+ "edition": "Capital Improvement Program (CIP) Report 2025-2029: Build Better Together",
+ "fiscal_first": 2025,
+ "fiscal_last": 2029,
+ "source_url": "https://www.chicago.gov/city/en/depts/obm/supp_info/office-publications.html",
+ "cip_urls": [
+  "https://www.chicago.gov/content/dam/city/depts/obm/supp_info/CIP/City%20of%20Chicago%202025-2029%20CIP.pdf"
+ ],
+ "notes": "Single volume PDF; published by the Office of Budget and Management (OBM); titled 'Build Better Together'; no 2026-2030 edition detected as of search date.",
+ "source_id": "chicago-cip"
+}

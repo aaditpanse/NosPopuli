@@ -430,6 +430,36 @@
     "method": null,
     "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
+  },
+  "fairfax-bos-2026-07-14": {
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "body": "Fairfax County Board of Supervisors",
+   "date": "2026-07-14",
+   "attendance": {
+    "Jeffrey C. McKay": "present",
+    "Walter Alcorn": "present",
+    "James N. Bierman, Jr.": "present",
+    "Patrick S. Herrity": "present",
+    "Andres F. Jimenez": "present",
+    "Rodney Lusk": "present",
+    "Dalia Palchik": "present",
+    "Rachna Sizemore Heizer": "present",
+    "Kathy L. Smith": "present",
+    "Daniel G. Storck": "present"
+   },
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
   }
  },
  "agenda_items": {
@@ -7302,6 +7332,686 @@
    "file_number": null,
    "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/oct-28-2025-meeting",
    "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2025/10-28-25%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-2": {
+   "item_id": "fairfax-bos-2026-07-14-item-2",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "RESOLUTION OF RECOGNITION PRESENTED TO",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-3": {
+   "item_id": "fairfax-bos-2026-07-14-item-3",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "RESOLUTION OF RECOGNITION CELEBRATING THE",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-4": {
+   "item_id": "fairfax-bos-2026-07-14-item-4",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "RESOLUTION OF RECOGNITION PRESENTED TO FAIRFAX WATER",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-5": {
+   "item_id": "fairfax-bos-2026-07-14-item-5",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "RESOLUTION RECOGNIZING THE 125TH ANNIVERSARY OF",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-6": {
+   "item_id": "fairfax-bos-2026-07-14-item-6",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "PROCLAMATION DESIGNATING JULY 2026 AS \u201cPARK AND",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-7": {
+   "item_id": "fairfax-bos-2026-07-14-item-7",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "APPOINTMENTS TO CITIZEN BOARDS, AUTHORITIES,",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-16": {
+   "item_id": "fairfax-bos-2026-07-14-item-16",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "IMPLEMENTATION OF A PILOT PROGRAM FOR AUTOMATED ENFORCEMENT REGARDING NOISE EMISSIONS FROM LOUD",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-18": {
+   "item_id": "fairfax-bos-2026-07-14-item-18",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "ENDORSEMENT OF FISCAL YEAR (FY) 2027 \u2013 2028 ZONING",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-19": {
+   "item_id": "fairfax-bos-2026-07-14-item-19",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "MOTION TO REQUEST EXPEDITED PROCESSING FOR ENTERPRISE",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-23": {
+   "item_id": "fairfax-bos-2026-07-14-item-23",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "Jay Riat, Building Official for Fairfax County, Virginia",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-29": {
+   "item_id": "fairfax-bos-2026-07-14-item-29",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "PROCLAMATION REQUEST FOR HAVEN OF NORTHERN VIRGINIA",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-31": {
+   "item_id": "fairfax-bos-2026-07-14-item-31",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "APPROVAL OF THE PERFORMANCE AUDITOR TO THE BOARD\u2019S",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-32": {
+   "item_id": "fairfax-bos-2026-07-14-item-32",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "SUPPORT OF THE VIRGINIA PASSENGER RAIL AUTHORITY'S (VPRA) APPLICATION FOR FUNDING THROUGH THE FISCAL YEAR (FY) 2025-2026 CONSOLIDATED RAIL INFRASTRUCTURE AND SAFETY IMPROVEMENTS PROGRAM FOR THE OCCOQUAN RIVER",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-38": {
+   "item_id": "fairfax-bos-2026-07-14-item-38",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "MOTION TO EXPEDITE AND ALLOW CONCURRENT SITE PLAN REVIEW FOR SPECIAL EXCEPTION APPLICATION SE 2025-SP-00042, JP MORGAN CHASE BANK, N.A. (SPRINGFIELD DISTRICT)",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-41": {
+   "item_id": "fairfax-bos-2026-07-14-item-41",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "ADMINISTRATIVE ITEMS",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-42": {
+   "item_id": "fairfax-bos-2026-07-14-item-42",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "A-1 \u2013 APPROVAL OF A BOARD OF SUPERVISORS' DRAFT REGULAR",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-43": {
+   "item_id": "fairfax-bos-2026-07-14-item-43",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "A-2 \u2013 APPROVAL OF CHANGES TO THE FAIRFAX COUNTY",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-44": {
+   "item_id": "fairfax-bos-2026-07-14-item-44",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "A-3 \u2013 APPROVAL OF PLAIN LANGUAGE EXPLANATIONS FOR THE",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-45": {
+   "item_id": "fairfax-bos-2026-07-14-item-45",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "A-4 \u2013 AUTHORIZATION OF APPROPRIATION FROM ECONOMIC OPPORTUNITY RESERVE (EOR) FUND TO EXTEND THE FAIRFAX FOUNDERS FUND GRANT AND TECHNICAL ASSISTANCE PROGRAM",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-46": {
+   "item_id": "fairfax-bos-2026-07-14-item-46",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "A-5 \u2013 APPROVAL OF THE FAIRFAX COUNTY DEPARTMENT OF TRANSPORTATION'S MAJOR SERVICE CHANGE, DISPARATE IMPACT, AND DISPROPORTIONATE BURDEN POLICIES FOR THE",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-47": {
+   "item_id": "fairfax-bos-2026-07-14-item-47",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "A-6 \u2013 APPROVAL OF AN ASSESSMENT OF STREAM RESPONSE TO STREAM RESTORATION IN PAUL SPRING BRANCH, FAIRFAX, VA",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-49": {
+   "item_id": "fairfax-bos-2026-07-14-item-49",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "CERTIFICATION BY BOARD MEMBERS REGARDING ITEMS",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-50": {
+   "item_id": "fairfax-bos-2026-07-14-item-50",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "APPOINTMENT OF THE ZONING ADMINISTRATOR",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-51": {
+   "item_id": "fairfax-bos-2026-07-14-item-51",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "APPOINTMENT TO THE BOARD OF ZONING APPEALS",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-52": {
+   "item_id": "fairfax-bos-2026-07-14-item-52",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "THE ACQUISITION OF REAL PROPERTY IN THE MOUNT VERNON",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-54": {
+   "item_id": "fairfax-bos-2026-07-14-item-54",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "3:30 P.M. \u2013 PUBLIC HEARING ON RZ-2024-MA-00013 (6200 WILSON LLC) TO REZONE FROM R-20 AND CRD TO PRM AND CRD TO PERMIT A MIXED USE DEVELOPMENT WITH RETAIL, A NEW MULTIFAMILY RESIDENTIAL BUILDING AND THE RETENTION OF THE EXISTING MULTIFAMILY RESIDENTIAL",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-55": {
+   "item_id": "fairfax-bos-2026-07-14-item-55",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "3:30 P.M. \u2013 PUBLIC HEARING ON RZ-2025-HM-00018 (OLD RESTON ASSOCIATES LLC) TO REZONE FROM PDC TO PDH-12 TO PERMIT 57 SINGLE-FAMILY ATTACHED UNITS AND ADAPTIVE RE-USE OF THE A. SMITH BOWMAN HOUSE FOR RESIDENTIAL OR",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-56": {
+   "item_id": "fairfax-bos-2026-07-14-item-56",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "3:30 P.M. \u2013 PUBLIC HEARING PCA-85-P-002-002/CDPA-85-P-002 (RZPA-2026-PR-00018) (STANDARD HEALTHCARE SERVICES INC) TO AMEND THE PROFFERS AND CONCEPTUAL DEVELOPMENT PLAN FOR RZ-85-P-002 TO ADD A COLLEGE OR UNIVERSITY USE AND",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-57": {
+   "item_id": "fairfax-bos-2026-07-14-item-57",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "3:30 P.M. \u2013 PUBLIC HEARING ON SE-2024-MA-00023 (LAADAM FAMILY, LLC) TO ADD A DRIVE-THROUGH ATM TO AN EXISTING FINANCIAL INSTITUTION, LOCATED ON APPROXIMATELY 19,602 SQUARE FEET OF LAND ZONED C-6, HC",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-58": {
+   "item_id": "fairfax-bos-2026-07-14-item-58",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "3:30 P.M. \u2013 PUBLIC HEARING ON SE-2025-MA-00025 (SNS28 LLC) TO PERMIT CHILD CARE WITH A MAXIMUM OF 99 CHILDREN, LOCATED ON APPROXIMATELY 38,241 SQUARE FEET OF LAND",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-59": {
+   "item_id": "fairfax-bos-2026-07-14-item-59",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "3:30 P.M. \u2013 PUBLIC HEARING ON RZ-2022-HM-00003 (PULTE HOME COMPANY LLC) TO REZONE FROM I-4 TO PRM TO PERMIT THE DEVELOPMENT OF 112 MULTIFAMILY DWELLING UNITS AND 46 STACKED TOWNHOUSE UNITS WITH A FLOOR AREA RATIO (FAR) OF 1.39 INCLUSIVE OF BONUS DENSITY AND",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-60": {
+   "item_id": "fairfax-bos-2026-07-14-item-60",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "4 P.M. \u2013 PUBLIC HEARING ON PROPOSED PLAN AMENDMENT SSPA-2023-III-5UP, LINCOLN PARK IN LAND UNIT D-3, DULLES SUBURBAN CENTER (SULLY DISTRICT)",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-61": {
+   "item_id": "fairfax-bos-2026-07-14-item-61",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "4 P.M. \u2013 PUBLIC HEARING TO CONSIDER ADOPTION OF AN UNCODIFIED ORDINANCE TO ALLOW FOR ADJUSTMENTS OF ACCOUNTS AND PAYMENTS THAT INVOLVE CASH TRANSACTIONS DUE TO THE DECREASE IN PENNIES FOLLOWING THE UNITED STATES MINT\u2019S CESSATION OF THE PRODUCTION OF THE PENNY",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-62": {
+   "item_id": "fairfax-bos-2026-07-14-item-62",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "title": "4 P.M. \u2013 PUBLIC HEARING ON PROPOSED PLAN AMENDMENT",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
    "provenance": {
     "source_id": "fairfax-bos",
     "extractor_version": "1",
@@ -30921,6 +31631,2247 @@
    "file_number": null,
    "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/oct-28-2025-meeting",
    "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2025/10-28-25%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-2-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-2-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-2",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-3-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-3-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-3",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-4-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-4-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-4",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-5-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-5-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-5",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-6-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-6-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-6",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-7-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-7-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-7",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-16-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-16-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-16",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-16-v2": {
+   "vote_id": "fairfax-bos-2026-07-14-item-16-v2",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-16",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-18-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-18-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-18",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "abstain"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9,
+    "abstain": 1
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-19-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-19-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-19",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-23-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-23-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-23",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-29-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-29-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-29",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-31-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-31-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-31",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-32-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-32-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-32",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-38-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-38-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-38",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-41-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-41-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-41",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-42-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-42-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-42",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-43-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-43-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-43",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-44-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-44-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-44",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-45-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-45-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-45",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-46-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-46-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-46",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-47-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-47-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-47",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-49-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-49-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-49",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-50-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-50-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-50",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-51-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-51-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-51",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-52-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-52-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-52",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-54-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-54-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-54",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-55-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-55-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-55",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-56-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-56-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-56",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-57-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-57-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-57",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-58-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-58-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-58",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-59-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-59-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-59",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-60-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-60-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-60",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-61-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-61-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-61",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
+   "provenance": {
+    "source_id": "fairfax-bos",
+    "extractor_version": "1",
+    "run_id": "fairfax-bos-1"
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "fairfax-bos-2026-07-14-item-62-v1": {
+   "vote_id": "fairfax-bos-2026-07-14-item-62-v1",
+   "meeting_id": "fairfax-bos-2026-07-14",
+   "item_id": "fairfax-bos-2026-07-14-item-62",
+   "positions": [
+    {
+     "member": "Jeffrey C. McKay",
+     "position": "aye"
+    },
+    {
+     "member": "Walter Alcorn",
+     "position": "aye"
+    },
+    {
+     "member": "James N. Bierman, Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Patrick S. Herrity",
+     "position": "aye"
+    },
+    {
+     "member": "Andres F. Jimenez",
+     "position": "aye"
+    },
+    {
+     "member": "Rodney Lusk",
+     "position": "aye"
+    },
+    {
+     "member": "Dalia Palchik",
+     "position": "aye"
+    },
+    {
+     "member": "Rachna Sizemore Heizer",
+     "position": "aye"
+    },
+    {
+     "member": "Kathy L. Smith",
+     "position": "aye"
+    },
+    {
+     "member": "Daniel G. Storck",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 10
+   },
+   "result": "pass",
+   "file_number": null,
+   "source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/jul-14-2026-meeting",
+   "data_source_url": "https://www.fairfaxcounty.gov/boardofsupervisors/sites/boardofsupervisors/files/Assets/meeting-materials/2026/07-14-26%20Final%20Summary.pdf",
    "provenance": {
     "source_id": "fairfax-bos",
     "extractor_version": "1",
