@@ -1,0 +1,2396 @@
+{
+ "meetings": {
+  "seattle-bos-2026-07-14": {
+   "meeting_id": "seattle-bos-2026-07-14",
+   "body": "City Council",
+   "date": "2026-07-14",
+   "attendance": {
+    "Dan Strauss": "present",
+    "Alexis Mercedes Rinck": "present",
+    "Eddie Lin": "present",
+    "Debora Juarez": "present",
+    "Rob Saka": "present",
+    "Robert Kettle": "present",
+    "Dionne Foster": "present",
+    "Maritza Rivera": "present",
+    "Joy Hollingsworth": "present"
+   },
+   "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+   "data_source_url": "https://legistar2.granicus.com/seattle/meetings/2026/7/6827_M_City_Council_26-07-14_Full_Council_Meeting_Minutes.pdf",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07": {
+   "meeting_id": "seattle-bos-2026-07-07",
+   "body": "City Council",
+   "date": "2026-07-07",
+   "attendance": {
+    "Dan Strauss": "absent",
+    "Alexis Mercedes Rinck": "present",
+    "Eddie Lin": "present",
+    "Debora Juarez": "absent",
+    "Rob Saka": "present",
+    "Robert Kettle": "present",
+    "Dionne Foster": "present",
+    "Maritza Rivera": "present",
+    "Joy Hollingsworth": "present"
+   },
+   "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+   "data_source_url": "https://legistar2.granicus.com/seattle/meetings/2026/7/6819_M_City_Council_26-07-07_Full_Council_Meeting_Minutes.pdf",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-06-30": {
+   "meeting_id": "seattle-bos-2026-06-30",
+   "body": "City Council",
+   "date": "2026-06-30",
+   "attendance": {
+    "Dan Strauss": "present",
+    "Alexis Mercedes Rinck": "present",
+    "Eddie Lin": "present",
+    "Debora Juarez": "present",
+    "Rob Saka": "present",
+    "Robert Kettle": "present",
+    "Dionne Foster": "present",
+    "Maritza Rivera": "present",
+    "Joy Hollingsworth": "present"
+   },
+   "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6811&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+   "data_source_url": "https://legistar2.granicus.com/seattle/meetings/2026/6/6811_M_City_Council_26-06-30_Full_Council_Meeting_Minutes.pdf",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6811&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  }
+ },
+ "agenda_items": {
+  "seattle-bos-2026-07-14-item-124514": {
+   "item_id": "seattle-bos-2026-07-14-item-124514",
+   "meeting_id": "seattle-bos-2026-07-14",
+   "title": "Appointment of Zahoor Ahmed as member, Washington State Convention Center Public Facilities District Board, for a term to July 30, 2030.",
+   "action": "confirmed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-14-item-124516": {
+   "item_id": "seattle-bos-2026-07-14-item-124516",
+   "meeting_id": "seattle-bos-2026-07-14",
+   "title": "Appointment of Danielle Budd as member, Domestic Workers Standards Board, for a term to February 28, 2028.",
+   "action": "confirmed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-14-item-124517": {
+   "item_id": "seattle-bos-2026-07-14-item-124517",
+   "meeting_id": "seattle-bos-2026-07-14",
+   "title": "Reappointment of Estefana R. Harry as member, Domestic Workers Standards Board, for a term to February 28, 2028.",
+   "action": "confirmed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-14-item-124518": {
+   "item_id": "seattle-bos-2026-07-14-item-124518",
+   "meeting_id": "seattle-bos-2026-07-14",
+   "title": "Appointment of Serhii Fulytka as member, Domestic Workers Standards Board, for a term to February 28, 2029.",
+   "action": "confirmed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-14-item-124519": {
+   "item_id": "seattle-bos-2026-07-14-item-124519",
+   "meeting_id": "seattle-bos-2026-07-14",
+   "title": "Appointment of Jared Lowery as member, Domestic Workers Standards Board, for a term to February 28, 2029.",
+   "action": "confirmed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-14-item-124523": {
+   "item_id": "seattle-bos-2026-07-14-item-124523",
+   "meeting_id": "seattle-bos-2026-07-14",
+   "title": "An ordinance relating to the Utility Discount Program; amending the income threshold for the utility discount program for water, wastewater, drainage, solid waste, and electric utility services; and amending Sections 21.49.040 and 21.76.030",
+   "action": "passed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-14-item-124529": {
+   "item_id": "seattle-bos-2026-07-14-item-124529",
+   "meeting_id": "seattle-bos-2026-07-14",
+   "title": "An ordinance relating to City employment; establishing the Forensic Digital Evidence classification title series and corresponding rates of pay in the Seattle Police Department.",
+   "action": "passed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-14-item-124550": {
+   "item_id": "seattle-bos-2026-07-14-item-124550",
+   "meeting_id": "seattle-bos-2026-07-14",
+   "title": "An ordinance appropriating money to pay certain claims for the week of June 29, 2026, through July 3, 2026, and ordering the payment thereof; and ratifying and confirming certain prior acts.",
+   "action": "passed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-item-124343": {
+   "item_id": "seattle-bos-2026-07-07-item-124343",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "title": "Appointment of T.J. Stutman as member, Seattle Planning Commission, for a term to April 15, 2028.",
+   "action": "confirmed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-item-124344": {
+   "item_id": "seattle-bos-2026-07-07-item-124344",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "title": "Appointment of Amir Ehsaei as member, Seattle Planning Commission, for a term to April 15, 2029.",
+   "action": "confirmed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-item-124345": {
+   "item_id": "seattle-bos-2026-07-07-item-124345",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "title": "Appointment of Hailey P. Karcher as member, Seattle Planning Commission, for a term to April 15, 2029.",
+   "action": "confirmed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-item-124346": {
+   "item_id": "seattle-bos-2026-07-07-item-124346",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "title": "Appointment of Patrick W. Taylor as member, Seattle Planning Commission, for a term to April 15, 2029.",
+   "action": "confirmed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-item-124347": {
+   "item_id": "seattle-bos-2026-07-07-item-124347",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "title": "Reappointment of P Xiomara Alvarez as member, Seattle Planning Commission, for a term to April 15, 2029.",
+   "action": "confirmed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-item-124348": {
+   "item_id": "seattle-bos-2026-07-07-item-124348",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "title": "Reappointment of Andrew L. Dannenberg as member, Seattle Planning Commission, for a term to April 15, 2029.",
+   "action": "confirmed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-item-124360": {
+   "item_id": "seattle-bos-2026-07-07-item-124360",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "title": "An ordinance relating to the City Light Department; authorizing the Department to enter into long-term agreements for the acquisition of electric power, including attributes, transmission, or ancillary services; and amending Section 21.49.1",
+   "action": "passed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-item-124361": {
+   "item_id": "seattle-bos-2026-07-07-item-124361",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "title": "A resolution relating to the City Light Department; adopting a 2027-2032 Strategic Plan for the City Light Department and endorsing the associated rate path.",
+   "action": "adopted",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-item-124363": {
+   "item_id": "seattle-bos-2026-07-07-item-124363",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "title": "A resolution adopting updated policies regarding the establishment and management of Parking and Business Improvement Areas for The City of Seattle; and superseding Resolution 31657.",
+   "action": "adopted as amended",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-item-124392": {
+   "item_id": "seattle-bos-2026-07-07-item-124392",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "title": "An ordinance appropriating money to pay certain claims for the week of June 22, 2026, through June 26, 2026, and ordering the payment thereof; and ratifying and confirming certain prior acts.",
+   "action": "passed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-06-30-item-124240": {
+   "item_id": "seattle-bos-2026-06-30-item-124240",
+   "meeting_id": "seattle-bos-2026-06-30",
+   "title": "An ordinance relating to housing for low-income households; adopting the 2023 Seattle Housing Levy Administrative and Financial Plan for program years 2026-2028; adopting Housing Funding Policies for program years 2026-2028 for the 2023 Sea",
+   "action": "passed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6811&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-06-30-item-124241": {
+   "item_id": "seattle-bos-2026-06-30-item-124241",
+   "meeting_id": "seattle-bos-2026-06-30",
+   "title": "An ordinance relating to the Office of Housing; granting a ground lease of real property located at 2929 27th Ave South; authorizing the Director of the Office of Housing to grant a lease of the real property to MBTOD Phase One LLLP, an aff",
+   "action": "passed as amended",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6811&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-06-30-item-124242": {
+   "item_id": "seattle-bos-2026-06-30-item-124242",
+   "meeting_id": "seattle-bos-2026-06-30",
+   "title": "An ordinance relating to the Seattle Office of Housing (OH); placing acquired real property in the Montlake neighborhood under the jurisdiction of OH; authorizing OH to issue a competitive request for proposals for selection of a preferred ",
+   "action": "passed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6811&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-06-30-item-124243": {
+   "item_id": "seattle-bos-2026-06-30-item-124243",
+   "meeting_id": "seattle-bos-2026-06-30",
+   "title": "An ordinance relating to the Office of Housing; authorizing the acquisition of two parcels in the Central Area for the purpose of developing affordable homeownership units; placing the property under the jurisdiction of the Office of Housin",
+   "action": "passed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6811&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-06-30-item-124245": {
+   "item_id": "seattle-bos-2026-06-30-item-124245",
+   "meeting_id": "seattle-bos-2026-06-30",
+   "title": "An ordinance relating to the operations of the Community Assisted Response and Engagement Department; describing the duties of the Community Crisis Responder team; amending Section 3.15.060 of the Seattle Municipal Code; and adding a new Se",
+   "action": "passed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6811&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-06-30-item-124246": {
+   "item_id": "seattle-bos-2026-06-30-item-124246",
+   "meeting_id": "seattle-bos-2026-06-30",
+   "title": "An ordinance relating to closing public streets to maintain or enhance public safety; authorizing the Director of Transportation to close streets; amending Section 11.16.125 of the Seattle Municipal Code; declaring an emergency; and establi",
+   "action": "passed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6811&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-06-30-item-124296": {
+   "item_id": "seattle-bos-2026-06-30-item-124296",
+   "meeting_id": "seattle-bos-2026-06-30",
+   "title": "An ordinance appropriating money to pay certain claims for the week of June 15, 2026, through June 19, 2026, and ordering the payment thereof; and ratifying and confirming certain prior acts.",
+   "action": "passed",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6811&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  }
+ },
+ "vote_events": {
+  "seattle-bos-2026-07-14-vote-124514": {
+   "vote_id": "seattle-bos-2026-07-14-vote-124514",
+   "meeting_id": "seattle-bos-2026-07-14",
+   "item_id": "seattle-bos-2026-07-14-item-124514",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-14-vote-124516": {
+   "vote_id": "seattle-bos-2026-07-14-vote-124516",
+   "meeting_id": "seattle-bos-2026-07-14",
+   "item_id": "seattle-bos-2026-07-14-item-124516",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-14-vote-124517": {
+   "vote_id": "seattle-bos-2026-07-14-vote-124517",
+   "meeting_id": "seattle-bos-2026-07-14",
+   "item_id": "seattle-bos-2026-07-14-item-124517",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-14-vote-124518": {
+   "vote_id": "seattle-bos-2026-07-14-vote-124518",
+   "meeting_id": "seattle-bos-2026-07-14",
+   "item_id": "seattle-bos-2026-07-14-item-124518",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-14-vote-124519": {
+   "vote_id": "seattle-bos-2026-07-14-vote-124519",
+   "meeting_id": "seattle-bos-2026-07-14",
+   "item_id": "seattle-bos-2026-07-14-item-124519",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-14-vote-124523": {
+   "vote_id": "seattle-bos-2026-07-14-vote-124523",
+   "meeting_id": "seattle-bos-2026-07-14",
+   "item_id": "seattle-bos-2026-07-14-item-124523",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-14-vote-124529": {
+   "vote_id": "seattle-bos-2026-07-14-vote-124529",
+   "meeting_id": "seattle-bos-2026-07-14",
+   "item_id": "seattle-bos-2026-07-14-item-124529",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-14-vote-124550": {
+   "vote_id": "seattle-bos-2026-07-14-vote-124550",
+   "meeting_id": "seattle-bos-2026-07-14",
+   "item_id": "seattle-bos-2026-07-14-item-124550",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-vote-124343": {
+   "vote_id": "seattle-bos-2026-07-07-vote-124343",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "item_id": "seattle-bos-2026-07-07-item-124343",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "absent"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 2
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-vote-124344": {
+   "vote_id": "seattle-bos-2026-07-07-vote-124344",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "item_id": "seattle-bos-2026-07-07-item-124344",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "absent"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 2
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-vote-124345": {
+   "vote_id": "seattle-bos-2026-07-07-vote-124345",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "item_id": "seattle-bos-2026-07-07-item-124345",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "absent"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 2
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-vote-124346": {
+   "vote_id": "seattle-bos-2026-07-07-vote-124346",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "item_id": "seattle-bos-2026-07-07-item-124346",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "absent"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 2
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-vote-124347": {
+   "vote_id": "seattle-bos-2026-07-07-vote-124347",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "item_id": "seattle-bos-2026-07-07-item-124347",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "absent"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 2
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-vote-124348": {
+   "vote_id": "seattle-bos-2026-07-07-vote-124348",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "item_id": "seattle-bos-2026-07-07-item-124348",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "absent"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 2
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-vote-124360": {
+   "vote_id": "seattle-bos-2026-07-07-vote-124360",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "item_id": "seattle-bos-2026-07-07-item-124360",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "absent"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 2
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-vote-124361": {
+   "vote_id": "seattle-bos-2026-07-07-vote-124361",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "item_id": "seattle-bos-2026-07-07-item-124361",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "absent"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 2
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-vote-124363": {
+   "vote_id": "seattle-bos-2026-07-07-vote-124363",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "item_id": "seattle-bos-2026-07-07-item-124363",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "absent"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 2
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-07-07-vote-124392": {
+   "vote_id": "seattle-bos-2026-07-07-vote-124392",
+   "meeting_id": "seattle-bos-2026-07-07",
+   "item_id": "seattle-bos-2026-07-07-item-124392",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "absent"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 2
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6819&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-06-30-vote-124240": {
+   "vote_id": "seattle-bos-2026-06-30-vote-124240",
+   "meeting_id": "seattle-bos-2026-06-30",
+   "item_id": "seattle-bos-2026-06-30-item-124240",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6811&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-06-30-vote-124241": {
+   "vote_id": "seattle-bos-2026-06-30-vote-124241",
+   "meeting_id": "seattle-bos-2026-06-30",
+   "item_id": "seattle-bos-2026-06-30-item-124241",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6811&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-06-30-vote-124242": {
+   "vote_id": "seattle-bos-2026-06-30-vote-124242",
+   "meeting_id": "seattle-bos-2026-06-30",
+   "item_id": "seattle-bos-2026-06-30-item-124242",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6811&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-06-30-vote-124243": {
+   "vote_id": "seattle-bos-2026-06-30-vote-124243",
+   "meeting_id": "seattle-bos-2026-06-30",
+   "item_id": "seattle-bos-2026-06-30-item-124243",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6811&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-06-30-vote-124245": {
+   "vote_id": "seattle-bos-2026-06-30-vote-124245",
+   "meeting_id": "seattle-bos-2026-06-30",
+   "item_id": "seattle-bos-2026-06-30-item-124245",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6811&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-06-30-vote-124246": {
+   "vote_id": "seattle-bos-2026-06-30-vote-124246",
+   "meeting_id": "seattle-bos-2026-06-30",
+   "item_id": "seattle-bos-2026-06-30-item-124246",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6811&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "seattle-bos-2026-06-30-vote-124296": {
+   "vote_id": "seattle-bos-2026-06-30-vote-124296",
+   "meeting_id": "seattle-bos-2026-06-30",
+   "item_id": "seattle-bos-2026-06-30-item-124296",
+   "positions": [
+    {
+     "member": "Dionne Foster",
+     "position": "aye"
+    },
+    {
+     "member": "Joy Hollingsworth",
+     "position": "aye"
+    },
+    {
+     "member": "Debora Juarez",
+     "position": "aye"
+    },
+    {
+     "member": "Robert Kettle",
+     "position": "aye"
+    },
+    {
+     "member": "Eddie Lin",
+     "position": "aye"
+    },
+    {
+     "member": "Alexis Mercedes Rinck",
+     "position": "aye"
+    },
+    {
+     "member": "Maritza Rivera",
+     "position": "aye"
+    },
+    {
+     "member": "Rob Saka",
+     "position": "aye"
+    },
+    {
+     "member": "Dan Strauss",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6811&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  }
+ },
+ "members": {
+  "Alexis Mercedes Rinck": {
+   "name": "Alexis Mercedes Rinck",
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   }
+  },
+  "Dan Strauss": {
+   "name": "Dan Strauss",
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   }
+  },
+  "Debora Juarez": {
+   "name": "Debora Juarez",
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   }
+  },
+  "Dionne Foster": {
+   "name": "Dionne Foster",
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   }
+  },
+  "Eddie Lin": {
+   "name": "Eddie Lin",
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   }
+  },
+  "Joy Hollingsworth": {
+   "name": "Joy Hollingsworth",
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   }
+  },
+  "Maritza Rivera": {
+   "name": "Maritza Rivera",
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   }
+  },
+  "Rob Saka": {
+   "name": "Rob Saka",
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   }
+  },
+  "Robert Kettle": {
+   "name": "Robert Kettle",
+   "provenance": {
+    "source_id": "seattle-bos",
+    "extractor_version": "1",
+    "run_id": "seattle-bos-1",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "certification": {
+     "certified": true,
+     "method": "legistar-rest-api+minutes-rollcall"
+    }
+   }
+  }
+ },
+ "meta": {
+  "title": "Seattle City Council, Seattle, WA",
+  "sub": "Legistar (Seattle tenant) \u00b7 auto-onboarded, single-source",
+  "artifact": "extractors/seattle-bos/v1_attempt2.py",
+  "platform": "legistar",
+  "meetings_arg": 3
+ }
+}

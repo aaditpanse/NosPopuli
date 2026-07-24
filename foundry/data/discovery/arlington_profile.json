@@ -1,0 +1,102 @@
+{
+ "jurisdiction": "Arlington County Board, Arlington County, Virginia",
+ "primary_source": {
+  "system": "Hyland OnBase Agenda Online",
+  "base_urls": [
+   "https://meetings.arlingtonva.us/CountyBoard",
+   "https://meetings.arlingtonva.us/CountyBoard/Meetings",
+   "https://meetings.arlingtonva.us/CountyBoard/Meetings/ViewMeeting?id={meetingId}&doctype={1=agenda|2=minutes}"
+  ],
+  "rung": "html",
+  "era_covered": "2023\u2013present (note: OnBase banner states 'we are in the process of moving our historical County Board Meeting archives')",
+  "how_to_enumerate_meetings": "Fetch https://meetings.arlingtonva.us/CountyBoard \u2014 the homepage lists all upcoming and recent meetings as HTML with embedded meeting IDs (e.g. id=2722, id=2737, id=2739). Use the /CountyBoard/Meetings search page to filter by Meeting Type (Regular, Recessed, Closed Session, Organizational, Budget, CIP, Tax Rate, Work Session, Special, Carry Over) and/or date range. Each meeting row contains direct PDF links for the agenda, minutes, and agenda packet.",
+  "meeting_types_available": [
+   "County Board Regular Meeting",
+   "County Board Recessed Meeting",
+   "County Board Closed Session Meeting",
+   "County Board January Organizational Meeting",
+   "County Board Special Meeting",
+   "County Board Work Session Meeting",
+   "County Board Carry Over Meeting",
+   "County Board Budget Public Hearing",
+   "County Board Budget Work Session Meeting",
+   "County Board Tax Rate Meeting",
+   "Capital Improvement Plan (CIP) Public Hearing",
+   "Capital Improvement Plan (CIP) Work Session Meeting"
+  ],
+  "sample_document_urls": [
+   "https://meetings.arlingtonva.us/CountyBoard/Meetings/ViewMeeting?id=2722&doctype=1  (agenda viewer, Regular Meeting 2026-01-24)",
+   "https://meetings.arlingtonva.us/CountyBoard/Documents/DownloadFile/County_Board_Regular_Meeting_2722_Agenda_1_24_2026_9_30_00_AM.pdf?documentType=1&meetingId=2722",
+   "https://meetings.arlingtonva.us/CountyBoard/Documents/DownloadFile/County_Board_Regular_Meeting_2722_Minutes_1_24_2026_9_30_00_AM.pdf?documentType=2&meetingId=2722",
+   "https://meetings.arlingtonva.us/CountyBoard/Documents/DownloadFile/County_Board_Regular_Meeting_2722_Agenda_Packet_1_24_2026_9_30_00_AM.pdf?documentType=5&meetingId=2722&isAttachment=True",
+   "https://meetings.arlingtonva.us/CountyBoard/Documents/DownloadFile/County_Board_January_Organizational_Meeting_2737_Minutes_1_5_2026_6_00_00_PM.pdf?documentType=2&meetingId=2737"
+  ],
+  "access_constraints": "ViewMeeting detail pages are JavaScript-rendered SPAs (body is empty HTML shell until JS executes). PDF DownloadFile URLs also redirect through a JS 'Downloading, Please wait...' interstitial page rather than serving the PDF directly \u2014 a headless browser or session cookie may be required to retrieve the actual file."
+ },
+ "second_source": {
+  "exists": true,
+  "system": "Granicus (arlington.granicus.com)",
+  "urls": [
+   "https://arlington.granicus.com/ViewPublisher.php?view_id=2  (full meeting archive index)",
+   "https://arlington.granicus.com/AgendaViewer.php?view_id=2&clip_id={clip_id}  (HTML agenda \u2014 confirmed rendering full agenda text)",
+   "https://arlington.granicus.com/MinutesViewer.php?view_id=2&clip_id={clip_id}  (HTML minutes \u2014 redirects to DocumentViewer)",
+   "https://arlington.granicus.com/ViewPublisherRSS.php?view_id=2&mode=agendas  (RSS feed for agendas)",
+   "https://arlington.granicus.com/ViewPublisherRSS.php?view_id=2&mode=minutes  (RSS feed for minutes)"
+  ],
+  "what_it_affirms": "Granicus is an independently operated video/document archive that predates OnBase and extends the historical record further back (clip IDs reach into the low thousands, consistent with 2004+ coverage). It stores HTML agendas (confirmed: full agenda text rendered at AgendaViewer for clip 4277, a Sep 2023 Recessed Meeting), HTML/PDF minutes (MinutesViewer confirmed for clip 4244), and \u2014 critically \u2014 structured 'Motions/Votes' as a first-class searchable content type in its advanced search interface (alongside Agenda Items, Attachment Items, Notes, and Captions). Granicus therefore independently affirms meeting content and provides a separate path to motion/vote records distinct from the OnBase minutes PDFs.",
+  "era_covered": "~2004 to present based on archive structure; pre-2004 static HTML agendas linked from arlingtonva.us/Government/Departments/County-Board/County-Board-Meetings/County-Board-Meetings-and-Agendas/Agendas-1999-2003"
+ },
+ "votes_located": "Per-item vote data lives in two places:\n\n1. **Minutes PDFs** (primary narrative record) \u2014 accessible via OnBase DownloadFile URLs (JS-gated) and via Granicus MinutesViewer (redirects to DocumentViewer). Based on Arlington County's published format for all boards, minutes record mover, seconder, and outcome per item (e.g. 'moved \u2026 seconded \u2026 The motion passed, 5-0' style confirmed in structurally identical Arlington County advisory board minutes PDFs at arlingtonva.us).\n\n2. **Granicus 'Motions/Votes' search index** \u2014 the Granicus advanced search at arlington.granicus.com/ViewPublisher.php?view_id=2 explicitly lists 'Motions/Votes' as a standalone searchable content type, meaning Granicus indexes structured motion/vote text per clip. Querying this endpoint (once the correct search path is identified) would yield vote lines keyed to clip_id (meeting) and timestamp. Exact structured vote fields (individual member yeas/nays) could not be confirmed without rendering the JS-gated minutes PDFs; narrative tally votes (e.g. '5-0', '4-1') are the confirmed format.",
+ "systems_surveyed": [
+  {
+   "system": "Legistar (webapi.legistar.com/v1/arlington/bodies)",
+   "url": "https://webapi.legistar.com/v1/arlington/bodies",
+   "status": "HTTP 500 \u2014 Arlington is NOT a Legistar tenant",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "PrimeGov (arlington.primegov.com)",
+   "url": "https://arlington.primegov.com/api/v2/PublicPortal/ListArchivedMeetings?year=2024",
+   "status": "DNS resolution failure \u2014 Arlington is NOT a PrimeGov tenant",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "Hyland OnBase Agenda Online",
+   "url": "https://meetings.arlingtonva.us/CountyBoard",
+   "status": "HTTP 200 \u2014 LIVE, confirmed meeting listings with IDs 2722\u20132739+ and PDF document links for 2023\u20132026",
+   "era_covered": "2023\u2013present (historical archives in migration)"
+  },
+  {
+   "system": "Granicus",
+   "url": "https://arlington.granicus.com/ViewPublisher.php?view_id=2",
+   "status": "HTTP 200 \u2014 LIVE, confirmed AgendaViewer (clip 4277) and MinutesViewer (clip 4244) links; RSS feeds active; Motions/Votes search type confirmed",
+   "era_covered": "~2004\u2013present; pre-2004 static pages on arlingtonva.us"
+  },
+  {
+   "system": "Arlington County official site (arlingtonva.us County Board meetings page)",
+   "url": "https://www.arlingtonva.us/Government/Departments/County-Board/County-Board-Meetings",
+   "status": "HTTP 403 Forbidden on direct fetch; content confirmed via search snippets \u2014 links out to Granicus and OnBase",
+   "era_covered": "Static HTML agendas 1999\u20132003; links to live systems for 2004\u2013present"
+  },
+  {
+   "system": "Granicus APIs (ClipData, ViewPublisherAPI, getCategoryVotes, results search)",
+   "url": "https://arlington.granicus.com/APIs/ClipData.php?view_id=2&clip_id=4244",
+   "status": "HTTP 404 \u2014 Granicus public API endpoints not exposed for this tenant",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "OnBase REST/ASMX services",
+   "url": "https://meetings.arlingtonva.us/CountyBoard/Services/AgendaOnlineService.asmx/GetMeetings",
+   "status": "HTTP 200 but returns OnBase error page ('web page not available') \u2014 no public API exposed",
+   "era_covered": "N/A"
+  }
+ ],
+ "access_constraints": "1. OnBase ViewMeeting pages and DownloadFile PDF links are JavaScript-gated \u2014 a headless browser (Playwright/Puppeteer) or authenticated session is required to retrieve rendered agenda/minutes content or trigger actual PDF downloads. 2. Granicus public JSON/XML API endpoints (ClipData, ViewPublisherAPI, getCategoryVotes) return 404 for this tenant \u2014 data must be scraped from HTML AgendaViewer/MinutesViewer pages. 3. arlingtonva.us itself returns HTTP 403 on direct fetch (likely Cloudflare), but its content is available via search cache and its linked systems (OnBase, Granicus) are directly accessible. 4. No authentication or FOIA required for any public meeting records \u2014 all content is open public access once JS rendering constraint is met.",
+ "open_questions": [
+  "Can individual member-level yes/no votes (not just aggregate tally) be extracted from the minutes PDFs or Granicus Motions/Votes index? The narrative format confirmed for advisory boards uses tallies (e.g., '5-0'); County Board minutes may or may not list each member's vote by name.",
+  "What is the correct Granicus search URL path for querying Motions/Votes by type? The advanced search UI exists at arlington.granicus.com/ViewPublisher.php?view_id=2 but the /results.php and /search/ paths returned 404.",
+  "OnBase states it is 'in the process of moving historical County Board Meeting archives' \u2014 what year does the OnBase record currently start at, and where do the pre-2023 structured records live during migration (Granicus only, or an older OnBase instance)?",
+  "Is there a direct (non-JS-gated) URL pattern for the minutes PDFs stored in OnBase, or must all PDF retrieval go through a headless browser?",
+  "The Granicus MinutesViewer for recent clips (e.g., 4244) redirects to a DocumentViewer \u2014 what is the DocumentViewer URL pattern and does it serve the PDF or render it inline?"
+ ]
+}

@@ -1,0 +1,91 @@
+{
+ "jurisdiction": "Chicago City Council, Chicago, IL",
+ "primary_source": {
+  "system": "City Clerk Electronic Legislative Management System (eLMS) \u2014 custom Microsoft Power Platform / Dynamics 365 backend, publicly documented with Swagger 2.0",
+  "base_urls": [
+   "https://chicityclerkelms.chicago.gov/  (web portal)",
+   "https://api.chicityclerkelms.chicago.gov/  (REST API root + Swagger UI)",
+   "https://api.chicityclerkelms.chicago.gov/swagger.json  (OpenAPI spec)"
+  ],
+  "rung": "api",
+  "how_to_enumerate_meetings": "GET https://api.chicityclerkelms.chicago.gov/meeting-agenda?filter=body%20eq%20%27City%20Council%27&sort=date%20desc&top=100&skip=0  \u2014 returns paginated JSON with meetingId, date, status, agenda items, and file attachments. Use `top` + `skip` to page through all 295 City Council meetings on record.",
+  "sample_document_urls": [
+   "Meeting list (City Council, desc): https://api.chicityclerkelms.chicago.gov/meeting-agenda?filter=body%20eq%20%27City%20Council%27&sort=date%20desc&top=3",
+   "Single meeting record (M26-0001511, 2026-07-15): https://api.chicityclerkelms.chicago.gov/meeting-agenda/DF5C52EA-0D6B-F111-A823-001DD8019941",
+   "Per-item roll-call votes: https://api.chicityclerkelms.chicago.gov/meeting-agenda/DF5C52EA-0D6B-F111-A823-001DD8019941/matter/B175CDB2-A153-F111-BEC6-001DD8033B18/votes",
+   "All legislative bodies: https://api.chicityclerkelms.chicago.gov/body/",
+   "Swagger spec: https://api.chicityclerkelms.chicago.gov/swagger.json",
+   "Agenda PDF (Jul 2026 meeting): https://occprodstoragev1.blob.core.usgovcloudapi.net/meetingattachmentspublic/cf29cbec-a4d5-4adf-8bd9-d55536d5dacf.pdf"
+  ]
+ },
+ "second_source": {
+  "exists": true,
+  "system": "Journal of the Proceedings \u2014 official statutory record published by the Chicago City Clerk after every City Council meeting, hosted as PDFs on AWS S3 (chicityclerk.s3.us-west-2.amazonaws.com). Index page: https://www.chicityclerk.com/legislation-records/journals-and-reports/journals-proceedings",
+  "urls": [
+   "https://chicityclerk.s3.us-west-2.amazonaws.com/s3fs-public-1/reports/2026_03_18%20Journal%20of%20the%20Proceedings.pdf  (verified accessible, 13.8 MB)",
+   "https://chicityclerk.s3.us-west-2.amazonaws.com/s3fs-public-1/reports/2026_06_17%20Journal%20of%20the%20Proceedings%20Vol.%20I.pdf  (31.93 MB)",
+   "https://chicityclerk.s3.us-west-2.amazonaws.com/s3fs-public-1/reports/2026_06_17%20Journal%20of%20the%20Proceedings%20Vol.%20II.pdf  (52.89 MB)"
+  ],
+  "what_it_affirms": "Independently produced statutory record containing: synopsis of introductions, full text of adopted legislation, roll call votes, attendance, motions, and parliamentary actions. Verified: the March 18 2026 PDF opened and shows 'JOURNAL of the PROCEEDINGS of the CITY COUNCIL of the CITY of CHICAGO, ILLINOIS \u2014 Regular Meeting -- Wednesday, March 18, 2026 \u2014 OFFICIAL RECORD.' Table of contents lists committee reports, Agreed Calendar, and roll call vote sections. Produced independently of the eLMS API and can cross-validate item-level votes."
+ },
+ "votes_located": "Per-item roll-call votes are available via the eLMS REST API at GET /meeting-agenda/{meetingId}/matter/{lineId}/votes. Each record returns voterName, vote value, and personId. Verified example from meeting M26-0001511 (City Council, July 15 2026), matter O2026-0025382 (Zoning Reclassification, hasVotes=true, voteType='Roll Call'): {\\\"voterName\\\": \\\"Lee, Nicole T.\\\", \\\"vote\\\": \\\"Yea\\\", \\\"personId\\\": \\\"E29E5122-7BB7-EC11-983E-001DD8049E83\\\"} \u2014 followed by all 50 alderpersons. Votes are also embedded in /matter records under actions[]/votes[] (filterable on actions/votes/voterName and actions/votes/vote). Roll call votes also appear in the Journal of Proceedings PDF as a second source.",
+ "systems_surveyed": [
+  {
+   "system": "eLMS REST API (primary, current)",
+   "url": "https://api.chicityclerkelms.chicago.gov/",
+   "status": "200 OK \u2014 fully live, returns rich JSON; Swagger 2.0 spec at /swagger.json; no auth required",
+   "era_covered": "December 1, 2010 to present (295 City Council meetings, 3605+ total meetings across all bodies)"
+  },
+  {
+   "system": "eLMS Web Portal",
+   "url": "https://chicityclerkelms.chicago.gov/Meetings/?body=City+Council",
+   "status": "200 OK \u2014 HTML SPA that calls the API; confirms API endpoints and CSV export",
+   "era_covered": "December 1, 2010 to present"
+  },
+  {
+   "system": "chicago.legistar.com (legacy Legistar web UI)",
+   "url": "https://chicago.legistar.com/",
+   "status": "Accessible as a web UI but returns 'Invalid parameters!' on most direct page fetches; Legistar Webapi tenant 'chicago' returns HTTP 500 (API likely decommissioned). Replaced by eLMS circa June 2023.",
+   "era_covered": "December 1, 2010 \u2013 ~June 2023 (historical archive; new records no longer posted here)"
+  },
+  {
+   "system": "Legistar Webapi (chicago slug)",
+   "url": "https://webapi.legistar.com/v1/chicago/bodies",
+   "status": "HTTP 500 \u2014 tenant not found / API decommissioned for Chicago",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "Legistar Webapi (ChicagoCityClerk slug)",
+   "url": "https://webapi.legistar.com/v1/ChicagoCityClerk/bodies",
+   "status": "HTTP 500 \u2014 tenant not found",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "Journal of Proceedings (PDF, second source)",
+   "url": "https://www.chicityclerk.com/legislation-records/journals-and-reports/journals-proceedings",
+   "status": "200 OK \u2014 index page live; PDFs on S3 verified accessible (2026 through at least 2010)",
+   "era_covered": "2010 to present (current entry: June 17, 2026)"
+  },
+  {
+   "system": "City of Chicago FOIA/Minutes portal",
+   "url": "https://www.chicago.gov/city/en/narr/foia/minutes_and_agendas.html",
+   "status": "200 OK \u2014 links to Journal of Proceedings and commission minutes; not a separate data system",
+   "era_covered": "Varies by body"
+  },
+  {
+   "system": "chicityclerk.com Council & Committee Reports",
+   "url": "https://www.chicityclerk.com/legislation-records/journals-and-reports/council-meeting-reports",
+   "status": "200 OK \u2014 Monthly Committee Reports/Minutes and Attendance/Divided Roll Call Reports as PDFs",
+   "era_covered": "Current (2026 entries confirmed)"
+  }
+ ],
+ "access_constraints": "No authentication required for the eLMS public API (https://api.chicityclerkelms.chicago.gov). Terms of Service at https://chicityclerkelms.chicago.gov/TermsAndConditions must be reviewed before ingestion. The API is labeled 'BETA' in the Swagger spec. Journal PDFs are open on public AWS S3. Agenda/notice PDFs are hosted on Azure Government Cloud (occprodstoragev1.blob.core.usgovcloudapi.net) and appear to be publicly accessible. No rate-limit headers observed, but should be respected.",
+ "open_questions": [
+  "The eLMS API is labeled 'BETA' \u2014 confirm with ClerkELMSSupport@cityofchicago.org whether it is production-stable and if breaking changes are versioned.",
+  "The lineId parameter in /meeting-agenda/{meetingId}/matter/{lineId}/votes appears to accept matterId (UUID). Confirm this mapping is stable \u2014 the Swagger labels it 'lineId' but the agenda item fields return 'matterId'.",
+  "chicago.legistar.com web UI still loads \u2014 determine exactly what date range it covers and whether its data was fully migrated into eLMS (the 'legacy identifiers vs new identifiers' issue noted by Chicago Councilmatic suggests a possible gap or dual-ID problem around June 2023).",
+  "The eLMS meeting-agenda list endpoint ignores the $top query parameter (returns all facets regardless) \u2014 confirm correct pagination parameter name ('top' per Swagger) and whether server-side paging is enforced.",
+  "Azure Government blob storage base URL (occprodstoragev1.blob.core.usgovcloudapi.net) for attachment PDFs \u2014 confirm public read access does not require SAS tokens or expire.",
+  "Monthly Committee Reports/Minutes PDFs on chicityclerk.com \u2014 determine if these contain structured vote data or only narrative minutes, and whether they supplement the API vote records for committee (non-full-Council) meetings."
+ ]
+}

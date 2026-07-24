@@ -26,6 +26,8 @@ const REGIONS = {
   "pittsburgh-legistar": { title: "Pittsburgh, Pennsylvania", sub: "City Council · Legistar API + clerk's minutes" },
   "la-primegov": { title: "Los Angeles, California", sub: "City Council · PrimeGov Journal + City Clerk CFMS" },
   "loudoun-bos": { title: "Loudoun County, Virginia", sub: "Board of Supervisors · Laserfiche Action Reports" },
+  "seattle-bos": { title: "Seattle, Washington", sub: "City Council · Legistar API + clerk minutes PDFs" },
+  "chicago-bos": { title: "Chicago, Illinois", sub: "City Council · Clerk eLMS API + Journal of Proceedings" },
 };
 
 function el(tag, cls, html) {
@@ -497,6 +499,7 @@ function capitalProjectsSection(sourceId, store, opts = {}) {
 // a county-name lookup (a city's name isn't its county's name).
 const PLACE_ELECTIONS = {
   newyork: ["new york"], pittsburgh: ["pittsburgh"], la: ["los angeles"],
+  seattle: ["seattle"], chicago: ["chicago"],
 };
 
 // state FIPS (2-digit) -> USPS, for turning a county's FIPS into its state
@@ -842,7 +845,7 @@ function buildCounties(data) {
 const PLACE_CENTER = {
   fairfax: [38.83, -77.28], loudoun: [39.09, -77.64], princewilliam: [38.70, -77.48],
   stafford: [38.42, -77.46], newyork: [40.71, -74.00], pittsburgh: [40.44, -79.99],
-  la: [34.05, -118.24],
+  la: [34.05, -118.24], seattle: [47.61, -122.33], chicago: [41.88, -87.63],
 };
 
 // next U.S. general election: the Tuesday after the first Monday in November
@@ -1047,6 +1050,8 @@ const FIPS_BY_PLACE = {
   loudoun: ["51107"], fairfax: ["51059"],
   princewilliam: ["51153"], stafford: ["51179"],          // Virginia counties
   newyork: ["36061", "36047", "36081", "36005", "36085"], // the five boroughs
+  seattle: ["53033"],                                     // King County, WA
+  chicago: ["17031"],                                     // Cook County, IL
 };
 
 const SVG_NS = "http://www.w3.org/2000/svg";

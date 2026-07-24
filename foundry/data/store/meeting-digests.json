@@ -2350,5 +2350,87 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "chicago-bos-2026-07-15": {
+  "digest": "The City Council passed 58 items including eight zoning reclassifications across multiple neighborhoods, approved multiple sign permits, allocated Open Space Impact Fee funds to develop several public parks and plazas, designated the Chicago Daily News Building as a historical landmark, created an Electric Vehicle Curbside Charging Pilot Program, and required special use approval for new gas stations and existing stations adding seven or more EV chargers. A resolution calling on Andrew Boutros to resign as U.S. Attorney passed 46\u20133 with three aldermen opposed (Sposato, Napolitano, and Gardiner). Councilmember Emma Mitts was absent; otherwise all votes passed unanimously.",
+  "notable": [
+   "Eight zoning reclassifications approved across the city for residential and commercial properties",
+   "Resolution calling for U.S. Attorney Andrew Boutros's resignation passed 46\u20133 with Sposato, Napolitano, and Gardiner voting no",
+   "EV Curbside Charging Pilot Program created; gas stations now require special use approval if adding 7+ EV chargers"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "chicago-bos-2026-06-17": {
+  "digest": "City Council passed 54 items with near-unanimous support (49 ayes each, 2 absent), including 30 zoning classification changes across the city, 20+ sign permits for various locations, and a building code update. All motions passed without dissent or opposition, with council members Villegas and Gilbert absent from the session.",
+  "notable": [
+   "30 zoning reclassifications approved citywide, affecting properties from Devon Ave to 79th St",
+   "Building code updated across multiple municipal code sections for construction requirements",
+   "Wrigley Field-area zoning amendment allowing static roof signs on Waveland and Sheffield avenues"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "chicago-bos-2026-05-20": {
+  "digest": "Chicago City Council rejected a referendum question on a 100-day non-salaried office (30 no, 15 aye, 5 absent) but approved numerous zoning changes across the city, appointed David Glockner as Inspector General unanimously, and established the Reverend Jesse L. Jackson Sr. Advisory Council with 8 opposing votes. The council also approved dozens of sign permits and updated the Uptown Special Service Area agreement.",
+  "notable": [
+   "Referendum on 100-day non-salaried office failed decisively, 30-15 with 5 absent",
+   "Jesse L. Jackson Sr. Advisory Council ordinance passed 42-8, with Lopez, O'Shea, Tabares, Sposato, Napolitano, and Gardiner voting no",
+   "Extensive rezoning agenda approved unanimously across 20+ properties citywide"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-07-14": {
+  "digest": "City Council unanimously approved five board appointments, including Zahoor Ahmed to the Convention Center board and four members to the Domestic Workers Standards Board. The council also raised income thresholds for the Utility Discount Program, which will allow more residents to qualify for reduced water, wastewater, drainage, solid waste, and electric bills. Additionally, Council created a new Forensic Digital Evidence classification and pay rates for Seattle Police Department positions, and approved routine claims payments.",
+  "notable": [
+   "Utility Discount Program income threshold raised\u2014more residents may now qualify for reduced utility costs",
+   "New Forensic Digital Evidence position created in Seattle Police Department with established pay rates",
+   "All eight items passed unanimously (9-0)"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-07-07": {
+  "digest": "The City Council passed ten measures in a largely procedural session with two council members absent. The substantive items included approving City Light Department's authority to sign long-term power contracts and adopting a 2027-2032 strategic plan with associated rate changes. The council also filled five Planning Commission seats and updated parking and business improvement area policies. All votes passed 7-0 with no dissent recorded.",
+  "notable": [
+   "City Light Department won authority to commit to long-term power contracts and a new 6-year strategic plan that includes a rate path through 2032.",
+   "Five Planning Commission appointments passed unanimously, including reappointments and new members with terms through 2028-2029."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-06-30": {
+  "digest": "Seattle City Council unanimously approved seven measures focused on affordable housing expansion and public safety infrastructure. The council advanced the 2023 Housing Levy implementation for 2026-2028, authorized ground leases and property acquisitions in South Seattle and the Central Area for affordable housing development totaling multiple sites, and clarified the Community Crisis Responder team's authority. The council also granted the Transportation Director expanded authority to temporarily close streets for safety purposes and approved routine weekly claims payments.",
+  "notable": [
+   "Council unanimously approved four separate affordable housing development initiatives affecting South Seattle, Montlake, and Central Area neighborhoods.",
+   "All nine council members voted yes on every item; no dissent or failed motions recorded."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }

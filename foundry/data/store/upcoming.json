@@ -5,6 +5,21 @@
     "date": "2026-07-24",
     "time": "10:00 AM",
     "body": "City Council Meeting"
+   },
+   {
+    "date": "2026-07-28",
+    "time": "10:00 AM",
+    "body": "City Council Meeting"
+   },
+   {
+    "date": "2026-07-29",
+    "time": "10:00 AM",
+    "body": "City Council Meeting"
+   },
+   {
+    "date": "2026-07-31",
+    "time": "10:00 AM",
+    "body": "City Council Meeting"
    }
   ],
   "next": {
@@ -44,23 +59,23 @@
   "upcoming": [
    {
     "date": "2026-09-01",
-    "time": "02:00 pm",
+    "time": "14:00",
     "body": "Board of County Supervisors Meeting"
    },
    {
     "date": "2026-09-15",
-    "time": "02:00 pm",
+    "time": "14:00",
     "body": "Board of County Supervisors Meeting - Work Session"
    },
    {
     "date": "2026-09-22",
-    "time": "02:00 pm",
+    "time": "14:00",
     "body": "Board of County Supervisors Meeting"
    }
   ],
   "next": {
    "date": "2026-09-01",
-   "time": "02:00 pm",
+   "time": "14:00",
    "body": "Board of County Supervisors Meeting"
   },
   "checked": "2026-07-23",
@@ -208,6 +223,35 @@
    "time": "14:00",
    "body": "Board of County Supervisors Meeting"
   },
+  "checked": "2026-07-23",
+  "derived_by": "claude-haiku-4-5",
+  "note": "machine-derived schedule lookup; advisory, never certified"
+ },
+ "chicago-bos": {
+  "upcoming": [
+   {
+    "date": "2026-08-20",
+    "time": null,
+    "body": "No future City Council meetings with explicit dates found after 2026-09-23"
+   },
+   {
+    "date": "2026-09-23",
+    "time": "15:00",
+    "body": "City Council meeting at City Council Chamber, 2nd Floor, City Hall, 121 North LaSalle Street - Chicago, IL 60602"
+   }
+  ],
+  "next": {
+   "date": "2026-08-20",
+   "time": null,
+   "body": "No future City Council meetings with explicit dates found after 2026-09-23"
+  },
+  "checked": "2026-07-23",
+  "derived_by": "claude-haiku-4-5",
+  "note": "machine-derived schedule lookup; advisory, never certified"
+ },
+ "seattle-bos": {
+  "upcoming": [],
+  "next": null,
   "checked": "2026-07-23",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"

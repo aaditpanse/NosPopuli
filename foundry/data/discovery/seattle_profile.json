@@ -1,0 +1,100 @@
+{
+ "jurisdiction": "Seattle City Council, Seattle, WA",
+ "primary_source": {
+  "system": "Legistar (Seattle tenant)",
+  "base_urls": [
+   "https://webapi.legistar.com/v1/seattle/",
+   "https://seattle.legistar.com/"
+  ],
+  "rung": "api",
+  "how_to_enumerate_meetings": "GET https://webapi.legistar.com/v1/seattle/events?$filter=EventBodyId+eq+138&$orderby=EventDate+desc \u2014 BodyId 138 is 'City Council'; omit filter to get all committee meetings. Use $top and $skip for pagination. Each event carries EventAgendaFile and EventMinutesFile (PDF URLs at legistar2.granicus.com) plus EventInSiteURL for the HTML meeting-detail page.",
+  "key_endpoints": {
+   "bodies": "GET /v1/seattle/bodies  \u2192 200 JSON; City Council BodyId=138",
+   "events": "GET /v1/seattle/events?$filter=EventBodyId+eq+138&$orderby=EventDate+desc",
+   "event_items": "GET /v1/seattle/events/{EventId}/eventitems  \u2192 includes EventItemPassedFlag, EventItemRollCallFlag, EventItemActionName, EventItemMover",
+   "votes": "GET /v1/seattle/eventitems/{EventItemId}/votes  \u2192 per-member vote records",
+   "matters": "GET /v1/seattle/matters  \u2192 legislation index (CBs, Resolutions, Appointments, etc.)",
+   "matter_history": "GET /v1/seattle/matters/{MatterId}/histories  \u2192 full legislative history per bill"
+  },
+  "sample_document_urls": [
+   "https://legistar2.granicus.com/seattle/meetings/2026/7/6827_A_City_Council_26-07-14_Full_Council_Meeting_Agenda.pdf",
+   "https://legistar2.granicus.com/seattle/meetings/2026/7/6827_M_City_Council_26-07-14_Full_Council_Meeting_Minutes.pdf",
+   "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6827&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C"
+  ],
+  "era_covered": "February 2015 \u2013 present (Legistar); pre-Feb 2015 records in a separate legacy system referenced on the Legistar Legislation page"
+ },
+ "second_source": {
+  "exists": true,
+  "system": "SeattleChannel.org \u2014 City of Seattle's public-access TV video archive",
+  "urls": [
+   "https://www.seattlechannel.org/FullCouncil",
+   "https://www.seattlechannel.org/FullCouncil?videoid=x188618"
+  ],
+  "what_it_affirms": "Independently produced video recordings of every Full Council and committee meeting, current through July 2026. Each video page lists the agenda items (e.g. 'CB 121222; CB 121207; Items Removed from Consent\u2026') and a runtime timestamp per section. Confirms which items were called and in what order, and \u2014 via the audio/video record \u2014 the oral roll-call vote, but does NOT provide machine-readable per-member vote tallies. Legistar's EventMedia field links directly to the corresponding SeattleChannel URL for each event.",
+  "caveat": "Video is the independent confirmation layer; structured per-member vote data lives only in Legistar (eventitems/{id}/votes) and the official Minutes PDFs."
+ },
+ "votes_located": "\"Per-member votes are available via the Legistar REST API at GET https://webapi.legistar.com/v1/seattle/eventitems/{EventItemId}/votes. Verified example \u2014 EventItem 124514 (Appt 03542, July 14 2026 Full Council): VoteId 108988 {VotePersonName:'Dionne Foster', VoteValueName:'In Favor', VoteResult:1}; VoteId 108989 {VotePersonName:'Joy Hollingsworth', VoteValueName:'In Favor', VoteResult:1} \u2026 through all 9 members. The same votes appear narratively in the official Minutes PDF (Journal of the Proceedings): 'Consent Calendar by the following vote: In Favor: 9 - Foster, Hollingsworth, Juarez, Kettle, Lin, Rinck, Rivera, Saka, Strauss.'\"",
+ "systems_surveyed": [
+  {
+   "system": "Legistar REST API",
+   "url": "https://webapi.legistar.com/v1/seattle/bodies",
+   "status": "200 OK \u2014 confirmed Seattle tenant, 30+ bodies returned including City Council (BodyId=138)",
+   "era_covered": "February 2015 \u2013 present"
+  },
+  {
+   "system": "Legistar Web Portal (seattle.legistar.com)",
+   "url": "https://seattle.legistar.com/Calendar.aspx",
+   "status": "200 OK \u2014 full calendar, meeting detail pages, legislation search, HTML and PDF exports all functional",
+   "era_covered": "February 2015 \u2013 present"
+  },
+  {
+   "system": "Legistar Minutes PDF (legistar2.granicus.com storage)",
+   "url": "https://legistar2.granicus.com/seattle/meetings/2026/7/6827_M_City_Council_26-07-14_Full_Council_Meeting_Minutes.pdf",
+   "status": "200 OK \u2014 full 'Journal of the Proceedings' with roll-call, member names, and vote tallies fetched and confirmed",
+   "era_covered": "Current (July 2026 confirmed)"
+  },
+  {
+   "system": "PrimeGov",
+   "url": "https://seattle.primegov.com/api/v2/PublicPortal/ListArchivedMeetings?year=2024",
+   "status": "DNS error \u2014 Seattle is not a PrimeGov tenant",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "seattle.gov City Council Meetings page",
+   "url": "https://www.seattle.gov/city-council/meet-the-council/council-meetings",
+   "status": "404 Not Found",
+   "era_covered": "N/A"
+  },
+  {
+   "system": "seattle.gov City Clerk Agendas page",
+   "url": "https://www.seattle.gov/city-clerk/agendas-and-legislative-resources/city-council-agendas",
+   "status": "200 OK \u2014 landing page; all substantive links redirect to seattle.legistar.com",
+   "era_covered": "Current"
+  },
+  {
+   "system": "SeattleChannel.org video archive",
+   "url": "https://www.seattlechannel.org/FullCouncil?videoid=x188618",
+   "status": "200 OK \u2014 confirmed July 14 and July 21, 2026 Full Council videos with agenda item descriptions",
+   "era_covered": "Current (2026 confirmed)"
+  },
+  {
+   "system": "council.seattle.gov \u2014 Full Council Action Summary blog",
+   "url": "https://council.seattle.gov/tag/action-summary/",
+   "status": "200 OK \u2014 page loads but most recent posts are from 2014\u20132015; this blog-based action summary is effectively discontinued",
+   "era_covered": "~2013\u20132015 only"
+  },
+  {
+   "system": "Legistar top-level /votes endpoint",
+   "url": "https://webapi.legistar.com/v1/seattle/votes",
+   "status": "404 Not Found \u2014 votes must be fetched per event-item via /eventitems/{id}/votes",
+   "era_covered": "N/A"
+  }
+ ],
+ "access_constraints": "All endpoints are publicly accessible with no authentication required. The Legistar REST API is open (no API key). Minutes and agenda PDFs at legistar2.granicus.com are publicly downloadable. SeattleChannel videos are publicly streamable. Standard Legistar rate-limiting may apply but no documented cap was encountered. Pre-February 2015 legislative records are in a separate legacy system (referenced on the Legistar Legislation page as 'Online Information Resources') \u2014 not yet probed.",
+ "open_questions": [
+  "Pre-February 2015 records: Legistar's own Legislation page notes that older records live in a separate 'Online Information Resources' system \u2014 its URL and structure were not probed within this budget.",
+  "The council.seattle.gov Action Summary blog (a useful lightweight second source with vote tallies) appears discontinued after ~2015. It is unclear whether the City Clerk publishes a current equivalent anywhere else.",
+  "Committee-level votes: the /eventitems/{id}/votes endpoint was verified for a Full Council consent-calendar item. Split votes and committee-level roll calls should be spot-checked to confirm the same endpoint populates them.",
+  "HistoryDetail.aspx pages (linked from MeetingDetail) returned HTTP 410 Gone when fetched directly, suggesting those popup URLs are session-scoped and not directly crawlable."
+ ]
+}

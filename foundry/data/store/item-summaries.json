@@ -16273,5 +16273,990 @@
   "plain_english": "Requires the Department for the Aging to develop a protocol for cold weather wellness checks on seniors in collaboration with NYC Emergency Management and other agencies.",
   "topic": "public safety",
   "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0025382": {
+  "plain_english": "Changes zoning classification for the property at 3615-3621 W 16th St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0025383": {
+  "plain_english": "Changes zoning classification for properties at 3717 W 16th St, 1601 S Ridgeway Ave, 3733 W 16th St, and 1601 S Hamlin Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0025469": {
+  "plain_english": "Changes zoning classification for the property at 3003-3139 W 51st St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0025199": {
+  "plain_english": "Changes zoning classification for the property at 33 W 95th St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0025201": {
+  "plain_english": "Changes zoning classification for the property at 10701 S Dr. Martin Luther King, Jr. Dr.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0025200": {
+  "plain_english": "Changes zoning classification for the property at 354 E 107th St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0025038": {
+  "plain_english": "Changes zoning classification for the property at 11139 S Michigan Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0025039": {
+  "plain_english": "Changes zoning classification for the property at 234 E 115th St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-or2026-0027296": {
+  "plain_english": "Issues permit for sign(s)/signboard(s) at 6720 W Grand Ave (Permit No. 101085555).",
+  "topic": "sign permits",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-so2026-0026272": {
+  "plain_english": "Establishes a mobile food vehicle stand at 2400 W Gunnison St by amending Municipal Code Section 7-38-117.",
+  "topic": "mobile food vendors",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026348": {
+  "plain_english": "Allocates Open Space Impact Fee funds to develop Kimball and Wellington Plaza at the intersection of N Kimball Ave and W Wellington Ave.",
+  "topic": "public parks",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026347": {
+  "plain_english": "Allocates Open Space Impact Fee funds to develop CircEsteem Plaza at 4730 N Sheridan Rd.",
+  "topic": "public parks",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-or2026-0026330": {
+  "plain_english": "Issues permit for sign(s)/signboard(s) at 6623 S Dr. Martin Luther King, Jr. Dr (Permit No. 101082064).",
+  "topic": "sign permits",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-or2026-0026125": {
+  "plain_english": "Issues permit for sign(s)/signboard(s) at 3338 W Lake St (Permit No. 101083686).",
+  "topic": "sign permits",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-or2026-0026280": {
+  "plain_english": "Issues permit for sign(s)/signboard(s) at 1242 W Washington Blvd (Permit No. 101084016).",
+  "topic": "sign permits",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-sor2026-0026047": {
+  "plain_english": "Approves a sign permit for the property at 8750 W Bryn Mawr Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-or2026-0027272": {
+  "plain_english": "Approves a sign permit for the property at 12 W Maple St.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-or2026-0026291": {
+  "plain_english": "Approves a sign permit for the property at 225 W Randolph St.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-or2026-0026334": {
+  "plain_english": "Approves a sign permit for the property at 3577 W Grand Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-or2026-0026333": {
+  "plain_english": "Approves a sign permit for the property at 6623 S Dr. Martin Luther King, Jr. Dr.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-or2026-0026336": {
+  "plain_english": "Approves a sign permit for the property at 3577 W Grand Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-or2026-0026279": {
+  "plain_english": "Approves a sign permit for the property at 1242 W Washington Blvd.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-or2026-0026133": {
+  "plain_english": "Approves a sign permit for the property at 3319 N Ashland Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-or2026-0026282": {
+  "plain_english": "Approves a sign permit for the property at 1242 W Washington Blvd.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-or2026-0026124": {
+  "plain_english": "Approves a sign permit for the property at 2551 W Cermak Rd.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-or2026-0027283": {
+  "plain_english": "Approves a sign permit for the property at 835 N Michigan Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-or2026-0027295": {
+  "plain_english": "Approves a sign permit for the property at 511 N Columbus Dr.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-or2026-0026050": {
+  "plain_english": "Waives permit fees for the property at 3351 S Giles Ave.",
+  "topic": "permit fee waiver",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026346": {
+  "plain_english": "Uses Open Space Impact Fee funds to develop a community orchard at Garfield Park, 3001 W Fifth Ave.",
+  "topic": "park development",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026343": {
+  "plain_english": "Uses Open Space Impact Fee funds to develop Goose Island Overlook at 1111 N Elston Ave.",
+  "topic": "park development",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026341": {
+  "plain_english": "Spends Open Space Impact Fee funds to develop the Montrose Metra Garden park at 4350 N Ravenswood Ave.",
+  "topic": "park development",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026340": {
+  "plain_english": "Spends Open Space Impact Fee funds to develop Chicago Farmworks at 409 N Albany Ave and 411-419 N Kedzie Ave.",
+  "topic": "park development",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026117": {
+  "plain_english": "Designates the Chicago Daily News Building at 2 N Riverside Plaza/400 W Monroe St as a historical landmark.",
+  "topic": "landmark designation",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0025429": {
+  "plain_english": "Requires special use approval for new gas stations and for existing gas stations adding seven or more electric vehicle chargers.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-so2026-0026276": {
+  "plain_english": "Allows residential storage warehouses by right in Planned Manufacturing District 4B.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026278": {
+  "plain_english": "Establishes size restrictions for participant sports and recreation uses permitted by right in planned manufacturing districts.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0025394": {
+  "plain_english": "Creates an Electric Vehicle Curbside Charging Pilot Program.",
+  "topic": "electric vehicle infrastructure",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026121": {
+  "plain_english": "Opens a public way in the area bounded by W Maypole Ave, N Kedzie Ave, W Lake St and N Homan Ave.",
+  "topic": "public way",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-so2026-0026284": {
+  "plain_english": "Dedicates a public way in the area bounded by W Grand Ave, N Halsted St, W Chicago Ave, and the North Branch of the Chicago River.",
+  "topic": "public way",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026137": {
+  "plain_english": "Releases use restriction covenant on a vacated alley in the area bounded by W 28th Pl, S Stewart Ave, W 29th St and S Canal St.",
+  "topic": "alley release",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0025943": {
+  "plain_english": "Dedicates streets and an alley in the area bounded by W 23rd St, S State St, W 24th St, and S Dearborn St.",
+  "topic": "public way",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0025907": {
+  "plain_english": "Opens S Dearborn Ave from W 24th St to W 23rd St.",
+  "topic": "public way",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026087": {
+  "plain_english": "Designates a street as \"Honorary Lyndsay Sullivan Way\".",
+  "topic": "honorary designation",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-r2026-0026273": {
+  "plain_english": "Calls on Andrew Boutros to resign as U.S. Attorney for Northern District of Illinois and requests the Department of Justice to review obligations in Operation Midway Blitz, Broadview prosecutions, and related proceedings.",
+  "topic": "federal accountability",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026294": {
+  "plain_english": "Designates a street as \"Lois Juanita Ellington Way\".",
+  "topic": "honorary designation",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026093": {
+  "plain_english": "Designates a street or portion of a street as \"Allan Mellis Way\" in honor of Allan Mellis.",
+  "topic": "honorary designation",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-so2026-0025003": {
+  "plain_english": "Prohibits current or former City officials and employees from using or sharing confidential information for prediction markets or event-based contracts.",
+  "topic": "ethics, governance",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0025809": {
+  "plain_english": "Exempts Elevate Carbon from the requirement to install a physical barrier at their commercial driveway alley access.",
+  "topic": "zoning exemption",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026037": {
+  "plain_english": "Exempts M&P Vending Co., Inc. from the requirement to install a physical barrier at their commercial driveway alley access.",
+  "topic": "zoning exemption",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0025610": {
+  "plain_english": "Exempts Keeston LLC from the requirement to install a physical barrier at their commercial driveway alley access.",
+  "topic": "zoning exemption",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026007": {
+  "plain_english": "Exempts DoorDash Essentials LLC from the requirement to install a physical barrier at their commercial driveway alley access.",
+  "topic": "zoning exemption",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026055": {
+  "plain_english": "Designates a street or portion of a street as \"Honorary Terry Kath Way\" in honor of Terry Kath.",
+  "topic": "honorary designation",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-a2026-0027119": {
+  "plain_english": "Appoints Dr. Garth Walker as Commissioner of Public Health.",
+  "topic": "appointments",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026217": {
+  "plain_english": "Exempts Reyna de Sabares Corp. from the requirement to install a physical barrier at their commercial driveway alley access.",
+  "topic": "zoning exemption",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026074": {
+  "plain_english": "Exempts Advanced Concrete from the requirement to install a physical barrier at their commercial driveway alley access.",
+  "topic": "zoning exemption",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026036": {
+  "plain_english": "Designates a street or portion of a street as \"Nathan Diaz Way\" in honor of Nathan Diaz.",
+  "topic": "honorary designation",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0025632": {
+  "plain_english": "Exempts Adames Party Rental LLC from the requirement to install a physical barrier at their commercial driveway alley access.",
+  "topic": "zoning exemption",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0025960": {
+  "plain_english": "Exempts A Reliable Glass & Door from the requirement to install a physical barrier at their commercial driveway alley access.",
+  "topic": "zoning exemption",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0026311": {
+  "plain_english": "Exempts Marquez Sons Auto Repair and Tires Service, Inc. from the requirement to install a physical barrier at their commercial driveway alley access.",
+  "topic": "zoning exemption",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-07-15-o2026-0025813": {
+  "plain_english": "Exempts Gutter Girls Supply, Inc. from the requirement to install a physical barrier at their commercial driveway alley access.",
+  "topic": "zoning exemption",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0026404": {
+  "plain_english": "Authorizes signage permits for a property at 4183 W Irving Park Rd.",
+  "topic": "signage permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-so2025-0016791": {
+  "plain_english": "Changes zoning classification for the property at 215 N Racine Ave.",
+  "topic": "zoning reclassification",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025401": {
+  "plain_english": "Changes zoning classification for the property at 5255-5259 N Clark St.",
+  "topic": "zoning reclassification",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025313": {
+  "plain_english": "Changes zoning classification for the property at 3909 N Ashland Ave.",
+  "topic": "zoning reclassification",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025359": {
+  "plain_english": "Changes zoning classification for the property at 1841 N Orleans St.",
+  "topic": "zoning reclassification",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-so2026-0024034": {
+  "plain_english": "Changes zoning classification for the property at 6342-6344 N Pulaski Rd.",
+  "topic": "zoning reclassification",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025388": {
+  "plain_english": "Changes zoning classification for the property at 6902 W Diversey Ave.",
+  "topic": "zoning reclassification",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-so2026-0023084": {
+  "plain_english": "Changes zoning classification for the properties at 3231-3265 N California Ave and 2752-2762 W Melrose St.",
+  "topic": "zoning reclassification",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025360": {
+  "plain_english": "Changes zoning classification for the property at 1921-1925 N Milwaukee Ave.",
+  "topic": "zoning reclassification",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025358": {
+  "plain_english": "Changes zoning classification for the property at 1218 W George St.",
+  "topic": "zoning reclassification",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-so2026-0023903": {
+  "plain_english": "Changes zoning classification for the property at 2428 N Clybourn Ave.",
+  "topic": "zoning reclassification",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-so2026-0025322": {
+  "plain_english": "Changes zoning classification for the property at 3542-3544 N Milwaukee Ave.",
+  "topic": "zoning reclassification",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025342": {
+  "plain_english": "Changes zoning classification for the property at 2323 W Grand Ave.",
+  "topic": "zoning reclassification",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025343": {
+  "plain_english": "Changes zoning classification for the property at 2315 W Grand Ave.",
+  "topic": "zoning reclassification",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-so2026-0024764": {
+  "plain_english": "Changes zoning classification for the property at 2553-2565 W Madison St.",
+  "topic": "zoning reclassification",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025357": {
+  "plain_english": "Changes zoning classification for the property at 1522 N Keystone Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025350": {
+  "plain_english": "Changes zoning classification for the property at 2029 W 17th St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-so2026-0024734": {
+  "plain_english": "Changes zoning classification for properties at 1441-1471 S Blue Island Ave, 1434-1458 S Racine Ave and 1200-1228 W 15th St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025416": {
+  "plain_english": "Changes zoning classification for the property at 654 W 47th St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-so2026-0024780": {
+  "plain_english": "Changes zoning classification for the property at 3301-3315 S Justine St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025334": {
+  "plain_english": "Changes zoning classification for properties at 437-439 W 28th Pl and 436-438 W 29th St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025390": {
+  "plain_english": "Changes zoning classification for the property at 201 E Walton Pl.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0024906": {
+  "plain_english": "Changes zoning classification for properties at 2131-2225 W Devon Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0024907": {
+  "plain_english": "Changes zoning classification for properties at 433-437 W 119th St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025386": {
+  "plain_english": "Changes zoning classification for properties at 1200-1328 and 1201-1321 E 63rd St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025385": {
+  "plain_english": "Changes zoning classification for properties at 935-1043 E 63rd St; 1153-1169 E 63rd St, 1000-1178 E 63rd St, 6310-6336 S Woodlawn Ave, and 6311-6337 S University Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025482": {
+  "plain_english": "Changes zoning classification for properties at 1932-2258 E 75th St and 2131-2225 E 75th St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025483": {
+  "plain_english": "Changes zoning classification for properties at 2300-2600 E 75th St, 2301-2631 E 75th St, 7462-7474 S Exchange Ave, 2338-2654 E 75th St, 7515-7535 S Saginaw Ave and 7550 S Exchange Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025478": {
+  "plain_english": "Changes zoning classification for properties at 2900-3032 E 79th St, 2901-2953 E 79th St, 7916-7956 S Exchange Ave and 7913-8043 S Exchange Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025480": {
+  "plain_english": "Changes zoning classification for properties at 2200-2870 E 79th St, 2201-2853 E 79th St, 7915 S Yates Ave and 7900 S Escanaba Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025202": {
+  "plain_english": "Changes zoning classification for the property at 5001 S Michigan Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0024965": {
+  "plain_english": "Approves a sign permit for 6191 N Lincoln Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0024975": {
+  "plain_english": "Approves a sign permit for 320 W Ohio St.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0024977": {
+  "plain_english": "Approves a sign permit for 200 N Columbus Dr.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0025446": {
+  "plain_english": "Approves a sign permit for 15 E Oak St.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0024976": {
+  "plain_english": "Approves a sign permit for 1 W Grand Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0024973": {
+  "plain_english": "Approves a sign permit for 1 N Wacker Dr.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0024980": {
+  "plain_english": "Approves a sign permit for 1101 W Jackson Blvd.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0024982": {
+  "plain_english": "Approves a sign permit for 1101 W Jackson Blvd.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0024983": {
+  "plain_english": "Approves a sign permit for 1101 W Jackson Blvd.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0024984": {
+  "plain_english": "Approves a sign permit for 1101 W Jackson Blvd.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0024985": {
+  "plain_english": "Approves a sign permit for 1101 W Jackson Blvd.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0024986": {
+  "plain_english": "Approves a sign permit for 1101 W Jackson Blvd.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0025228": {
+  "plain_english": "Approves a sign permit for 2023 W Fullerton Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0025420": {
+  "plain_english": "Approves a sign permit for 838 W Kinzie St.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0025422": {
+  "plain_english": "Issues a permit for one or more signs or signboards at 838 W Kinzie St (Permit No. 101082907).",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0025421": {
+  "plain_english": "Issues a permit for one or more signs or signboards at 838 W Kinzie St (Permit No. 101082906).",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0025412": {
+  "plain_english": "Issues a permit for one or more signs or signboards at 173 N Morgan St (Permit No. 101082887).",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0025415": {
+  "plain_english": "Issues a permit for one or more signs or signboards at 173 N Morgan St (Permit No. 101082886).",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0025418": {
+  "plain_english": "Issues a permit for one or more signs or signboards at 1242 W Washington Blvd (Permit No. 101082258).",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0025417": {
+  "plain_english": "Issues a permit for one or more signs or signboards at 1242 W Washington Blvd (Permit No. 101082253).",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0025419": {
+  "plain_english": "Issues a permit for one or more signs or signboards at 1242 W Washington Blvd (Permit No. 101082250).",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0025440": {
+  "plain_english": "Issues a permit for one or more signs or signboards at 551 W 18th St (Permit No. 101082918).",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0025441": {
+  "plain_english": "Issues a permit for one or more signs or signboards at 2404 S Wolcott Ave (Permit No. 101083112).",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0025468": {
+  "plain_english": "Issues a permit for one or more signs or signboards at 2101 W Division St (Permit No. 101082984).",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-or2026-0025466": {
+  "plain_english": "Issues a permit for one or more signs or signboards at 1709 W Chicago Ave (Permit No. 101081265).",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-o2026-0025414": {
+  "plain_english": "Amends zoning code to allow the zoning administrator to install static roof signs on W Waveland Ave and N Sheffield Ave facing into Wrigley Field.",
+  "topic": "zoning, signage",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-so2026-0024930": {
+  "plain_english": "Updates building code provisions across multiple municipal code titles to modify requirements related to buildings and construction.",
+  "topic": "building code",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-06-17-so2025-0018155": {
+  "plain_english": "Donates Police Department explosive magazines to the City of Waukegan Fire Department Bomb Squad.",
+  "topic": "equipment donation",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-r2025-0018197": {
+  "plain_english": "Submits a public referendum question to Chicago voters at the March 17, 2026 primary election asking whether the city should establish a 100-day non-salaried Office of Chicago Reform Commission to draft a city charter proposal.",
+  "topic": "referendum, governance",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0024653": {
+  "plain_english": "Permits sign(s) or signboard(s) at 1523 W North Ave.",
+  "topic": "permits",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0025537": {
+  "plain_english": "Sets the next City Council Meeting for June 17, 2026, at 10:00 A.M. in the Council Chamber.",
+  "topic": "meeting schedule",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-so2026-0024036": {
+  "plain_english": "Adds The Reverend Jesse L. Jackson Sr. Fair Access to Democracy Ordinance to the Municipal Code and establishes The Reverend Jesse L. Jackson Sr. Advisory Council on Access to Democracy.",
+  "topic": "ordinance, governance",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-a2026-0025389": {
+  "plain_english": "Appoints David Glockner as Inspector General.",
+  "topic": "appointments",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-so2026-0025017": {
+  "plain_english": "Rezones properties at 1646-1654 W Howard St and 7601-7623 N Paulina St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0024765": {
+  "plain_english": "Rezones property at 4447 N Ashland Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-so2026-0024805": {
+  "plain_english": "Rezones property at 3440-3444 N Janssen Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0024820": {
+  "plain_english": "Rezones property at 4133-4135 W Lawrence Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0024790": {
+  "plain_english": "Rezones property at 1001-1021 N Homan Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0024768": {
+  "plain_english": "Rezones property at 3000-3010 N Oakley Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0024762": {
+  "plain_english": "Rezones property at 3040-3042 N Lincoln Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-so2026-0022481": {
+  "plain_english": "Rezones properties at 1801-1809 N Winnebago Ave and 2248-2254 W Bloomindale Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0024767": {
+  "plain_english": "Rezones property at 2124 W Madison St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0024864": {
+  "plain_english": "Rezones property at 446 N Aberdeen St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0024867": {
+  "plain_english": "Rezones property at 448 N Aberdeen St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0024766": {
+  "plain_english": "Reclassifies the zoning designation for the property at 3100-3108 W Lake St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-so2026-0024821": {
+  "plain_english": "Reclassifies the zoning designation for the property at 2653 W Monroe St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0024791": {
+  "plain_english": "Reclassifies the zoning designation for the property at 3444-3446 W North Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0024769": {
+  "plain_english": "Reclassifies the zoning designation for the property at 6940 S Campbell Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0024770": {
+  "plain_english": "Reclassifies the zoning designation for the property at 657 E 75th St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-so2026-0023275": {
+  "plain_english": "Reclassifies the zoning designation for the properties at 5725 S Woodlawn Ave and 1100 E 55th St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0024787": {
+  "plain_english": "Reclassifies the zoning designation for the property at 4315-4317 S Cottage Grove Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-so2026-0024037": {
+  "plain_english": "Reclassifies the zoning designation for the property at 4524 S Michigan Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0024778": {
+  "plain_english": "Reclassifies the zoning designation for the property at 4640 S Lamon Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2025-0021895": {
+  "plain_english": "Reclassifies the zoning designation for the properties at 8901-9357 S Ashland Ave, 8900-9258 S Ashland Ave and 9334-9344 S Ashland Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2025-0021692": {
+  "plain_english": "Reclassifies the zoning designation for the properties at 1236-1230 W 105th St, 1245 W 105th St and 10335 S Vincennes Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-so2026-0023297": {
+  "plain_english": "Reclassifies the zoning designation for the property at 5626 W 63rd Pl.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0023546": {
+  "plain_english": "Reclassifies the zoning designation for the property at 224 E 103rd St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0022546": {
+  "plain_english": "Reclassifies the zoning designation for the property at 2206 E 75th St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0022521": {
+  "plain_english": "Reclassifies the zoning designation for the property at 7050 S Dorchester Ave.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0022965": {
+  "plain_english": "Reclassifies the zoning for the property at 1616 N Burling St.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0024877": {
+  "plain_english": "Approves a sign permit for 6341 W McCormick Blvd.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0024851": {
+  "plain_english": "Approves a sign permit for 6341 N McCormick Blvd.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0024850": {
+  "plain_english": "Approves a sign permit for 6341 N McCormick Blvd.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0024808": {
+  "plain_english": "Approves a sign permit for 5943 N Lincoln Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0024613": {
+  "plain_english": "Approves a sign permit for 5257 N Clark St.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0025406": {
+  "plain_english": "Approves a sign permit for 4059 N Cicero Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0025403": {
+  "plain_english": "Approves a sign permit for 4059 N Cicero Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0025402": {
+  "plain_english": "Approves a sign permit for 4059 N Cicero Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0025400": {
+  "plain_english": "Approves a sign permit for 4059 N Cicero Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0025396": {
+  "plain_english": "Approves a sign permit for 4059 N Cicero Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0024788": {
+  "plain_english": "Approves a sign permit for 1000 N Rush St.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0024886": {
+  "plain_english": "Approves a sign permit for 11601 W Touhy Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0024887": {
+  "plain_english": "Approves a sign permit for 11601 W Touhy Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0025408": {
+  "plain_english": "Approves a sign permit for 2401 W Diversey Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0025410": {
+  "plain_english": "Approves a sign permit for 3201 N Kimball Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0024665": {
+  "plain_english": "Approves a sign permit for 2859 N Harlem Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0024797": {
+  "plain_english": "Approves a sign permit for 2322-2324 W Taylor St.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-o2026-0024865": {
+  "plain_english": "Amends the Special Service Area No. 34 (Uptown) agreement with service provider Uptown United and sets the 2026 tax levy.",
+  "topic": "special service area",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0024881": {
+  "plain_english": "Approves a sign permit for 949 N Elston Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0024879": {
+  "plain_english": "Approves a sign permit for 949 N Elston Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "chicago-bos-2026-05-20-or2026-0024880": {
+  "plain_english": "Approves a sign permit for 949 N Elston Ave.",
+  "topic": "sign permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-14-item-124514": {
+  "plain_english": "Appoints Zahoor Ahmed to the Washington State Convention Center Public Facilities District Board through July 30, 2030.",
+  "topic": "board appointment",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-14-item-124516": {
+  "plain_english": "Appoints Danielle Budd to the Domestic Workers Standards Board through February 28, 2028.",
+  "topic": "board appointment",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-14-item-124517": {
+  "plain_english": "Reappoints Estefana R. Harry to the Domestic Workers Standards Board through February 28, 2028.",
+  "topic": "board appointment",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-14-item-124518": {
+  "plain_english": "Appoints Serhii Fulytka to the Domestic Workers Standards Board through February 28, 2029.",
+  "topic": "board appointment",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-14-item-124519": {
+  "plain_english": "Appoints Jared Lowery to the Domestic Workers Standards Board through February 28, 2029.",
+  "topic": "board appointment",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-14-item-124523": {
+  "plain_english": "Raises the income threshold for the Utility Discount Program for water, wastewater, drainage, solid waste, and electric utility services.",
+  "topic": "utility assistance",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-14-item-124529": {
+  "plain_english": "Establishes a new Forensic Digital Evidence classification title and pay rates for the Seattle Police Department.",
+  "topic": "employment classification",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-14-item-124550": {
+  "plain_english": "Appropriates and pays claims for the week of June 29 through July 3, 2026.",
+  "topic": "claims payment",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-07-item-124343": {
+  "plain_english": "Appoints T.J. Stutman to the Seattle Planning Commission for a term ending April 15, 2028.",
+  "topic": "appointments",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-07-item-124344": {
+  "plain_english": "Appoints Amir Ehsaei to the Seattle Planning Commission for a term ending April 15, 2029.",
+  "topic": "appointments",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-07-item-124345": {
+  "plain_english": "Appoints Hailey P. Karcher to the Seattle Planning Commission for a term ending April 15, 2029.",
+  "topic": "appointments",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-07-item-124346": {
+  "plain_english": "Appoints Patrick W. Taylor to the Seattle Planning Commission for a term ending April 15, 2029.",
+  "topic": "appointments",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-07-item-124347": {
+  "plain_english": "Reappoints P Xiomara Alvarez to the Seattle Planning Commission for a term ending April 15, 2029.",
+  "topic": "appointments",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-07-item-124348": {
+  "plain_english": "Reappoints Andrew L. Dannenberg to the Seattle Planning Commission for a term ending April 15, 2029.",
+  "topic": "appointments",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-07-item-124360": {
+  "plain_english": "Allows City Light Department to sign long-term contracts to buy electric power and related services, and amends the municipal code.",
+  "topic": "utilities",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-07-item-124361": {
+  "plain_english": "Adopts a 2027-2032 strategic plan for City Light Department and approves its associated rate path.",
+  "topic": "utilities",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-07-item-124363": {
+  "plain_english": "Updates city policies for establishing and managing parking and business improvement areas, replacing prior Resolution 31657.",
+  "topic": "parking policy",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-07-item-124392": {
+  "plain_english": "Appropriates money to pay claims submitted for the week of June 22-26, 2026, and ratifies prior payments.",
+  "topic": "budget",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-06-30-item-124240": {
+  "plain_english": "Adopts the 2023 Seattle Housing Levy Administrative and Financial Plan for 2026-2028 and sets Housing Funding Policies for low-income housing programs.",
+  "topic": "housing",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-06-30-item-124241": {
+  "plain_english": "Authorizes a ground lease at 2929 27th Ave South to MBTOD Phase One LLLP for affordable housing development.",
+  "topic": "housing",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-06-30-item-124242": {
+  "plain_english": "Places acquired property in the Montlake neighborhood under Office of Housing jurisdiction and authorizes a request for proposals to select a developer for affordable housing.",
+  "topic": "housing",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-06-30-item-124243": {
+  "plain_english": "Authorizes the Office of Housing to acquire two parcels in the Central Area for developing affordable homeownership units.",
+  "topic": "housing",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-06-30-item-124245": {
+  "plain_english": "Defines duties of the Community Crisis Responder team within the Community Assisted Response and Engagement Department and amends the municipal code.",
+  "topic": "public safety",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-06-30-item-124246": {
+  "plain_english": "Allows the Director of Transportation to close public streets when necessary to maintain or enhance public safety, and updates Seattle Municipal Code Section 11.16.125 to reflect this authority.",
+  "topic": "public safety, streets",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-06-30-item-124296": {
+  "plain_english": "Pays approved claims totaling an unspecified amount for the week of June 15\u201319, 2026, and confirms prior related actions.",
+  "topic": "budget, claims",
+  "derived_by": "claude-haiku-4-5"
  }
 }
