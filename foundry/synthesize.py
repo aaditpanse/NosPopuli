@@ -10,18 +10,43 @@ attempt loop is one conversation.
 """
 
 import json
+import os
 import pathlib
 import re
+import types
 
 import anthropic
 from dotenv import load_dotenv
 
 load_dotenv(pathlib.Path(__file__).parent.parent / ".env")
 
-MODEL = "claude-opus-4-8"
-# $/MTok for claude-opus-4-8: input, cache write (1.25x), cache read (0.1x), output
-PRICES = {"input_tokens": 5.00, "cache_creation_input_tokens": 6.25,
-          "cache_read_input_tokens": 0.50, "output_tokens": 25.00}
+# The synthesis model is swappable so cheaper challengers (Kimi K3, DeepSeek)
+# can be A/B'd against Opus with the gate as the judge — the gate makes model
+# quality an objective pass/fail, so this is the safest slot to shop around.
+# Anything not named claude-* goes through an OpenAI-compatible /chat/completions
+# endpoint (FOUNDRY_SYNTH_BASE_URL + FOUNDRY_SYNTH_API_KEY). Default behavior
+# with no env set is byte-identical to before: Opus 4.8 via the Anthropic SDK.
+MODEL = os.environ.get("FOUNDRY_SYNTH_MODEL", "claude-opus-4-8")
+
+# $/MTok: input, cache write (1.25x), cache read (0.1x), output. Unknown models
+# fall back to Opus prices — a conservative OVERestimate so the budget governor
+# can only err on the safe side. Override: FOUNDRY_SYNTH_PRICES="in,out".
+_PRICE_TABLE = {
+    "claude-opus-4-8": {"input_tokens": 5.00, "cache_creation_input_tokens": 6.25,
+                        "cache_read_input_tokens": 0.50, "output_tokens": 25.00},
+    "kimi-k3": {"input_tokens": 3.00, "output_tokens": 15.00},
+}
+
+
+def _prices():
+    override = os.environ.get("FOUNDRY_SYNTH_PRICES")
+    if override:
+        inp, outp = (float(x) for x in override.split(","))
+        return {"input_tokens": inp, "output_tokens": outp}
+    return _PRICE_TABLE.get(MODEL) or _PRICE_TABLE["claude-opus-4-8"]
+
+
+PRICES = _prices()
 
 SYSTEM = """You write deterministic data-extractor code for a municipal-data \
 pipeline system. You are given a source profile (sample API responses), a \
@@ -198,6 +223,8 @@ def generate(messages):
     """One synthesis call. Returns (code, assistant_content, usage)."""
     import budget
     budget.check("synthesis")
+    if not MODEL.startswith("claude"):
+        return _generate_compat(messages)
     client = anthropic.Anthropic()
     with client.messages.stream(
         model=MODEL,
@@ -220,6 +247,55 @@ def generate(messages):
         raise RuntimeError(f"no complete python code block "
                            f"(stop_reason={msg.stop_reason}): {text[:300]}")
     return max(blocks, key=len), msg.content, msg.usage
+
+
+def _generate_compat(messages):
+    """Synthesis via an OpenAI-compatible /chat/completions endpoint (Kimi K3,
+    DeepSeek, any vLLM host). Same contract as the Anthropic path; the returned
+    assistant_content is a plain string, which both this path and the Anthropic
+    API accept when the attempt loop replays it as an assistant turn."""
+    import requests
+
+    base = os.environ.get("FOUNDRY_SYNTH_BASE_URL",
+                          "https://api.moonshot.ai/v1").rstrip("/")
+    key = os.environ.get("FOUNDRY_SYNTH_API_KEY")
+    if not key:
+        raise RuntimeError(
+            f"FOUNDRY_SYNTH_MODEL={MODEL} needs FOUNDRY_SYNTH_API_KEY in .env")
+    max_tokens = int(os.environ.get("FOUNDRY_SYNTH_MAX_TOKENS", "32768"))
+
+    def _flatten(content):
+        # A prior Anthropic-path turn stores content blocks; a compat run only
+        # ever sees its own strings, but tolerate both.
+        if isinstance(content, str):
+            return content
+        return "".join(getattr(b, "text", "") or (b.get("text", "") if isinstance(b, dict) else "")
+                       for b in content)
+
+    payload = {
+        "model": MODEL,
+        "max_tokens": max_tokens,
+        "messages": [{"role": "system", "content": SYSTEM}] + [
+            {"role": m["role"], "content": _flatten(m["content"])} for m in messages],
+    }
+    resp = requests.post(f"{base}/chat/completions", timeout=900,
+                         headers={"Authorization": f"Bearer {key}"}, json=payload)
+    resp.raise_for_status()
+    data = resp.json()
+    choice = data["choices"][0]
+    text = choice["message"]["content"] or ""
+    u = data.get("usage", {})
+    usage = types.SimpleNamespace(input_tokens=u.get("prompt_tokens", 0),
+                                  output_tokens=u.get("completion_tokens", 0))
+    import budget
+    budget.record("synthesis", cost_usd([usage]))
+    blocks = re.findall(r"```python\n(.*?)```", text, re.DOTALL)
+    if not blocks and choice.get("finish_reason") != "length":
+        blocks = re.findall(r"```python\n(.*)\Z", text, re.DOTALL)
+    if not blocks:
+        raise RuntimeError(f"no complete python code block "
+                           f"(finish_reason={choice.get('finish_reason')}): {text[:300]}")
+    return max(blocks, key=len), text, usage
 
 
 def cost_usd(usages):
