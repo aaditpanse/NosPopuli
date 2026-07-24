@@ -50,16 +50,28 @@ def structural(records):
 
 def consistency(records, prior_run_meta=None):
     findings = []
-    meetings = {m["meeting_id"]: m for m in records["meetings"]}
-    item_by_id = {i["item_id"]: i for i in records["agenda_items"]}
+    # Malformed records (missing the fields this layer dereferences) are the
+    # structural layer's finding — skip them here rather than crash the gate
+    # on a bad candidate. The M2 lesson, re-learned on Chicago attempt 3: a
+    # vote_event without item_id (not schema-required) KeyError'd the harness
+    # and killed the whole onboard loop instead of feeding back a finding.
+    meetings = {m["meeting_id"]: m for m in records["meetings"]
+                if m.get("meeting_id")}
+    item_by_id = {i["item_id"]: i for i in records["agenda_items"]
+                  if i.get("item_id")}
 
     for item in records["agenda_items"]:
+        if not (item.get("item_id") and item.get("meeting_id")):
+            continue  # structural's finding
         if item["meeting_id"] not in meetings:
             findings.append(_finding("consistency", "orphan_item", item["item_id"],
                                      f"meeting {item['meeting_id']} not in run"))
 
     for ve in records["vote_events"]:
-        ref = ve["vote_id"]
+        ref = ve.get("vote_id") or "?"
+        if not all(ve.get(k) not in (None, "", [], {}) for k in
+                   ("vote_id", "meeting_id", "counts", "result")):
+            continue  # structural's finding
         meeting = meetings.get(ve["meeting_id"])
         if meeting is None:
             findings.append(_finding("consistency", "orphan_vote", ref,
@@ -93,14 +105,16 @@ def consistency(records, prior_run_meta=None):
             findings.append(_finding("consistency", "result_vs_tally", ref,
                                      f"result=fail but ayes {ayes} > noes {noes}"))
 
-        # The vote must agree with its agenda item on the basics.
-        item = item_by_id.get(ve["item_id"])
+        # The vote must agree with its agenda item on the basics. item_id is
+        # not schema-required, so a missing one lands here as a finding (the
+        # model gets told), never as a crash.
+        item = item_by_id.get(ve.get("item_id"))
         if item is None:
             findings.append(_finding("consistency", "orphan_vote", ref,
-                                     f"agenda item {ve['item_id']} not in run"))
-        elif item["file_number"] != ve["file_number"]:
+                                     f"agenda item {ve.get('item_id')} not in run"))
+        elif item.get("file_number") != ve.get("file_number"):
             findings.append(_finding("consistency", "file_number_mismatch", ref,
-                                     f"vote says {ve['file_number']}, item says {item['file_number']}"))
+                                     f"vote says {ve.get('file_number')}, item says {item.get('file_number')}"))
 
     if prior_run_meta:
         prior = prior_run_meta["row_counts"]
