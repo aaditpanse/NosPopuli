@@ -661,7 +661,16 @@ function renderConnections(conn) {
 
   // Committee Reports — positioned between Amends and Identical per spec
   if (conn.committee_reports && conn.committee_reports.length) {
-    _showCategory('connections-committee-reports', conn.committee_reports.map(_reportCard).join(''));
+    // Congress.gov lists a report once per format/version — same citation+part
+    // renders as visible duplicate cards without this.
+    const seenReports = new Set();
+    const reports = conn.committee_reports.filter(r => {
+      const k = `${r.citation || ''}|${r.part || 1}|${r.title || ''}`;
+      if (seenReports.has(k)) return false;
+      seenReports.add(k);
+      return true;
+    });
+    _showCategory('connections-committee-reports', reports.map(_reportCard).join(''));
     anyVisible = true;
   }
 
@@ -1591,8 +1600,10 @@ function renderStockChart(d) {
   const laws = (d.laws || []).filter(l => l.date);
   const trades = (d.trades || []).filter(t => t.date);
 
-  // geometry
-  const W = 900, H = 360, PL = 52, PR = 16, PT = 16, PB = 34;
+  // geometry — narrow the viewBox on small screens so text/markers, which
+  // scale with it, stay legible instead of shrinking to 40%
+  const W = Math.max(520, Math.min(900, (canvas.clientWidth || 900) * 1.5));
+  const H = Math.round(W * 0.4), PL = 52, PR = 16, PT = 16, PB = 34;
   const iw = W - PL - PR, ih = H - PT - PB;
   const toDay = s => Date.parse(s) / 86400000;
   const xs = series.map(p => toDay(p[0]));

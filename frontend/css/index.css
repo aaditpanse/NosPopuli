@@ -3313,6 +3313,39 @@ footer.footer {
   .nav-link, .top-nav-btn { padding: 0.85rem 0.85rem; font-size: 0.55rem; }
 }
 
+/* ── Phone-width fixes ── */
+@media (max-width: 640px) {
+  /* Centered flex clips its first item once the row overflows — let the nav
+     scroll sideways instead, scrollbar hidden. */
+  .top-nav {
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .top-nav::-webkit-scrollbar { display: none; }
+  .nav-link, .top-nav-btn { flex: 0 0 auto; white-space: nowrap; }
+
+  /* Dateline: keep only the date; vol/price wrap badly at this width */
+  .dateline-vol, .dateline-price { display: none; }
+  .dateline-strip { justify-content: center; }
+  .dateline-date { white-space: nowrap; }
+
+  /* Command bar: full-width input on its own row, controls share the second */
+  .command-row { flex-wrap: wrap; }
+  .command-input { flex: 1 1 100%; border-bottom: 1.5px solid var(--ink); padding: 0.8rem 1rem; }
+  .command-go { flex: 1 1 auto; }
+
+  /* "Who's pushing this" / sponsor-money rows: the mono stat line was
+     overflowing the viewport — let it wrap under the name */
+  .pushing-row { flex-wrap: wrap; }
+  .pushing-meta { white-space: normal; text-align: left; }
+}
+
+/* ── Elections standalone page container (was completely unstyled) ── */
+.e-head { padding: 1.2rem 1.25rem 0.3rem; text-align: center; cursor: pointer; }
+.elections-page { max-width: var(--content-width); margin: 0 auto; padding: 1.25rem 1.25rem 3rem; }
+
 /* ── State picker on command bar (ported from test UI) ─────────── */
 .command-state {
   position: relative;
