@@ -2432,5 +2432,375 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "fairfax-bos-2026-07-14": {
+  "digest": "The Fairfax County Board of Supervisors unanimously approved a routine agenda on July 14, 2026, including a pilot program for automated enforcement of loud vehicle noise, endorsement of zoning policy priorities for 2027\u20132028 (with Supervisor Patrick Herrity abstaining), and multiple rezoning and special exception approvals for mixed-use and residential developments. The board also authorized property acquisition in Mount Vernon, extended the Fairfax Founders Fund using reserves, and approved changes to county code and transportation policies.",
+  "notable": [
+   "Loud vehicle noise enforcement pilot program launched with full 10\u20130 board support",
+   "Zoning policy priorities endorsed 9\u20130\u20131, with Patrick Herrity abstaining",
+   "Multiple rezoning approvals including mixed-use, multifamily, and residential projects across Springfield, Reston, and Dulles districts"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-06-23": {
+  "digest": "The City Council unanimously passed 14 measures with two members absent, including budget amendments for 2025 and 2026, appointments of four new Parks and Recreation Commissioners, and authorization for City Light to execute a five-year agreement with Washington State Ferries for system improvements. The council also approved the Parks Department to negotiate and acquire property in the Delridge neighborhood of West Seattle, approved the 2026 Integrated Resource Plan for City Light, and reappointed three members to the Equitable Development Initiative Advisory Board.",
+  "notable": [
+   "Budget amendments passed for both 2025 and 2026 with appropriation changes across city departments.",
+   "City Light authorized to sign five-year agreement with Washington State Ferries for construction improvements.",
+   "Parks Department cleared to acquire real property in Delridge neighborhood of West Seattle."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-06-16": {
+  "digest": "The Seattle City Council appointed nine members to the Community Technology Advisory Board and reappointed four sitting members, with Sarah Champ also appointed to the Seattle Public Utilities Customer Review Panel through mid-2028. The council authorized Seattle Public Utilities to contract with Waste Management for recycling processing services and approved charter amendments proposed by the Seattle Social Housing Developer board. All measures passed unanimously with Councilmember Eddie Lin absent.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-06-09": {
+  "digest": "City Council unanimously passed eight items, including retiring inactive files, extending a contract rezone for 5201 Rainier Avenue South, adopting a new data center definition, and imposing a moratorium on new data center applications while the city studies their impacts on electrical grid capacity, water usage, and utility rates. The council also unanimously appointed Sandra J. Valenciano as Director of Public Health for Seattle and King County, affirmed Seattle Center's importance as a civic and cultural asset, and approved payment of claims for the week of May 25\u201329.",
+  "notable": [
+   "Data center moratorium enacted with comprehensive study ordered on grid capacity, water usage, and utility impacts",
+   "5201 Rainier Avenue South contract rezone extended with amended Property Use and Development Agreement accepted",
+   "Sandra J. Valenciano appointed Director of Public Health for Seattle and King County"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-06-02": {
+  "digest": "City Council unanimously approved 24 items including zoning changes in University District, Fremont, Rainier Beach, and downtown neighborhoods; updated stormwater requirements for development; appointed multiple members to commissions and authorities; and authorized City Light to accept property deeds and grant easements (with one dissent from Dan Strauss on a Puget Sound Energy easement). The council also approved 10-year contracts for two cooperative preschools at parks and requested the mayor investigate public funds following a King County forensic evaluation.",
+  "notable": [
+   "Zoning changes approved across five neighborhoods (University District, Fremont, Madison/Miller, Rainier Beach, Downtown)",
+   "Dan Strauss opposed City Light granting an easement to Puget Sound Energy (8-1 vote)",
+   "Updated stormwater control requirements for development and maintenance activities passed unanimously"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-05-19": {
+  "digest": "The City Council unanimously passed ten measures including two Arts and Cultural District designations for Columbia Hillman City and Georgetown neighborhoods, approved interim zoning to expand transitional encampment capacity, reappointed Andrew Lee as Seattle Public Utilities CEO through 2029, appointed Quynh Pham as Director of the Department of Neighborhoods through 2029, and designated the Woodin House as a historical landmark. All votes were 9-0 with no dissent or failed motions.",
+  "notable": [
+   "Council designated two neighborhoods as Arts and Cultural Districts and expanded transitional encampment capacity through interim zoning changes",
+   "Andrew Lee reappointed as Seattle Public Utilities CEO through December 2029 and Quynh Pham appointed as Director of the Department of Neighborhoods through December 2029"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-05-12": {
+  "digest": "Seattle City Council unanimously passed four measures: authorizing the Mayor to execute the FIFA World Cup 2026 agreement with SeattleFWC26, repealing residential zoning in the Stadium Transition Area to eliminate mixed-use housing, establishing new shared streets regulations in the municipal code, and approving $1+ million in claims payments. All votes passed 9-0 or 7-0 (with two absent), indicating no council dissent on any of the four items.",
+  "notable": [
+   "Stadium Transition Area will no longer permit residential use\u2014the ordinance allowing mixed-use housing was repealed",
+   "City formalized 2026 FIFA World Cup hosting agreement with SeattleFWC26",
+   "New shared streets rules adopted via municipal code amendments"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-05-05": {
+  "digest": "The City Council appointed Lylianna Allala as Director of the Office of Sustainability and Environment and approved payment of claims totaling the week of April 20\u201324, 2026. Both measures passed unanimously with 8 votes in favor, while Councilmember Debora Juarez was absent.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-04-28": {
+  "digest": "City Council unanimously passed routine appointments to arts, music, and renters' commissions, along with adjustments to IT professional pay zones and approval of weekly claim payments. Councilmembers Debora Juarez and Dan Strauss were absent; all other council members voted yes on every item.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-04-21": {
+  "digest": "The City Council approved naming South Jackson Street between 28th and 29th Avenue South as 'Dr. RL Manaway, Sr. Way' and appropriated funds to pay city claims for the week of April 6\u201310, 2026. Both measures passed unanimously among the eight councilmembers present, with Dan Strauss absent.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-04-14": {
+  "digest": "The Seattle City Council approved 16 routine motions at the April 14, 2026 meeting, including three new appointments and five reappointments to city commissions and advisory boards. The council also authorized spending adjustments for homelessness response, approved an alley vacation hearing in Greenwood, and submitted a property tax proposition to voters for August 2026. Three council members\u2014Dionne Foster, Eddie Lin, and Alexis Mercedes Rinck\u2014voted against the appointment of Evan M. Smith to the Ethics and Elections Commission, while Councilmember Robert Kettle was absent from the meeting.",
+  "notable": [
+   "Three council members opposed Evan M. Smith's appointment to the Ethics and Elections Commission (Foster, Lin, Rinck voted no; 5-3 passage).",
+   "Council authorized the Finance Director to sign leases for transitional homeless encampments without further approval and approved budget adjustments for homelessness response.",
+   "Property tax ballot proposition scheduled for August 4, 2026 voter approval."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-04-07": {
+  "digest": "The City Council passed 11 motions with no dissent, including a collective bargaining agreement with the plumbing union, authorization for the Mayor to settle hydroelectric dam relicensing, the sale of City Light property to Snohomish County for road improvements, and a statement affirming Seattle's readiness to host an NBA team. The council also appointed and reappointed five members to the Seattle Design Commission and adopted the 2026 budget legislative intent statements. Two council members, Rob Saka and Robert Kettle, were absent.",
+  "notable": [
+   "Mayor authorized to execute comprehensive settlement agreement for hydroelectric dam relicensing",
+   "City selling portion of City Light Department property to Snohomish County for road purposes",
+   "Council affirms Seattle and Climate Pledge Arena ready to host NBA team"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-03-31": {
+  "digest": "Seattle City Council passed three measures: a mandatory 60-day pause on police surveillance camera and license plate reader data collection, new rules restricting when police can question people about citizenship or immigration status, and approval of claims for the week of March 16\u201320. All three passed unanimously with 8 votes (Councilmember Maritza Rivera absent).",
+  "notable": [
+   "Police surveillance pause: 60-day moratorium on SPD camera and license plate reader data collection approved 8-0",
+   "New limits on immigration status questioning by Seattle Police approved 8-0"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-03-24": {
+  "digest": "The city council approved three routine matters: an amendment to the Comcast cable television franchise agreement, adoption of updated federal flood insurance maps and floodplain regulations to comply with FEMA requirements, and payment of claims from the week of March 9\u201313. All three measures passed unanimously with eight votes in favor and one member absent.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-03-17": {
+  "digest": "The Seattle City Council held a routine meeting on March 17, 2026, with Councilmember Joy Hollingsworth absent. The body unanimously appointed and reappointed eight members to the Seattle Arts Commission and one to the Seattle Film Commission, appointed Carlin Llorente to the Burke-Gilman Place Public Development Authority, and declared a Seattle Public Utilities property in SeaTac surplus. The council also passed new civil immigration enforcement restrictions on city-controlled property and reaffirmed data privacy protections for city program users, with all votes passing 8\u20130 in Hollingsworth's absence.",
+  "notable": [
+   "Passed new Seattle Municipal Code chapter prohibiting civil immigration enforcement staging on all city-owned and controlled property.",
+   "Declared Seattle Public Utilities property at South 138th Street in SeaTac surplus to city needs.",
+   "Eight Arts Commission members reappointed through December 31, 2027, and data privacy protections reaffirmed with unanimous support."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-03-10": {
+  "digest": "City Council unanimously approved routine administrative matters: reappointed four members to the Joint Apprenticeship Training Committee, adopted a moratorium on new detention center applications or expansions, accepted 211 electrical distribution easements for the City Light Department, and paid approved claims from the previous week. All eight items passed 9-0 with no dissent or discussion noted.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-03-03": {
+  "digest": "Seattle City Council unanimously affirmed expectations for professional law enforcement conduct and condemned recent federal law enforcement actions. The council also directed the city to develop a regional transportation hub adjacent to Westlake Park with neighborhood integration and approved claims payments for the week of February 16\u201320, 2026.",
+  "notable": [
+   "Council unanimously directed development of a regional transportation hub next to Westlake Park integrated with surrounding neighborhoods"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-02-24": {
+  "digest": "The City Council unanimously appointed Aly Pennucci as Director of the City Budget Office for a three-year term through 2029, and approved payment of claims for the week of February 9\u201313 without opposition. Both votes passed 9\u20130.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-02-17": {
+  "digest": "The City Council unanimously approved six measures with Councilmember Robert Kettle absent. Key actions included transferring partial control of the Bitter Lake Reservoir property from Seattle Public Utilities to the Department of Transportation, authorizing utilities to join a regional water supply coordination forum, and approving limited herbicide use to treat invasive knotweed in the Cedar River watershed. The council also passed a privacy protection measure prohibiting the city from sharing resident personal information with federal or state agencies for immigration enforcement purposes. Mayor Katie B. Wilson delivered her State of the City address, and the council approved routine claims for the prior week.",
+  "notable": [
+   "Council prohibited sharing resident personal information with federal/state agencies for civil immigration enforcement",
+   "Bitter Lake Reservoir property transferred from Seattle Public Utilities to Department of Transportation",
+   "Limited herbicide use approved to treat invasive knotweed in Cedar River Municipal Watershed"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-02-10": {
+  "digest": "The council authorized the mayor to implement a Social Housing Tax through an interlocal agreement with the Seattle Social Housing Developer. The council also approved three land-use code changes streamlining environmental review thresholds and transportation impact analysis requirements. All four items passed 7-0 with councilmembers Strauss and Juarez absent.",
+  "notable": [
+   "Social Housing Tax implementation authorized via interlocal agreement",
+   "Environmental review and transportation impact analysis rules simplified in land use code"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-02-03": {
+  "digest": "The city council approved payment of all claims and invoices from January 19-23, 2026 with unanimous support. No details about the dollar amount or specific vendors were disclosed in the record.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-01-27": {
+  "digest": "The City Council approved payment of all claims and invoices submitted to the city during the week of January 12-16, 2026, with unanimous support. No opposing votes were recorded.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-01-20": {
+  "digest": "City Council approved three routine items: a 15-year pedestrian skybridge permit for HST Lessee West Seattle LLC over Virginia Street in West Seattle, vacation of an alley in Denny Triangle in exchange for a development agreement with GID Development Group, and payment of approved city claims and invoices from early January. All three passed 6-3 with the same three council members absent (Juarez, Strauss, Rivera).",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-01-13": {
+  "digest": "The city council extended interim floodplain regulations for six more months so updated federal flood maps can guide development decisions, and approved routine bill payments from the past week. Both motions passed unanimously with all nine council members voting yes.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-01-06": {
+  "digest": "The City Council unanimously approved three weeks of routine vendor payments totaling multiple invoices from early-to-mid December 2025. The council also established its 2026-2027 committee structure, designated a monthly Pro Tem, and set participation rules for regional committee assignments\u2014all passing without dissent.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2025-12-16": {
+  "digest": "The City Council approved 39 appointments and reappointments to various boards and commissions, including the Seattle Disability Commission, Women's Commission, LGBTQ Commission, Housing Levy Oversight Committee, and others, with terms extending through 2027\u20132028. All votes passed 8\u20131 (with Councilmember Debora Juarez absent). No substantive policy changes or budget matters were decided; the meeting consisted entirely of administrative personnel appointments.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2025-12-09": {
+  "digest": "The council unanimously appointed and reappointed 26 people to various advisory boards covering pedestrian safety, transit, freight, bicycles, and Indigenous services, all serving through 2026-2028. The council approved two police union contracts with a notable split: a Police Management Association deal passed 9-0, but the Police Officers' Guild contract passed 6-3 with Alexis Mercedes Rinck, Eddie Lin, and Rob Saka voting no. The council also set the 2026 state legislative agenda, adjusted pay structures for city discretionary pay programs, and appropriated funds for claims.",
+  "notable": [
+   "Police Officers' Guild contract passed 6-3 with dissent from Rinck, Lin, and Saka; Police Management Association contract passed unanimously.",
+   "26 people appointed or reappointed to advisory boards across pedestrian safety, transit, freight, bicycles, and Indigenous services.",
+   "Council set 2026 state legislative agenda and adjusted city pay zone structures for 2026."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2025-12-02": {
+  "digest": "The City Council approved payment of claims that accumulated during the week of November 17-21, 2025, with all nine council members voting in favor. This routine weekly appropriation authorizes the city to settle various outstanding invoices and expenses from that period.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2025-11-21": {
+  "digest": "The City Council adopted the 2026 budget with $9 million in bonded projects for water, drainage, wastewater, and electric systems, plus property tax increases allowed under state limits. Most votes passed 8\u20131 with Councilmember Kettle absent, but two items drew dissent: moving the Major Institutions and Schools program drew 'no' votes from Nelson and Rivera (6\u20132), and a construction permit fee increase drew 'no' votes from Nelson, Rivera, and Solomon (6\u20133). Council also expanded Transportation Benefit District funding to cover transit security services over Rinck's opposition, and created a dedicated fund for Central District and Southeast Seattle preservation.",
+  "notable": [
+   "2026 budget and capital improvement program adopted (9\u20130) with expanded property tax levy and $9M+ in revenue bonds",
+   "Major Institutions/Schools program transfer to Planning opposed by Nelson and Rivera (6\u20132); construction permit fees opposed by Nelson, Rivera, Solomon (6\u20133)",
+   "Transportation Benefit District expanded for transit security over Rinck's dissent (8\u20131)"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2025-11-12": {
+  "digest": "City Council unanimously approved five appointments to the Equitable Development Initiative Advisory Board (with terms ending in 2026\u20132028), appointed Bonnie J. Glenn as Director of the Office of Police Accountability through the end of 2026, and authorized two labor agreements with the International Brotherhood of Electrical Workers Local No. 77. The council also approved claims payment for two separate weeks in late October. All votes passed 8\u20130 with Councilmember Debora Juarez absent.",
+  "notable": [
+   "No dissenting votes or failed motions; all routine appointments and labor agreements passed unanimously.",
+   "Bonnie J. Glenn appointed as Director of the Office of Police Accountability through December 31, 2026."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2025-11-03": {
+  "digest": "The City Council unanimously approved modifications to the Mayor's emergency declaration addressing the federal government shutdown's effects on SNAP benefits for Seattle residents. The vote was 9-0 in favor.",
+  "notable": [
+   "Council unanimously supported emergency measures for SNAP benefit disruptions caused by federal shutdown"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }
