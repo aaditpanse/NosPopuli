@@ -1,47 +1,48 @@
-"""Deterministic extractor for the City of Chicago Capital Improvement
-Program (CIP) 2025-2029 — "Build Better Together" (Office of Budget and
-Management). Single-volume PDF; the funded projects live in the
-"Project and Fund Source Detail Report" section near the back, which prints,
-per functional category, one project block: a project title, its fund-source
-rows with per-fiscal-year dollar columns (2025-2029) and a Total column.
+"""Deterministic extractor for the City of Chicago Capital Improvement Program.
 
-Parse strategy (mirrors the Fairfax reference, adapted to THIS layout):
-`pdftotext -layout` preserves column alignment, so we locate each cost
-table's year-header row, record each fiscal-year label's character offset,
-and read every data row by slicing values at those offsets. We track the
-current functional-category heading as we walk. Per project we sum the
-fund-source rows into fiscal-year columns and reconcile that sum against the
-document's own printed Total — the defining gate check.
+Source: 'City of Chicago 2025-2029 Capital Improvement Program (Build Better
+Together)', a single layout-preserving PDF published by OBM. We parse the
+'Project and Fund Source Detail Report' at the back of the document: it groups
+funded projects under the CIP's top-level functional categories (Aviation,
+Water System, Transportation, ...) and prints, per project, one row per fund
+source with per-fiscal-year dollars and a project Total line.
 
-stdlib only; all I/O is rt.fetch_text.
+Approach (adapted from the Fairfax reference, different layout):
+  * fetch each CIP url once via rt.fetch_text (pdftotext -layout upstream);
+  * walk lines, tracking the current top-level section heading as `function`;
+  * find each cost table's fiscal-year header row, record the character offset
+    of each year label (and the Total label), and read data rows by slicing at
+    those offsets (nearest-column assignment with a spacing-derived tolerance);
+  * sum fund-source rows into per-year totals; reconcile, in raw dollars,
+    against the project's printed Total column before trusting a subtotal;
+  * normalize every amount to integer thousands of dollars.
 """
 
 import re
 
-try:  # schema is the durable asset; import if present, else pin the version
+try:
     import schema
     SCHEMA_VERSION = schema.SCHEMA_VERSION
-except Exception:  # pragma: no cover
+except Exception:
     SCHEMA_VERSION = "1.5"
 
 EXTRACTOR_VERSION = "1"
 SOURCE_ID = "chicago-cip"
-JURISDICTION = "City of Chicago, Illinois"
-EDITION = "Capital Improvement Program (CIP) Report 2025-2029: Build Better Together"
 
 SOURCE_URL = ("https://www.chicago.gov/city/en/depts/obm/supp_info/"
               "office-publications.html")
 CIP_URLS = [
     "https://www.chicago.gov/content/dam/city/depts/obm/supp_info/CIP/"
-    "City%20of%20Chicago%202025-2029%20CIP.pdf",
+    "City%20of%20Chicago%202025-2029%20CIP.pdf"
 ]
 
-YEARS = [2025, 2026, 2027, 2028, 2029]
-TOL = 9  # char tolerance when snapping a value's end offset to a column
+FY_FIRST, FY_LAST = 2025, 2029
+FY_YEARS = list(range(FY_FIRST, FY_LAST + 1))
 
-# Top-level functional categories (the CIP's summary/section headings). These
-# group the project pages; we use whichever is current as `function`.
-CATEGORIES = [
+# Top-level functional categories, from the CIP's Table of Contents / funding
+# summary. These are the section headings the detail report groups projects by;
+# we track the current one and emit it as `function`.
+FUNCTIONS = [
     "Aviation",
     "Water System",
     "Transportation",
@@ -55,316 +56,307 @@ CATEGORIES = [
     "City Space",
 ]
 
+NUM_RE = re.compile(r"\$?\(?-?[\d,]*\d\)?")
+FURNITURE = re.compile(
+    r"(?i)city of chicago|capital improvement program|project and fund source"
+    r"|^\s*fund source\s*$|table of contents|build better together"
+    r"|^\s*page\b|^\s*\d{1,3}\s*$|grand total|program total|^\s*\.+\s*$")
+
 
 def _norm(s):
-    return re.sub(r"[^a-z0-9]+", "", (s or "").lower())
+    return re.sub(r"[^a-z0-9]+", " ", (s or "").lower()).strip()
 
 
-CAT_NORM = {_norm(c): c for c in CATEGORIES}
-
-AMT = re.compile(r"\d[\d,]*|-")
-FUND_HINT = re.compile(
-    r"(?i)(funds?|debt|revenue|bonds?|\btif\b|grants?|g\.?\s*o\.?|"
-    r"proceeds|financing|reimbursement)")
-TOTAL_RE = re.compile(r"(?i)^\s*(project\s+|program\s+|grand\s+)?(sub)?total\b")
+FUNC_NORM = {_norm(f): f for f in FUNCTIONS}
 
 
-def _clean(s):
-    s = re.sub(r"\s+", " ", (s or "")).strip(" .:-\u2013")
-    return s[:200]
+def money(tok):
+    tok = tok.strip()
+    neg = tok.startswith("(") and tok.endswith(")")
+    tok = tok.strip("()").replace("$", "").replace(",", "").replace(" ", "")
+    if tok in ("", "-"):
+        return 0
+    try:
+        v = int(tok)
+    except ValueError:
+        return 0
+    return -v if neg else v
 
 
-def _slug(s):
-    return re.sub(r"[^a-z0-9]+", "-", (s or "").lower()).strip("-")[:70]
-
-
-def _furniture(line):
-    s = line.strip()
-    if not s:
-        return True
-    if re.match(r"^[\d,]+$", s) and len(s) <= 4:
-        return True
-    low = s.lower()
-    for k in ("city of chicago", "capital improvement program",
-              "project and fund source", "build better together",
-              "in whole dollars", "in dollars", "fund source",
-              "table of contents"):
-        if k in low:
-            return True
-    return False
-
-
-def _header(line):
-    """Return (cols, total_off) if this is a fiscal-year header row, else None.
-    cols maps each year -> the character offset of the END of its label; values
-    are right-aligned to those offsets."""
-    found = {}
-    for y in YEARS:
-        i = line.find(str(y))
-        if i >= 0:
-            found[y] = i + len(str(y))
-    if 2025 not in found or 2029 not in found or len(found) < 4:
+def match_function(s):
+    """Return the canonical top-level function if `s` is one of its headings."""
+    if len(s) > 60:
         return None
-    if found[2029] <= found[2025]:
+    s2 = re.sub(r"(?i)^(program|function|category|department of)\s*:?\s*", "", s)
+    s2 = re.sub(r"(?i)\s+program\s*$", "", s2).strip(" :-")
+    n = _norm(s2)
+    return FUNC_NORM.get(n)
+
+
+def find_header(line):
+    """Detect a fiscal-year header row; return {year -> end offset, 'Total': off}."""
+    pos = {}
+    for y in FY_YEARS:
+        m = re.search(r"(?<!\d)" + str(y) + r"(?!\d)", line)
+        if m:
+            pos[y] = m.end()
+            continue
+        m = re.search(r"(?i)FY\s*" + f"{y % 100:02d}" + r"(?!\d)", line)
+        if m:
+            pos[y] = m.end()
+    if len(pos) < 3:
         return None
-    step = (found[2029] - found[2025]) / 4.0
-    cols = {}
-    for k, y in enumerate(YEARS):
-        cols[y] = found.get(y, int(round(found[2025] + k * step)))
-    low = line.lower()
-    ti = low.rfind("total")
-    if ti >= 0:
-        total_off = ti + len("total")
+    tot = list(re.finditer(r"(?i)total", line))
+    if tot:
+        pos["Total"] = tot[-1].end()
+    return pos
+
+
+def parse_row(line, cols):
+    """Slice a data row at the header offsets.
+
+    Returns (year_values, total_value, first_number_start). Each number is
+    assigned to the nearest column (year or Total) within a spacing-derived
+    tolerance; numbers outside tolerance (e.g. a prior-year column) are left in
+    the label region."""
+    year_off = {y: cols[y] for y in FY_YEARS if y in cols}
+    total_off = cols.get("Total")
+    all_off = sorted(list(year_off.values()) + ([total_off] if total_off else []))
+    if len(all_off) >= 2:
+        gaps = [all_off[i + 1] - all_off[i] for i in range(len(all_off) - 1)]
+        tol = max(4, min(gaps) // 2)
     else:
-        m = re.search(r"20\d\d\s*[-\u2013]\s*20\d\d", line)
-        total_off = m.end() if m else int(round(cols[2029] + step))
-    return cols, total_off
-
-
-def _read_row(line, cols, total_off):
-    """Slice a data row's values by column offset. Returns
-    (fy dict, row_total, aligned_count, first_aligned_start)."""
-    fy = {y: 0 for y in YEARS}
-    row_total = None
-    aligned = 0
-    first = None
-    for m in AMT.finditer(line):
-        tok = m.group()
-        val = 0 if tok == "-" else int(tok.replace(",", ""))
-        e = m.end()
-        best_y = min(YEARS, key=lambda y: abs(cols[y] - e))
-        if abs(cols[best_y] - e) <= TOL:
-            fy[best_y] = val
-            aligned += 1
-            if first is None:
+        tol = 8
+    yv, total_val, first = {}, None, None
+    for m in NUM_RE.finditer(line):
+        g = m.group()
+        if not re.search(r"\d", g):
+            continue
+        end = m.end()
+        best_key, best_d = None, None
+        for y, off in year_off.items():
+            d = abs(off - end)
+            if best_d is None or d < best_d:
+                best_d, best_key = d, ("y", y)
+        if total_off is not None:
+            d = abs(total_off - end)
+            if best_d is None or d < best_d:
+                best_d, best_key = d, ("t", None)
+        if best_d is not None and best_d <= tol:
+            v = money(g)
+            if best_key[0] == "y":
+                yv[best_key[1]] = yv.get(best_key[1], 0) + v
+            else:
+                total_val = v
+            if first is None or m.start() < first:
                 first = m.start()
-        elif total_off is not None and (
-                abs(total_off - e) <= TOL or e > cols[YEARS[-1]] + TOL):
-            row_total = val  # rightmost such wins
-            aligned += 1
-            if first is None:
-                first = m.start()
-    return fy, row_total, aligned, first
+    return yv, total_val, first
 
 
-def _detail_start(lines):
-    idxs = [i for i, l in enumerate(lines)
-            if "project and fund source detail" in l.lower()]
-    if idxs:
-        return idxs[-1]
-    return 0
+def _new_project(function):
+    return {"title_parts": [], "function": function or "Other",
+            "funds": [], "fy": {y: 0 for y in FY_YEARS},
+            "printed_total": None, "printed_years": None,
+            "nrows": 0, "last_total": None}
 
 
-def _new(title, category):
-    return {"title": title or "Untitled Project",
-            "function": category or "Unspecified",
-            "fy": {y: 0 for y in YEARS},
-            "row_totals": 0, "have_row_total": False,
-            "funds": [], "printed_total_row": None}
+def _titleish(s):
+    return len(s) <= 90 and not s.rstrip().endswith(".")
 
 
-def _parse(lines):
+def parse_projects(lines):
     projects = []
+    cur = None
+    function = None
     cols = None
-    total_off = None
-    category = None
-    title_buf = []
-    current = [None]  # boxed for closure
 
-    def finalize():
-        cur = current[0]
-        if cur is not None:
-            if sum(cur["fy"].values()) > 0 or cur["printed_total_row"]:
-                projects.append(cur)
-        current[0] = None
+    def flush():
+        nonlocal cur
+        if cur is not None and (any(cur["fy"].values()) or cur["funds"]
+                                or cur["printed_total"] is not None):
+            projects.append(cur)
+        cur = None
 
     for raw in lines:
         line = raw.replace("\f", "")
-        h = _header(line)
-        if h:
-            cols, total_off = h
-            title_buf = []
-            continue
         s = line.strip()
         if not s:
             continue
-        n = _norm(s)
-        if n in CAT_NORM:
-            cat = CAT_NORM[n]
-            if cat != category:  # a genuinely new section, not a page reprint
-                finalize()
-                title_buf = []
-                category = cat
+
+        fn = match_function(s)
+        if fn:
+            flush()
+            function = fn
             continue
-        if _furniture(line):
+
+        hdr = find_header(line)
+        if hdr:
+            cols = hdr
+            continue
+
+        if FURNITURE.search(s):
             continue
         if cols is None:
-            title_buf.append(s)
-            if len(title_buf) > 4:
-                title_buf = title_buf[-4:]
             continue
 
-        fy, row_total, aligned, fa = _read_row(line, cols, total_off)
-        lead = line[:fa].strip() if fa is not None else s
-        is_total = bool(TOTAL_RE.match(line))
+        yv, total_val, first = parse_row(line, cols)
+        has_nums = bool(yv) or total_val is not None
+        label = line[:first].strip() if first is not None else s
+        low = label.lower()
 
-        if is_total and aligned >= 1:
-            cur = current[0]
+        if not has_nums:
+            # text-only line: a project title (or a title continuation)
+            if cur is None:
+                cur = _new_project(function)
+                cur["title_parts"].append(s)
+            elif cur["funds"] or any(cur["fy"].values()):
+                flush()
+                cur = _new_project(function)
+                cur["title_parts"].append(s)
+            else:
+                joined = " ".join(cur["title_parts"])
+                if _titleish(s) and len(joined) < 100:
+                    cur["title_parts"].append(s)
+            continue
+
+        if "total" in low:
             if cur is not None:
-                cur["printed_total_row"] = (
-                    row_total if row_total is not None else sum(fy.values()))
-                finalize()
-            title_buf = []
+                cur["printed_total"] = total_val
+                cur["printed_years"] = yv
+                flush()
             continue
 
-        is_fund = aligned >= 1 and bool(FUND_HINT.search(lead)) and len(lead) <= 70
-        if is_fund:
-            if current[0] is None:
-                current[0] = _new(_clean(" ".join(title_buf)), category)
-                title_buf = []
-            cur = current[0]
-            for y in YEARS:
-                cur["fy"][y] += fy[y]
-            if row_total is not None:
-                cur["row_totals"] += row_total
-                cur["have_row_total"] = True
-            if lead and lead not in cur["funds"]:
-                cur["funds"].append(lead)
-            continue
+        # fund-source row
+        if cur is None:
+            cur = _new_project(function)
+            if label:
+                cur["title_parts"].append(label)
+        for y, v in yv.items():
+            cur["fy"][y] += v
+        cur["nrows"] += 1
+        cur["last_total"] = total_val
+        if label and not label[0].isdigit() and len(label) < 80:
+            if label not in cur["funds"]:
+                cur["funds"].append(label)
 
-        # An inline project row (amounts, no fund breakdown) — only start one
-        # when no fund-based project is open, to avoid swallowing subtotals.
-        if (current[0] is None and aligned >= 3 and lead
-                and re.search(r"[A-Za-z]", lead) and len(lead) <= 90):
-            title = _clean((" ".join(title_buf) + " " + lead).strip())
-            cur = _new(title, category)
-            for y in YEARS:
-                cur["fy"][y] += fy[y]
-            if row_total is not None:
-                cur["printed_total_row"] = row_total
-            current[0] = cur
-            finalize()
-            title_buf = []
-            continue
-
-        if aligned >= 1:
-            # numeric noise (unlabeled subtotal, stray figure) — ignore
-            continue
-
-        # pure text -> project title / continuation
-        if current[0] is not None:
-            finalize()
-            title_buf = [s]
-        else:
-            title_buf.append(s)
-            if len(title_buf) > 4:
-                title_buf = title_buf[-4:]
-
-    finalize()
+    flush()
     return projects
 
 
-def _to_thousands(raw_years, target_raw):
-    """Convert whole-dollar year values to integer thousands while forcing
-    their sum to equal round(target_raw/1000), using largest-remainder — so a
-    reconciled project stays reconciled after unit conversion."""
-    total_k = int(round(target_raw / 1000.0))
-    fl = {y: raw_years[y] // 1000 for y in YEARS}
-    rem = total_k - sum(fl.values())
-    order = sorted(YEARS, key=lambda y: raw_years[y] % 1000, reverse=True)
-    conv = dict(fl)
-    i = 0
-    while rem > 0 and order:
-        conv[order[i % len(order)]] += 1
-        rem -= 1
-        i += 1
-    if rem < 0:
-        for y in sorted(YEARS, key=lambda y: raw_years[y] % 1000):
-            if rem >= 0:
-                break
-            if conv[y] > 0:
-                conv[y] -= 1
-                rem += 1
-    return {y: conv[y] for y in YEARS}, total_k
+def _clean_title(parts):
+    t = " ".join(parts)
+    t = re.sub(r"\.{2,}", " ", t)
+    t = re.sub(r"\s+", " ", t).strip(" .-")
+    return t
 
 
-def extract(rt, args=None):
-    raw_projects = []
-    for url in CIP_URLS:
-        text = rt.fetch_text(url) or ""
-        lines = text.splitlines()
-        start = _detail_start(lines)
-        for p in _parse(lines[start:]):
-            p["_url"] = url
-            raw_projects.append(p)
+def _slug(s):
+    return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")[:80]
 
-    # Detect the document's unit (Chicago prints whole dollars in its summary).
-    raw_sum = 0
-    max_amt = 0
-    for p in raw_projects:
-        t = (p["printed_total_row"] if p["printed_total_row"] is not None
-             else sum(p["fy"].values()))
-        raw_sum += t or 0
-        max_amt = max(max_amt, max(p["fy"].values(), default=0), t or 0)
-    whole_dollars = raw_sum > 1_000_000_000 or max_amt >= 100_000_000
 
+def build_records(projects, data_url, divisor):
     run_id = f"{SOURCE_ID}-{EXTRACTOR_VERSION}"
-    records = []
-    seen = {}
-    for p in raw_projects:
-        raw_years = p["fy"]
-        raw_year_sum = sum(raw_years.values())
-        if raw_year_sum <= 0:
+    records, seen = [], {}
+
+    def scale(v):
+        return int(round(v / divisor)) if divisor != 1 else int(v)
+
+    for p in projects:
+        title = _clean_title(p["title_parts"])
+        if not title or len(title) < 3:
             continue
-        raw_printed = p["printed_total_row"]
-        if raw_printed is None and p["have_row_total"]:
-            raw_printed = p["row_totals"]
-        reconciled = raw_printed is not None and raw_printed == raw_year_sum
 
-        if whole_dollars:
-            target = raw_printed if reconciled else raw_year_sum
-            conv_years, conv_total = _to_thousands(raw_years, target)
-        else:
-            conv_years = {y: int(raw_years[y]) for y in YEARS}
-            conv_total = sum(conv_years.values())
+        raw_fy = dict(p["fy"])
+        if not any(raw_fy.values()) and p["printed_years"]:
+            raw_fy = {y: p["printed_years"].get(y, 0) for y in FY_YEARS}
 
-        five = sum(conv_years.values())
-        printed_sub = conv_total if reconciled else None
-        if printed_sub is not None and printed_sub != five:
-            printed_sub = None  # never emit a self-contradicting subtotal
+        fy_k = {y: max(0, scale(raw_fy.get(y, 0))) for y in FY_YEARS}
+        five = sum(fy_k.values())
+        if five <= 0:
+            continue
 
-        title = _clean(p["title"]) or "Untitled Project"
-        base = _slug(f"{p['function']}-{title}") or "project"
-        seen[base] = seen.get(base, 0) + 1
-        pid = base if seen[base] == 1 else f"{base}-{seen[base]}"
+        # raw-dollar reconciliation before trusting any printed subtotal
+        raw_sum = sum(raw_fy.get(y, 0) for y in FY_YEARS)
+        raw_printed = p["printed_total"]
+        if raw_printed is None and p["nrows"] == 1 and p["last_total"] is not None:
+            raw_printed = p["last_total"]
+
+        printed_sub = None
+        if raw_printed is not None and raw_printed > 0 and raw_sum == raw_printed:
+            target = scale(raw_printed)
+            diff = target - five
+            if diff != 0:
+                ymax = max(FY_YEARS, key=lambda y: raw_fy.get(y, 0))
+                if fy_k[ymax] + diff >= 0:
+                    fy_k[ymax] += diff
+                    five = sum(fy_k.values())
+            if five == target:
+                printed_sub = target
+
+        total = printed_sub if printed_sub is not None else five
+
+        base = _slug(f"{p['function']}-{title}")
+        pid = base or "project"
+        seen[pid] = seen.get(pid, 0) + 1
+        if seen[pid] > 1:
+            pid = f"{pid}-{seen[pid]}"
 
         rec = {
             "project_id": f"{SOURCE_ID}-{pid}",
             "title": title,
             "function": p["function"],
             "funding_sources": list(p["funds"]),
-            "fiscal_years": {str(y): int(conv_years[y]) for y in YEARS},
+            "fiscal_years": {str(y): fy_k[y] for y in FY_YEARS},
             "five_year_total": five,
-            "printed_subtotal": printed_sub,
-            "total": five,
+            "total": int(total),
             "districts": [],
             "unit": "usd_thousands",
             "source_url": SOURCE_URL,
-            "data_source_url": p["_url"],
+            "data_source_url": data_url,
             "provenance": {
                 "source_id": SOURCE_ID,
                 "extractor_version": EXTRACTOR_VERSION,
                 "run_id": run_id,
             },
         }
+        if printed_sub is not None:
+            rec["printed_subtotal"] = printed_sub
         records.append(rec)
+
+    return records
+
+
+def _detail_region(text):
+    lines = text.splitlines()
+    start = 0
+    for idx, l in enumerate(lines):
+        if "Project and Fund Source Detail Report" in l:
+            start = idx
+    return lines[start:], lines
+
+
+def extract(rt, args):
+    all_records = []
+    data_url = CIP_URLS[0]
+    for url in CIP_URLS:
+        text = rt.fetch_text(url)
+        divisor = 1 if re.search(r"(?i)in thousands|\(\$?000|\$000s", text) else 1000
+
+        detail_lines, all_lines = _detail_region(text)
+        projects = parse_projects(detail_lines)
+        if len({p["function"] for p in projects
+                if p["function"] != "Other"}) < 6 or len(projects) < 20:
+            # fall back to walking the whole document
+            whole = parse_projects(all_lines)
+            if len(whole) > len(projects):
+                projects = whole
+
+        all_records.extend(build_records(projects, url, divisor))
 
     run_meta = {
         "source_id": SOURCE_ID,
         "extractor_version": EXTRACTOR_VERSION,
         "schema_version": SCHEMA_VERSION,
-        "jurisdiction": JURISDICTION,
-        "edition": EDITION,
-        "row_counts": {"capital_projects": len(records)},
+        "row_counts": {"capital_projects": len(all_records)},
     }
-    return {"capital_projects": records}, run_meta
+    return {"capital_projects": all_records}, run_meta
