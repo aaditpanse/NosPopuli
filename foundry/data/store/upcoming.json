@@ -2,66 +2,36 @@
  "la-primegov": {
   "upcoming": [
    {
-    "date": "2026-07-28",
-    "time": "10:00 AM",
-    "body": "City Council"
-   },
-   {
     "date": "2026-07-29",
     "time": "10:00 AM",
-    "body": "City Council"
+    "body": "City Council Meeting"
    },
    {
     "date": "2026-07-31",
     "time": "10:00 AM",
-    "body": "City Council"
+    "body": "City Council Meeting"
    }
   ],
   "next": {
-   "date": "2026-07-28",
+   "date": "2026-07-29",
    "time": "10:00 AM",
-   "body": "City Council"
+   "body": "City Council Meeting"
   },
-  "checked": "2026-07-27",
+  "checked": "2026-07-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "loudoun-bos": {
   "upcoming": [],
   "next": null,
-  "checked": "2026-07-27",
+  "checked": "2026-07-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "pittsburgh-legistar": {
-  "upcoming": [
-   {
-    "date": "2026-07-28",
-    "time": "10:00 AM",
-    "body": "City Council"
-   },
-   {
-    "date": "2026-07-28",
-    "time": "10:01 AM",
-    "body": "City Council"
-   },
-   {
-    "date": "2026-07-28",
-    "time": "1:30 PM",
-    "body": "Committee on Hearings and Policy"
-   },
-   {
-    "date": "2026-07-29",
-    "time": "10:00 AM",
-    "body": "Standing Committees"
-   }
-  ],
-  "next": {
-   "date": "2026-07-28",
-   "time": "10:00 AM",
-   "body": "City Council"
-  },
-  "checked": "2026-07-27",
+  "upcoming": [],
+  "next": null,
+  "checked": "2026-07-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -88,7 +58,7 @@
    "time": "14:00",
    "body": "Board of County Supervisors Meeting"
   },
-  "checked": "2026-07-27",
+  "checked": "2026-07-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -125,7 +95,7 @@
    "time": "9:30 a.m.",
    "body": "Full Board of Supervisors Meeting"
   },
-  "checked": "2026-07-27",
+  "checked": "2026-07-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -162,7 +132,7 @@
    "time": "17:00",
    "body": "August 18, 2026 Board of Supervisors Meeting"
   },
-  "checked": "2026-07-27",
+  "checked": "2026-07-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -199,14 +169,14 @@
    "time": "1:30 PM",
    "body": "City Council Stated Meeting"
   },
-  "checked": "2026-07-27",
+  "checked": "2026-07-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "fairfax-cip": {
   "upcoming": [],
   "next": null,
-  "checked": "2026-07-27",
+  "checked": "2026-07-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -233,46 +203,36 @@
    "time": "14:00",
    "body": "Board of County Supervisors Meeting"
   },
-  "checked": "2026-07-27",
+  "checked": "2026-07-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "chicago-bos": {
   "upcoming": [
    {
-    "date": "2026-08-20",
-    "time": null,
-    "body": "City Council meeting"
-   },
-   {
     "date": "2026-09-23",
     "time": "15:00",
     "body": "City Council meeting at City Council Chamber, 2nd Floor, City Hall, 121 North LaSalle Street - Chicago, IL 60602"
+   },
+   {
+    "date": "2026-09-23",
+    "time": null,
+    "body": "Additional meeting - awaiting agenda details"
    }
   ],
   "next": {
-   "date": "2026-08-20",
-   "time": null,
-   "body": "City Council meeting"
+   "date": "2026-09-23",
+   "time": "15:00",
+   "body": "City Council meeting at City Council Chamber, 2nd Floor, City Hall, 121 North LaSalle Street - Chicago, IL 60602"
   },
-  "checked": "2026-07-27",
+  "checked": "2026-07-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "seattle-bos": {
-  "upcoming": [
-   {
-    "date": "2026-07-28",
-    "time": "2:00 PM",
-    "body": "City Council"
-   }
-  ],
-  "next": {
-   "date": "2026-07-28",
-   "time": "2:00 PM",
-   "body": "City Council"
-  },
-  "checked": "2026-07-27",
+  "upcoming": [],
+  "next": null,
+  "checked": "2026-07-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -281,7 +241,7 @@
    {
     "date": "2026-08-20",
     "time": null,
-    "body": "City Council meeting (inferred from schedule pattern, but no explicit future date found after 2026-07-27)"
+    "body": "No additional meetings with explicitly stated future dates found after 2026-07-28"
    },
    {
     "date": "2026-09-23",
@@ -292,9 +252,9 @@
   "next": {
    "date": "2026-08-20",
    "time": null,
-   "body": "City Council meeting (inferred from schedule pattern, but no explicit future date found after 2026-07-27)"
+   "body": "No additional meetings with explicitly stated future dates found after 2026-07-28"
   },
-  "checked": "2026-07-27",
+  "checked": "2026-07-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  }
