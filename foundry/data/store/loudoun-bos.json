@@ -359,6 +359,30 @@
     "method": null,
     "note": "ingest-only: no second source wired for Loudoun yet"
    }
+  },
+  "loudoun-bos-2026-07-21": {
+   "meeting_id": "loudoun-bos-2026-07-21",
+   "body": "Board of Supervisors",
+   "jurisdiction": "Loudoun County, VA",
+   "date": "2026-07-21",
+   "attendance": {
+    "Phyllis J. Randall": "present",
+    "Michael R. Turner": "present",
+    "Juli Briskman": "present",
+    "Sylvia Glass": "present",
+    "Caleb Kershner": "present",
+    "Matthew F. Letourneau": "present",
+    "Kristen Umstattd": "present",
+    "Laura TeKrony": "present",
+    "Koran Saines": "present"
+   },
+   "source_url": "https://lfportal.loudoun.gov/LFPortalinternet/docview.aspx?id=1974411&dbid=0",
+   "minutes_url": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1974411/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "ingest-only: no second source wired for Loudoun yet"
+   }
   }
  },
  "agenda_items": {},

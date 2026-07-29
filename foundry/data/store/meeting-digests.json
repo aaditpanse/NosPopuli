@@ -2802,5 +2802,29 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "la-primegov-17801": {
+  "digest": "City Council held a lengthy session approving dozens of matters including 23 property lien hearings for code violations and nuisance abatement, amendments to cannabis business fees, four alcoholic beverage license applications, and major zoning changes at 400 South Central Avenue. The council also appointed Joone Kim-Lopez as Executive Director of Sanitation and Crystal Lee as City Engineer, allocated $9.4 million for development services consulting, and reallocated funds for homeless services and street projects. All matters passed with either 13 or 14 aye votes; Councilmember Price Jr. was absent from all votes, and Councilmember Nazarian was absent from most votes starting mid-session.",
+  "notable": [
+   "General Plan Amendment and zoning changes approved for 400 South Central Avenue with related tract map and conditional use permit appeals (14 aye, Nazarian absent)",
+   "23 separate property lien hearings for code violations and nuisance abatement costs all passed with no dissent or discussion noted",
+   "$9.4 million allocated from development services trust fund for BuildLA Project consultant services and $9.4 million from CRA bond proceeds for excess housing programs"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "loudoun-bos-2026-07-21": {
+  "digest": "The Board of Supervisors met on July 21, 2026, but the provided record contains no details about what was discussed, decided, or voted on. Without agenda items, motions, or resolutions documented, no substantive summary can be generated about actions affecting residents.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }
