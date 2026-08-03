@@ -17,36 +17,21 @@
    "time": "10:00 AM",
    "body": "City Council Meeting"
   },
-  "checked": "2026-08-02",
+  "checked": "2026-08-03",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "loudoun-bos": {
   "upcoming": [],
   "next": null,
-  "checked": "2026-08-02",
+  "checked": "2026-08-03",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "pittsburgh-legistar": {
-  "upcoming": [
-   {
-    "date": "2026-08-03",
-    "time": "10:00 AM",
-    "body": "City Council"
-   },
-   {
-    "date": "2026-08-03",
-    "time": "10:01 AM",
-    "body": "City Council"
-   }
-  ],
-  "next": {
-   "date": "2026-08-03",
-   "time": "10:00 AM",
-   "body": "City Council"
-  },
-  "checked": "2026-08-02",
+  "upcoming": [],
+  "next": null,
+  "checked": "2026-08-03",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -73,7 +58,7 @@
    "time": "02:00 pm",
    "body": "Board of County Supervisors Meeting"
   },
-  "checked": "2026-08-02",
+  "checked": "2026-08-03",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -82,35 +67,35 @@
    {
     "date": "2026-08-25",
     "time": "9:30 a.m.",
-    "body": "Full Board of Supervisors Meeting"
+    "body": "Fairfax County Board of Supervisors"
    },
    {
     "date": "2026-09-15",
     "time": "9:30 a.m.",
-    "body": "Full Board of Supervisors Meeting"
+    "body": "Fairfax County Board of Supervisors"
    },
    {
     "date": "2026-09-29",
     "time": "9:30 a.m.",
-    "body": "Full Board of Supervisors Meeting"
+    "body": "Fairfax County Board of Supervisors"
    },
    {
     "date": "2026-10-13",
     "time": "9:30 a.m.",
-    "body": "Full Board of Supervisors Meeting"
+    "body": "Fairfax County Board of Supervisors"
    },
    {
     "date": "2026-10-27",
     "time": "9:30 a.m.",
-    "body": "Full Board of Supervisors Meeting"
+    "body": "Fairfax County Board of Supervisors"
    }
   ],
   "next": {
    "date": "2026-08-25",
    "time": "9:30 a.m.",
-   "body": "Full Board of Supervisors Meeting"
+   "body": "Fairfax County Board of Supervisors"
   },
-  "checked": "2026-08-02",
+  "checked": "2026-08-03",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -147,7 +132,7 @@
    "time": "17:00",
    "body": "August 18, 2026 Board of Supervisors Meeting"
   },
-  "checked": "2026-08-02",
+  "checked": "2026-08-03",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -184,7 +169,7 @@
    "time": "1:30 PM",
    "body": "City Council Stated Meeting"
   },
-  "checked": "2026-08-02",
+  "checked": "2026-08-03",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -193,35 +178,35 @@
    {
     "date": "2026-08-25",
     "time": null,
-    "body": "Full Board of Supervisors Meeting"
+    "body": "Board of Supervisors Meeting"
    },
    {
     "date": "2026-09-15",
     "time": null,
-    "body": "Full Board of Supervisors Meeting"
+    "body": "Board of Supervisors Meeting"
    },
    {
     "date": "2026-09-29",
     "time": null,
-    "body": "Full Board of Supervisors Meeting"
+    "body": "Board of Supervisors Meeting"
    },
    {
     "date": "2026-10-13",
     "time": null,
-    "body": "Full Board of Supervisors Meeting"
+    "body": "Board of Supervisors Meeting"
    },
    {
     "date": "2026-10-27",
     "time": null,
-    "body": "Full Board of Supervisors Meeting"
+    "body": "Board of Supervisors Meeting"
    }
   ],
   "next": {
    "date": "2026-08-25",
    "time": null,
-   "body": "Full Board of Supervisors Meeting"
+   "body": "Board of Supervisors Meeting"
   },
-  "checked": "2026-08-02",
+  "checked": "2026-08-03",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -248,7 +233,7 @@
    "time": "14:00",
    "body": "Board of County Supervisors Meeting"
   },
-  "checked": "2026-08-02",
+  "checked": "2026-08-03",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -257,20 +242,20 @@
    {
     "date": "2026-09-23",
     "time": "15:00",
-    "body": "City Council meeting"
+    "body": "City Council meeting at City Council Chamber, 2nd Floor, City Hall, 121 North LaSalle Street - Chicago, IL 60602"
    },
    {
     "date": "2026-09-23",
     "time": null,
-    "body": "City Council meeting"
+    "body": "Additional City Council meeting scheduled for September 23, 2026"
    }
   ],
   "next": {
    "date": "2026-09-23",
    "time": "15:00",
-   "body": "City Council meeting"
+   "body": "City Council meeting at City Council Chamber, 2nd Floor, City Hall, 121 North LaSalle Street - Chicago, IL 60602"
   },
-  "checked": "2026-08-02",
+  "checked": "2026-08-03",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -287,29 +272,29 @@
    "time": "2:00 PM",
    "body": "City Council"
   },
-  "checked": "2026-08-02",
+  "checked": "2026-08-03",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "chicago-cip": {
   "upcoming": [
    {
-    "date": "2026-08-20",
-    "time": null,
-    "body": "No explicit future meeting date found after 2026-08-02 other than the September 23 meeting in the provided data"
+    "date": "2026-09-23",
+    "time": "15:00",
+    "body": "City Council Meeting"
    },
    {
     "date": "2026-09-23",
-    "time": "15:00",
-    "body": "City Council meeting"
+    "time": null,
+    "body": "City Council meeting scheduled for September 23, 2026 at 3:00 PM at City Council Chamber, 2nd Floor, City Hall, 121 North LaSalle Street - Chicago, IL 60602"
    }
   ],
   "next": {
-   "date": "2026-08-20",
-   "time": null,
-   "body": "No explicit future meeting date found after 2026-08-02 other than the September 23 meeting in the provided data"
+   "date": "2026-09-23",
+   "time": "15:00",
+   "body": "City Council Meeting"
   },
-  "checked": "2026-08-02",
+  "checked": "2026-08-03",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  }
