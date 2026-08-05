@@ -2826,5 +2826,19 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "seattle-bos-2026-07-28": {
+  "digest": "City Council unanimously filled multiple advisory commissions including the Human Rights Commission, Disability Commission, and LGBTQ Commission with new and returning members. The council also approved three labor agreements for city employees and passed an amendment to clarify council land use decision processes (though four councilmembers opposed it), along with new IT job classifications and approval of the 2025 Families, Education, Preschool, and Promise Levy implementation plan.",
+  "notable": [
+   "Land use code amendment passed 5\u20134, with Hollingsworth, Juarez, Rivera, and Saka voting no",
+   "All other measures passed unanimously (9\u20130)",
+   "Approved three collective bargaining/memorandum agreements affecting Fire Protection Engineers, electrical workers, and technical employees"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }
