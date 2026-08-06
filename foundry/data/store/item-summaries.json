@@ -19528,5 +19528,260 @@
   "plain_english": "Appropriates money to pay approved claims for the week of July 13-17, 2026.",
   "topic": "budget",
   "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-1": {
+  "plain_english": "Announces ballot tabulation results and considers an ordinance to establish the Venice Beach Business Improvement District.",
+  "topic": "business improvement district",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-2": {
+  "plain_english": "Announces ballot tabulation results and considers an ordinance to establish the Century City Business Improvement District.",
+  "topic": "business improvement district",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-3": {
+  "plain_english": "Announces ballot tabulation results and considers an ordinance to establish the Westwood Business Improvement District.",
+  "topic": "business improvement district",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-4": {
+  "plain_english": "Announces ballot tabulation results and considers an ordinance to establish the West Adams Property and Business Improvement District.",
+  "topic": "business improvement district",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-5": {
+  "plain_english": "Announces ballot tabulation results and considers an ordinance to establish the Old Granada Village Business Improvement District.",
+  "topic": "business improvement district",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-6": {
+  "plain_english": "Announces ballot tabulation results and considers an ordinance to modify the Larchmont Village Business Improvement District.",
+  "topic": "business improvement district",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-7": {
+  "plain_english": "Considers a hearing on protests and objections to confirm a lien for nuisance abatement costs and code violations at 13911 West Cohasset Street.",
+  "topic": "code enforcement",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-8": {
+  "plain_english": "Considers comments on an application for permission to sell alcoholic beverages on-site and off-site at Blackjack Marketplace and Cafe located at 12643 Sherman Way.",
+  "topic": "alcohol license",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-9": {
+  "plain_english": "Reviews an environmental impact report for airspace vacation at the corner of Hope Street and 2nd Street.",
+  "topic": "environmental review",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-10": {
+  "plain_english": "Reviews a categorical exemption for the vacation of Arvilla Avenue between San Fernando Northeast and Southwest Roadways.",
+  "topic": "street vacation",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-11": {
+  "plain_english": "Reviews a categorical exemption for the vacation of a portion of Park Drive adjacent to Elysian View Tract between Ewing and Baxter Streets.",
+  "topic": "street vacation",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-12": {
+  "plain_english": "Considers comments on an application for permission to sell alcoholic beverages on-site and off-site at The California Wine Exchange located at 1050 South Flower Street.",
+  "topic": "alcohol license",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-13": {
+  "plain_english": "Continues consideration of an environmental impact report and Board of Water and Power Commissioners resolution.",
+  "topic": "environmental review",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-14": {
+  "plain_english": "Considers submitting an application for funding under the Governor's Extreme Heat and Community Resilience Program.",
+  "topic": "climate resilience",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-15": {
+  "plain_english": "Initiates the process to change the name of West 58th Street between South Figueroa and South Flower Streets to \"Senator Bill Greene Street.\"",
+  "topic": "street naming",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-16": {
+  "plain_english": "Redirects unspent 2024-25 Sanitation Department money in Council District 1 to fund additional homeless services.",
+  "topic": "budget reallocation",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-17": {
+  "plain_english": "Redirects funds between two Street Services projects in Council Districts 4 and 6.",
+  "topic": "budget reallocation",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-18": {
+  "plain_english": "Transfers funds to expand CARE Team operations by converting three operation days from standard CARE to enhanced CARE+ service.",
+  "topic": "budget transfer",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-19": {
+  "plain_english": "Transfers funds as part of the year-end financial review for Fiscal Year 2025-26.",
+  "topic": "budget transfer",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-20": {
+  "plain_english": "Transfers funds and accepts a World Cup Safety and Security Grant award for Council Districts 9 and 14.",
+  "topic": "grant acceptance",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-21": {
+  "plain_english": "Accepts and appropriates funds from a California state grant for gang violence intervention and prevention programs across multiple fiscal years.",
+  "topic": "grant acceptance",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-22": {
+  "plain_english": "Transfers funds to pay for legal services from Burke, Williams & Sorensen, LLP to represent the City in the Oceans 11 RV Park lawsuit.",
+  "topic": "legal services",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-23": {
+  "plain_english": "Transfers funds and approves position authority to accept a grant from ASPCA and Best Friends Animal Society.",
+  "topic": "grant acceptance",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-24": {
+  "plain_english": "Transfers funds related to the Fiscal Year 2026-27 annual report on homelessness funding.",
+  "topic": "budget transfer",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-25": {
+  "plain_english": "Exempts residential properties damaged or destroyed in the January 2025 Palisades Fire from the Measure ULA tax if sold within five years, effective retroactive to January 7, 2025.",
+  "topic": "tax exemption",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-26": {
+  "plain_english": "Allocates funding for enforcement and investigation of illegal dumping activities in Council District 9.",
+  "topic": "public safety",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-27": {
+  "plain_english": "Approves a contract amendment with Infosys Public Services for continued Amazon Web Services cloud support and maintenance of the LATAX system.",
+  "topic": "contract amendment",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-28": {
+  "plain_english": "Allocates funding for tree planting and maintenance programs in Council District 9.",
+  "topic": "environment",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-29": {
+  "plain_english": "Removes the property at 2219 West 15th Street in Council District 1 from the Rent Escrow Account Program.",
+  "topic": "housing",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-30": {
+  "plain_english": "Establishes a program authorizing the Fire Department to proactively demolish abandoned structures that pose significant fire hazards.",
+  "topic": "public safety",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-31": {
+  "plain_english": "Authorizes payment of a reward offer for information in a hit-and-run case (DR No. 25-15-04141).",
+  "topic": "public safety",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-32": {
+  "plain_english": "Designates a location in Council District 11 where the city will enforce laws against sitting, lying, sleeping, or storing personal property in public right-of-way.",
+  "topic": "public safety",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-33": {
+  "plain_english": "Extends the Exclusive Negotiating Agreement for city-owned property at 9402 S. Broadway in Council District 8.",
+  "topic": "property agreement",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-34": {
+  "plain_english": "Confirms prior council action regarding Arts Development Fee updates and adoption of the expenditure report.",
+  "topic": "arts funding",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-35": {
+  "plain_english": "Approves the final parcel map for property at 2031 North McPherson Avenue in Council District 14.",
+  "topic": "land division",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-36": {
+  "plain_english": "Approves the final parcel map for property at 15159 Morrison Street in Council District 4.",
+  "topic": "land division",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-37": {
+  "plain_english": "Allocates funding to address school safety concerns at the Ohio Avenue intersection in Council District 5.",
+  "topic": "public safety",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-38": {
+  "plain_english": "Amends prior council action to designate the intersection of Roscoe Boulevard and Langdon Avenue as 'Bert & Jane Boeckmann Square' in Council District 7.",
+  "topic": "naming",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-39": {
+  "plain_english": "Funds two security officers to provide security services at Runyon Canyon Park from 7 p.m. to 1 a.m. in Council District 4.",
+  "topic": "public safety",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-40": {
+  "plain_english": "Funds a street banner program in Council District 4 to conduct outreach and promote the business improvement district.",
+  "topic": "business development",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-41": {
+  "plain_english": "Allocates funding for Council District 3's Contingency Management Pilot Program operated by Hope of the Mission to support additional resources.",
+  "topic": "social services",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-42": {
+  "plain_english": "Funds Project Restore and Los Angeles Conservancy to conduct special tours of historic spaces in City Hall on July 29 and August 5, 2026.",
+  "topic": "cultural events",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-43": {
+  "plain_english": "Allocates funding for Council Discretionary Street Furniture in Council District 1.",
+  "topic": "infrastructure",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-44": {
+  "plain_english": "Instructs the City Administrative Officer to initiate meet-and-confer obligations regarding Charter Reform Commission Recommendation No. 54.",
+  "topic": "governance",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-45": {
+  "plain_english": "Funds expert consultant capacity to support the city in developing a transition plan away from the Los Angeles Homeless Services Authority (LAHSA).",
+  "topic": "homeless services",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-46": {
+  "plain_english": "Allocates funding for two permanent supportive housing projects called 'Elderberry' and 'Nova' in Council District 3.",
+  "topic": "affordable housing",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-47": {
+  "plain_english": "Allocates funding for CARE+ operations in Council District 7.",
+  "topic": "public services",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-48": {
+  "plain_english": "Allocates funding for additional overtime costs and an extra service day for CARE+ cleanup efforts in Council District 6.",
+  "topic": "public services",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-49": {
+  "plain_english": "Amends the Convention Center and Arena Sign District regulations under Los Angeles Municipal Code Section 8.2.3.D.",
+  "topic": "zoning/signage",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-50": {
+  "plain_english": "Approves the final parcel map dividing property at 9000 North Canby Avenue and 18424-18425 West Sunburt Street in Council District 12.",
+  "topic": "land division",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "la-primegov-item-17724-51": {
+  "plain_english": "Approves the final parcel map dividing property at 701 East Vernon Street in Council District 11.",
+  "topic": "land division",
+  "derived_by": "claude-haiku-4-5"
  }
 }

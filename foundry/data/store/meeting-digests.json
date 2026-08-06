@@ -2840,5 +2840,19 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "la-primegov-17724": {
+  "digest": "The City Council passed 49 items in a largely routine session with Councilmember Price Jr. absent. Major actions included establishing five new business improvement districts (Venice Beach, Century City, Westwood, West Adams, and Old Granada Village) and modifying Larchmont Village's district; approving two alcohol sales permits; and redirecting sanitation and grant funds toward homeless services, CARE Team expansion, gang violence prevention, and tree planting. Three items drew dissent: a Board of Water and Power resolution failed with Hernandez, Raman, and Yaroslavsky opposed; a public-space enforcement designation passed with four council members opposed (Hernandez, Jurado, Raman, Soto-Mart\u00ednez); and three other motions each received one no vote. The council also approved Palisades Fire victim tax relief, hired legal counsel for an RV park lawsuit, and authorized the Fire Department to demolish abandoned fire hazards.",
+  "notable": [
+   "Three items split votes: Water and Power resolution (3 no), public-space enforcement rule in CD-11 (4 no), and homelessness funding report and Palisades Fire tax exemption (1 no each)",
+   "Five new business improvement districts established via ballot results plus modification of existing Larchmont Village district",
+   "Significant budget moves redirecting sanitation funds to homeless services, expanding CARE Team operations, and allocating gang prevention and tree-planting funding"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }
