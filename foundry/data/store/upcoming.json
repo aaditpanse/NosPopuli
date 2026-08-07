@@ -1,37 +1,22 @@
 {
  "la-primegov": {
-  "upcoming": [
-   {
-    "date": "2026-08-07",
-    "time": "01:00 PM",
-    "body": "Budget and Finance Advisory Committee"
-   },
-   {
-    "date": "2026-08-11",
-    "time": "08:45 AM",
-    "body": "Arts, Parks, Libraries, and Community Enrichment Committee"
-   }
-  ],
-  "next": {
-   "date": "2026-08-07",
-   "time": "01:00 PM",
-   "body": "Budget and Finance Advisory Committee"
-  },
-  "checked": "2026-08-06",
+  "upcoming": [],
+  "next": null,
+  "checked": "2026-08-07",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "loudoun-bos": {
   "upcoming": [],
   "next": null,
-  "checked": "2026-08-06",
+  "checked": "2026-08-07",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "pittsburgh-legistar": {
   "upcoming": [],
   "next": null,
-  "checked": "2026-08-06",
+  "checked": "2026-08-07",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -39,26 +24,26 @@
   "upcoming": [
    {
     "date": "2026-09-01",
-    "time": "14:00",
+    "time": "02:00 pm",
     "body": "Board of County Supervisors Meeting"
    },
    {
     "date": "2026-09-15",
-    "time": "14:00",
+    "time": "02:00 pm",
     "body": "Board of County Supervisors Meeting - Work Session"
    },
    {
     "date": "2026-09-22",
-    "time": "14:00",
+    "time": "02:00 pm",
     "body": "Board of County Supervisors Meeting"
    }
   ],
   "next": {
    "date": "2026-09-01",
-   "time": "14:00",
+   "time": "02:00 pm",
    "body": "Board of County Supervisors Meeting"
   },
-  "checked": "2026-08-06",
+  "checked": "2026-08-07",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -66,36 +51,36 @@
   "upcoming": [
    {
     "date": "2026-08-25",
-    "time": "09:30",
-    "body": "Fairfax County Board of Supervisors"
+    "time": "9:30",
+    "body": "Full Board of Supervisors Meeting"
    },
    {
     "date": "2026-09-15",
-    "time": "09:30",
-    "body": "Fairfax County Board of Supervisors"
+    "time": "9:30",
+    "body": "Full Board of Supervisors Meeting"
    },
    {
     "date": "2026-09-29",
-    "time": "09:30",
-    "body": "Fairfax County Board of Supervisors"
+    "time": "9:30",
+    "body": "Full Board of Supervisors Meeting"
    },
    {
     "date": "2026-10-13",
-    "time": "09:30",
-    "body": "Fairfax County Board of Supervisors"
+    "time": "9:30",
+    "body": "Full Board of Supervisors Meeting"
    },
    {
     "date": "2026-10-27",
-    "time": "09:30",
-    "body": "Fairfax County Board of Supervisors"
+    "time": "9:30",
+    "body": "Full Board of Supervisors Meeting"
    }
   ],
   "next": {
    "date": "2026-08-25",
-   "time": "09:30",
-   "body": "Fairfax County Board of Supervisors"
+   "time": "9:30",
+   "body": "Full Board of Supervisors Meeting"
   },
-  "checked": "2026-08-06",
+  "checked": "2026-08-07",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -132,7 +117,7 @@
    "time": "17:00",
    "body": "August 18, 2026 Board of Supervisors Meeting"
   },
-  "checked": "2026-08-06",
+  "checked": "2026-08-07",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -169,7 +154,7 @@
    "time": "1:30 PM",
    "body": "City Council Stated Meeting"
   },
-  "checked": "2026-08-06",
+  "checked": "2026-08-07",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -177,36 +162,36 @@
   "upcoming": [
    {
     "date": "2026-08-25",
-    "time": "09:30",
-    "body": "Full Board of Supervisors Meeting"
+    "time": null,
+    "body": "Board of Supervisors Meeting"
    },
    {
     "date": "2026-09-15",
-    "time": "09:30",
-    "body": "Full Board of Supervisors Meeting"
+    "time": null,
+    "body": "Board of Supervisors Meeting"
    },
    {
     "date": "2026-09-29",
-    "time": "09:30",
-    "body": "Full Board of Supervisors Meeting"
+    "time": null,
+    "body": "Board of Supervisors Meeting"
    },
    {
     "date": "2026-10-13",
-    "time": "09:30",
-    "body": "Full Board of Supervisors Meeting"
+    "time": null,
+    "body": "Board of Supervisors Meeting"
    },
    {
     "date": "2026-10-27",
-    "time": "09:30",
-    "body": "Full Board of Supervisors Meeting"
+    "time": null,
+    "body": "Board of Supervisors Meeting"
    }
   ],
   "next": {
    "date": "2026-08-25",
-   "time": "09:30",
-   "body": "Full Board of Supervisors Meeting"
+   "time": null,
+   "body": "Board of Supervisors Meeting"
   },
-  "checked": "2026-08-06",
+  "checked": "2026-08-07",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -233,36 +218,36 @@
    "time": "14:00",
    "body": "Board of County Supervisors Meeting"
   },
-  "checked": "2026-08-06",
+  "checked": "2026-08-07",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "chicago-bos": {
   "upcoming": [
    {
-    "date": "2026-09-23",
-    "time": "15:00",
-    "body": "City Council meeting"
+    "date": "2026-08-20",
+    "time": null,
+    "body": "City Council meeting (explicitly stated future date required - not found in source data"
    },
    {
     "date": "2026-09-23",
-    "time": null,
-    "body": "City Council meeting scheduled"
+    "time": "15:00",
+    "body": "City Council meeting"
    }
   ],
   "next": {
-   "date": "2026-09-23",
-   "time": "15:00",
-   "body": "City Council meeting"
+   "date": "2026-08-20",
+   "time": null,
+   "body": "City Council meeting (explicitly stated future date required - not found in source data"
   },
-  "checked": "2026-08-06",
+  "checked": "2026-08-07",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "seattle-bos": {
   "upcoming": [],
   "next": null,
-  "checked": "2026-08-06",
+  "checked": "2026-08-07",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -279,7 +264,7 @@
    "time": "15:00",
    "body": "City Council meeting"
   },
-  "checked": "2026-08-06",
+  "checked": "2026-08-07",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  }
