@@ -2854,5 +2854,33 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "pittsburgh-legistar-12053": {
+  "digest": "City Council unanimously approved 37 items in a largely routine budget and administrative session. Major financial actions included: reallocating $60,000 from play area improvements to public safety equipment; settling two lawsuits totaling $518,000 (one including a $3,000 property sale); authorizing $1.06 million in new grant funds for public safety hiring and soccer field improvements; and approving cost increases totaling over $1 million for bridge construction and street projects. The council also closed out unencumbered funds from multiple prior capital budgets and transferred $200,000 from the Stop the Violence Trust Fund to youth recreation programming.",
+  "notable": [
+   "Council approved $1.06 million in outside grants ($1M for public safety recruitment hiring, $100K for recreational soccer facility) without new city spending.",
+   "Major infrastructure cost overruns approved: $790,914.71 for West Carson Street Bridge design, $250,837.47 for Charles Anderson Bridge construction, plus $302,400 for federal lobbying services.",
+   "All nine council members voted yes on every item; no dissent recorded."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "pittsburgh-legistar-12047": {
+  "digest": "City Council secured $32 million in five-year donations from Highmark Health, UPMC, and Carnegie Mellon for medical equipment, emergency vehicles, and education/infrastructure. The council rejected a Downtown Pittsburgh Transit Revitalization plan 7\u20132 but passed a revised version 6\u20133 later in the meeting, with six council members opposing across the two votes. The body also transferred properties to the Pittsburgh Land Bank, approved a $100,000 litigation settlement, and moved $200,000 to Parks and Recreation for Burgwin Recreation Center staffing.",
+  "notable": [
+   "$32 million in corporate and university donations approved for medical first responders, EMS vehicles, and education infrastructure.",
+   "Downtown Transit Revitalization plan failed 7\u20132, then passed 6\u20133 in a revised form with Mosley voting no both times and Gross and Warwick opposing only the second version.",
+   "City transferred two parcels to Pittsburgh Land Bank and sold two city-owned lots at no cost for redevelopment."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }
