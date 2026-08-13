@@ -2882,5 +2882,29 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "newyork-bos-2026-08-12": {
+  "digest": "The Subcommittee on Zoning and Franchises approved modifications to a zoning application for major concessions in the Flatiron NoMad area of Manhattan, sending it to the City Planning Commission for further review. Two additional items passed with 7 affirmative votes each, though their subjects were not detailed in the minutes.",
+  "notable": [
+   "Zoning modifications approved for Flatiron NoMad area concessions project, referred to City Planning Commission"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-08-12-Subcommittee-on-Landmarks-Public-Sitings": {
+  "digest": "The Subcommittee approved a landmarks application for selecting and acquiring a park site in Queens Community District 2, sending it to the City Planning Commission for further review. The vote was 4\u20130 with 3 members absent.",
+  "notable": [
+   "Park acquisition site in QCD 2 approved and referred to City Planning Commission"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }

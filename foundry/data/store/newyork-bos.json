@@ -274,25 +274,69 @@
   },
   "newyork-bos-2026-07-16": {
    "meeting_id": "newyork-bos-2026-07-16",
-   "body": "Committee on Small Business",
+   "body": "City Council Stated Meeting",
    "date": "2026-07-16",
    "attendance": {
-    "Thomas-Henry": "present",
+    "Menin": "present",
+    "Abreu": "present",
+    "Aldebol": "present",
+    "Avil\u00e9s": "present",
+    "Banks": "present",
+    "Brewer": "present",
     "Brooks-Powers": "present",
+    "Cab\u00e1n": "present",
+    "De La Rosa": "present",
+    "Dinowitz": "present",
+    "Encarnaci\u00f3n": "present",
+    "Epstein": "present",
+    "Far\u00edas": "present",
+    "Feliz": "present",
+    "Gennaro": "present",
+    "Guti\u00e9rrez": "present",
     "Hanif": "present",
+    "Hankerson": "present",
+    "Hanks": "present",
+    "Hudson": "present",
+    "Joseph": "present",
+    "Krishnan": "present",
+    "Lee": "present",
+    "Louis": "present",
     "Maloney": "present",
-    "Morano": "present",
+    "Marte": "present",
+    "Narcisse": "present",
+    "Nurse": "present",
+    "Oss\u00e9": "present",
+    "Restler": "present",
+    "Riley": "present",
     "Salaam": "present",
-    "Santosuosso": "present"
+    "Sanchez": "present",
+    "Santosuosso": "present",
+    "Schulman": "present",
+    "Stevens": "present",
+    "Thomas-Henry": "present",
+    "Ung": "present",
+    "Williams": "present",
+    "Wilson": "present",
+    "Won": "present",
+    "Zhuang": "present",
+    "Ariola": "present",
+    "Carr": "present",
+    "Felder": "present",
+    "Morano": "present",
+    "Vernikov": "present",
+    "Wong": "present",
+    "Mealy": "absent",
+    "Paladino": "absent",
+    "De La": "present"
    },
-   "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428287&GUID=00369DB3-17AE-4FA1-A8CA-4E41034D32A9&Options=info|&Search=",
-   "data_source_url": "https://legistar.council.nyc.gov/View.ashx?M=M&ID=1428287&GUID=00369DB3-17AE-4FA1-A8CA-4E41034D32A9",
+   "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+   "data_source_url": "https://legistar.council.nyc.gov/View.ashx?M=M&ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411",
    "file_number": null,
    "provenance": {
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428287&GUID=00369DB3-17AE-4FA1-A8CA-4E41034D32A9&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -525,6 +569,70 @@
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
     "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428285&GUID=DD817F44-E114-45C5-B865-052890E15FF5&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-12": {
+   "meeting_id": "newyork-bos-2026-08-12",
+   "body": "Subcommittee on Zoning and Franchises Farah N",
+   "date": "2026-08-12",
+   "attendance": {
+    "Carr": "present",
+    "Encarnaci\u00f3n": "present",
+    "Far\u00edas": "present",
+    "Salaam": "present",
+    "Sanchez": "present",
+    "Schulman": "present",
+    "Thomas-Henry": "present"
+   },
+   "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852&Options=info|&Search=",
+   "data_source_url": "https://legistar.council.nyc.gov/View.ashx?M=M&ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852",
+   "file_number": null,
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-12-Subcommittee-on-Landmarks-Public-Sitings": {
+   "meeting_id": "newyork-bos-2026-08-12-Subcommittee-on-Landmarks-Public-Sitings",
+   "body": "Subcommittee on Landmarks, Public Sitings, Resiliency and Dispositions Christ",
+   "date": "2026-08-12",
+   "attendance": {
+    "Marte": "present",
+    "Hanks": "present",
+    "Nurse": "present",
+    "Thomas-Henry": "present",
+    "Avil\u00e9s": "absent",
+    "Feliz": "absent",
+    "Oss\u00e9": "absent"
+   },
+   "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432306&GUID=F0483C5F-3791-45FA-9D35-EBA2F6A1E8FF&Options=info|&Search=",
+   "data_source_url": "https://legistar.council.nyc.gov/View.ashx?M=M&ID=1432306&GUID=F0483C5F-3791-45FA-9D35-EBA2F6A1E8FF",
+   "file_number": null,
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432306&GUID=F0483C5F-3791-45FA-9D35-EBA2F6A1E8FF&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -1806,15 +1914,15 @@
   "newyork-bos-2026-07-16-item-1": {
    "item_id": "newyork-bos-2026-07-16-item-1",
    "meeting_id": "newyork-bos-2026-07-16",
-   "title": "This bill would require the mayor to establish a program that would coordinate inspections and plan reviews among agencies to cut down on the time for new businesses to open. Eligibility requirements for this program will be left to the dis",
+   "title": "Decreasing the credit against the city personal income tax on residents for such residents\u2019 share of city unincorporated business tax paid by partnerships in which such residents are partners or businesses of which such residents are propri",
    "action": "Approved",
    "result": "pass",
-   "file_number": "0955-2026",
+   "file_number": "0972-2026",
    "provenance": {
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428287&GUID=00369DB3-17AE-4FA1-A8CA-4E41034D32A9&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -2735,6 +2843,213 @@
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
     "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428285&GUID=DD817F44-E114-45C5-B865-052890E15FF5&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-12-item-1": {
+   "item_id": "newyork-bos-2026-08-12-item-1",
+   "meeting_id": "newyork-bos-2026-08-12",
+   "title": "Approved by Subcommittee with Modifications and Referred to CPC",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": "0115-2026",
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-12-item-2": {
+   "item_id": "newyork-bos-2026-08-12-item-2",
+   "meeting_id": "newyork-bos-2026-08-12",
+   "title": "Approved by Subcommittee with Modifications and Referred to CPC",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": "0116-2026",
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-12-item-3": {
+   "item_id": "newyork-bos-2026-08-12-item-3",
+   "meeting_id": "newyork-bos-2026-08-12",
+   "title": "Zoning, Flatiron NoMad Major Concessions, Manhattan (C 260123 MCM).",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": "0117-2026",
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-12-item-4": {
+   "item_id": "newyork-bos-2026-08-12-item-4",
+   "meeting_id": "newyork-bos-2026-08-12",
+   "title": "Approved by Subcommittee with Modifications and Referred to CPC",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": "0118-2026",
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-12-item-5": {
+   "item_id": "newyork-bos-2026-08-12-item-5",
+   "meeting_id": "newyork-bos-2026-08-12",
+   "title": "Approved by Subcommittee with Modifications and Referred to CPC",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": "0119-2026",
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-12-Subcommittee-on-Landmarks-Public-Sitings-item-1": {
+   "item_id": "newyork-bos-2026-08-12-Subcommittee-on-Landmarks-Public-Sitings-item-1",
+   "meeting_id": "newyork-bos-2026-08-12-Subcommittee-on-Landmarks-Public-Sitings",
+   "title": "Landmarks, Queens CD 2 Walk to Park Site Selection/Acquisition, Queens (C 260089 PCQ).",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": "0114-2026",
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432306&GUID=F0483C5F-3791-45FA-9D35-EBA2F6A1E8FF&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-07-16-item-2": {
+   "item_id": "newyork-bos-2026-07-16-item-2",
+   "meeting_id": "newyork-bos-2026-07-16",
+   "title": "This bill would increase the salaries of the Mayor, Public Advocate, Comptroller, Council Members, Borough Presidents, and District Attorneys by 18.2% since the last time their salaries were adjusted by local law, as recommended by the rece",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": "0983-2026",
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-07-16-item-3": {
+   "item_id": "newyork-bos-2026-07-16-item-3",
+   "meeting_id": "newyork-bos-2026-07-16",
+   "title": "This bill would raise the maximum age at which someone can take the civil service exam to become a police officer from thirty-five years of age to forty-three years of age. This legislation also allows individuals who have spent time on mil",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": "0913-2026",
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-07-16-item-4": {
+   "item_id": "newyork-bos-2026-07-16-item-4",
+   "meeting_id": "newyork-bos-2026-07-16",
+   "title": "Coupled on General Orders",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": "0590-2026",
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -6932,7 +7247,27 @@
    "item_id": "newyork-bos-2026-07-16-item-1",
    "positions": [
     {
-     "member": "Thomas-Henry",
+     "member": "Menin",
+     "position": "aye"
+    },
+    {
+     "member": "Abreu",
+     "position": "aye"
+    },
+    {
+     "member": "Aldebol",
+     "position": "aye"
+    },
+    {
+     "member": "Avil\u00e9s",
+     "position": "aye"
+    },
+    {
+     "member": "Banks",
+     "position": "aye"
+    },
+    {
+     "member": "Brewer",
      "position": "aye"
     },
     {
@@ -6940,7 +7275,71 @@
      "position": "aye"
     },
     {
+     "member": "Cab\u00e1n",
+     "position": "aye"
+    },
+    {
+     "member": "De La Rosa",
+     "position": "aye"
+    },
+    {
+     "member": "Dinowitz",
+     "position": "aye"
+    },
+    {
+     "member": "Encarnaci\u00f3n",
+     "position": "aye"
+    },
+    {
+     "member": "Epstein",
+     "position": "aye"
+    },
+    {
+     "member": "Far\u00edas",
+     "position": "aye"
+    },
+    {
+     "member": "Feliz",
+     "position": "aye"
+    },
+    {
+     "member": "Gennaro",
+     "position": "aye"
+    },
+    {
+     "member": "Guti\u00e9rrez",
+     "position": "aye"
+    },
+    {
      "member": "Hanif",
+     "position": "aye"
+    },
+    {
+     "member": "Hankerson",
+     "position": "aye"
+    },
+    {
+     "member": "Hanks",
+     "position": "aye"
+    },
+    {
+     "member": "Hudson",
+     "position": "aye"
+    },
+    {
+     "member": "Joseph",
+     "position": "aye"
+    },
+    {
+     "member": "Krishnan",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "Louis",
      "position": "aye"
     },
     {
@@ -6948,7 +7347,27 @@
      "position": "aye"
     },
     {
-     "member": "Morano",
+     "member": "Marte",
+     "position": "aye"
+    },
+    {
+     "member": "Narcisse",
+     "position": "aye"
+    },
+    {
+     "member": "Nurse",
+     "position": "aye"
+    },
+    {
+     "member": "Oss\u00e9",
+     "position": "aye"
+    },
+    {
+     "member": "Restler",
+     "position": "aye"
+    },
+    {
+     "member": "Riley",
      "position": "aye"
     },
     {
@@ -6956,24 +7375,98 @@
      "position": "aye"
     },
     {
+     "member": "Sanchez",
+     "position": "aye"
+    },
+    {
+     "member": "Sanchez",
+     "position": "aye"
+    },
+    {
      "member": "Santosuosso",
      "position": "aye"
+    },
+    {
+     "member": "Schulman",
+     "position": "aye"
+    },
+    {
+     "member": "Stevens",
+     "position": "aye"
+    },
+    {
+     "member": "Thomas-Henry",
+     "position": "aye"
+    },
+    {
+     "member": "Ung",
+     "position": "aye"
+    },
+    {
+     "member": "Williams",
+     "position": "aye"
+    },
+    {
+     "member": "Wilson",
+     "position": "aye"
+    },
+    {
+     "member": "Won",
+     "position": "aye"
+    },
+    {
+     "member": "Zhuang",
+     "position": "aye"
+    },
+    {
+     "member": "Ariola",
+     "position": "no"
+    },
+    {
+     "member": "Carr",
+     "position": "no"
+    },
+    {
+     "member": "Felder",
+     "position": "no"
+    },
+    {
+     "member": "Morano",
+     "position": "no"
+    },
+    {
+     "member": "Vernikov",
+     "position": "no"
+    },
+    {
+     "member": "Wong",
+     "position": "no"
+    },
+    {
+     "member": "Mealy",
+     "position": "absent"
+    },
+    {
+     "member": "Paladino",
+     "position": "absent"
     }
    ],
    "counts": {
-    "aye": 7
+    "aye": 43,
+    "no": 6,
+    "absent": 2
    },
    "result": "pass",
-   "file_number": "0955-2026",
+   "file_number": "0972-2026",
    "evidence": {
-    "quote": "motion was made that this Introduction be Approved by Committee approved\n                                 by Roll Call.\n\n                            Affirmative:   7-   Thomas-Henry, Brooks-Powers, Hanif, Maloney, Morano, Salaam and\n                                                Santosuosso\n\n\n\n\nThe New York City Council",
-    "doc_url": "https://legistar.council.nyc.gov/View.ashx?M=M&ID=1428287&GUID=00369DB3-17AE-4FA1-A8CA-4E41034D32A9"
+    "quote": "motion was made that this Introduction be Approved by Council approved by\n                                Roll Call.\n\n                            Affirmative: 43 - Speaker Menin, Abreu, Aldebol, Avil\u00e9s, Banks, Brewer, Brooks-Powers,\n                                              Cab\u00e1n, De La Rosa, Dinowitz, Encarnaci\u00f3n, Epstein, Far\u00edas, Feliz,",
+    "doc_url": "https://legistar.council.nyc.gov/View.ashx?M=M&ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411"
    },
    "provenance": {
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428287&GUID=00369DB3-17AE-4FA1-A8CA-4E41034D32A9&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -7774,6 +8267,954 @@
     "method": null,
     "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
+  },
+  "newyork-bos-2026-08-12-vote-1": {
+   "vote_id": "newyork-bos-2026-08-12-vote-1",
+   "meeting_id": "newyork-bos-2026-08-12",
+   "item_id": "newyork-bos-2026-08-12-item-1",
+   "positions": [
+    {
+     "member": "Carr",
+     "position": "aye"
+    },
+    {
+     "member": "Encarnaci\u00f3n",
+     "position": "aye"
+    },
+    {
+     "member": "Far\u00edas",
+     "position": "aye"
+    },
+    {
+     "member": "Salaam",
+     "position": "aye"
+    },
+    {
+     "member": "Sanchez",
+     "position": "aye"
+    },
+    {
+     "member": "Schulman",
+     "position": "aye"
+    },
+    {
+     "member": "Thomas-Henry",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 7
+   },
+   "result": "pass",
+   "file_number": "0115-2026",
+   "evidence": {
+    "quote": "motion was made that this Land Use Application be Approved by Subcommittee\n                                 with Modifications and Referred to CPC approved by Roll Call.\n\n                            Affirmative:   7-    Carr, Encarnaci\u00f3n, Far\u00edas, Salaam, Sanchez, Schulman and\n                                                 Thomas-Henry\n\n                               Medical:    1-    Felder",
+    "doc_url": "https://legistar.council.nyc.gov/View.ashx?M=M&ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852"
+   },
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-12-vote-2": {
+   "vote_id": "newyork-bos-2026-08-12-vote-2",
+   "meeting_id": "newyork-bos-2026-08-12",
+   "item_id": "newyork-bos-2026-08-12-item-2",
+   "positions": [
+    {
+     "member": "Carr",
+     "position": "aye"
+    },
+    {
+     "member": "Encarnaci\u00f3n",
+     "position": "aye"
+    },
+    {
+     "member": "Far\u00edas",
+     "position": "aye"
+    },
+    {
+     "member": "Salaam",
+     "position": "aye"
+    },
+    {
+     "member": "Sanchez",
+     "position": "aye"
+    },
+    {
+     "member": "Schulman",
+     "position": "aye"
+    },
+    {
+     "member": "Thomas-Henry",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 7
+   },
+   "result": "pass",
+   "file_number": "0116-2026",
+   "evidence": {
+    "quote": "motion was made that this Land Use Application be Approved by Subcommittee\n                                 with Modifications and Referred to CPC approved by Roll Call.\n\n                            Affirmative:   7-    Carr, Encarnaci\u00f3n, Far\u00edas, Salaam, Sanchez, Schulman and\n                                                 Thomas-Henry\n\n\nThe New York City Council",
+    "doc_url": "https://legistar.council.nyc.gov/View.ashx?M=M&ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852"
+   },
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-12-vote-3": {
+   "vote_id": "newyork-bos-2026-08-12-vote-3",
+   "meeting_id": "newyork-bos-2026-08-12",
+   "item_id": "newyork-bos-2026-08-12-item-3",
+   "positions": [
+    {
+     "member": "Carr",
+     "position": "aye"
+    },
+    {
+     "member": "Encarnaci\u00f3n",
+     "position": "aye"
+    },
+    {
+     "member": "Far\u00edas",
+     "position": "aye"
+    },
+    {
+     "member": "Salaam",
+     "position": "aye"
+    },
+    {
+     "member": "Sanchez",
+     "position": "aye"
+    },
+    {
+     "member": "Schulman",
+     "position": "aye"
+    },
+    {
+     "member": "Thomas-Henry",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 7
+   },
+   "result": "pass",
+   "file_number": "0117-2026",
+   "evidence": {
+    "quote": "motion was made that this Land Use Application be Approved by Subcommittee\n                                 approved by Roll Call.\n\n                            Affirmative:   7-   Carr, Encarnaci\u00f3n, Far\u00edas, Salaam, Sanchez, Schulman and\n                                                Thomas-Henry\n\n                               Medical:    1-   Felder",
+    "doc_url": "https://legistar.council.nyc.gov/View.ashx?M=M&ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852"
+   },
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-12-Subcommittee-on-Landmarks-Public-Sitings-vote-1": {
+   "vote_id": "newyork-bos-2026-08-12-Subcommittee-on-Landmarks-Public-Sitings-vote-1",
+   "meeting_id": "newyork-bos-2026-08-12-Subcommittee-on-Landmarks-Public-Sitings",
+   "item_id": "newyork-bos-2026-08-12-Subcommittee-on-Landmarks-Public-Sitings-item-1",
+   "positions": [
+    {
+     "member": "Marte",
+     "position": "aye"
+    },
+    {
+     "member": "Hanks",
+     "position": "aye"
+    },
+    {
+     "member": "Nurse",
+     "position": "aye"
+    },
+    {
+     "member": "Thomas-Henry",
+     "position": "aye"
+    },
+    {
+     "member": "Avil\u00e9s",
+     "position": "absent"
+    },
+    {
+     "member": "Feliz",
+     "position": "absent"
+    },
+    {
+     "member": "Oss\u00e9",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 4,
+    "absent": 3
+   },
+   "result": "pass",
+   "file_number": "0114-2026",
+   "evidence": {
+    "quote": "motion was made that this Land Use Application be Approved by Subcommittee\n                                 approved by Roll Call.\n\n                            Affirmative:   4-   Marte, Hanks, Nurse and Thomas-Henry\n\n                               Absent:     3-   Avil\u00e9s, Feliz and Oss\u00e9\n\n\n\n\nThe New York City Council                                       Pag",
+    "doc_url": "https://legistar.council.nyc.gov/View.ashx?M=M&ID=1432306&GUID=F0483C5F-3791-45FA-9D35-EBA2F6A1E8FF"
+   },
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432306&GUID=F0483C5F-3791-45FA-9D35-EBA2F6A1E8FF&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-07-16-vote-2": {
+   "vote_id": "newyork-bos-2026-07-16-vote-2",
+   "meeting_id": "newyork-bos-2026-07-16",
+   "item_id": "newyork-bos-2026-07-16-item-2",
+   "positions": [
+    {
+     "member": "Abreu",
+     "position": "aye"
+    },
+    {
+     "member": "Aldebol",
+     "position": "aye"
+    },
+    {
+     "member": "Avil\u00e9s",
+     "position": "aye"
+    },
+    {
+     "member": "Banks",
+     "position": "aye"
+    },
+    {
+     "member": "Brewer",
+     "position": "aye"
+    },
+    {
+     "member": "Brooks-Powers",
+     "position": "aye"
+    },
+    {
+     "member": "Cab\u00e1n",
+     "position": "aye"
+    },
+    {
+     "member": "De La",
+     "position": "aye"
+    },
+    {
+     "member": "Dinowitz",
+     "position": "aye"
+    },
+    {
+     "member": "Encarnaci\u00f3n",
+     "position": "aye"
+    },
+    {
+     "member": "Epstein",
+     "position": "aye"
+    },
+    {
+     "member": "Far\u00edas",
+     "position": "aye"
+    },
+    {
+     "member": "Felder",
+     "position": "aye"
+    },
+    {
+     "member": "Feliz",
+     "position": "aye"
+    },
+    {
+     "member": "Gennaro",
+     "position": "aye"
+    },
+    {
+     "member": "Guti\u00e9rrez",
+     "position": "aye"
+    },
+    {
+     "member": "Hanif",
+     "position": "aye"
+    },
+    {
+     "member": "Hankerson",
+     "position": "aye"
+    },
+    {
+     "member": "Hanks",
+     "position": "aye"
+    },
+    {
+     "member": "Hudson",
+     "position": "aye"
+    },
+    {
+     "member": "Joseph",
+     "position": "aye"
+    },
+    {
+     "member": "Krishnan",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "Louis",
+     "position": "aye"
+    },
+    {
+     "member": "Maloney",
+     "position": "aye"
+    },
+    {
+     "member": "Marte",
+     "position": "aye"
+    },
+    {
+     "member": "Narcisse",
+     "position": "aye"
+    },
+    {
+     "member": "Nurse",
+     "position": "aye"
+    },
+    {
+     "member": "Oss\u00e9",
+     "position": "aye"
+    },
+    {
+     "member": "Restler",
+     "position": "aye"
+    },
+    {
+     "member": "Riley",
+     "position": "aye"
+    },
+    {
+     "member": "Salaam",
+     "position": "aye"
+    },
+    {
+     "member": "Sanchez",
+     "position": "aye"
+    },
+    {
+     "member": "Sanchez",
+     "position": "aye"
+    },
+    {
+     "member": "Santosuosso",
+     "position": "aye"
+    },
+    {
+     "member": "Schulman",
+     "position": "aye"
+    },
+    {
+     "member": "Stevens",
+     "position": "aye"
+    },
+    {
+     "member": "Thomas-Henry",
+     "position": "aye"
+    },
+    {
+     "member": "Ung",
+     "position": "aye"
+    },
+    {
+     "member": "Williams",
+     "position": "aye"
+    },
+    {
+     "member": "Wilson",
+     "position": "aye"
+    },
+    {
+     "member": "Won",
+     "position": "aye"
+    },
+    {
+     "member": "Ariola",
+     "position": "no"
+    },
+    {
+     "member": "Carr",
+     "position": "no"
+    },
+    {
+     "member": "Morano",
+     "position": "no"
+    },
+    {
+     "member": "Vernikov",
+     "position": "no"
+    },
+    {
+     "member": "Wong",
+     "position": "no"
+    },
+    {
+     "member": "Zhuang",
+     "position": "no"
+    },
+    {
+     "member": "Menin",
+     "position": "abstain"
+    },
+    {
+     "member": "Mealy",
+     "position": "absent"
+    },
+    {
+     "member": "Paladino",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 42,
+    "no": 6,
+    "abstain": 1,
+    "absent": 2
+   },
+   "result": "pass",
+   "file_number": "0983-2026",
+   "evidence": {
+    "quote": "motion was made that this Introduction be Approved by Council approved by\n                                Roll Call.\n\n                            Affirmative: 42 - Abreu, Aldebol, Avil\u00e9s, Banks, Brewer, Brooks-Powers, Cab\u00e1n, De La\n                                              Rosa, Dinowitz, Encarnaci\u00f3n, Epstein, Far\u00edas, Felder, Feliz, Gennaro,",
+    "doc_url": "https://legistar.council.nyc.gov/View.ashx?M=M&ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411"
+   },
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-07-16-vote-3": {
+   "vote_id": "newyork-bos-2026-07-16-vote-3",
+   "meeting_id": "newyork-bos-2026-07-16",
+   "item_id": "newyork-bos-2026-07-16-item-3",
+   "positions": [
+    {
+     "member": "Menin",
+     "position": "aye"
+    },
+    {
+     "member": "Abreu",
+     "position": "aye"
+    },
+    {
+     "member": "Aldebol",
+     "position": "aye"
+    },
+    {
+     "member": "Ariola",
+     "position": "aye"
+    },
+    {
+     "member": "Avil\u00e9s",
+     "position": "aye"
+    },
+    {
+     "member": "Banks",
+     "position": "aye"
+    },
+    {
+     "member": "Brewer",
+     "position": "aye"
+    },
+    {
+     "member": "Brooks-Powers",
+     "position": "aye"
+    },
+    {
+     "member": "Carr",
+     "position": "aye"
+    },
+    {
+     "member": "De La Rosa",
+     "position": "aye"
+    },
+    {
+     "member": "Dinowitz",
+     "position": "aye"
+    },
+    {
+     "member": "Encarnaci\u00f3n",
+     "position": "aye"
+    },
+    {
+     "member": "Epstein",
+     "position": "aye"
+    },
+    {
+     "member": "Far\u00edas",
+     "position": "aye"
+    },
+    {
+     "member": "Felder",
+     "position": "aye"
+    },
+    {
+     "member": "Feliz",
+     "position": "aye"
+    },
+    {
+     "member": "Gennaro",
+     "position": "aye"
+    },
+    {
+     "member": "Guti\u00e9rrez",
+     "position": "aye"
+    },
+    {
+     "member": "Hanif",
+     "position": "aye"
+    },
+    {
+     "member": "Hankerson",
+     "position": "aye"
+    },
+    {
+     "member": "Hanks",
+     "position": "aye"
+    },
+    {
+     "member": "Hudson",
+     "position": "aye"
+    },
+    {
+     "member": "Joseph",
+     "position": "aye"
+    },
+    {
+     "member": "Krishnan",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "Louis",
+     "position": "aye"
+    },
+    {
+     "member": "Maloney",
+     "position": "aye"
+    },
+    {
+     "member": "Marte",
+     "position": "aye"
+    },
+    {
+     "member": "Morano",
+     "position": "aye"
+    },
+    {
+     "member": "Narcisse",
+     "position": "aye"
+    },
+    {
+     "member": "Nurse",
+     "position": "aye"
+    },
+    {
+     "member": "Oss\u00e9",
+     "position": "aye"
+    },
+    {
+     "member": "Restler",
+     "position": "aye"
+    },
+    {
+     "member": "Riley",
+     "position": "aye"
+    },
+    {
+     "member": "Salaam",
+     "position": "aye"
+    },
+    {
+     "member": "Sanchez",
+     "position": "aye"
+    },
+    {
+     "member": "Sanchez",
+     "position": "aye"
+    },
+    {
+     "member": "Santosuosso",
+     "position": "aye"
+    },
+    {
+     "member": "Schulman",
+     "position": "aye"
+    },
+    {
+     "member": "Stevens",
+     "position": "aye"
+    },
+    {
+     "member": "Thomas-Henry",
+     "position": "aye"
+    },
+    {
+     "member": "Ung",
+     "position": "aye"
+    },
+    {
+     "member": "Vernikov",
+     "position": "aye"
+    },
+    {
+     "member": "Williams",
+     "position": "aye"
+    },
+    {
+     "member": "Wilson",
+     "position": "aye"
+    },
+    {
+     "member": "Won",
+     "position": "aye"
+    },
+    {
+     "member": "Wong",
+     "position": "aye"
+    },
+    {
+     "member": "Zhuang",
+     "position": "aye"
+    },
+    {
+     "member": "Cab\u00e1n",
+     "position": "no"
+    },
+    {
+     "member": "Mealy",
+     "position": "absent"
+    },
+    {
+     "member": "Paladino",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 48,
+    "no": 1,
+    "absent": 2
+   },
+   "result": "pass",
+   "file_number": "0913-2026",
+   "evidence": {
+    "quote": "motion was made that this Introduction be Approved by Council approved by\n                                Roll Call.\n\n                            Affirmative: 48 - Speaker Menin, Abreu, Aldebol, Ariola, Avil\u00e9s, Banks, Brewer,\n                                              Brooks-Powers, Carr, De La Rosa, Dinowitz, Encarnaci\u00f3n, Epstein, Far\u00edas,",
+    "doc_url": "https://legistar.council.nyc.gov/View.ashx?M=M&ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411"
+   },
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-07-16-vote-4": {
+   "vote_id": "newyork-bos-2026-07-16-vote-4",
+   "meeting_id": "newyork-bos-2026-07-16",
+   "item_id": "newyork-bos-2026-07-16-item-4",
+   "positions": [
+    {
+     "member": "Menin",
+     "position": "aye"
+    },
+    {
+     "member": "Abreu",
+     "position": "aye"
+    },
+    {
+     "member": "Aldebol",
+     "position": "aye"
+    },
+    {
+     "member": "Ariola",
+     "position": "aye"
+    },
+    {
+     "member": "Avil\u00e9s",
+     "position": "aye"
+    },
+    {
+     "member": "Banks",
+     "position": "aye"
+    },
+    {
+     "member": "Brewer",
+     "position": "aye"
+    },
+    {
+     "member": "Brooks-Powers",
+     "position": "aye"
+    },
+    {
+     "member": "Cab\u00e1n",
+     "position": "aye"
+    },
+    {
+     "member": "Carr",
+     "position": "aye"
+    },
+    {
+     "member": "De La Rosa",
+     "position": "aye"
+    },
+    {
+     "member": "Dinowitz",
+     "position": "aye"
+    },
+    {
+     "member": "Encarnaci\u00f3n",
+     "position": "aye"
+    },
+    {
+     "member": "Epstein",
+     "position": "aye"
+    },
+    {
+     "member": "Far\u00edas",
+     "position": "aye"
+    },
+    {
+     "member": "Felder",
+     "position": "aye"
+    },
+    {
+     "member": "Feliz",
+     "position": "aye"
+    },
+    {
+     "member": "Gennaro",
+     "position": "aye"
+    },
+    {
+     "member": "Guti\u00e9rrez",
+     "position": "aye"
+    },
+    {
+     "member": "Hanif",
+     "position": "aye"
+    },
+    {
+     "member": "Hankerson",
+     "position": "aye"
+    },
+    {
+     "member": "Hanks",
+     "position": "aye"
+    },
+    {
+     "member": "Hudson",
+     "position": "aye"
+    },
+    {
+     "member": "Joseph",
+     "position": "aye"
+    },
+    {
+     "member": "Krishnan",
+     "position": "aye"
+    },
+    {
+     "member": "Lee",
+     "position": "aye"
+    },
+    {
+     "member": "Louis",
+     "position": "aye"
+    },
+    {
+     "member": "Maloney",
+     "position": "aye"
+    },
+    {
+     "member": "Marte",
+     "position": "aye"
+    },
+    {
+     "member": "Morano",
+     "position": "aye"
+    },
+    {
+     "member": "Narcisse",
+     "position": "aye"
+    },
+    {
+     "member": "Nurse",
+     "position": "aye"
+    },
+    {
+     "member": "Oss\u00e9",
+     "position": "aye"
+    },
+    {
+     "member": "Restler",
+     "position": "aye"
+    },
+    {
+     "member": "Riley",
+     "position": "aye"
+    },
+    {
+     "member": "Salaam",
+     "position": "aye"
+    },
+    {
+     "member": "Sanchez",
+     "position": "aye"
+    },
+    {
+     "member": "Sanchez",
+     "position": "aye"
+    },
+    {
+     "member": "Santosuosso",
+     "position": "aye"
+    },
+    {
+     "member": "Schulman",
+     "position": "aye"
+    },
+    {
+     "member": "Stevens",
+     "position": "aye"
+    },
+    {
+     "member": "Thomas-Henry",
+     "position": "aye"
+    },
+    {
+     "member": "Ung",
+     "position": "aye"
+    },
+    {
+     "member": "Vernikov",
+     "position": "aye"
+    },
+    {
+     "member": "Williams",
+     "position": "aye"
+    },
+    {
+     "member": "Wilson",
+     "position": "aye"
+    },
+    {
+     "member": "Won",
+     "position": "aye"
+    },
+    {
+     "member": "Wong",
+     "position": "aye"
+    },
+    {
+     "member": "Zhuang",
+     "position": "aye"
+    },
+    {
+     "member": "Mealy",
+     "position": "absent"
+    },
+    {
+     "member": "Paladino",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 49,
+    "absent": 2
+   },
+   "result": "pass",
+   "file_number": "0590-2026",
+   "evidence": {
+    "quote": "motion was made that these files be approved by consent vote.\n\n                            Affirmative: 49 - Speaker Menin, Abreu, Aldebol, Ariola, Avil\u00e9s, Banks, Brewer,\n                                              Brooks-Powers, Cab\u00e1n, Carr, De La Rosa, Dinowitz, Encarnaci\u00f3n, Epstein,",
+    "doc_url": "https://legistar.council.nyc.gov/View.ashx?M=M&ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411"
+   },
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
   }
  },
  "members": {
@@ -7822,7 +9263,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432306&GUID=F0483C5F-3791-45FA-9D35-EBA2F6A1E8FF&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -7887,7 +9328,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -7926,7 +9367,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -7952,7 +9393,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -7978,7 +9419,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432306&GUID=F0483C5F-3791-45FA-9D35-EBA2F6A1E8FF&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -8043,7 +9484,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432306&GUID=F0483C5F-3791-45FA-9D35-EBA2F6A1E8FF&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -8134,7 +9575,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432306&GUID=F0483C5F-3791-45FA-9D35-EBA2F6A1E8FF&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -8199,7 +9640,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432306&GUID=F0483C5F-3791-45FA-9D35-EBA2F6A1E8FF&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -8212,7 +9653,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432306&GUID=F0483C5F-3791-45FA-9D35-EBA2F6A1E8FF&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -8264,7 +9705,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -8277,7 +9718,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -8303,7 +9744,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -8329,7 +9770,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
