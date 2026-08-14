@@ -20073,5 +20073,95 @@
   "plain_english": "No subject stated in the minutes; see the official record.",
   "topic": "land use",
   "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-08-13-item-1": {
+  "plain_english": "Approves selection and acquisition of a park site in Queens Community District 2 for a walk-to-park project.",
+  "topic": "landmarks, zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-08-13-item-2": {
+  "plain_english": "Approves a land use application with modifications and refers it to the City Planning Commission.",
+  "topic": "land use",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-08-13-item-3": {
+  "plain_english": "Approves a land use application with modifications and refers it to the City Planning Commission.",
+  "topic": "land use",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-08-13-Committee-on-Finance-Linda-Lee-Chair-Mem-item-1": {
+  "plain_english": "Establishes a temporary program for the Commissioner of Finance to resolve certain outstanding Environmental Control Board judgments resulting from default decisions.",
+  "topic": "budget, judgments",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-08-13-Committee-on-Finance-Linda-Lee-Chair-Mem-item-2": {
+  "plain_english": "Approves new designations and changes to designations of certain organizations to receive funding in the Expense Budget.",
+  "topic": "budget",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-08-13-Committee-on-Governmental-Operations-Sta-item-1": {
+  "plain_english": "Codifies the current flag of Staten Island as its official flag.",
+  "topic": "municipal designation",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-08-13-Committee-on-Consumer-and-Worker-Protect-item-1": {
+  "plain_english": "Establishes an Office of Insurance Affordability to provide consumer insurance information and guidance and track legal actions alleging deception.",
+  "topic": "consumer protection",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-08-13-Committee-on-Consumer-and-Worker-Protect-item-2": {
+  "plain_english": "Addresses measures to mitigate the rising cost of property insurance for affordable housing.",
+  "topic": "affordable housing",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-08-13-Committee-on-Housing-and-Buildings-item-1": {
+  "plain_english": "Makes the Certification of No Harassment pilot program permanent, with updated program lists published by the Department of Housing Preservation and Development every three years beginning April 15, 2027.",
+  "topic": "housing, harassment",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-08-13-Committee-on-Parks-and-Recreation-Ty-Han-item-1": {
+  "plain_english": "Establishes a pilot program requiring the Department of Parks and Recreation to designate volunteer-led dog run groups to collect dog feces from dog runs.",
+  "topic": "parks, animals",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-08-13-Committee-on-Parks-and-Recreation-Ty-Han-item-2": {
+  "plain_english": "Requires the Commissioner of Parks and Recreation to post signs at park entrances, exits, and facilities summarizing rules against leaving dog waste and associated penalties.",
+  "topic": "parks, animals",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-08-13-Committee-on-Civil-and-Human-Rights-item-1": {
+  "plain_english": "Declares August 2 annually as James Baldwin Day in New York City.",
+  "topic": "commemoration",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-08-13-Committee-on-Transportation-and-Infrastr-item-1": {
+  "plain_english": "Expands the City's outdoor dining program by removing seasonal restrictions on roadway cafe operation and permitting weatherproofing and winterizing materials for year-round operation.",
+  "topic": "outdoor dining",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-08-13-Committee-on-Transportation-and-Infrastr-item-2": {
+  "plain_english": "Allows sidewalk cafe operators to enclose year-round sidewalk cafes annually from November 30 through March 31 and permits weather protection materials during other times of the year.",
+  "topic": "outdoor dining",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-08-13-Committee-on-Transportation-and-Infrastr-item-3": {
+  "plain_english": "Requires roadway and sidewalk cafe operators to maintain their outdoor setups free of trash, debris, graffiti, vermin, food scraps, and unsanitary conditions, with violations subject to civil penalties.",
+  "topic": "outdoor dining",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-08-13-Committee-on-Transportation-and-Infrastr-item-5": {
+  "plain_english": "Completes environmental review process for Proposed Int. No. 894-A under New York State Environmental Quality Review Act.",
+  "topic": "environmental review",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-08-13-Committee-on-Sanitation-and-Solid-Waste--item-1": {
+  "plain_english": "Requires the Department of Sanitation to install at least 1,200 dog waste bag dispensers on public litter baskets across all five boroughs.",
+  "topic": "sanitation, public amenities",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-08-13-Committee-on-Public-Safety-Oswald-J-Feli-item-1": {
+  "plain_english": "Requires the New York City Police Department to report quarterly on confirmed firearm discharges, including date, time, and location of each incident.",
+  "topic": "public safety, police accountability",
+  "derived_by": "claude-haiku-4-5"
  }
 }

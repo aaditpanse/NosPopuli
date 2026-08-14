@@ -2906,5 +2906,131 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "newyork-bos-2026-08-13": {
+  "digest": "The Committee on Land Use approved acquisition of a new park site in Queens Community District 2 for a walk-to-park project and advanced two modified land use applications to the City Planning Commission, all passing unanimously with one absent member.",
+  "notable": [
+   "New park site acquired in Queens CD2 as part of walk-to-park initiative",
+   "Two land use applications approved with modifications and referred to City Planning Commission"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-08-13-Committee-on-Finance-Linda-Lee-Chair-Mem": {
+  "digest": "The Finance Committee approved a temporary program to help the Finance Commissioner resolve outstanding Environmental Control Board judgments from default decisions, and approved new funding designations for various organizations in the city budget. Both measures passed with 12 votes in favor and 1 vote against; four committee members were absent from the meeting.",
+  "notable": [
+   "Environmental Control Board judgment resolution program and organizational funding designations both passed 12-1",
+   "Councilmember Wong voted no on the ECB judgments program; Councilmember Morano voted no on the funding designations",
+   "Four committee members absent: Lee (chair), Avil\u00e9s, Gennaro, and Mealy"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-08-13-Committee-on-Governmental-Operations-Sta": {
+  "digest": "The Committee on Governmental Operations, State & Federal Legislation voted unanimously to codify Staten Island's current flag as its official flag, formalizing what was already in use.",
+  "notable": [
+   "All 7 committee members voted yes to make Staten Island's existing flag official."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-08-13-Committee-on-Consumer-and-Worker-Protect": {
+  "digest": "The Committee on Consumer and Worker Protection approved creation of a new Office of Insurance Affordability to help consumers understand insurance and monitor fraud cases, and backed measures to help affordable housing developers cope with rising property insurance costs. Both votes passed unanimously among the 10 members present, with one member absent.",
+  "notable": [
+   "New Office of Insurance Affordability established to provide consumer guidance and track insurance deception cases.",
+   "Committee approved steps to address property insurance cost pressures on affordable housing."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-08-13-Committee-on-Housing-and-Buildings": {
+  "digest": "The Housing Committee voted 9-1 to make the Certification of No Harassment pilot program permanent, which requires HPD to maintain and publish updated lists of properties. Councilmember Zhuang opposed the measure.",
+  "notable": [
+   "Certification of No Harassment pilot made permanent (9-1 vote)",
+   "Zhuang cast sole opposing vote"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-08-13-Committee-on-Parks-and-Recreation-Ty-Han": {
+  "digest": "The Parks and Recreation Committee approved a pilot program requiring volunteer dog run groups to collect dog feces from city dog runs, with one dissenting vote from Morano. The committee also unanimously approved a requirement for the Parks Commissioner to post signs at park entrances and facilities summarizing rules against leaving dog waste. Committee member Linda Lee was absent from the meeting.",
+  "notable": [
+   "Pilot program for volunteer-led dog waste collection approved 9-1, with Morano dissenting",
+   "Sign requirement for dog waste rules passed without opposition (Lee absent)"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-08-13-Committee-on-Civil-and-Human-Rights": {
+  "digest": "The Committee on Civil and Human Rights voted unanimously to designate August 2 as James Baldwin Day in New York City each year, honoring the influential writer and civil rights activist.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-08-13-Committee-on-Transportation-and-Infrastr": {
+  "digest": "The Committee on Transportation and Infrastructure expanded the city's outdoor dining program by removing seasonal restrictions and allowing year-round operation of sidewalk cafes with winterizing materials from November through March. All four measures passed with minimal opposition: Councilmember Wong voted against the first two dining measures, Marte abstained on one, and a maintenance standards requirement passed unanimously. The committee also completed environmental review for the expanded program.",
+  "notable": [
+   "Year-round sidewalk cafe enclosures now permitted November 30\u2013March 31 with weather protection materials",
+   "Councilmember Wong opposed both main dining expansion measures; Marte abstained on sidewalk cafe enclosure rules",
+   "New maintenance standards require outdoor dining operators to keep setups free of trash, debris, graffiti, and unsanitary conditions"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-08-13-Committee-on-Sanitation-and-Solid-Waste-": {
+  "digest": "The Sanitation Committee unanimously approved a requirement for the Department of Sanitation to install at least 1,200 dog waste bag dispensers on public litter baskets throughout all five boroughs. This expansion of pet waste infrastructure aims to encourage cleanup of dog waste in public spaces.",
+  "notable": [
+   "Unanimous approval (10 aye) to mandate 1,200+ dog waste bag dispensers citywide"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-08-13-Committee-on-Public-Safety-Oswald-J-Feli": {
+  "digest": "The Committee on Public Safety voted unanimously to require the NYPD to submit quarterly reports detailing all confirmed firearm discharges, including when and where each incident occurred. The measure passed 8\u20130, with Committee Member Joann Ariola absent.",
+  "notable": [
+   "Required quarterly NYPD firearm discharge reporting (unanimous 8\u20130 vote)"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }
