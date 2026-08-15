@@ -3032,5 +3032,18 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai": {
+  "digest": "The Committee on Land Use approved acquisition of a park site in Queens Community District 2 for landmarks designation, with Member Oss\u00e9 absent. Two additional items passed but no subjects were recorded in the minutes; residents should check the official record for details on those votes.",
+  "notable": [
+   "Park site acquisition approved for Queens CD 2 landmarks designation",
+   "Two votes passed with subjects not documented in minutes\u2014check official record for details"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }

@@ -994,6 +994,43 @@
     "method": null,
     "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
+  },
+  "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai": {
+   "meeting_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai",
+   "body": "Committee on Land Use Kevin C. Riley, Chair Members: Shaun Abreu, Chris Banks",
+   "date": "2026-08-13",
+   "attendance": {
+    "Riley": "present",
+    "Abreu": "present",
+    "Banks": "present",
+    "Brooks-Powers": "present",
+    "Cab\u00e1n": "present",
+    "Carr": "present",
+    "Encarnaci\u00f3n": "present",
+    "Salaam": "present",
+    "Sanchez": "present",
+    "Thomas-Henry": "present",
+    "Zhuang": "present",
+    "Oss\u00e9": "absent"
+   },
+   "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+   "data_source_url": "https://legistar.council.nyc.gov/View.ashx?M=M&ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008",
+   "file_number": null,
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
   }
  },
  "agenda_items": {
@@ -3953,6 +3990,144 @@
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
     "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436298&GUID=408B37C2-ECCD-4EDA-9F98-9050B5919CA1&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-item-1": {
+   "item_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-item-1",
+   "meeting_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai",
+   "title": "Landmarks, Queens CD 2 Walk to Park Site Selection/Acquisition, Queens (C 260089 PCQ).",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": "0114-2026",
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-item-2": {
+   "item_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-item-2",
+   "meeting_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai",
+   "title": "Approved by Committee with Modifications and Referred to CPC",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": "0115-2026",
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-item-3": {
+   "item_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-item-3",
+   "meeting_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai",
+   "title": "Approved by Committee with Modifications and Referred to CPC",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": "0116-2026",
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-item-4": {
+   "item_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-item-4",
+   "meeting_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai",
+   "title": "Zoning, Flatiron NoMad Major Concessions, Manhattan (C 260123 MCM).",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": "0117-2026",
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-item-5": {
+   "item_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-item-5",
+   "meeting_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai",
+   "title": "Approved by Committee with Modifications and Referred to CPC",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": "0118-2026",
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-item-6": {
+   "item_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-item-6",
+   "meeting_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai",
+   "title": "Approved by Committee with Modifications and Referred to CPC",
+   "action": "Approved",
+   "result": "pass",
+   "file_number": "0119-2026",
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11466,6 +11641,246 @@
     "method": null,
     "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
    }
+  },
+  "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-vote-1": {
+   "vote_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-vote-1",
+   "meeting_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai",
+   "item_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-item-1",
+   "positions": [
+    {
+     "member": "Riley",
+     "position": "aye"
+    },
+    {
+     "member": "Abreu",
+     "position": "aye"
+    },
+    {
+     "member": "Banks",
+     "position": "aye"
+    },
+    {
+     "member": "Brooks-Powers",
+     "position": "aye"
+    },
+    {
+     "member": "Cab\u00e1n",
+     "position": "aye"
+    },
+    {
+     "member": "Carr",
+     "position": "aye"
+    },
+    {
+     "member": "Encarnaci\u00f3n",
+     "position": "aye"
+    },
+    {
+     "member": "Salaam",
+     "position": "aye"
+    },
+    {
+     "member": "Sanchez",
+     "position": "aye"
+    },
+    {
+     "member": "Thomas-Henry",
+     "position": "aye"
+    },
+    {
+     "member": "Zhuang",
+     "position": "aye"
+    },
+    {
+     "member": "Oss\u00e9",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 11,
+    "absent": 1
+   },
+   "result": "pass",
+   "file_number": "0114-2026",
+   "evidence": {
+    "quote": "motion was made that this Land Use Application be Approved by Committee\n                                with Companion Resolution approved by Roll Call.\n\n                            Affirmative: 11 - Riley, Abreu, Banks, Brooks-Powers, Cab\u00e1n, Carr, Encarnaci\u00f3n, Salaam,\n                                              Sanchez, Thomas-Henry and Zhuang\n\n                               A",
+    "doc_url": "https://legistar.council.nyc.gov/View.ashx?M=M&ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008"
+   },
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-vote-2": {
+   "vote_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-vote-2",
+   "meeting_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai",
+   "item_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-item-2",
+   "positions": [
+    {
+     "member": "Riley",
+     "position": "aye"
+    },
+    {
+     "member": "Abreu",
+     "position": "aye"
+    },
+    {
+     "member": "Banks",
+     "position": "aye"
+    },
+    {
+     "member": "Brooks-Powers",
+     "position": "aye"
+    },
+    {
+     "member": "Cab\u00e1n",
+     "position": "aye"
+    },
+    {
+     "member": "Carr",
+     "position": "aye"
+    },
+    {
+     "member": "Encarnaci\u00f3n",
+     "position": "aye"
+    },
+    {
+     "member": "Salaam",
+     "position": "aye"
+    },
+    {
+     "member": "Sanchez",
+     "position": "aye"
+    },
+    {
+     "member": "Thomas-Henry",
+     "position": "aye"
+    },
+    {
+     "member": "Zhuang",
+     "position": "aye"
+    },
+    {
+     "member": "Oss\u00e9",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 11,
+    "absent": 1
+   },
+   "result": "pass",
+   "file_number": "0115-2026",
+   "evidence": {
+    "quote": "motion was made that this Land Use Application be Approved by Committee\n                                with Modifications and Referred to CPC approved by Roll Call.\n\n                            Affirmative: 11 - Riley, Abreu, Banks, Brooks-Powers, Cab\u00e1n, Carr, Encarnaci\u00f3n, Salaam,\n                                              Sanchez, Thomas-Henry and Zhuang\n\nThe New York City Council",
+    "doc_url": "https://legistar.council.nyc.gov/View.ashx?M=M&ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008"
+   },
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-vote-3": {
+   "vote_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-vote-3",
+   "meeting_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai",
+   "item_id": "newyork-bos-2026-08-13-Committee-on-Land-Use-Kevin-C-Riley-Chai-item-3",
+   "positions": [
+    {
+     "member": "Riley",
+     "position": "aye"
+    },
+    {
+     "member": "Abreu",
+     "position": "aye"
+    },
+    {
+     "member": "Banks",
+     "position": "aye"
+    },
+    {
+     "member": "Brooks-Powers",
+     "position": "aye"
+    },
+    {
+     "member": "Cab\u00e1n",
+     "position": "aye"
+    },
+    {
+     "member": "Carr",
+     "position": "aye"
+    },
+    {
+     "member": "Encarnaci\u00f3n",
+     "position": "aye"
+    },
+    {
+     "member": "Salaam",
+     "position": "aye"
+    },
+    {
+     "member": "Sanchez",
+     "position": "aye"
+    },
+    {
+     "member": "Thomas-Henry",
+     "position": "aye"
+    },
+    {
+     "member": "Zhuang",
+     "position": "aye"
+    },
+    {
+     "member": "Oss\u00e9",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 11,
+    "absent": 1
+   },
+   "result": "pass",
+   "file_number": "0116-2026",
+   "evidence": {
+    "quote": "motion was made that this Land Use Application be Approved by Committee\n                                with Modifications and Referred to CPC approved by Roll Call.\n\n                            Affirmative: 11 - Riley, Abreu, Banks, Brooks-Powers, Cab\u00e1n, Carr, Encarnaci\u00f3n, Salaam,\n                                              Sanchez, Thomas-Henry and Zhuang\n\n                               A",
+    "doc_url": "https://legistar.council.nyc.gov/View.ashx?M=M&ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008"
+   },
+   "provenance": {
+    "source_id": "newyork-bos",
+    "extractor_version": "1",
+    "run_id": "newyork-bos-1",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "certification": {
+     "certified": true,
+     "method": "legistar-calendar+minutes+detail"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
   }
  },
  "members": {
@@ -11475,7 +11890,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11488,7 +11903,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1431094&GUID=D0598793-9001-427E-8F4C-98B04AC4D7BE&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11501,7 +11916,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432917&GUID=27E782CE-1F94-4930-AF77-1AF4DEC4F1B6&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11514,7 +11929,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1431094&GUID=D0598793-9001-427E-8F4C-98B04AC4D7BE&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11527,7 +11942,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11540,7 +11955,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1435944&GUID=27429D48-9126-45CD-BDC1-74F0AF30C635&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11553,7 +11968,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11566,7 +11981,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11579,7 +11994,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11592,7 +12007,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432917&GUID=27E782CE-1F94-4930-AF77-1AF4DEC4F1B6&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11605,7 +12020,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1435944&GUID=27429D48-9126-45CD-BDC1-74F0AF30C635&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11618,7 +12033,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11631,7 +12046,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432917&GUID=27E782CE-1F94-4930-AF77-1AF4DEC4F1B6&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11644,7 +12059,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1417104&GUID=CD9BCAFC-291A-4B2D-8E46-A4D16260B852&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11657,7 +12072,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11670,7 +12085,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1431094&GUID=D0598793-9001-427E-8F4C-98B04AC4D7BE&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11683,7 +12098,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1431094&GUID=D0598793-9001-427E-8F4C-98B04AC4D7BE&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11696,7 +12111,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436298&GUID=408B37C2-ECCD-4EDA-9F98-9050B5919CA1&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11709,7 +12124,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1435943&GUID=BDB9E7C7-F450-4EBD-9F23-2E33459490F8&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11722,7 +12137,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432912&GUID=1FD0E343-F33D-4C34-96E1-69D9363B6C52&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11735,7 +12150,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432917&GUID=27E782CE-1F94-4930-AF77-1AF4DEC4F1B6&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11748,7 +12163,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1431094&GUID=D0598793-9001-427E-8F4C-98B04AC4D7BE&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11761,7 +12176,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429781&GUID=EE55A7F1-1952-4652-B322-D66A9BB083B8&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11774,7 +12189,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432917&GUID=27E782CE-1F94-4930-AF77-1AF4DEC4F1B6&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11787,7 +12202,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1431094&GUID=D0598793-9001-427E-8F4C-98B04AC4D7BE&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11813,7 +12228,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1431094&GUID=D0598793-9001-427E-8F4C-98B04AC4D7BE&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11826,7 +12241,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1431094&GUID=D0598793-9001-427E-8F4C-98B04AC4D7BE&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11839,7 +12254,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1431094&GUID=D0598793-9001-427E-8F4C-98B04AC4D7BE&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11852,7 +12267,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11865,7 +12280,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1431094&GUID=D0598793-9001-427E-8F4C-98B04AC4D7BE&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11878,7 +12293,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1431094&GUID=D0598793-9001-427E-8F4C-98B04AC4D7BE&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11891,7 +12306,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432912&GUID=1FD0E343-F33D-4C34-96E1-69D9363B6C52&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11904,7 +12319,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11930,7 +12345,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1431094&GUID=D0598793-9001-427E-8F4C-98B04AC4D7BE&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11943,7 +12358,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11956,7 +12371,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11969,7 +12384,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11982,7 +12397,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432912&GUID=1FD0E343-F33D-4C34-96E1-69D9363B6C52&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -11995,7 +12410,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432917&GUID=27E782CE-1F94-4930-AF77-1AF4DEC4F1B6&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -12008,7 +12423,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1435944&GUID=27429D48-9126-45CD-BDC1-74F0AF30C635&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -12021,7 +12436,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -12034,7 +12449,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1432912&GUID=1FD0E343-F33D-4C34-96E1-69D9363B6C52&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -12047,7 +12462,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1435942&GUID=39AE886A-0C40-4A66-8579-682C82930499&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -12060,7 +12475,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1431094&GUID=D0598793-9001-427E-8F4C-98B04AC4D7BE&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -12073,7 +12488,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1435944&GUID=27429D48-9126-45CD-BDC1-74F0AF30C635&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -12099,7 +12514,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1431094&GUID=D0598793-9001-427E-8F4C-98B04AC4D7BE&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -12112,7 +12527,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1429656&GUID=0135401C-2609-415E-8E3E-2839D233B008&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
@@ -12125,7 +12540,7 @@
     "source_id": "newyork-bos",
     "extractor_version": "1",
     "run_id": "newyork-bos-1",
-    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1428421&GUID=A8F46D04-3DAF-44AE-A236-D22957727411&Options=info|&Search=",
+    "source_url": "https://legistar.council.nyc.gov/MeetingDetail.aspx?ID=1436177&GUID=CD23F0A4-7ED4-4823-9C95-ACC4F8195F7F&Options=info|&Search=",
     "certification": {
      "certified": true,
      "method": "legistar-calendar+minutes+detail"
