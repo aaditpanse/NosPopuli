@@ -3045,5 +3045,33 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "seattle-bos-2026-08-04": {
+  "digest": "The city council unanimously approved 13 items including expanded emergency utility assistance for low-income customers, revised water service rates, a new Do Not Solicit List protecting homeowners from property solicitation, and permission for a pedestrian skybridge in First Hill. The council also authorized a zoning exemption extension for affordable housing projects, updated drug possession enforcement policy, and approved various property and departmental adjustments, all passing 9\u20130 with no dissenting votes.",
+  "notable": [
+   "Water rates revised and emergency assistance expanded for low-income utility customers with fund withdrawals authorized",
+   "Unanimous passage of Do Not Solicit List protecting residents from unwanted property solicitation pitches",
+   "First Hill skybridge construction approved and six-month zoning exemption for affordable housing extended"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-07-21": {
+  "digest": "The City Council approved new electricity rates for City Light, including a special pricing tier for data centers, and authorized long-term contracts with customers in transportation electrification programs. The council also transferred Lake City Garage and Plaza to Seattle Parks and Recreation and placed a transportation funding measure on the November ballot that would impose a sales and use tax to fund transit. All measures passed unanimously.",
+  "notable": [
+   "New data center electricity rate class created alongside general rate schedule changes",
+   "Lake City Garage and Plaza moved from Finance to Parks and Recreation",
+   "Sales and use tax ballot proposition for transit funding approved for November 3, 2026"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }

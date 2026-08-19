@@ -20178,5 +20178,95 @@
   "plain_english": "No subject stated in the minutes; see the official record.",
   "topic": "land use",
   "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-08-04-item-124983": {
+  "plain_english": "Adopts the 2026 Citywide Position List, which defines the authorized city jobs and positions.",
+  "topic": "city employment",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-08-04-item-124984": {
+  "plain_english": "Transfers responsibility for collecting coins from parking payment devices from one department to another.",
+  "topic": "parking revenue",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-08-04-item-124985": {
+  "plain_english": "Schedules a public hearing to clarify rules about assessment escalations for the Ballard Business Improvement Area.",
+  "topic": "business district assessment",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-08-04-item-124986": {
+  "plain_english": "Schedules a hearing to modify the boundaries and assessment structure of the Capitol Hill Business Improvement Area.",
+  "topic": "business district boundaries",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-08-04-item-124988": {
+  "plain_english": "Expands eligibility and adjusts terms for City Light Department's emergency bill assistance program for utility customers.",
+  "topic": "utility assistance",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-08-04-item-124989": {
+  "plain_english": "Revises water service rates and credits for low-income customers, and authorizes withdrawal of funds from the Water Fund Revenue Stabilization account.",
+  "topic": "water rates",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-08-04-item-124990": {
+  "plain_english": "Expands eligibility and adjusts terms for Seattle Public Utilities' emergency bill assistance program.",
+  "topic": "utility assistance",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-08-04-item-124992": {
+  "plain_english": "Establishes a Do Not Solicit List to protect homeowners from unwanted solicitation to sell their residential property and creates an enforcement process.",
+  "topic": "consumer protection",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-08-04-item-124994": {
+  "plain_english": "Extends temporary zoning regulations for six months that exempt certain housing projects meeting Mandatory Housing Affordability requirements from specific zoning restrictions.",
+  "topic": "zoning, housing",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-08-04-item-124996": {
+  "plain_english": "Updates city policy for enforcement of possession and use of controlled substances, amending related sections of the Seattle Municipal Code.",
+  "topic": "drug enforcement",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-08-04-item-124998": {
+  "plain_english": "Grants FH, LLC (Skyline) permission to construct and operate a pedestrian skybridge across 8th Avenue in the First Hill neighborhood.",
+  "topic": "skybridge permit",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-08-04-item-124999": {
+  "plain_english": "Considers The Yew, LLC's petition to vacate a portion of an alley in the Wallingford area (8623 Palatine Avenue N).",
+  "topic": "alley vacation",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-08-04-item-125048": {
+  "plain_english": "Appropriates and orders payment of claims submitted for the week of July 20\u201324, 2026, and ratifies prior related acts.",
+  "topic": "claims payment",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-21-item-124651": {
+  "plain_english": "Establishes new retail rate schedules for City Light and creates a new customer class for data centers with large electricity demand.",
+  "topic": "utility rates",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-21-item-124652": {
+  "plain_english": "Authorizes ten-year agreements between City Light and customers participating in transportation electrification programs.",
+  "topic": "energy, electrification",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-21-item-124653": {
+  "plain_english": "Transfers control of the Lake City Garage and Plaza from the Department of Finance and Administrative Services to Seattle Parks and Recreation.",
+  "topic": "property management",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-21-item-124661": {
+  "plain_english": "Authorizes a ballot proposition for November 3, 2026 asking Seattle voters to approve a sales and use tax to fund transit and related transportation.",
+  "topic": "ballot measure",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "seattle-bos-2026-07-21-item-124709": {
+  "plain_english": "Appropriates funds to pay approved claims submitted for the week of July 6\u201310, 2026.",
+  "topic": "budget appropriation",
+  "derived_by": "claude-haiku-4-5"
  }
 }
