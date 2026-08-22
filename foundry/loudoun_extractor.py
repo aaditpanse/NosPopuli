@@ -40,10 +40,16 @@ def rss_entries(rt, folder_id):
                       xml)
 
 
-def parse_action_report(text, date, doc_url):
+def parse_action_report(text, date, doc_url, start_index=1):
+    """Parse one Action Report's motions. `start_index` lets a caller merge
+    several documents from the same meeting folder (a postponed/reconvened
+    session files a second Action Report alongside the first) without their
+    vote_ids colliding — returns the next unused index so the caller can
+    chain calls across documents."""
     flat = re.sub(r"\s+", " ", text)
     votes, flags = [], []
-    for i, m in enumerate(MOTION_RE.finditer(flat), 1):
+    i = start_index
+    for m in MOTION_RE.finditer(flat):
         body, outcome, ayes, noes, other, blob = m.groups()
         positions = {}
         for names_text, status in EXCEPTION_RE.findall(blob):
@@ -72,7 +78,8 @@ def parse_action_report(text, date, doc_url):
             "result": "pass" if outcome == "passed" else "fail",
             "source_document": doc_url,
         })
-    return votes, flags
+        i += 1
+    return votes, flags, i
 
 
 def extract(rt, years):
@@ -84,16 +91,37 @@ def extract(rt, years):
             folder = re.findall(r"startid=(\d+)", link)
             if not folder:
                 continue
-            ar = next(((t, l) for t, l in rss_entries(rt, folder[0])
-                       if "Action Report" in t), None)
-            if ar is None:
+            # A folder can carry more than one "Action Report" when a session
+            # is postponed and reconvened — Loudoun files a postponement-only
+            # stub (zero motions) alongside the real reconvened report under
+            # the SAME folder. Taking only the first match (the old behavior)
+            # silently drops every vote when the stub happens to sort first.
+            # Parse every match and merge — safe for the common one-document
+            # case, and for any future multi-part session (recessed and
+            # resumed more than once), not just this specific postponement.
+            ars = [(t, l) for t, l in rss_entries(rt, folder[0]) if "Action Report" in t]
+            if not ars:
                 continue  # meeting hasn't happened / report not posted yet
-            doc_id = re.findall(r"id=(\d+)", ar[1])[0]
-            doc_url = f"{PORTAL}/0/edoc/{doc_id}/ActionReport.pdf"
             d = re.search(r"(\d{2})-(\d{2})-(\d{2})", title)
             date = f"20{d.group(3)}-{d.group(1)}-{d.group(2)}"
-            votes, flags = parse_action_report(rt.fetch_text(doc_url), date, doc_url)
-            all_flags += flags
+            votes, next_i = [], 1
+            docs = []  # (doc_id, doc_url, vote_count) per Action Report parsed
+            for ar_title, ar_link in ars:
+                doc_id = re.findall(r"id=(\d+)", ar_link)[0]
+                doc_url = f"{PORTAL}/0/edoc/{doc_id}/ActionReport.pdf"
+                v, flags, next_i = parse_action_report(
+                    rt.fetch_text(doc_url), date, doc_url, next_i)
+                votes += v
+                all_flags += flags
+                docs.append((doc_id, doc_url, len(v)))
+            if len(ars) > 1:
+                all_flags.append(
+                    f"{date}: {len(ars)} Action Report documents in one folder "
+                    f"(likely postponed/reconvened) — merged {len(votes)} total votes")
+            # Link the meeting to whichever document actually carries the
+            # business, not necessarily the first-filed one (a postponement
+            # stub with zero motions is a bad "read the source" link).
+            doc_id, doc_url, _ = max(docs, key=lambda x: x[2])
             absent_all = None
             for v in votes:
                 absent = {p["member"] for p in v["positions"]
