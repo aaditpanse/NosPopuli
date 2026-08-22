@@ -41,17 +41,36 @@ function esc(s) {
   return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 }
 
+// Truncate to n chars with a trailing "…" ONLY when text was actually cut —
+// an unconditional ellipsis implies more text exists even when it doesn't,
+// and cutting with none at all reads as broken (a sentence stopping mid-word).
+function truncate(s, n) {
+  return s.length > n ? s.slice(0, n).trimEnd() + "…" : s;
+}
+
 function certStatus(rec) {
   return (rec.certification && rec.certification.status) || "quarantined";
 }
 
+// Plain-language certification vocabulary — the internal three-way status
+// (certified/quarantined/machine-derived) translated for a reader who has
+// never heard the word "oracle." Three states, not fewer: "Double-checked"
+// vs "Single-sourced" is the one trust distinction a citizen actually needs,
+// and "Plain-English by AI" must stay visually distinct so an AI-written
+// sentence is never mistaken for a certified fact — the one line
+// foundry/README.md says can never blur.
+const CERT_LABEL = {
+  certified: { cls: "ok", text: "Double-checked",
+    hint: "We compared this against a second, independent record and they agree." },
+  "machine-derived": { cls: "derived", text: "Plain-English by AI",
+    hint: "The official title was legal language; this sentence was written by an AI model to explain it. It's a summary, not a certified fact." },
+  quarantined: { cls: "warn", text: "Single-sourced",
+    hint: "This comes from one official record only. We haven't found a second source to compare it against yet." },
+};
+
 function badge(rec) {
-  const status = certStatus(rec);
-  if (status === "certified")
-    return '<span class="badge ok">certified · cross-source</span>';
-  if (status === "machine-derived")
-    return '<span class="badge derived">machine-derived</span>';
-  return '<span class="badge warn">⚠ uncertified</span>';
+  const c = CERT_LABEL[certStatus(rec)] || CERT_LABEL.quarantined;
+  return `<span class="badge ${c.cls}" title="${esc(c.hint)}">${esc(c.text)}</span>`;
 }
 
 function tally(counts) {
@@ -90,6 +109,13 @@ function consentBreakdown(vote, meetingDate, factsByMeeting) {
 function voteRow(vote, items, summaries, meetingDate, factsByMeeting, sharedNote) {
   const item = items[vote.item_id];
   const summary = summaries[vote.item_id] || summaries[vote.vote_id];
+  // Rare edge case (verified: 8 of 628 Pittsburgh voted items): the vote
+  // itself is double-checked against a second source, but the agenda-item
+  // TEXT describing it isn't. The vote's own badge is independent and
+  // correct either way — this is a small honesty note, not a downgrade.
+  const itemCertNote = (item && certStatus(vote) === "certified" && certStatus(item) !== "certified")
+    ? `<div class="note" style="margin-top:0.15rem">the item text above is single-sourced;
+       the vote itself is double-checked independently</div>` : "";
   let label;
   if (summary) {
     // plain-English first; the official record stays one line below
@@ -98,14 +124,14 @@ function voteRow(vote, items, summaries, meetingDate, factsByMeeting, sharedNote
         <span class="topic">${esc(summary.topic)}</span></div>
       <div class="official">${vote.file_number
           ? `<span class="code">${esc(vote.file_number)}</span> · ` : ""}
-        ${esc(official.slice(0, 150))}</div>
+        ${esc(official.slice(0, 150))}</div>${itemCertNote}
       ${consentBreakdown(vote, meetingDate, factsByMeeting)}</td>`;
   } else if (item && item.title) {
     label = `<td>${vote.file_number
         ? `<span class="code">${esc(vote.file_number)}</span> · ` : ""}
-      ${esc(item.title.slice(0, 180))}</td>`;
+      ${esc(item.title.slice(0, 180))}${itemCertNote}</td>`;
   } else if (vote.motion) {
-    label = `<td class="note">${esc(vote.motion.slice(0, 170))}…</td>`;
+    label = `<td class="note">${esc(truncate(vote.motion, 170))}</td>`;
   } else {
     label = `<td class="code">${esc(vote.file_number || vote.vote_id)}</td>`;
   }
@@ -132,15 +158,28 @@ function voteRow(vote, items, summaries, meetingDate, factsByMeeting, sharedNote
     .replace(/&[a-z]+;/gi, " ")      // entities (&nbsp; etc.)
     .replace(/\s+([:;,.])/g, "$1")   // no space before punctuation
     .replace(/\s+/g, " ").trim();
+  // "Straight from the source": the verbatim quote is the strongest trust
+  // move available — not "trust us," but "verify it yourself." Collapsed
+  // behind <details> so it's there to check without cluttering every row;
+  // renders nothing at all when a source has no quote on record (most
+  // don't yet — this is honest, not broken).
   let evidence = "";
-  if (vote.evidence && vote.evidence.quote)
-    evidence += `<div class="evidence"><span class="evlabel">source text</span>
-      “${esc(clean(vote.evidence.quote).slice(0, 220))}”</div>`;
+  const srcQuote = vote.evidence && vote.evidence.quote;
+  if (srcQuote) {
+    const srcUrl = vote.evidence.doc_url;
+    evidence += `<details class="evidence"><summary class="evlabel">straight from the source</summary>
+      <div class="evtext">“${esc(clean(srcQuote).slice(0, 220))}”</div>
+      <div class="evwhy">copied word-for-word from the official record — so this isn't an
+      AI's paraphrase of a paraphrase.${srcUrl ? ` <a href="${esc(srcUrl)}" target="_blank" rel="noopener">see the original →</a>` : ""}</div></details>`;
+  }
   const affirmed = vote.certification && vote.certification.evidence;
-  if (affirmed && affirmed.quote)
-    evidence += `<div class="evidence"><span class="evlabel">affirmed by second source</span>
-      “${esc(clean(affirmed.quote).slice(0, 220))}”</div>`;
-  return `<tr>${label}
+  if (affirmed && affirmed.quote) {
+    evidence += `<details class="evidence"><summary class="evlabel">affirmed by a second source</summary>
+      <div class="evtext">“${esc(clean(affirmed.quote).slice(0, 220))}”</div>
+      <div class="evwhy">the independent record we cross-checked this against.${affirmed.doc_url
+        ? ` <a href="${esc(affirmed.doc_url)}" target="_blank" rel="noopener">see the original →</a>` : ""}</div></details>`;
+  }
+  return `<tr data-topic="${esc(summary ? summary.topic : "")}">${label}
     <td class="tallycell">${tally(vote.counts || {})}</td>
     <td class="tallycell result-${esc(vote.result)}">${esc((vote.result || "?").toUpperCase())}</td>
     <td>${badge(vote)}${note}${inconsistent}${evidence}</td></tr>`;
@@ -156,8 +195,8 @@ function meetingBlock(meeting, votes, items, summaries, factsByMeeting) {
       <span class="mdate">${esc(meeting.date)}</span>
       <span class="mmeta">${esc(meeting.body || "")} · ${present} present / ${absent} absent
         · ${votes.length} recorded votes</span>
-      ${uncert ? `<span class="badge warn">⚠ ${uncert} uncertified</span>`
-               : `<span class="badge ok">all certified</span>`}
+      ${uncert ? `<span class="badge warn">${uncert} single-sourced</span>`
+               : `<span class="badge ok">all double-checked</span>`}
     </summary>`;
   const digest = DIGESTS[meeting.meeting_id];
   if (digest && digest.digest) {
@@ -229,7 +268,7 @@ function memberPanel(name, store, summaries) {
   const deviations = rows.filter(r => r.position !== "aye");
   const row = r => `<tr>
     <td class="code">${esc(r.date)}</td>
-    <td>${esc(voteLabel(r.vote, store, summaries).slice(0, 130))}</td>
+    <td>${esc(truncate(voteLabel(r.vote, store, summaries), 130))}</td>
     <td class="tallycell ${r.position === "no" ? "result-fail" : ""}">${esc(r.position.toUpperCase())}</td>
     <td class="tallycell result-${esc(r.vote.result)}">${esc((r.vote.result || "?").toUpperCase())}</td>
     <td>${badge(r.vote)}</td></tr>`;
@@ -575,6 +614,86 @@ function electionsSection(contests) {
   return section;
 }
 
+// Deviations — failed motions, no votes, abstentions — deterministic and
+// straight from the record. Shared by the lede (picks the top entry as the
+// front-page story) and the "worth your attention" list beneath it, so the
+// selection logic lives in exactly one place.
+function computeAttention(meetings, votes) {
+  const mdates = {};
+  for (const m of meetings) mdates[m.meeting_id] = m.date;
+  const attention = [];
+  for (const v of votes) {
+    const nos = (v.positions || []).filter(p => p.position === "no").map(p => p.member);
+    const abst = (v.positions || []).filter(p => p.position === "abstain").map(p => p.member);
+    if (v.result === "fail")
+      attention.push({ v, why: "motion FAILED", date: mdates[v.meeting_id] || "" });
+    else if (nos.length)
+      attention.push({ v, why: `${nos.join(", ")} voted no`, date: mdates[v.meeting_id] || "" });
+    else if (abst.length)
+      attention.push({ v, why: `${abst.join(", ")} abstained`, date: mdates[v.meeting_id] || "" });
+  }
+  attention.sort((a, b) => b.date.localeCompare(a.date));
+  return attention;
+}
+
+// Freshness phrase for a YYYY-MM-DD date — mirrors the main feed's recency
+// framing (frontend/js/index.js's _whySuffix) so the Ledger reads like the
+// same product, not a bolted-on lab tool.
+function freshnessPhrase(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr + "T12:00:00");
+  const days = Math.floor((new Date() - d) / 86400000);
+  if (days <= 0) return "today";
+  if (days === 1) return "yesterday";
+  if (days <= 7) return "this week";
+  return `on ${d.toLocaleDateString("en-US", { month: "long", day: "numeric" })}`;
+}
+
+// A plain "aye-no" tally phrase, e.g. "8-1" or "unanimous, 9-0". States the
+// number, never editorializes ("controversial") — facts side-by-side, not
+// implication (docs/spec_why_now_context.md's rule, reused here).
+function tallyPhrase(counts) {
+  const aye = counts.aye || 0, no = counts.no || 0;
+  if (!no && !(counts.abstain || 0)) return aye ? `unanimous, ${aye}-0` : "";
+  return `${aye}-${no}`;
+}
+
+// The front-page story: the single most relevant vote, composed the same
+// way the main feed composes a "why this matters" line — a plain-English
+// clause plus a freshness/attention-worthy suffix. When nothing is
+// attention-worthy this window, say so calmly instead of manufacturing
+// drama — "correctly staying silent" is itself a success criterion
+// (docs/spec_why_now_context.md).
+function ledeCard(store, summaries, attention, votes, meetings) {
+  if (!votes.length) return null;
+  const mdates = {};
+  for (const m of meetings) mdates[m.meeting_id] = m.date;
+  const summaryFor = v => summaries[v.item_id] || summaries[v.vote_id];
+
+  let v, sub;
+  if (attention.length) {
+    v = attention[0].v;
+    const s = summaryFor(v);
+    const parts = [tallyPhrase(v.counts || {}), attention[0].why, freshnessPhrase(attention[0].date)]
+      .filter(Boolean);
+    sub = parts.join(" · ");
+    var headline = s ? s.plain_english : voteLabel(v, store, summaries);
+  } else {
+    const recent = votes.slice().sort((a, b) =>
+      (mdates[b.meeting_id] || "").localeCompare(mdates[a.meeting_id] || ""))[0];
+    v = recent;
+    const s = summaryFor(v);
+    headline = s ? s.plain_english : voteLabel(v, store, summaries);
+    sub = `The board's most recent votes were unanimous — here's what passed ${freshnessPhrase(mdates[recent.meeting_id])}`.trim();
+  }
+  const card = el("div", "lede");
+  card.innerHTML = `<div class="lede-eyebrow">recent council action</div>
+    <div class="lede-headline">${esc(headline)}</div>
+    <div class="lede-sub">${esc(sub)}</div>
+    <div class="lede-trust">${badge(v)}</div>`;
+  return card;
+}
+
 function regionSection(sourceId, store, itemFacts, summaries) {
   // display metadata: curated entry, else whatever the store carries
   // (auto-onboarded sources write their own meta), else the raw id
@@ -582,6 +701,14 @@ function regionSection(sourceId, store, itemFacts, summaries) {
   const section = el("section", "region");
   section.appendChild(el("h2", null,
     `${esc(meta.title)} <span class="tag" style="display:block">${esc(meta.sub)}</span>`));
+
+  const meetings = Object.values(store.meetings).sort((a, b) => b.date.localeCompare(a.date));
+  const votes = Object.values(store.vote_events);
+  const items = Object.values(store.agenda_items || {});
+  const attention = computeAttention(meetings, votes);
+
+  const lede = ledeCard(store, summaries, attention, votes, meetings);
+  if (lede) section.appendChild(lede);
 
   const next = nextMeeting(sourceId);
   if (next) {
@@ -598,67 +725,76 @@ function regionSection(sourceId, store, itemFacts, summaries) {
        <div class="nm-body">Our meeting-schedule data is out of date — a gap on our end.</div>`));
   }
 
-  const meetings = Object.values(store.meetings).sort((a, b) => b.date.localeCompare(a.date));
-  const votes = Object.values(store.vote_events);
-  const items = Object.values(store.agenda_items || {});
   const all = [...meetings, ...votes, ...items];
   const certified = all.filter(r => certStatus(r) === "certified").length;
   const uncertified = all.length - certified;
 
   const stats = el("div", "stats");
   for (const [n, l] of [[meetings.length, "meetings"], [items.length, "agenda items"],
-                        [votes.length, "vote events"], [certified, "certified"],
-                        [uncertified, "uncertified"]])
+                        [votes.length, "vote events"], [certified, "double-checked"],
+                        [uncertified, "single-sourced"]])
     stats.appendChild(el("div", "stat", `<div class="n">${n}</div><div class="l">${l}</div>`));
   section.appendChild(stats);
 
   if (uncertified > 0) {
     const pct = Math.round(100 * certified / all.length);
     section.appendChild(el("div", "warnbox",
-      `<strong>⚠ ${uncertified} uncertified record${uncertified === 1 ? "" : "s"}</strong>
+      `<strong>${uncertified} single-sourced record${uncertified === 1 ? "" : "s"}</strong>
        ${certified === 0
-         ? "No independent second source is wired for this jurisdiction yet — every record is ingested only, none is publishable."
-         : `${pct}% of records are affirmed by an independent second source. The remainder is quarantined:
-            source disagreements, second-source gaps, or items with no final action to affirm.`}`));
+         ? "We haven't found a second, independent record to double-check this jurisdiction against yet — everything below comes from one official source only."
+         : `${pct}% of records are double-checked against an independent second source. The rest is
+            single-sourced: source disagreements, second-source gaps, or items with no final action to check.`}`));
   }
 
   // worth your attention: the deviations — failed motions, dissents,
-  // abstentions. Deterministic, straight from the record.
-  const mdates = {};
-  for (const m of meetings) mdates[m.meeting_id] = m.date;
-  const attention = [];
-  for (const v of votes) {
-    const nos = (v.positions || []).filter(p => p.position === "no").map(p => p.member);
-    const abst = (v.positions || []).filter(p => p.position === "abstain").map(p => p.member);
-    if (v.result === "fail")
-      attention.push({ v, why: "motion FAILED" });
-    else if (nos.length)
-      attention.push({ v, why: `${nos.join(", ")} voted no` });
-    else if (abst.length)
-      attention.push({ v, why: `${abst.join(", ")} abstained` });
-  }
-  attention.sort((a, b) => (mdates[b.v.meeting_id] || "").localeCompare(mdates[a.v.meeting_id] || ""));
-  if (attention.length) {
-    const rows = attention.slice(0, 6).map(({ v, why }) =>
-      `<div class="factrow"><span class="code">${esc(mdates[v.meeting_id] || "")}</span>
+  // abstentions — minus whichever one is already the lede above, so the
+  // same vote isn't shown twice on one page.
+  const rest = attention.length ? attention.slice(1, 7) : [];
+  if (rest.length) {
+    const rows = rest.map(({ v, why, date }) =>
+      `<div class="factrow"><span class="code">${esc(date)}</span>
        ${esc(voteLabel(v, store, summaries).slice(0, 110))}
        <span class="attn-why">— ${esc(why)}</span></div>`).join("");
     section.appendChild(el("div", "attention",
-      `<div class="mmeta">worth your attention — where the board didn't just agree
+      `<div class="mmeta">also worth your attention — where the board didn't just agree
        (${attention.length} of ${votes.length} votes)</div>${rows}`));
   }
 
-  // what they voted on, by topic (from the machine-derived item summaries)
+  // what they voted on, by topic — click a chip to filter the meetings
+  // below to just that topic; click again (or a different chip) to change it.
   const topicCount = {};
   for (const v of votes) {
     const s = summaries[v.item_id] || summaries[v.vote_id];
     if (s && s.topic) topicCount[s.topic] = (topicCount[s.topic] || 0) + 1;
   }
   const topics = Object.entries(topicCount).sort((a, b) => b[1] - a[1]).slice(0, 10);
-  if (topics.length)
-    section.appendChild(el("div", "topicstrip",
-      `<span class="mmeta">what they voted on: </span>` + topics.map(([t, n]) =>
-        `<span class="topicchip">${esc(t)} · ${n}</span>`).join(" ")));
+  if (topics.length) {
+    const strip = el("div", "topicstrip");
+    strip.appendChild(el("span", "mmeta", "what they voted on — click to filter: "));
+    let activeTopic = null;
+    const applyTopicFilter = () => {
+      for (const row of section.querySelectorAll("tr[data-topic]"))
+        row.style.display = (!activeTopic || row.dataset.topic === activeTopic) ? "" : "none";
+      for (const m of section.querySelectorAll("details.meeting")) {
+        const rows = [...m.querySelectorAll("tr[data-topic]")];
+        const anyVisible = !rows.length || rows.some(r => r.style.display !== "none");
+        m.style.display = anyVisible ? "" : "none";
+        if (activeTopic && anyVisible) m.open = true;
+      }
+    };
+    for (const [t, n] of topics) {
+      const chip = el("button", "topicchip", `${esc(t)} · ${n}`);
+      chip.type = "button";
+      chip.addEventListener("click", () => {
+        activeTopic = activeTopic === t ? null : t;
+        for (const c of strip.querySelectorAll(".topicchip")) c.classList.remove("active");
+        if (activeTopic) chip.classList.add("active");
+        applyTopicFilter();
+      });
+      strip.appendChild(chip);
+    }
+    section.appendChild(strip);
+  }
 
   const strip = memberStrip(store, summaries);
   if (strip) section.appendChild(strip);
@@ -727,6 +863,29 @@ function profileSection(result) {
   return section;
 }
 
+// Cost/time disclosure before a search can trigger the live onboarding
+// pipeline. Native confirm() is deliberately plain — this is a guardrail,
+// not a feature moment. Covers both outcomes honestly: some queries turn
+// out to be free instantly (a cached preview the client doesn't know about
+// yet), most aren't — the copy doesn't promise either way.
+async function confirmOnboard(query) {
+  let usd = 0.45, lo = 2, hi = 5;
+  try {
+    const est = await (await fetch("/api/foundry/onboard/estimate")).json();
+    if (est.usd) usd = est.usd;
+    if (est.minutes_low) lo = est.minutes_low;
+    if (est.minutes_high) hi = est.minutes_high;
+  } catch (e) { /* static defaults above are a fine fallback */ }
+  return window.confirm(
+    `We don't have "${query}" open right now.\n\n`
+    + `If this is a place we haven't checked before, finding it costs us real `
+    + `money and takes time — typically around $${usd.toFixed(2)} and ${lo}-${hi} `
+    + `minutes, sometimes more. If we've already looked at it, this is instant `
+    + `and free.\n\n`
+    + `Either way, this is a one-time preview for this session — it isn't yet `
+    + `guaranteed to be permanently added to the site.\n\nContinue?`);
+}
+
 async function runSearch(query) {
   const q = query.trim().toLowerCase();
   const log = document.getElementById("joblog");
@@ -737,6 +896,7 @@ async function runSearch(query) {
       if (box) { log.textContent = ""; selectCounty(placeKey(sourceId)); return; }
     }
   }
+  if (!(await confirmOnboard(query))) { log.textContent = ""; return; }
   log.innerHTML = `<div class="jl-head">Running the pipeline for “${esc(query)}”…</div>`;
   const start = await fetch("/api/foundry/onboard", {
     method: "POST", headers: { "Content-Type": "application/json" },
@@ -1022,6 +1182,12 @@ function dashElections(c) {
 function selectCounty(key) {
   for (const c of document.querySelectorAll(".county"))
     c.classList.toggle("active", c.dataset.key === key);
+  // Shrink the coverage map into a corner navigator once a county is open —
+  // it stays live (still clickable) so you can jump straight to another
+  // county without scrolling back to the top. Single funnel: every path
+  // that opens a county (map click, search, onboarding) goes through here.
+  const map = document.getElementById("usmap");
+  if (map) map.classList.toggle("mini", !!key);
   if (key) history.replaceState(null, "", `#${key}`);
 }
 
@@ -1208,6 +1374,15 @@ async function init() {
     const q = document.getElementById("searchbox").value;
     if (q.trim()) runSearch(q);
   });
+  // Clicking the shrunk map restores it to full size. Capture phase so this
+  // runs BEFORE the click's own target handler (a county pin, a state, the
+  // "back to all states" button) — if that handler goes on to open a county
+  // via selectCounty(), it re-shrinks the map right after, so picking a new
+  // county still ends up correctly mini. Anything else (browsing a bare
+  // state, going back to all-states, empty space) stays maximized.
+  document.getElementById("usmap").addEventListener("click", () => {
+    document.getElementById("usmap").classList.remove("mini");
+  }, true);
   const resp = await fetch("/api/foundry/data");
   if (!resp.ok) {
     document.getElementById("loading").textContent =

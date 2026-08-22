@@ -30,6 +30,11 @@ STORE = FOUNDRY / "data" / "store"
 OUT = STORE / "item-summaries.json"
 PRICES = {"claude-haiku-4-5": (1.00, 5.00), "claude-sonnet-4-6": (3.00, 15.00)}
 
+# Bump when SCHEMA's fields change so `main()` knows which stored entries are
+# stale and need a real rerun (--force), not a silent skip. v2 added
+# item_type/fiscal_impact for the Municipal Ledger's citizen-facing IA.
+SCHEMA_VERSION = 2
+
 SCHEMA = {
     "type": "object",
     "properties": {"summaries": {"type": "array", "items": {
@@ -53,8 +58,17 @@ SCHEMA = {
             "topic": {"type": "string", "description":
                 "2-3 word topic tag, e.g. 'legal settlement', 'zoning', "
                 "'public safety', 'budget', 'appointments'"},
+            "item_type": {"type": "string", "description":
+                "One of: contract, rezoning, budget, appointment, policy, "
+                "report, other. Pick the single best fit for what KIND of "
+                "council action this is — not the topic, the action type."},
+            "fiscal_impact": {"type": "string", "description":
+                "The dollar figure or budget effect this item states, in "
+                "plain terms, e.g. '$2.1M for road resurfacing'. Empty "
+                "string if the item states no dollar figure — do not guess "
+                "or estimate one."},
         },
-        "required": ["id", "plain_english", "topic"],
+        "required": ["id", "plain_english", "topic", "item_type", "fiscal_impact"],
         "additionalProperties": False}}},
     "required": ["summaries"],
     "additionalProperties": False,
@@ -85,15 +99,21 @@ def _quote_context(quote, docs, before=900, after=200):
     return None
 
 
-def voted_items():
+def voted_items(source=None):
     """id -> official text for everything a vote references: the agenda
     item's title where one exists (Pittsburgh, LA), else the motion text
     itself keyed by vote_id (Loudoun records votes as motions). Where the
     vote carries an evidence quote, source context around the quote is
-    appended so the summary can name the actual subject."""
+    appended so the summary can name the actual subject.
+
+    `source` restricts to one store's stem (e.g. "pittsburgh-legistar") —
+    used to re-run a schema bump against a single pilot source instead of
+    spending across every source at once."""
     out = {}
     for path in STORE.glob("*.json"):
         if path.name in (OUT.name,) or "item-facts" in path.name:
+            continue
+        if source and path.stem != source:
             continue
         store = json.loads(path.read_text())
         items = store.get("agenda_items", {})
@@ -118,10 +138,27 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default="claude-haiku-4-5")
     parser.add_argument("--batch", type=int, default=15)
+    parser.add_argument("--source", default=None,
+        help="restrict to one store's stem, e.g. pittsburgh-legistar")
+    parser.add_argument("--force", action="store_true",
+        help="regenerate even rows already on the current schema version")
     args = parser.parse_args()
 
     existing = json.loads(OUT.read_text()) if OUT.exists() else {}
-    todo = {k: v for k, v in voted_items().items() if k not in existing}
+    candidates = voted_items(args.source)
+    if args.force:
+        todo = candidates
+    else:
+        # Default (unattended/scheduled) path stays exactly as before a
+        # SCHEMA bump: only genuinely new votes, never "existing row is on
+        # an old schema_version." The version check is real but opt-in only
+        # (--force, with --source to scope the spend) — without that guard,
+        # bumping SCHEMA_VERSION makes every historical row across every
+        # source look stale at once, and refresh.py's unattended cron call
+        # (no args) tried to regenerate all of them in one run and blew
+        # through its 900s subprocess timeout. Caught locally 2026-08-22
+        # before this shipped; see git history for the incident.
+        todo = {k: v for k, v in candidates.items() if k not in existing}
     print(f"{len(todo)} voted items need summaries "
           f"({len(existing)} already done)")
     if not todo:
@@ -146,7 +183,10 @@ def main():
             if s["id"] in todo:
                 existing[s["id"]] = {"plain_english": s["plain_english"],
                                      "topic": s["topic"],
-                                     "derived_by": args.model}
+                                     "item_type": s.get("item_type", ""),
+                                     "fiscal_impact": s.get("fiscal_impact", ""),
+                                     "derived_by": args.model,
+                                     "schema_version": SCHEMA_VERSION}
         OUT.write_text(json.dumps(existing, indent=1))
         print(f"  {min(i + args.batch, len(pending))}/{len(pending)} "
               f"(${cost:.2f})")

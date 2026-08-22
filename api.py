@@ -30,7 +30,7 @@ from member_search_agent import (
 from query_expander_agent import expand_query
 from search_logger import log_search, log_bill_opened, log_member_opened
 from analyst_agent import analyze
-from flag_logger import log_search_flag, log_bill_flag, get_flags
+from flag_logger import log_search_flag, log_bill_flag, log_town_request, get_flags
 from feed_agent import fetch_feed
 from civic_resolver import resolve_zip
 from district_resolver import resolve_address, resolve_point, resolve_geoid
@@ -273,6 +273,13 @@ class BillFlagRequest(BaseModel):
     reason: str
     notes: str = ""
     flagged_section: str = "translation"
+
+
+class TownRequest(BaseModel):
+    place_name: str
+    lat: Optional[float] = None
+    lon: Optional[float] = None
+    notes: str = ""
 
 
 # ── Search handlers ──
@@ -2471,6 +2478,19 @@ async def flag_search(request: SearchFlagRequest):
         raise HTTPException(status_code=500, detail="Failed to log flag")
 
 
+@app.post("/api/foundry/request-town")
+@limiter.limit("10/minute")
+async def request_foundry_town(request: Request, body: TownRequest):
+    """Free, zero-spend signal that a citizen wants their town added to the
+    Municipal Ledger — separate from the paid, guarded live-onboarding
+    trigger. Just logs interest; nothing runs."""
+    try:
+        log_town_request(place_name=body.place_name, lat=body.lat, lon=body.lon, notes=body.notes)
+        return {"status": "logged", "message": "Thanks — we'll factor this into what we add next."}
+    except Exception:
+        raise HTTPException(status_code=500, detail="Failed to log request")
+
+
 @app.post("/flag/bill")
 async def flag_bill(request: BillFlagRequest):
     try:
@@ -2664,6 +2684,7 @@ async def foundry_data():
 # polls. Previews are ingest-only by construction and persisted so a repeat
 # search is instant.
 
+import datetime as _dt
 import re as _re
 import sys as _sys
 import threading as _threading
@@ -2676,6 +2697,42 @@ import run_onboard as _run_onboard
 
 _FOUNDRY_JOBS = {}
 _FOUNDRY_PREVIEWS = _pathlib.Path("foundry/data/preview")
+
+# Guardrails for the public-facing onboarding trigger. Cache hits (an
+# already-onboarded source, or a previously-extracted preview) are free and
+# must not consume either limit — checked before either counter is touched,
+# not via a blanket per-route rate limiter that can't tell a $0 request from
+# a $1 one. Localhost is exempt, matching the existing FOUNDRY_ONBOARD gate's
+# "lab use needs no setup" stance.
+FOUNDRY_ONBOARD_DAILY_LIMIT = 2
+FOUNDRY_ONBOARD_MAX_CONCURRENT = 3
+_FOUNDRY_ONBOARD_ATTEMPTS = {}  # ip -> [date strings, one per paid attempt]
+
+
+def _foundry_is_cache_hit(name):
+    """Whether onboarding this name would hit a real, already-stored source —
+    checked across ANY platform suffix (-bos, -legistar, -primegov, ...), not
+    just -bos.json like _foundry_onboard_job's own early-exit shortcut, which
+    would otherwise wrongly charge quota for a search like "pittsburgh" that's
+    already fully onboarded under -legistar. The cached-discovery-profile path
+    still calls the paid synthesis step downstream, so it is deliberately NOT
+    treated as a cache hit here."""
+    store = _pathlib.Path("foundry/data/store")
+    for slug in _foundry_slugs(name):
+        if any(store.glob(f"{slug}-*.json")):
+            return True
+        if (_FOUNDRY_PREVIEWS / f"{slug}-legistar.json").exists():
+            return True
+    return False
+
+
+def _foundry_onboard_quota_ok(ip):
+    today = _dt.date.today().isoformat()
+    return sum(1 for d in _FOUNDRY_ONBOARD_ATTEMPTS.get(ip, []) if d == today) < FOUNDRY_ONBOARD_DAILY_LIMIT
+
+
+def _foundry_onboard_record_attempt(ip):
+    _FOUNDRY_ONBOARD_ATTEMPTS.setdefault(ip, []).append(_dt.date.today().isoformat())
 
 
 def _foundry_slugs(name):
@@ -2865,12 +2922,51 @@ async def foundry_onboard(body: _FoundryOnboardBody, request: Request):
             detail="foundry onboarding is disabled on this deployment — the "
                    "ledger is read-only here (set FOUNDRY_ONBOARD=on to allow "
                    "search-triggered pipeline runs)")
+    if not local and not _foundry_is_cache_hit(body.name):
+        running = sum(1 for j in _FOUNDRY_JOBS.values() if j["status"] == "running")
+        if running >= FOUNDRY_ONBOARD_MAX_CONCURRENT:
+            raise HTTPException(status_code=429, detail="Too many onboarding "
+                "runs in progress right now — try again in a few minutes.")
+        ip = request.client.host if request.client else "unknown"
+        if not _foundry_onboard_quota_ok(ip):
+            raise HTTPException(status_code=429,
+                detail=f"You've hit today's limit of {FOUNDRY_ONBOARD_DAILY_LIMIT} "
+                       "new-place searches. Try again tomorrow, or search a place "
+                       "we already cover.")
+        _foundry_onboard_record_attempt(ip)
     job_id = _uuid.uuid4().hex[:12]
     _FOUNDRY_JOBS[job_id] = {"status": "running", "log": [], "result": None,
                              "progress": {"pct": 0, "stage": "queued"}}
     _threading.Thread(target=_foundry_onboard_job, args=(job_id, body.name),
                       daemon=True).start()
     return {"job_id": job_id}
+
+
+@app.get("/api/foundry/onboard/estimate")
+async def foundry_onboard_estimate():
+    """Cost/time estimate for the confirmation dialog shown before a public
+    visitor triggers a live onboarding run. Seeded from the M1 milestone
+    datapoint (foundry/README.md: ~$0.45, 2.6 min cold-onboarding a Legistar
+    source) until enough real attempts accumulate in budget.py's ledger to
+    average instead. Elapsed time isn't recorded in the ledger (only $), so
+    the minutes range stays anchored to M1 regardless of sample size."""
+    usd, sample_size = 0.45, 0
+    try:
+        import budget as _foundry_budget
+        if _foundry_budget.LEDGER.exists():
+            costs = []
+            for line in _foundry_budget.LEDGER.read_text().splitlines():
+                try:
+                    row = json.loads(line)
+                except ValueError:
+                    continue
+                if row.get("kind") in ("discovery", "synthesis"):
+                    costs.append(row["usd"])
+            if len(costs) >= 5:  # don't trust an estimate from a handful of runs
+                usd, sample_size = sum(costs) / len(costs), len(costs)
+    except Exception:
+        pass  # the static M1-seeded default is a fine fallback
+    return {"usd": round(usd, 2), "minutes_low": 2, "minutes_high": 5, "sample_size": sample_size}
 
 
 @app.get("/api/foundry/onboard/{job_id}")

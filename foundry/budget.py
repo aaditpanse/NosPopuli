@@ -23,6 +23,14 @@ except ImportError:
 
 LEDGER = pathlib.Path(__file__).parent / "data" / "spend_log.jsonl"
 DEFAULT_DAILY_USD = 8.0
+# Per-attempt reservation for check()'s cap comparison. Closes the gap this
+# module has documented since M0: checking only today's ALREADY-recorded
+# spend lets one large attempt pass the check and then blow through the cap
+# by itself before it's recorded. Reserving headroom for the attempt about
+# to start — not just looking backward — was an acceptable lab-only gap;
+# it stopped being acceptable once a public trigger can start attempts
+# (see docs: Foundry public-UX guardrails).
+DEFAULT_MAX_ATTEMPT_USD = 3.0
 
 
 def record(kind, usd):
@@ -48,15 +56,23 @@ def spent_since(prefix):
     return total
 
 
-def check(kind):
-    """Raise before an expensive call when today's ledger exceeds the cap."""
+def check(kind, estimated_usd=None):
+    """Raise before an expensive call when today's ledger — PLUS a reserved
+    estimate for the attempt about to start — would exceed the cap. Pass
+    `estimated_usd` when a caller has a real estimate; otherwise a flat
+    per-attempt reservation (FOUNDRY_MAX_ATTEMPT_USD) is assumed, so a single
+    large attempt can no longer pass the check and then overshoot the cap
+    on its own before it's recorded."""
     cap = float(os.environ.get("FOUNDRY_DAILY_BUDGET", DEFAULT_DAILY_USD))
     today = spent_since(datetime.date.today().isoformat())
-    if today >= cap:
+    reserve = estimated_usd if estimated_usd is not None else float(
+        os.environ.get("FOUNDRY_MAX_ATTEMPT_USD", DEFAULT_MAX_ATTEMPT_USD))
+    if today + reserve > cap:
         raise RuntimeError(
-            f"daily LLM budget reached: ${today:.2f} spent today >= "
-            f"${cap:.2f} cap — refusing to start '{kind}'. Raise it for one "
-            "run with FOUNDRY_DAILY_BUDGET=<usd> if this spend is deliberate.")
+            f"daily LLM budget would be exceeded: ${today:.2f} already spent today "
+            f"+ ~${reserve:.2f} reserved for this '{kind}' attempt > ${cap:.2f} cap "
+            "— refusing to start. Raise FOUNDRY_DAILY_BUDGET for one run if this "
+            "spend is deliberate.")
 
 
 def main():

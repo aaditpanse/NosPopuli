@@ -113,8 +113,12 @@ def _geocode(url):
 
 
 def _districts_from(geographies):
-    """Pull the CD (state FIPS, district number) and state-leg codes out of a
-    Census `geographies` block."""
+    """Pull the CD (state FIPS, district number), state-leg codes, and
+    county/place identity out of a Census `geographies` block. The geocoder
+    call already returns county and incorporated-place layers alongside the
+    CD layer; county/place ride along here for Foundry's local-government
+    lookup (see FOUNDRY_JURISDICTIONS below) rather than needing a second
+    API call."""
     cds = geographies.get(CD_LAYER) or []
     if not cds:
         return None
@@ -127,7 +131,69 @@ def _districts_from(geographies):
         for lname, block in geographies.items():
             if "State Legislative" in lname and key in lname and block:
                 state_leg[label] = block[0].get("GEOID")
-    return {"state_fips": state_fips, "cd119": cd119, "state_leg": state_leg}
+    county = (geographies.get("Counties") or [None])[0]
+    place = (geographies.get("Incorporated Places") or [None])[0]
+    return {
+        "state_fips": state_fips, "cd119": cd119, "state_leg": state_leg,
+        "county_fips": county.get("GEOID") if county else None,
+        "county_name": county.get("NAME") if county else None,
+        "place_geoid": place.get("GEOID") if place else None,
+        "place_name": place.get("NAME") if place else None,
+    }
+
+
+# Foundry local-government coverage, keyed by the area each body actually
+# governs. "place" bodies (city councils) govern only their incorporated
+# place even though the nearest Census match is a county; "county" bodies
+# (boards of supervisors) govern everyone in the county. GEOIDs verified
+# directly against the Census Geocoder (onelineaddress, layers=all) against
+# a real address in each jurisdiction — not guessed from source-id naming,
+# which turned out to be unreliable (Chicago/Seattle/NYC's source ids all
+# end in "-bos" despite being city councils, not counties).
+FOUNDRY_JURISDICTIONS = [
+    {"source_id": "pittsburgh-legistar", "label": "Pittsburgh City Council",
+     "scope": "place", "county_fips": "42003", "place_geoid": "4261000"},
+    {"source_id": "la-primegov", "label": "Los Angeles City Council",
+     "scope": "place", "county_fips": "06037", "place_geoid": "0644000"},
+    {"source_id": "chicago-bos", "label": "Chicago City Council",
+     "scope": "place", "county_fips": "17031", "place_geoid": "1714000"},
+    {"source_id": "seattle-bos", "label": "Seattle City Council",
+     "scope": "place", "county_fips": "53033", "place_geoid": "5363000"},
+    # NYC's single incorporated place spans all five boroughs/counties, so
+    # county_fips is left unset — every address inside any of the five
+    # counties that's part of the city resolves to the same place_geoid,
+    # and there's no "in the county but outside city limits" case to catch.
+    {"source_id": "newyork-bos", "label": "New York City Council",
+     "scope": "place", "county_fips": None, "place_geoid": "3651000"},
+    {"source_id": "fairfax-bos", "label": "Fairfax County Board of Supervisors",
+     "scope": "county", "county_fips": "51059", "place_geoid": None},
+    {"source_id": "loudoun-bos", "label": "Loudoun County Board of Supervisors",
+     "scope": "county", "county_fips": "51107", "place_geoid": None},
+    {"source_id": "princewilliam-bos", "label": "Prince William Board of County Supervisors",
+     "scope": "county", "county_fips": "51153", "place_geoid": None},
+    {"source_id": "stafford-bos", "label": "Stafford County Board of Supervisors",
+     "scope": "county", "county_fips": "51179", "place_geoid": None},
+]
+
+
+def _foundry_jurisdiction_for(county_fips, place_geoid):
+    """Match a resolved county/place to a Foundry-covered governing body.
+
+    Three outcomes, not two: a county-wide body covers everyone in its
+    county; a place body (city council) only covers its incorporated place,
+    so someone elsewhere in the same county gets an honest "partial" gap
+    naming the real jurisdiction they're missing, not a generic "not
+    covered." See docs/spec_self_building_pipelines.md and foundry/README.md
+    for what "covered" means upstream (certified vs. ingest-only)."""
+    for j in FOUNDRY_JURISDICTIONS:
+        if j["scope"] == "county" and j["county_fips"] == county_fips:
+            return {"status": "covered", **j}
+        if j["scope"] == "place" and j["place_geoid"] == place_geoid:
+            return {"status": "covered", **j}
+    for j in FOUNDRY_JURISDICTIONS:
+        if j["scope"] == "place" and j["county_fips"] == county_fips:
+            return {"status": "partial", **j}
+    return {"status": "none"}
 
 
 def _resolve(geo, coords, method):
@@ -144,6 +210,7 @@ def _resolve(geo, coords, method):
     out["state_fips"] = geo["state_fips"]
     out["geoid"] = f"{geo['state_fips']}{str(geo['cd119']).zfill(2)}"
     out["state_legislative"] = geo["state_leg"]
+    out["foundry"] = _foundry_jurisdiction_for(geo.get("county_fips"), geo.get("place_geoid"))
     if coords:
         out["lat"], out["lon"] = coords.get("y"), coords.get("x")
     return out

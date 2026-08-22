@@ -3,13 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex,nofollow">
-<title>Foundry — Municipal Ledger · NosPopuli Lab</title>
-<meta name="description" content="Self-building pipelines charting local government data no one else maps — meetings, votes, public works, and local elections.">
+<title>The Municipal Ledger · NosPopuli</title>
+<meta name="description" content="See exactly how your city council or county board voted, what's being built, and who was elected — checked against a second, independent source wherever we can.">
 <meta property="og:site_name" content="NosPopuli">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Foundry — The Municipal Ledger · NosPopuli Lab">
-<meta property="og:description" content="Self-building pipelines charting local government data no one else maps — meetings, votes, public works, and local elections.">
+<meta property="og:title" content="The Municipal Ledger · NosPopuli">
+<meta property="og:description" content="See exactly how your city council or county board voted, what's being built, and who was elected — checked against a second, independent source wherever we can.">
 <meta property="og:url" content="https://nospopuli.org/foundry">
 <meta property="og:image" content="https://nospopuli.org/static/og-card.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -142,7 +141,11 @@ td.code, span.code { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
    the one containment that holds regardless of grid/track sizing: the table can
    never be wider than its column, so it can't bleed into the map sidebar (where
    the positioned Leaflet map paints on top) or past the page's right edge. */
-details.meeting table { display: block; overflow-x: auto; max-width: 100%; }
+/* Same overflow-containment for the member panel's tables — it has the same
+   nowrap cells (tallies, the trust badge) that can't shrink, and lives in the
+   same dashboard column, so without this it bleeds past the column the same
+   way the meeting tables did before this rule existed. */
+details.meeting table, .memberpanel table { display: block; overflow-x: auto; max-width: 100%; }
 .dash-h { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; letter-spacing: 0.2em;
   text-transform: uppercase; color: var(--accent); border-bottom: 1px solid var(--rule);
   padding-bottom: 0.35rem; margin-bottom: 0.6rem; }
@@ -208,11 +211,15 @@ details.consent > summary::-webkit-details-marker { display: none; }
 .dispnote { border-left: 3px solid var(--accent); padding: 0.2rem 0.6rem;
   margin-top: 0.3rem; font-size: 0.8rem; color: var(--muted); }
 .evidence { border-left: 2px solid var(--rule); padding: 0.15rem 0.6rem;
-  margin-top: 0.3rem; font-size: 0.78rem; font-style: italic; color: var(--muted);
-  max-width: 26rem; }
+  margin-top: 0.3rem; font-size: 0.78rem; color: var(--muted); max-width: 26rem; }
+.evidence > summary { cursor: pointer; list-style: none; }
+.evidence > summary::-webkit-details-marker { display: none; }
 .evidence .evlabel { font-family: 'IBM Plex Mono', monospace; font-style: normal;
   font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase;
-  display: block; }
+  color: var(--accent); }
+.evidence .evtext { font-style: italic; margin-top: 0.25rem; }
+.evidence .evwhy { font-size: 0.68rem; margin-top: 0.2rem; }
+.evidence .evwhy a { color: var(--accent); }
 .tallycell { white-space: nowrap; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; }
 .result-pass { color: var(--ink); } .result-fail { color: var(--accent); font-weight: 400; }
 #loading { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
@@ -244,7 +251,17 @@ h4 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; 
 .topicchip { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
   letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
   border: 1px solid var(--rule); padding: 0.1rem 0.45rem; white-space: nowrap;
-  display: inline-block; margin: 0.12rem 0; }
+  display: inline-block; margin: 0.12rem 0.2rem 0.12rem 0; background: none; cursor: pointer; }
+.topicchip:hover { border-color: var(--accent); color: var(--accent); }
+.topicchip.active { color: #fff; background: var(--accent); border-color: var(--accent); }
+.lede { border: 1px solid var(--ink); border-left: 6px solid var(--accent);
+  background: var(--card-bg); padding: 1rem 1.25rem 1.1rem; margin: 0.75rem 0 1.4rem; }
+.lede-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+  letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent); }
+.lede-headline { font-family: 'Playfair Display', serif; font-size: 1.5rem;
+  font-weight: 700; line-height: 1.25; margin: 0.3rem 0 0.4rem; }
+.lede-sub { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+  letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.55rem; }
 .digest { border-bottom: 1px dotted var(--rule); padding: 0.6rem 1rem 0.7rem; }
 .digest-text { font-size: 0.95rem; margin: 0.2rem 0 0.3rem; }
 .memberchip { font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem;
@@ -263,7 +280,20 @@ details.fullrecord > summary::-webkit-details-marker { display: none; }
 a { color: var(--accent); }
 .county { display: none; }
 .county.active { display: block; }
-#usmap { margin: 0.5rem 0 1.5rem; }
+#usmap { margin: 0.5rem 0 1.5rem; transition: none; }
+/* Once a county is open, the map shrinks into a corner navigator — pinned so
+   it stays reachable while you scroll the county dashboard, without eating
+   the full page width above content you're already reading. Desktop only:
+   there's no good corner to float it in on a narrow phone screen, so below
+   900px it just stays in normal flow like the unshrunk map. */
+@media (min-width: 901px) {
+  #usmap.mini { position: fixed; top: 5rem; right: 1.5rem; width: 250px;
+    margin: 0; z-index: 40; background: var(--paper); border: 1px solid var(--rule);
+    padding: 0.5rem; max-height: calc(100vh - 7rem); overflow-y: auto; }
+  #usmap.mini .map-sub, #usmap.mini .map-legend { display: none; }
+  #usmap.mini .map-title { font-size: 0.85rem; }
+  #usmap.mini .map-head { margin-bottom: 0.3rem; }
+}
 .map-head { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
 .map-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; }
 .map-sub { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
@@ -290,14 +320,18 @@ a { color: var(--accent); }
 <main>
   <header class="masthead">
     <a class="foundry-back" href="/">← Back to NosPopuli</a>
-    <div class="tag">NosPopuli · Foundry Lab Console — not a public page</div>
+    <div class="tag">NosPopuli · Local Government</div>
     <h1>The Municipal Ledger</h1>
-    <div class="tag">Self-built pipelines · Pittsburgh, PA · Los Angeles, CA · Loudoun County, VA</div>
+    <div class="tag">Covering city councils and county boards across the U.S. — click the map to see which</div>
   </header>
-  <div class="labnotice">⚠ Lab-grade data. Records marked <b>uncertified</b> have not been
-    affirmed by an independent second source and are never published — shown here for
-    operator review only. Plain-English descriptions are machine-derived from the
-    official titles and are not part of the certified record.</div>
+  <div class="labnotice">How we check our work: every record here is either
+    <b>Double-checked</b> — matched against a second, independent record, like the
+    clerk's own minutes, and they agree — or <b>Single-sourced</b> — from one
+    official record only, because we haven't found a second source to compare it
+    against yet. We show both, but never blur the line between them. Short
+    plain-English summaries are written by an AI model and marked
+    <b>Plain-English by AI</b> — they explain a vote, they aren't the certified
+    record of it.</div>
   <form id="searchform" autocomplete="off">
     <input id="searchbox" type="text" placeholder="Type a county or city — e.g. “Alexandria, VA” — and press Enter to run the pipeline"
       aria-label="Search or onboard a jurisdiction">
@@ -312,6 +346,6 @@ a { color: var(--accent); }
 <script src="/static/js/d3-geo.min.js"></script>
 <script src="/static/js/topojson-client.min.js"></script>
 <script src="/static/js/leaflet.js"></script>
-<script src="/static/js/foundry.js?v=36"></script>
+<script src="/static/js/foundry.js?v=41"></script>
 </body>
 </html>
