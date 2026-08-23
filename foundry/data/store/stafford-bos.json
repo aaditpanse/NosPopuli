@@ -5,12 +5,12 @@
    "body": "June 16, 2026 Board of Supervisors Meeting",
    "date": "2026-06-16",
    "attendance": {
-    "Allen": "present",
     "Guy": "present",
     "Evans": "present",
+    "English": "present",
     "Crystal Vanuch": "present",
     "Pamela Yeung": "present",
-    "English": "present",
+    "Allen": "present",
     "Deuntay Diggs": "present"
    },
    "source_url": "https://staffordcova.portal.civicclerk.com/event/2689/overview",
@@ -29,11 +29,11 @@
    "body": "June 02, 2026 Board of Supervisors Meeting",
    "date": "2026-06-02",
    "attendance": {
-    "Allen": "present",
     "Guy": "present",
     "Evans": "present",
-    "Pamela Yeung": "present",
     "English": "present",
+    "Pamela Yeung": "present",
+    "Allen": "present",
     "Deuntay Diggs": "present",
     "Crystal Vanuch": "absent"
    },
@@ -53,11 +53,11 @@
    "body": "May 26, 2026 Board of Supervisors Meeting",
    "date": "2026-05-26",
    "attendance": {
-    "Allen": "present",
     "Guy": "present",
+    "English": "present",
     "Crystal Vanuch": "present",
     "Pamela Yeung": "present",
-    "English": "present",
+    "Allen": "present",
     "Deuntay Diggs": "present",
     "Evans": "absent"
    },
