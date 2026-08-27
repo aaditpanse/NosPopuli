@@ -1170,7 +1170,7 @@
   "la-primegov-18525": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "meeting",
    "meeting_id": "la-primegov-18525",
    "body": "City Council",
@@ -1188,7 +1188,7 @@
   "la-primegov-17725": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "meeting",
    "meeting_id": "la-primegov-17725",
    "body": "City Council",
@@ -1213,6 +1213,24 @@
    },
    "source_url": "https://lacity.primegov.com/Public/CompiledDocument/85100",
    "minutes_url": "https://lacity.primegov.com/Public/CompiledDocument/85100",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-18560": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "meeting",
+   "meeting_id": "la-primegov-18560",
+   "body": "City Council",
+   "date": "2026-08-21",
+   "title": "City Council Meeting",
+   "attendance": {},
+   "source_url": "https://lacity.primegov.com/Public/CompiledDocument/85163",
+   "minutes_url": "https://lacity.primegov.com/Public/CompiledDocument/85163",
    "certification": {
     "status": "certified",
     "method": "cross-source",
@@ -28475,7 +28493,7 @@
   "la-primegov-item-18525-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-1",
    "meeting_id": "la-primegov-18525",
@@ -28492,7 +28510,7 @@
   "la-primegov-item-18525-2": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-2",
    "meeting_id": "la-primegov-18525",
@@ -28509,7 +28527,7 @@
   "la-primegov-item-18525-3": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-3",
    "meeting_id": "la-primegov-18525",
@@ -28526,7 +28544,7 @@
   "la-primegov-item-18525-4": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-4",
    "meeting_id": "la-primegov-18525",
@@ -28543,7 +28561,7 @@
   "la-primegov-item-18525-5": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-5",
    "meeting_id": "la-primegov-18525",
@@ -28560,7 +28578,7 @@
   "la-primegov-item-18525-6": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-6",
    "meeting_id": "la-primegov-18525",
@@ -28577,7 +28595,7 @@
   "la-primegov-item-18525-7": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-7",
    "meeting_id": "la-primegov-18525",
@@ -28594,7 +28612,7 @@
   "la-primegov-item-18525-8": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-8",
    "meeting_id": "la-primegov-18525",
@@ -28611,7 +28629,7 @@
   "la-primegov-item-18525-9": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-9",
    "meeting_id": "la-primegov-18525",
@@ -28628,7 +28646,7 @@
   "la-primegov-item-18525-10": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-10",
    "meeting_id": "la-primegov-18525",
@@ -28645,7 +28663,7 @@
   "la-primegov-item-18525-11": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-11",
    "meeting_id": "la-primegov-18525",
@@ -28662,7 +28680,7 @@
   "la-primegov-item-18525-12": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-12",
    "meeting_id": "la-primegov-18525",
@@ -28679,7 +28697,7 @@
   "la-primegov-item-18525-13": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-13",
    "meeting_id": "la-primegov-18525",
@@ -28696,7 +28714,7 @@
   "la-primegov-item-18525-14": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-14",
    "meeting_id": "la-primegov-18525",
@@ -28713,7 +28731,7 @@
   "la-primegov-item-18525-15": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-15",
    "meeting_id": "la-primegov-18525",
@@ -28730,7 +28748,7 @@
   "la-primegov-item-18525-16": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-16",
    "meeting_id": "la-primegov-18525",
@@ -28747,7 +28765,7 @@
   "la-primegov-item-18525-17": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-17",
    "meeting_id": "la-primegov-18525",
@@ -28764,7 +28782,7 @@
   "la-primegov-item-18525-18": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-18",
    "meeting_id": "la-primegov-18525",
@@ -28781,7 +28799,7 @@
   "la-primegov-item-18525-19": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-19",
    "meeting_id": "la-primegov-18525",
@@ -28798,7 +28816,7 @@
   "la-primegov-item-18525-20": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-20",
    "meeting_id": "la-primegov-18525",
@@ -28815,7 +28833,7 @@
   "la-primegov-item-18525-21": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-21",
    "meeting_id": "la-primegov-18525",
@@ -28832,7 +28850,7 @@
   "la-primegov-item-18525-22": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-22",
    "meeting_id": "la-primegov-18525",
@@ -28849,7 +28867,7 @@
   "la-primegov-item-18525-23": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-23",
    "meeting_id": "la-primegov-18525",
@@ -28866,7 +28884,7 @@
   "la-primegov-item-18525-24": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-24",
    "meeting_id": "la-primegov-18525",
@@ -28883,7 +28901,7 @@
   "la-primegov-item-18525-25": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-25",
    "meeting_id": "la-primegov-18525",
@@ -28900,7 +28918,7 @@
   "la-primegov-item-18525-26": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-26",
    "meeting_id": "la-primegov-18525",
@@ -28917,7 +28935,7 @@
   "la-primegov-item-18525-27": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-27",
    "meeting_id": "la-primegov-18525",
@@ -28934,7 +28952,7 @@
   "la-primegov-item-18525-28": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-28",
    "meeting_id": "la-primegov-18525",
@@ -28951,7 +28969,7 @@
   "la-primegov-item-18525-29": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-29",
    "meeting_id": "la-primegov-18525",
@@ -28968,7 +28986,7 @@
   "la-primegov-item-18525-30": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-30",
    "meeting_id": "la-primegov-18525",
@@ -28985,7 +29003,7 @@
   "la-primegov-item-18525-31": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-31",
    "meeting_id": "la-primegov-18525",
@@ -29002,7 +29020,7 @@
   "la-primegov-item-18525-32": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-32",
    "meeting_id": "la-primegov-18525",
@@ -29019,7 +29037,7 @@
   "la-primegov-item-18525-33": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-33",
    "meeting_id": "la-primegov-18525",
@@ -29036,7 +29054,7 @@
   "la-primegov-item-18525-34": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-34",
    "meeting_id": "la-primegov-18525",
@@ -29053,7 +29071,7 @@
   "la-primegov-item-18525-35": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-35",
    "meeting_id": "la-primegov-18525",
@@ -29070,7 +29088,7 @@
   "la-primegov-item-18525-36": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-36",
    "meeting_id": "la-primegov-18525",
@@ -29087,7 +29105,7 @@
   "la-primegov-item-18525-37": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-37",
    "meeting_id": "la-primegov-18525",
@@ -29104,7 +29122,7 @@
   "la-primegov-item-18525-38": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-38",
    "meeting_id": "la-primegov-18525",
@@ -29121,7 +29139,7 @@
   "la-primegov-item-18525-39": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-39",
    "meeting_id": "la-primegov-18525",
@@ -29138,7 +29156,7 @@
   "la-primegov-item-18525-40": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-40",
    "meeting_id": "la-primegov-18525",
@@ -29155,7 +29173,7 @@
   "la-primegov-item-18525-41": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-41",
    "meeting_id": "la-primegov-18525",
@@ -29172,7 +29190,7 @@
   "la-primegov-item-18525-42": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-42",
    "meeting_id": "la-primegov-18525",
@@ -29189,7 +29207,7 @@
   "la-primegov-item-18525-43": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-43",
    "meeting_id": "la-primegov-18525",
@@ -29206,7 +29224,7 @@
   "la-primegov-item-18525-44": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-44",
    "meeting_id": "la-primegov-18525",
@@ -29223,7 +29241,7 @@
   "la-primegov-item-18525-45": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-45",
    "meeting_id": "la-primegov-18525",
@@ -29240,7 +29258,7 @@
   "la-primegov-item-18525-46": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-46",
    "meeting_id": "la-primegov-18525",
@@ -29257,7 +29275,7 @@
   "la-primegov-item-18525-47": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-47",
    "meeting_id": "la-primegov-18525",
@@ -29274,7 +29292,7 @@
   "la-primegov-item-18525-48": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-48",
    "meeting_id": "la-primegov-18525",
@@ -29291,7 +29309,7 @@
   "la-primegov-item-18525-49": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-49",
    "meeting_id": "la-primegov-18525",
@@ -29308,7 +29326,7 @@
   "la-primegov-item-18525-50": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-50",
    "meeting_id": "la-primegov-18525",
@@ -29325,7 +29343,7 @@
   "la-primegov-item-18525-51": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-18525-51",
    "meeting_id": "la-primegov-18525",
@@ -29342,7 +29360,7 @@
   "la-primegov-item-17725-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-1",
    "meeting_id": "la-primegov-17725",
@@ -29359,7 +29377,7 @@
   "la-primegov-item-17725-2": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-2",
    "meeting_id": "la-primegov-17725",
@@ -29376,7 +29394,7 @@
   "la-primegov-item-17725-3": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-3",
    "meeting_id": "la-primegov-17725",
@@ -29393,7 +29411,7 @@
   "la-primegov-item-17725-4": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-4",
    "meeting_id": "la-primegov-17725",
@@ -29410,7 +29428,7 @@
   "la-primegov-item-17725-5": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-5",
    "meeting_id": "la-primegov-17725",
@@ -29427,7 +29445,7 @@
   "la-primegov-item-17725-6": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-6",
    "meeting_id": "la-primegov-17725",
@@ -29444,7 +29462,7 @@
   "la-primegov-item-17725-7": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-7",
    "meeting_id": "la-primegov-17725",
@@ -29461,7 +29479,7 @@
   "la-primegov-item-17725-8": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-8",
    "meeting_id": "la-primegov-17725",
@@ -29478,7 +29496,7 @@
   "la-primegov-item-17725-9": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-9",
    "meeting_id": "la-primegov-17725",
@@ -29495,7 +29513,7 @@
   "la-primegov-item-17725-10": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-10",
    "meeting_id": "la-primegov-17725",
@@ -29512,7 +29530,7 @@
   "la-primegov-item-17725-11": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-11",
    "meeting_id": "la-primegov-17725",
@@ -29529,7 +29547,7 @@
   "la-primegov-item-17725-12": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-12",
    "meeting_id": "la-primegov-17725",
@@ -29546,7 +29564,7 @@
   "la-primegov-item-17725-13": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-13",
    "meeting_id": "la-primegov-17725",
@@ -29563,7 +29581,7 @@
   "la-primegov-item-17725-14": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-14",
    "meeting_id": "la-primegov-17725",
@@ -29580,7 +29598,7 @@
   "la-primegov-item-17725-15": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-15",
    "meeting_id": "la-primegov-17725",
@@ -29597,7 +29615,7 @@
   "la-primegov-item-17725-16": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-16",
    "meeting_id": "la-primegov-17725",
@@ -29614,7 +29632,7 @@
   "la-primegov-item-17725-17": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-17",
    "meeting_id": "la-primegov-17725",
@@ -29631,7 +29649,7 @@
   "la-primegov-item-17725-18": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-18",
    "meeting_id": "la-primegov-17725",
@@ -29648,7 +29666,7 @@
   "la-primegov-item-17725-19": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-19",
    "meeting_id": "la-primegov-17725",
@@ -29665,7 +29683,7 @@
   "la-primegov-item-17725-20": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-20",
    "meeting_id": "la-primegov-17725",
@@ -29682,7 +29700,7 @@
   "la-primegov-item-17725-21": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-21",
    "meeting_id": "la-primegov-17725",
@@ -29699,7 +29717,7 @@
   "la-primegov-item-17725-22": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-22",
    "meeting_id": "la-primegov-17725",
@@ -29716,7 +29734,7 @@
   "la-primegov-item-17725-23": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-23",
    "meeting_id": "la-primegov-17725",
@@ -29733,7 +29751,7 @@
   "la-primegov-item-17725-24": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-24",
    "meeting_id": "la-primegov-17725",
@@ -29750,7 +29768,7 @@
   "la-primegov-item-17725-25": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-25",
    "meeting_id": "la-primegov-17725",
@@ -29767,7 +29785,7 @@
   "la-primegov-item-17725-26": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-26",
    "meeting_id": "la-primegov-17725",
@@ -29784,7 +29802,7 @@
   "la-primegov-item-17725-27": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-27",
    "meeting_id": "la-primegov-17725",
@@ -29801,7 +29819,7 @@
   "la-primegov-item-17725-28": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-28",
    "meeting_id": "la-primegov-17725",
@@ -29818,7 +29836,7 @@
   "la-primegov-item-17725-29": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-29",
    "meeting_id": "la-primegov-17725",
@@ -29835,7 +29853,7 @@
   "la-primegov-item-17725-30": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-30",
    "meeting_id": "la-primegov-17725",
@@ -29852,7 +29870,7 @@
   "la-primegov-item-17725-31": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-31",
    "meeting_id": "la-primegov-17725",
@@ -29869,7 +29887,7 @@
   "la-primegov-item-17725-32": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-32",
    "meeting_id": "la-primegov-17725",
@@ -29886,7 +29904,7 @@
   "la-primegov-item-17725-33": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-33",
    "meeting_id": "la-primegov-17725",
@@ -29903,7 +29921,7 @@
   "la-primegov-item-17725-34": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-34",
    "meeting_id": "la-primegov-17725",
@@ -29920,7 +29938,7 @@
   "la-primegov-item-17725-35": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-35",
    "meeting_id": "la-primegov-17725",
@@ -29937,7 +29955,7 @@
   "la-primegov-item-17725-36": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-36",
    "meeting_id": "la-primegov-17725",
@@ -29954,13 +29972,268 @@
   "la-primegov-item-17725-37": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "agenda_item",
    "item_id": "la-primegov-item-17725-37",
    "meeting_id": "la-primegov-17725",
    "file_number": "26-0600-S110",
    "title": "BUDGET AND FINANCE COMMITTEE REPORT relative to the Fiscal Year (FY) 2025-26 Capital and Technology Improvement Expenditure Program Year-End Reappropriations.",
    "action": "Adopted Item",
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-item-18560-1": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18560-1",
+   "meeting_id": "la-primegov-18560",
+   "file_number": "26-0697",
+   "title": "ARTS, PARKS, LIBRARIES, AND COMMUNITY ENRICHMENT COMMITTEE REPORT relative to tuition fees and financial assistance established by the licensed child care services providers selected to operate Department of Recreation and Parks (RAP) preschool programs.",
+   "action": "Adopted Item",
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-item-18560-2": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18560-2",
+   "meeting_id": "la-primegov-18560",
+   "file_number": "25-0600-S115",
+   "title": "ARTS, PARKS, LIBRARIES, AND COMMUNITY ENRICHMENT COMMITTEE REPORT relative to changes to current policy needed to facilitate the acceptance of private donations related to Department of Recreation and Parks (RAP) signage.",
+   "action": "Adopted Item as Amended - SEE ATTACHED",
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-item-18560-3": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18560-3",
+   "meeting_id": "la-primegov-18560",
+   "file_number": "25-1221",
+   "title": "ARTS, PARKS, LIBRARIES, AND COMMUNITY ENRICHMENT COMMITTEE REPORT relative to transport vehicle and personnel costs to expand the Department of Animal Services\u2019 (DAS) ability to host and participate in more Pet Fair events, other fairs, and City- sponsored events.",
+   "action": "Adopted Item",
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-item-18560-4": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18560-4",
+   "meeting_id": "la-primegov-18560",
+   "file_number": "26-0627",
+   "title": "CD 5 ARTS, PARKS, LIBRARIES, AND COMMUNITY ENRICHMENT COMMITTEE REPORT relative to officially naming the Melrose Avenue business corridor from Fairfax Avenue to Citrus Avenue on the north side, and from Fairfax Avenue to Highland Avenue on the south side, as the \u201cMelrose Arts District\u201d.",
+   "action": "Adopted Item",
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-item-18560-5": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18560-5",
+   "meeting_id": "la-primegov-18560",
+   "file_number": "26-1029",
+   "title": "CD 15 ARTS, PARKS, LIBRARIES, AND COMMUNITY ENRICHMENT COMMITTEE REPORT relative to an amendment to Contract No. C- 143404 with Museum Associates, dba Los Angeles County Museum of Art, for the Watts Towers Restoration and Conservation Project.",
+   "action": "Adopted Item",
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-item-18560-6": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18560-6",
+   "meeting_id": "la-primegov-18560",
+   "file_number": "26-0582",
+   "title": "ARTS, PARKS, LIBRARIES, AND COMMUNITY ENRICHMENT COMMITTEE REPORT relative to the feasibility of issuing a Request for Information (RFI) for City-operated animal shelter facilities, and the reassignment of existing Department of Animal Services (DAS) staff and resources to improve conditions.",
+   "action": "Adopted Item",
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-item-18560-7": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18560-7",
+   "meeting_id": "la-primegov-18560",
+   "file_number": "21-1188-S15",
+   "title": "ENERGY AND ENVIRONMENT COMMITTEE REPORT relative to the Memorandum of Agreement (MOA) between Department of Water and Power (DWP) and the Board of Public Works (BPW), on behalf of the Bureau of Sanitation (BOS), for the cost-sharing of planning activities",
+   "action": "Adopted Item",
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-item-18560-8": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18560-8",
+   "meeting_id": "la-primegov-18560",
+   "file_number": "26-0868",
+   "title": "ENERGY AND ENVIRONMENT COMMITTEE REPORT relative to the establishment of alternative project delivery contract criteria using a",
+   "action": "Adopted Item",
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-item-18560-9": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18560-9",
+   "meeting_id": "la-primegov-18560",
+   "file_number": "26-0290",
+   "title": "PLANNING AND LAND USE MANAGEMENT COMMITTEE REPORT relative to preparing a proposed ordinance to disallow public parking in the A Zone, developing recommendations for modifying allowable public parking in Residential Zones in sensitive areas, and preparing an Interim Control Ordinance to prohibit the issuance of approvals and permits for public parking areas in the Agricultural zone.",
+   "action": "Adopted Item",
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-item-18560-10": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18560-10",
+   "meeting_id": "la-primegov-18560",
+   "file_number": "25-0778",
+   "title": "CD 14 ORDINANCE SECOND CONSIDERATION relative to authorizing the execution of the Development Agreement by and between the City of Los Angeles and NREA-TRC 700 LLC, relating to real property in the Downtown Community Plan Area, located at 700 South Flower Street; 700 West 7th Street; and 711 South Hope Street.",
+   "action": "Adopted Item",
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-item-18560-11": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18560-11",
+   "meeting_id": "la-primegov-18560",
+   "file_number": "19-1308-S1",
+   "title": "TRANSPORTATION COMMITTEE REPORT relative to the agreement with EV Charging Solutions, Inc., to install, operate, and maintain electric vehicle charging stations.",
+   "action": "Adopted Item Forthwith - SEE ATTACHED",
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-item-18560-12": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18560-12",
+   "meeting_id": "la-primegov-18560",
+   "file_number": "19-0131-S3",
+   "title": "TRANSPORTATION and PUBLIC WORKS COMMITTEES\u2019 REPORT relative to an agreement with BlueLA Carsharing Service for electric vehicle (EV) charging infrastructure.",
+   "action": "Adopted Item Forthwith - SEE ATTACHED",
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-item-18560-13": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18560-13",
+   "meeting_id": "la-primegov-18560",
+   "file_number": "26-1041",
+   "title": "PERSONNEL AND HIRING COMMITTEE REPORT relative to the exemption of one Deputy General Manager Airports I (Class Code 0162) position (Chief of Airports Finance) for the Los Angeles World Airports (LAWA) from the Civil Service pursuant to Charter Section 1001(b).",
+   "action": "Adopted Item",
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-item-18560-14": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18560-14",
+   "meeting_id": "la-primegov-18560",
+   "file_number": "26-1130",
+   "title": "CD 10 CONTINUED CONSIDERATION OF MOTION (HUTT - LEE) relative to asserting jurisdiction over the Central Los Angeles Area Planning Commission action of July 28, 2026, granting in part an appeal with modified conditions for the project located at 261 South Kenmore Avenue.",
+   "action": "Adopted Item Forthwith",
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-item-18560-15": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "agenda_item",
+   "item_id": "la-primegov-item-18560-15",
+   "meeting_id": "la-primegov-18560",
+   "file_number": "15-1207-S10",
+   "title": "CD 9 COMMUNICATIONS FROM THE CITY ADMINISTRATIVE OFFICER and CITY ATTORNEY, RESOLUTION, and ORDINANCES FIRST CONSIDERATION relative to the Municipal Improvement Corporation of Los Angeles (MICLA) Lease Revenue Bonds for the Los Angeles Convention CenterExpansion and Modernization Project.",
+   "action": "Adopted Item as Amended by Amending Motion (Price \u2013 Park)",
    "result": "pass",
    "certification": {
     "status": "certified",
@@ -171341,7 +171614,7 @@
   "la-primegov-vote-18525-1-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-1-1",
    "meeting_id": "la-primegov-18525",
@@ -171424,7 +171697,7 @@
   "la-primegov-vote-18525-2-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-2-1",
    "meeting_id": "la-primegov-18525",
@@ -171507,7 +171780,7 @@
   "la-primegov-vote-18525-3-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-3-1",
    "meeting_id": "la-primegov-18525",
@@ -171591,7 +171864,7 @@
   "la-primegov-vote-18525-3-2": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-3-2",
    "meeting_id": "la-primegov-18525",
@@ -171674,7 +171947,7 @@
   "la-primegov-vote-18525-3-3": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-3-3",
    "meeting_id": "la-primegov-18525",
@@ -171758,7 +172031,7 @@
   "la-primegov-vote-18525-3-4": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-3-4",
    "meeting_id": "la-primegov-18525",
@@ -171842,7 +172115,7 @@
   "la-primegov-vote-18525-3-5": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-3-5",
    "meeting_id": "la-primegov-18525",
@@ -171926,7 +172199,7 @@
   "la-primegov-vote-18525-3-6": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-3-6",
    "meeting_id": "la-primegov-18525",
@@ -172010,7 +172283,7 @@
   "la-primegov-vote-18525-3-7": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-3-7",
    "meeting_id": "la-primegov-18525",
@@ -172094,7 +172367,7 @@
   "la-primegov-vote-18525-3-8": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-3-8",
    "meeting_id": "la-primegov-18525",
@@ -172178,7 +172451,7 @@
   "la-primegov-vote-18525-4-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-4-1",
    "meeting_id": "la-primegov-18525",
@@ -172261,7 +172534,7 @@
   "la-primegov-vote-18525-5-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-5-1",
    "meeting_id": "la-primegov-18525",
@@ -172344,7 +172617,7 @@
   "la-primegov-vote-18525-6-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-6-1",
    "meeting_id": "la-primegov-18525",
@@ -172428,7 +172701,7 @@
   "la-primegov-vote-18525-7-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-7-1",
    "meeting_id": "la-primegov-18525",
@@ -172511,7 +172784,7 @@
   "la-primegov-vote-18525-8-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-8-1",
    "meeting_id": "la-primegov-18525",
@@ -172594,7 +172867,7 @@
   "la-primegov-vote-18525-9-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-9-1",
    "meeting_id": "la-primegov-18525",
@@ -172678,7 +172951,7 @@
   "la-primegov-vote-18525-10-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-10-1",
    "meeting_id": "la-primegov-18525",
@@ -172761,7 +173034,7 @@
   "la-primegov-vote-18525-11-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-11-1",
    "meeting_id": "la-primegov-18525",
@@ -172844,7 +173117,7 @@
   "la-primegov-vote-18525-12-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-12-1",
    "meeting_id": "la-primegov-18525",
@@ -172927,7 +173200,7 @@
   "la-primegov-vote-18525-13-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-13-1",
    "meeting_id": "la-primegov-18525",
@@ -173010,7 +173283,7 @@
   "la-primegov-vote-18525-14-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-14-1",
    "meeting_id": "la-primegov-18525",
@@ -173093,7 +173366,7 @@
   "la-primegov-vote-18525-15-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-15-1",
    "meeting_id": "la-primegov-18525",
@@ -173176,7 +173449,7 @@
   "la-primegov-vote-18525-16-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-16-1",
    "meeting_id": "la-primegov-18525",
@@ -173259,7 +173532,7 @@
   "la-primegov-vote-18525-17-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-17-1",
    "meeting_id": "la-primegov-18525",
@@ -173342,7 +173615,7 @@
   "la-primegov-vote-18525-18-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-18-1",
    "meeting_id": "la-primegov-18525",
@@ -173425,7 +173698,7 @@
   "la-primegov-vote-18525-19-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-19-1",
    "meeting_id": "la-primegov-18525",
@@ -173508,7 +173781,7 @@
   "la-primegov-vote-18525-20-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-20-1",
    "meeting_id": "la-primegov-18525",
@@ -173591,7 +173864,7 @@
   "la-primegov-vote-18525-21-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-21-1",
    "meeting_id": "la-primegov-18525",
@@ -173674,7 +173947,7 @@
   "la-primegov-vote-18525-22-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-22-1",
    "meeting_id": "la-primegov-18525",
@@ -173757,7 +174030,7 @@
   "la-primegov-vote-18525-23-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-23-1",
    "meeting_id": "la-primegov-18525",
@@ -173840,7 +174113,7 @@
   "la-primegov-vote-18525-24-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-24-1",
    "meeting_id": "la-primegov-18525",
@@ -173924,7 +174197,7 @@
   "la-primegov-vote-18525-24-2": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-24-2",
    "meeting_id": "la-primegov-18525",
@@ -174008,7 +174281,7 @@
   "la-primegov-vote-18525-24-3": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-24-3",
    "meeting_id": "la-primegov-18525",
@@ -174091,7 +174364,7 @@
   "la-primegov-vote-18525-24-4": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-24-4",
    "meeting_id": "la-primegov-18525",
@@ -174174,7 +174447,7 @@
   "la-primegov-vote-18525-24-5": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-24-5",
    "meeting_id": "la-primegov-18525",
@@ -174257,7 +174530,7 @@
   "la-primegov-vote-18525-1-2": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-1-2",
    "meeting_id": "la-primegov-18525",
@@ -174340,7 +174613,7 @@
   "la-primegov-vote-18525-25-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-25-1",
    "meeting_id": "la-primegov-18525",
@@ -174423,7 +174696,7 @@
   "la-primegov-vote-18525-26-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-26-1",
    "meeting_id": "la-primegov-18525",
@@ -174506,7 +174779,7 @@
   "la-primegov-vote-18525-27-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-27-1",
    "meeting_id": "la-primegov-18525",
@@ -174589,7 +174862,7 @@
   "la-primegov-vote-18525-28-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-28-1",
    "meeting_id": "la-primegov-18525",
@@ -174672,7 +174945,7 @@
   "la-primegov-vote-18525-29-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-29-1",
    "meeting_id": "la-primegov-18525",
@@ -174755,7 +175028,7 @@
   "la-primegov-vote-18525-30-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-30-1",
    "meeting_id": "la-primegov-18525",
@@ -174838,7 +175111,7 @@
   "la-primegov-vote-18525-31-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-31-1",
    "meeting_id": "la-primegov-18525",
@@ -174921,7 +175194,7 @@
   "la-primegov-vote-18525-32-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-32-1",
    "meeting_id": "la-primegov-18525",
@@ -175005,7 +175278,7 @@
   "la-primegov-vote-18525-33-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-33-1",
    "meeting_id": "la-primegov-18525",
@@ -175088,7 +175361,7 @@
   "la-primegov-vote-18525-34-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-34-1",
    "meeting_id": "la-primegov-18525",
@@ -175171,7 +175444,7 @@
   "la-primegov-vote-18525-35-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-35-1",
    "meeting_id": "la-primegov-18525",
@@ -175254,7 +175527,7 @@
   "la-primegov-vote-18525-36-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-36-1",
    "meeting_id": "la-primegov-18525",
@@ -175337,7 +175610,7 @@
   "la-primegov-vote-18525-37-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-37-1",
    "meeting_id": "la-primegov-18525",
@@ -175420,7 +175693,7 @@
   "la-primegov-vote-18525-38-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-38-1",
    "meeting_id": "la-primegov-18525",
@@ -175503,7 +175776,7 @@
   "la-primegov-vote-18525-39-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-39-1",
    "meeting_id": "la-primegov-18525",
@@ -175586,7 +175859,7 @@
   "la-primegov-vote-18525-40-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-40-1",
    "meeting_id": "la-primegov-18525",
@@ -175669,7 +175942,7 @@
   "la-primegov-vote-18525-41-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-41-1",
    "meeting_id": "la-primegov-18525",
@@ -175752,7 +176025,7 @@
   "la-primegov-vote-18525-42-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-42-1",
    "meeting_id": "la-primegov-18525",
@@ -175835,7 +176108,7 @@
   "la-primegov-vote-18525-43-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-43-1",
    "meeting_id": "la-primegov-18525",
@@ -175918,7 +176191,7 @@
   "la-primegov-vote-18525-44-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-44-1",
    "meeting_id": "la-primegov-18525",
@@ -176001,7 +176274,7 @@
   "la-primegov-vote-18525-45-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-45-1",
    "meeting_id": "la-primegov-18525",
@@ -176084,7 +176357,7 @@
   "la-primegov-vote-18525-46-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-46-1",
    "meeting_id": "la-primegov-18525",
@@ -176167,7 +176440,7 @@
   "la-primegov-vote-18525-47-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-47-1",
    "meeting_id": "la-primegov-18525",
@@ -176250,7 +176523,7 @@
   "la-primegov-vote-18525-48-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-48-1",
    "meeting_id": "la-primegov-18525",
@@ -176333,7 +176606,7 @@
   "la-primegov-vote-18525-49-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-49-1",
    "meeting_id": "la-primegov-18525",
@@ -176416,7 +176689,7 @@
   "la-primegov-vote-18525-50-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-50-1",
    "meeting_id": "la-primegov-18525",
@@ -176499,7 +176772,7 @@
   "la-primegov-vote-18525-51-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-18525-51-1",
    "meeting_id": "la-primegov-18525",
@@ -176582,7 +176855,7 @@
   "la-primegov-vote-17725-1-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-1-1",
    "meeting_id": "la-primegov-17725",
@@ -176665,7 +176938,7 @@
   "la-primegov-vote-17725-2-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-2-1",
    "meeting_id": "la-primegov-17725",
@@ -176748,7 +177021,7 @@
   "la-primegov-vote-17725-3-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-3-1",
    "meeting_id": "la-primegov-17725",
@@ -176831,7 +177104,7 @@
   "la-primegov-vote-17725-4-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-4-1",
    "meeting_id": "la-primegov-17725",
@@ -176914,7 +177187,7 @@
   "la-primegov-vote-17725-5-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-5-1",
    "meeting_id": "la-primegov-17725",
@@ -176997,7 +177270,7 @@
   "la-primegov-vote-17725-6-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-6-1",
    "meeting_id": "la-primegov-17725",
@@ -177080,7 +177353,7 @@
   "la-primegov-vote-17725-7-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-7-1",
    "meeting_id": "la-primegov-17725",
@@ -177163,7 +177436,7 @@
   "la-primegov-vote-17725-8-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-8-1",
    "meeting_id": "la-primegov-17725",
@@ -177246,7 +177519,7 @@
   "la-primegov-vote-17725-9-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-9-1",
    "meeting_id": "la-primegov-17725",
@@ -177329,7 +177602,7 @@
   "la-primegov-vote-17725-10-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-10-1",
    "meeting_id": "la-primegov-17725",
@@ -177412,7 +177685,7 @@
   "la-primegov-vote-17725-11-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-11-1",
    "meeting_id": "la-primegov-17725",
@@ -177495,7 +177768,7 @@
   "la-primegov-vote-17725-12-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-12-1",
    "meeting_id": "la-primegov-17725",
@@ -177578,7 +177851,7 @@
   "la-primegov-vote-17725-13-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-13-1",
    "meeting_id": "la-primegov-17725",
@@ -177661,7 +177934,7 @@
   "la-primegov-vote-17725-14-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-14-1",
    "meeting_id": "la-primegov-17725",
@@ -177744,7 +178017,7 @@
   "la-primegov-vote-17725-15-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-15-1",
    "meeting_id": "la-primegov-17725",
@@ -177827,7 +178100,7 @@
   "la-primegov-vote-17725-16-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-16-1",
    "meeting_id": "la-primegov-17725",
@@ -177910,7 +178183,7 @@
   "la-primegov-vote-17725-17-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-17-1",
    "meeting_id": "la-primegov-17725",
@@ -177993,7 +178266,7 @@
   "la-primegov-vote-17725-18-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-18-1",
    "meeting_id": "la-primegov-17725",
@@ -178076,7 +178349,7 @@
   "la-primegov-vote-17725-19-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-19-1",
    "meeting_id": "la-primegov-17725",
@@ -178159,7 +178432,7 @@
   "la-primegov-vote-17725-20-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-20-1",
    "meeting_id": "la-primegov-17725",
@@ -178242,7 +178515,7 @@
   "la-primegov-vote-17725-21-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-21-1",
    "meeting_id": "la-primegov-17725",
@@ -178325,7 +178598,7 @@
   "la-primegov-vote-17725-22-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-22-1",
    "meeting_id": "la-primegov-17725",
@@ -178408,7 +178681,7 @@
   "la-primegov-vote-17725-23-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-23-1",
    "meeting_id": "la-primegov-17725",
@@ -178491,7 +178764,7 @@
   "la-primegov-vote-17725-24-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-24-1",
    "meeting_id": "la-primegov-17725",
@@ -178575,7 +178848,7 @@
   "la-primegov-vote-17725-25-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-25-1",
    "meeting_id": "la-primegov-17725",
@@ -178658,7 +178931,7 @@
   "la-primegov-vote-17725-26-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-26-1",
    "meeting_id": "la-primegov-17725",
@@ -178740,7 +179013,7 @@
   "la-primegov-vote-17725-27-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-27-1",
    "meeting_id": "la-primegov-17725",
@@ -178823,7 +179096,7 @@
   "la-primegov-vote-17725-28-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-28-1",
    "meeting_id": "la-primegov-17725",
@@ -178906,7 +179179,7 @@
   "la-primegov-vote-17725-29-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-29-1",
    "meeting_id": "la-primegov-17725",
@@ -178989,7 +179262,7 @@
   "la-primegov-vote-17725-30-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-30-1",
    "meeting_id": "la-primegov-17725",
@@ -179072,7 +179345,7 @@
   "la-primegov-vote-17725-31-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-31-1",
    "meeting_id": "la-primegov-17725",
@@ -179155,7 +179428,7 @@
   "la-primegov-vote-17725-32-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-32-1",
    "meeting_id": "la-primegov-17725",
@@ -179238,7 +179511,7 @@
   "la-primegov-vote-17725-33-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-33-1",
    "meeting_id": "la-primegov-17725",
@@ -179321,7 +179594,7 @@
   "la-primegov-vote-17725-34-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-34-1",
    "meeting_id": "la-primegov-17725",
@@ -179404,7 +179677,7 @@
   "la-primegov-vote-17725-35-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-35-1",
    "meeting_id": "la-primegov-17725",
@@ -179487,7 +179760,7 @@
   "la-primegov-vote-17725-36-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-36-1",
    "meeting_id": "la-primegov-17725",
@@ -179570,7 +179843,7 @@
   "la-primegov-vote-17725-37-1": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "vote_event",
    "vote_id": "la-primegov-vote-17725-37-1",
    "meeting_id": "la-primegov-17725",
@@ -179649,97 +179922,1676 @@
     "method": "cross-source",
     "note": null
    }
+  },
+  "la-primegov-vote-18560-1-1": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-1-1",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-1",
+   "file_number": "26-0697",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Nazarian",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 11,
+    "absent": 4
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-vote-18560-2-1": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-2-1",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-2",
+   "file_number": "25-0600-S115",
+   "motion": "Adopted Item as Amended - SEE ATTACHED",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-vote-18560-3-1": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-3-1",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-3",
+   "file_number": "25-1221",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-vote-18560-4-1": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-4-1",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-4",
+   "file_number": "26-0627",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Nazarian",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 11,
+    "absent": 4
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-vote-18560-5-1": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-5-1",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-5",
+   "file_number": "26-1029",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Nazarian",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 11,
+    "absent": 4
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-vote-18560-6-1": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-6-1",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-6",
+   "file_number": "26-0582",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-vote-18560-7-1": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-7-1",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-7",
+   "file_number": "21-1188-S15",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Nazarian",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 11,
+    "absent": 4
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-vote-18560-8-1": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-8-1",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-8",
+   "file_number": "26-0868",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Nazarian",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 11,
+    "absent": 4
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-vote-18560-9-1": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-9-1",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-9",
+   "file_number": "26-0290",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "no"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 11,
+    "no": 1,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-vote-18560-10-1": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-10-1",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-10",
+   "file_number": "25-0778",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-vote-18560-11-1": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-11-1",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-11",
+   "file_number": "19-1308-S1",
+   "motion": "Adopted Item Forthwith - SEE ATTACHED",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Nazarian",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 11,
+    "absent": 4
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-vote-18560-12-1": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-12-1",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-12",
+   "file_number": "19-0131-S3",
+   "motion": "Adopted Item Forthwith - SEE ATTACHED",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Nazarian",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 11,
+    "absent": 4
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-vote-18560-13-1": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-13-1",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-13",
+   "file_number": "26-1041",
+   "motion": "Adopted Item",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Nazarian",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 11,
+    "absent": 4
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-vote-18560-14-1": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-14-1",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-14",
+   "file_number": "26-1130",
+   "motion": "Adopted Item Forthwith",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "la-primegov-vote-18560-15-1": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-15-1",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-15",
+   "file_number": "15-1207-S10",
+   "motion": "Recommendations #1, 3-6 of the Budget and Finance Committee Report",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "la-primegov-vote-18560-15-2": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-15-2",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-15",
+   "file_number": "15-1207-S10",
+   "motion": "Forthwith",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "la-primegov-vote-18560-15-3": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-15-3",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-15",
+   "file_number": "15-1207-S10",
+   "motion": "second reading.",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "no"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "no"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "no"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 9,
+    "no": 3,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "la-primegov-vote-18560-15-4": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-15-4",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-15",
+   "file_number": "15-1207-S10",
+   "motion": "August 19, 2026 Council meeting. - SEE ATTACHED",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Nazarian",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 11,
+    "absent": 4
+   },
+   "result": "pass",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "la-primegov-vote-18560-15-5": {
+   "source_id": "la-primegov",
+   "extractor_version": "3",
+   "run_id": "5baa632848d4298b",
+   "type": "vote_event",
+   "vote_id": "la-primegov-vote-18560-15-5",
+   "meeting_id": "la-primegov-18560",
+   "item_id": "la-primegov-item-18560-15",
+   "file_number": "15-1207-S10",
+   "motion": "Adopted Item as Amended by Amending Motion (Price \u2013 Park)",
+   "positions": [
+    {
+     "member": "Blumenfield",
+     "position": "aye"
+    },
+    {
+     "member": "Harris-Dawson",
+     "position": "aye"
+    },
+    {
+     "member": "Jurado",
+     "position": "aye"
+    },
+    {
+     "member": "Hutt",
+     "position": "aye"
+    },
+    {
+     "member": "McOsker",
+     "position": "aye"
+    },
+    {
+     "member": "Nazarian",
+     "position": "aye"
+    },
+    {
+     "member": "Padilla",
+     "position": "aye"
+    },
+    {
+     "member": "Park",
+     "position": "aye"
+    },
+    {
+     "member": "Price Jr.",
+     "position": "aye"
+    },
+    {
+     "member": "Raman",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez",
+     "position": "aye"
+    },
+    {
+     "member": "Yaroslavsky",
+     "position": "aye"
+    },
+    {
+     "member": "Hernandez",
+     "position": "absent"
+    },
+    {
+     "member": "Lee",
+     "position": "absent"
+    },
+    {
+     "member": "Soto-Mart\u00ednez",
+     "position": "absent"
+    }
+   ],
+   "counts": {
+    "aye": 12,
+    "absent": 3
+   },
+   "result": "pass",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
   }
  },
  "members": {
   "Blumenfield": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "member",
    "name": "Blumenfield"
   },
   "Harris-Dawson": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "member",
    "name": "Harris-Dawson"
   },
   "Hernandez": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "member",
    "name": "Hernandez"
   },
   "Hutt": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "member",
    "name": "Hutt"
   },
   "Jurado": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "member",
    "name": "Jurado"
   },
   "Lee": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "member",
    "name": "Lee"
   },
   "McOsker": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "member",
    "name": "McOsker"
   },
   "Nazarian": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "member",
    "name": "Nazarian"
   },
   "Padilla": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "member",
    "name": "Padilla"
   },
   "Park": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "member",
    "name": "Park"
   },
   "Price Jr.": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "member",
    "name": "Price Jr."
   },
   "Raman": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "member",
    "name": "Raman"
   },
   "Rodriguez": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "member",
    "name": "Rodriguez"
   },
@@ -179753,14 +181605,14 @@
   "Soto-Mart\u00ednez": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "member",
    "name": "Soto-Mart\u00ednez"
   },
   "Yaroslavsky": {
    "source_id": "la-primegov",
    "extractor_version": "3",
-   "run_id": "a27181f236e47df9",
+   "run_id": "5baa632848d4298b",
    "type": "member",
    "name": "Yaroslavsky"
   },
