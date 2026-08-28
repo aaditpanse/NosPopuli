@@ -1454,7 +1454,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "99a982c02c3107726d1436cff917d987119ea699195646ad8ebc3ddccc7701aa"
@@ -1490,7 +1490,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "fcb450e1128c8ed01d157ea22caaefc5217fc1bdbacf0185865bff2aae088ab6"
@@ -1526,10 +1526,46 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "232b962fa8e2d6eef4c016e375dd2ef4836e95cc55cfde3d2dbd115aa3275544"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-12060": {
+   "meeting_id": "pittsburgh-legistar-12060",
+   "body": "City Council",
+   "date": "2026-08-28",
+   "attendance": {
+    "Robert Charland": "absent",
+    "Anthony Coghill": "present",
+    "Deborah L. Gross": "present",
+    "R. Daniel Lavelle": "present",
+    "Khari Mosley": "present",
+    "Kim Salinetro": "present",
+    "Erika Strassburger": "absent",
+    "Barbara Warwick": "present",
+    "Bobby Wilson": "present"
+   },
+   "source_url": "https://pittsburgh.legistar.com/MeetingDetail.aspx?LEGID=12060&GID=115&G=B84377D7-CD7F-434A-A5AB-A7BCD775D91D",
+   "legistar_event_id": 12060,
+   "time": "10:00 AM",
+   "location": "Council Chambers",
+   "agenda_url": "https://pittsburgh.legistar1.com/pittsburgh/meetings/2026/8/12060_A_City_Council_26-08-28_Regular_Meeting_Agenda.pdf",
+   "minutes_url": "https://pittsburgh.legistar1.com/pittsburgh/meetings/2026/8/12060_M_City_Council_26-08-28_Meeting_Minutes.pdf",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-5ec293abb732dd30",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "c91eb86283415d2f6c19e984c57853bec6cb294ba4ba6eb9a1aa97fea0d911f5"
     }
    },
    "certification": {
@@ -47104,7 +47140,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "63efb74a712ba0a0de127702dbf69150a51c73969aadbfd15263a81092188c44"
@@ -47131,7 +47167,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "ace27613e1c93a29067b004974ec435d327d920b37535a2ef578cd61e9cea0f2"
@@ -47158,7 +47194,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "9d3d2014e1f11f0865dedaca6c8986e6fa83e00c8391e31ad2c325e166b602e6"
@@ -47185,7 +47221,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "211e7171ffe687059bd93b867af7623411578345922561a750fcbd3b6f42f23d"
@@ -47212,7 +47248,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "8ce0be6a9c6667edda26956367dcc470a576ca53d303ae79dc629fb6a90e179a"
@@ -47239,7 +47275,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "90a25e7e610be07a4f430394d1b5b3d95b1c34da63e665de35b9645b49bf26dd"
@@ -47266,7 +47302,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "85b69044b95311425145c3430694346bb49b72d343b581a5c4d3385a80afd7c2"
@@ -47293,7 +47329,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "1046712c9d10110c02b5a356c002a89422a96cbbaf0a8af7f853f7e1421fe66c"
@@ -47320,7 +47356,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "fe6512edfb19a78f4a9ee66158c01e5c75be2a1275817c67b0a5341dd22991cb"
@@ -47347,7 +47383,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "47fd8742906b515b68c56fdf4e2973fb06140ecccb245b2728b1c1a78c7b6728"
@@ -47374,7 +47410,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "af286e65939fea15e83b2f72cea9b8217e75a3efaad9c3c7b69f0388c3f9931a"
@@ -47401,7 +47437,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "4e602b49b3237ca07fc34ddc984990ed0e5070a279dffe2cf046a9976f23b542"
@@ -47428,7 +47464,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "50bd46938e52ac7ad4e287398167527f39d4ed30b7921fb36dc5f6afd9bf5743"
@@ -47455,7 +47491,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "46d6d8c145aa65cfdff5084841ce959839056b1e85cbaac3531ae65767d4127a"
@@ -47482,7 +47518,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "51ed8cdc087356c77ebd2087001c6f2d2b85bc42e807088c6983f988a5958817"
@@ -47509,7 +47545,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "609d880d357111d4b586e15fcebf4057f770b1393add3b20dfdb7faf3a96afdb"
@@ -47536,7 +47572,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "10e8e48d356b9422f251930557b9c288db1479ec997ab327b8b45580d1bb2521"
@@ -47563,7 +47599,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "e80fd074bef62fd740452a88340f6b7d816cf4565ef49847781c1dd5712fa96f"
@@ -47590,7 +47626,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "8ba2dc3a38d490fa049e0b40ce4fdbfe207d494e8c527a81e0e9bd353049d349"
@@ -47617,7 +47653,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "65c2da50e9576c132383ee283c4821736865ff289347807dd6337a919b2d70bc"
@@ -47644,7 +47680,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "494b1732c2baa9d8b8db30b9bc294497f6452672ba0eb43f37119d9153540eb7"
@@ -47671,7 +47707,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "3a662d07d414023caa6fedf2e8d1ecc304fb32d65918a5b4ca9f35f3dc35846c"
@@ -47698,7 +47734,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "16fb609f20b9e4494e0485c6ea24f15ab4fae7924434e769fa72eb586f109ee9"
@@ -47725,7 +47761,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "25cfac0c07e96967e04b8d513b914df692a2230399a53fe1abbc6c142ab294a5"
@@ -47752,7 +47788,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "db7fd6442aed3456ae8f31331966fb49715aba643a8da2203e08a67613965803"
@@ -47779,7 +47815,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "ae74c177bba4c2f74366e36717e7b22543fc27d29b38e978d3b2c469c4110064"
@@ -47806,7 +47842,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "6a8b827c5072803720ffda1640d350e6613a032f883527218c05db04bcc78468"
@@ -47833,7 +47869,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "5055914134064a8bc6334fce04867d823801b45e3b9638725e3dbadf97b383a9"
@@ -47860,7 +47896,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "738b53223b29deb5e2525db8096782487fad23091ef3d9ede1904e37800a2c79"
@@ -47887,7 +47923,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "f4b74e555b2e42dde11117f1a323e375a9b4cb2c76fd0a8c679c7ae395119d1f"
@@ -47914,7 +47950,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "1b71dcec8262b65d9fc4dba5afd7521fedbc19d10f4a1a5ae7870412cbb6c31c"
@@ -47941,7 +47977,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "dd2ff3b2c72a87d4c1d9510010e14568a0fb2383c9d0506d4a1d8dbd15dbf941"
@@ -47968,7 +48004,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "121bb8df7140a2d1561297bd870ccacdb891f706dc52c002b462d9f19015561d"
@@ -47995,7 +48031,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "d72905d977e142788390f1a2b9b2fffd7e4adbb6d1b6108203ea7f06ef3e8951"
@@ -48022,7 +48058,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "80d67f5b454f6b614d1b60c290144f47b2c2bf832645de7c4c74417ccfac1d4b"
@@ -48049,7 +48085,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "6988adad8c2f06579d1a7004997dc0811a53267c49529f6fa4e82b4b0d2dfb33"
@@ -48076,7 +48112,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "017dad505723e4f1513f475207a49037466f4bc536cdf442ed4660485b179fb6"
@@ -48103,7 +48139,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "607f472e4addf8d18d92c0cde3ff273c006d09d8e41c7af225634b99fbf9969f"
@@ -48130,7 +48166,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "9bcba17402e594fd50d4e6f3d2c09645fd3a759a2c9da797ff38029768091ae5"
@@ -48157,7 +48193,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "d3f7836e14cdb3bd3ce1056c32dcad25773f493037ddfb9ed75e5457219286ef"
@@ -48184,7 +48220,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "5a4efd7729df685f53f94a9a31136aa813f02a8cb186bcf14a8419e127be1384"
@@ -48211,7 +48247,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "e6d07a0ed0a8172299b680305ad1a27f780fa127a0bd7d45b0710379073b77e9"
@@ -48238,7 +48274,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "4c3a79cc9a5f56cb0d82a1e76870bdecd23f8ca94bf61213463f3d705be4cbf9"
@@ -48265,7 +48301,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "6b07ccf4b7fb7d983a19980ed973b3a0eba09d6d1f150ad45307075aa12301e9"
@@ -48292,7 +48328,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "1630de1f02377fabbbcee5edb1f0445bbd5b0f505228e936ecf1991189d881be"
@@ -48319,7 +48355,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "e241032eb4fd4398e2ea837269e35992cbd9b974dd3a338c9c9d81efb288c2e7"
@@ -48346,7 +48382,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "f07e9ce2d50195d7ca4281cd5e55b2b3746967447fa068acb9c8d1eeba9426ec"
@@ -48373,7 +48409,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "5c702aa15c9edacfbafe35cfb233b0afa70baeee50e03fde9c743a2b683dfc23"
@@ -48400,7 +48436,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "72e5113f9a798c832893fd17d84011799b9076ef22e79b11c3c56e8c64cc4939"
@@ -48427,7 +48463,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "609bb06358fed26c376f03ad28496a209fd553f66d544ed8cf008f50ff68f38f"
@@ -48454,7 +48490,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "356291d8595c7fb59bcf330c65830991444094198fe5d9511fb49bbfed51bfb7"
@@ -48481,7 +48517,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "ad3027d0a1835e9855a45844b7fae36d7177631ef1d497f444a3e9903f504d35"
@@ -48508,7 +48544,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "26bc5104fcfa5619fe044174afb2dfc686c17e99a1079b7dd78d605f69b79fb8"
@@ -48535,7 +48571,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "c4e75a8dda467b2ddf4fd8d1909ed657bdc79c72fa790b8b494ead28b41ed5ba"
@@ -48562,7 +48598,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "70fe8fa8a23db728bf0de7b8e7f355b40c660e5e8d72a4e231d423942d987b53"
@@ -48589,7 +48625,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "4004bb3296239a0dd85facbdb97dbbd989cd873f1fe07bf66da05fe4dec056d6"
@@ -48616,7 +48652,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "1c7df8a3ef719824f1d209bd99ebdd485adaacf398068f7a5599762d0c0b1407"
@@ -48643,7 +48679,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "88719bcfcc3ca7aa7aa48e3f38a4ce4d5048b8099efd10c91cf8418b06a8c58a"
@@ -48670,7 +48706,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "d6e683acc8ba5c87bc3942eb0bac852b1fa8a46bd598c1cbfb2b8246a301d07a"
@@ -48697,7 +48733,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "123e6ed4748e645d87cc4a38f5fdcdd6d95e4efb6b61f2c37d8bb584f9f1d3bc"
@@ -48724,7 +48760,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "3f3d8b41dc750787803f9a22170cfb1ea4ca03821d984a3b74b023173818bb8f"
@@ -48751,7 +48787,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "3b12eb6ecef37d20a2af1de7c14460974067fddaead4776242215fbe272fff61"
@@ -48778,7 +48814,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "8ec1f5d811421f89d86f284a43ef552ed923137c9666730f5f205e1602410995"
@@ -48805,7 +48841,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "7faac99b042c9d0a662b974c61b469f70d5e925b4e259a96ad06ec082e21b1de"
@@ -48832,7 +48868,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "e2d69cdc8be20bd4d19d9149600c4706c0e057f1f152141749cd656dfe652cb1"
@@ -48859,7 +48895,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "5db1670914a45bed29fc0a97cf41ab189bc1ab0a2f66d1e8472b5b0b0538547d"
@@ -48886,7 +48922,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "172c24b3e44047596cd8fb2dfebe485873d011de76f3540e7d22c890e2c0a0b8"
@@ -48913,7 +48949,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "e1a3717d4369ea1ff702329f530aabc25a4910084f2d8cfda14e0efa550f05ff"
@@ -48940,7 +48976,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "df5f7f8283933bec344291fac245e97c24e1fb0794e9b550d5ced1f1e6e11733"
@@ -48967,7 +49003,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "78b8514913760f56b6e754e41c08d2570c064b258c2e07ca486a09feb0328ae0"
@@ -48994,7 +49030,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "132cbf209f5c42412badaa7fbf88f635a819fb3436739e76ccfce961680c8f4c"
@@ -49021,7 +49057,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "69808418d0f250e8d118c768d9991243d704fbe0191d5682d904c58659676766"
@@ -49048,7 +49084,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "59259de7389a53e4ea6ebb7dfac4b5425f181a4dbad481ba659cfb7f9b4bcfee"
@@ -49075,7 +49111,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "4573de0b08e3db1497126b0bfcc491fe907ddc1ab1bcf633cbdde8da46efb511"
@@ -49102,7 +49138,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "4b7d4a7972971401f7a7d8d48a6376c1017b2650a233b55c9c85e2daf758510e"
@@ -49129,7 +49165,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "8b3586bf613efc9791e28fa0a65f39a24f23023534a2a93377f1b71167c85bca"
@@ -49156,7 +49192,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "ea29d40598d5073f98fcb7c42053e6e8620f80a58e37921381ddf796196ca4e1"
@@ -49183,7 +49219,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "d5e1f494151e8874643c63b04770f1efa4e0fdb4f93b38c420e3ae038cba5138"
@@ -49210,7 +49246,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "608370cae212ade34bcc56e8f3025afd45ee160a6f572bec1aa9efc15c8c9a44"
@@ -49237,7 +49273,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "8c9be60eb1a94c978966def313d3ee56daa27687a456a4f78520b8234a7b3906"
@@ -49264,7 +49300,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "cd567e4a7cf897bab6b25d19090313106e04f2b869598d2eb40e67945dfbe57f"
@@ -49291,7 +49327,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "50a4558de3193a7741b37731eb87bd4b33d593e0670d4fab0805e7b2ea078106"
@@ -49318,7 +49354,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "ef60da256a61228511ed548701c8ffe6d1d28745f9302457dbd4a553ebc573af"
@@ -49345,7 +49381,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "827d977c707b9412deca623c50d9d4ef2a24bbbaa353db3a77bde5c69f2436de"
@@ -49372,7 +49408,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "1191588354c68a9ade49804a48a87cf587deefee8d03bc9d6932888a7729fa85"
@@ -49399,7 +49435,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "af13b0148bfd0f7d40af8b9c13fce79ca80da4f13510b36eb70381e1784939f9"
@@ -49426,7 +49462,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "fefe32063366b3966667e58559325b5ccdac19c93b95cbdede373c72e1e8d8b1"
@@ -49453,7 +49489,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "f82e75dc24b3510478b806e0676fd34bd57dc9298e691281ed26797b81e96fb3"
@@ -49480,7 +49516,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "57d0e5727efd1971fd0e2429cb27161f674d891baf9c42a10a1851f4ac9eee4a"
@@ -49507,7 +49543,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "449028a067c727224dc06a71e4a376bc851c5a45c20ca4384abab3fefe745f83"
@@ -49534,7 +49570,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "a49084361f8286e71f0899c2738e28002f60cf4815026bba343a008e7bcb6b45"
@@ -49561,7 +49597,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "0c60f9ead5dbc097d88dde5d55c6376f2f63c36f99c5d602e5a104c05a3f346f"
@@ -49588,7 +49624,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "b15a2d958f3e6ffbd0278c4ff1690fb4f626496f4b267630f9878418e848b173"
@@ -49615,7 +49651,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "9dec1f79371ed684ffd452330383743c94ef8ae517dff7d259500c1930a58574"
@@ -49642,7 +49678,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "9f5b60e62c4d6b4820d20c4cfae5108684e099f5bef377c76a5ffd769803f7f6"
@@ -49669,7 +49705,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "24ec6a57e9ea5b8252baf1551f0085c84c554971d2e8d865f24b70e47b38ecfd"
@@ -49696,7 +49732,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "e6e6b4e3d9978368b92dd59fbf6ac01f1bc0c8f7659ae1134f262953959214c7"
@@ -49723,7 +49759,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "6dea078d9fb510fba159ea018f5b85d9d9d596acbc0faceb35cdf065774e3db8"
@@ -49750,7 +49786,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "dc6cfe7f19ceb1ef372998a87f5f78ab2da1af17d9e31c0af4c77c21fbc88c63"
@@ -49777,7 +49813,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "f309aea14b95d664ac4b879d2e98bb1943a0dc2fbb102c22b011d2f31eacbf6d"
@@ -49804,7 +49840,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "0007e55ea1457d49be4dd859ecca08316a3a8f9907ab773b4035d39134c995bd"
@@ -49831,7 +49867,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "7952bd66ae86d00ee77cd740a1b903838ba1582644d7ab0ce475be17f82e7d6b"
@@ -49858,7 +49894,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "72a35d0dc5872c322b7085a0217022adca5e35e0a6a7ef2e622dbebb956de223"
@@ -49885,7 +49921,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "012c6b39924d5297272a58339b107a5e0d1496175f5c113dda4ea8f23d43833d"
@@ -49912,7 +49948,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "23b21e95f285401e9f8cbeb4eb5277ed8f307312d64ddeb91fa7f8c31f78440c"
@@ -49939,7 +49975,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "eb0ace66c7e11e647133a88752d6f8f37cb6203fc7966280aa7d52b43f4f547b"
@@ -49966,7 +50002,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "6edc76ad4ddcb56c1b530defbfac330f8238bfa3c665b832445fe4fc0666b075"
@@ -49993,7 +50029,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "253a26aa4b159302f34c7010710c7c429e5590ce4bfa5e0c74cdab28b3acae6b"
@@ -50020,7 +50056,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "0b79394545b8dae86b8feabb5956db423bfefe96f89b6ded209950f7a327d4b3"
@@ -50047,7 +50083,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "b157bb8e37c6096bde902982cec23515fb44df8b8e8f645299a543e882ad8b18"
@@ -50074,7 +50110,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "25c5226101e824420bc08f14f8119e083545e09f19b833d22f7e3770ff65762c"
@@ -50101,7 +50137,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "983cd137cdf2dc101c091967d77159b85078c653c0d8994c3907a4b684277d21"
@@ -50128,7 +50164,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "615dc3d5f8a9028b6cef3e68e7aae6d52266bb8b6dd9927469941759ef69d863"
@@ -50155,7 +50191,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "533f7b60271392f3b7b9ad3ff92f827f53dfe292af3f29712c54b5481fad0c1d"
@@ -50182,7 +50218,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "2d78250ef9b9b1c283c1c9817907cb204c0da4c1be1a1d9981360299d8fd0a84"
@@ -50209,7 +50245,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "042a95ef1be78cd5b9181559f04cb2fc7ecf565a13896b8677c1265d7bf996e0"
@@ -50236,7 +50272,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "f4222772fab2c1c254ec37e586480eb9a19e8b8f748cb70db422dceeee536722"
@@ -50263,7 +50299,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "73419d728bcb1b14cd68f489fc2d9d03efd887e132f17c464570dee93bb12c60"
@@ -50290,7 +50326,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "5ea9a7a399bc70ddf7a3c55cbf4490e0651d9daf843a38a9252d0677f99ffe38"
@@ -50317,7 +50353,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "924376c83a50d44974282532e68a8028fd5fca6cdb4ea196a30d961b80c162df"
@@ -50344,7 +50380,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "d8839156f16d48682d1d29bac8c57d6589f6f918641c2024e0ffc0fe0fef3585"
@@ -50371,7 +50407,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "00ea56ac9474bb3548af721a3753a67c41f0698588c1c919b5d2008257dbc874"
@@ -50398,7 +50434,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "647fefb873eb5afa501b0bca13682b6c0f17c8e8b76d8100bd323e2ca370403f"
@@ -50425,7 +50461,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "9b3f749c1dbd03857347548efae5ce3dfd78c88999059ee536f03c7ab495c948"
@@ -50452,7 +50488,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "247215cfb75a4a31d8376cd9d51ebf02c22396a9f6b7713923a067af479bb40f"
@@ -50479,7 +50515,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "dfaeff31d02d9e66370f71d11bd8e3556aac1b9088b3cdc23f54c2ef29158517"
@@ -50506,7 +50542,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "fa76f11cf2df668db85f8db269a06b28b789d59cadd59a62ea8c2116f367b7d8"
@@ -50533,7 +50569,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "d943b7dd9f015b9cda1dbfc7114a4fd2d9e75d750e6b0836826bccaac9cff752"
@@ -50560,7 +50596,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "68c129406a859cd0644a271e0281a09433f87720cf4b9200cde153961dae032a"
@@ -50587,7 +50623,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "784624ab588165806e11037651f8410a724bf455ccf4aee95fa3b45a30229009"
@@ -50614,7 +50650,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "e63e717b8fb0170af1175db0261b408a351117953ef0762c3c79c3331bc3bab5"
@@ -50641,7 +50677,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "624132159188c4d1ad9caaf911314716d81231d88e0b840213a37183f4cf2c9d"
@@ -50668,7 +50704,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "d50033c8497410e997f0fb354eefe9e7ad16433aef386fe1e7c7934285d223da"
@@ -50695,7 +50731,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "88da8536fda527ac4ffe33d4249c05ecfa892bca763bb510578806356a3a0617"
@@ -50722,7 +50758,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "abbe9829a4b804c02629104894ca4441f3c09e9f4b1835ebfb8cd6c69b701350"
@@ -50749,7 +50785,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "7b1050bc6ba324827f5870b45b3ecabb14827ca147176a02e96385038a454e24"
@@ -50776,7 +50812,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "a3384d21c54b1c1a085a3eb23841d372621908964309c01e38d5c7795bcc28d2"
@@ -86207,7 +86243,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "cba2f402f2c8179a6b508c257fb8eb25cc46e733ea186fac5a8423d2d2923b6c"
@@ -86269,7 +86305,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "21101eb79cc8bcbcdcf051ad2e8318811aecb2d37b241158c1c28d203ff9fc47"
@@ -86331,7 +86367,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "c65fcb5056efb6ea227d381bf59c3241de3cf03a6f4236e99b0deba0614f6683"
@@ -86394,7 +86430,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "ff9374d715f13a20e26b362ef63a66ca30067a99764e7b5a3a846aad103d92b2"
@@ -86456,7 +86492,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "d6a57f63ad9f1b24b08e9edc2d39296125f19ee08ad7e4627f28b96038190374"
@@ -86518,7 +86554,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "aefc9593b59119ceb19bd38319ff623a650fb33243f51fe8a09c95adb9cd44e7"
@@ -86580,7 +86616,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "e48c7aa18d847d5000a551c0a591b0cc19adf9715e5e22909d9e36a0358bed6b"
@@ -86642,7 +86678,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "6839435afc085eebc7bfc2a76106fcd53d6b49f54e0b0c9b58f6e6d6643e5150"
@@ -86704,7 +86740,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "84737e97036bc3c616426ba114ab49a21ca6d76d40b155d8619cafb07a34540b"
@@ -86766,7 +86802,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "2b2c8970dd0667f2057c5ac0ee454f37dc390ba480bfaa46cffe28dccd4d24b5"
@@ -86828,7 +86864,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "4c53eb23daf47317b7e8ddb3c4160ed062cf6d0497263702a737177c05b8be8a"
@@ -86890,7 +86926,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "ed13a4cb8ac581a15062fdd0cdfa08581aba52dffb8005b2101c26775ac9a07a"
@@ -86952,7 +86988,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "733bb613c992abca93f567789b9b1e4a09a719f8d11e51d410dcfdef8c5db1b5"
@@ -87014,7 +87050,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "868a2ece2ba0b2c727196da58357c766c4133d660a3fac281b38a37e1916b5d2"
@@ -87076,7 +87112,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "e30c930574858c8f388177697082f232c4aab7beafe4818ece9c1ecaf073d950"
@@ -87138,7 +87174,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "afdd2021d0a20546af5777c89b16f8602718fee979f3fb9db841240063be74a3"
@@ -87200,7 +87236,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "da18aba5514bcf24ed8e6396913274ca6c4b8214758f9356ffd37384955fc297"
@@ -87262,7 +87298,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "b945c5a8a024c7839e16a12e9e24a2ce85fc8193f8c52b94384223b67b197d80"
@@ -87324,7 +87360,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "d4675a7c5ab714d673430b4a05931ffafa4ff08c3103161f3ab55d05bde548ef"
@@ -87386,7 +87422,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "e6ca7a429fa40d6cca0b32c0a2a13879882cd547f2aeed2a8d507f785cc0aee1"
@@ -87448,7 +87484,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "89cc238d24b4c97fd45d65f65bda09c8414d34cfefff3fd2a333b767d623b9b6"
@@ -87510,7 +87546,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "90a5ca6634d5176aadd647bfe60a7a6fc36b3fb79baca75078cc7d4ba440eb80"
@@ -87572,7 +87608,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "59975ed6abc89f155cb4949f85b0df279fc6cec92037472da1b45ef3299de32c"
@@ -87634,7 +87670,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "b70d1f6e197346e9e055ffe36bbbbfe3bda64cb1b38204ae8a49904987a2753e"
@@ -87696,7 +87732,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "23d19d535786b70b231b144fe72981ed3285c5440cc92f47a9ff68cd2be1cffb"
@@ -87758,7 +87794,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "76eaf3bb943c43efe3ebe7a08a91f2e6c6ad075d0936d182623ef6805df3736f"
@@ -87820,7 +87856,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "d7797a25e5d26fc0c4d7021e67f9969ce42dd0b6c35ed85eecee4749c32d2ea9"
@@ -87882,7 +87918,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "396668f01b71b9267b9ef7cb6ad0dcdb7ab797be94b0516fa0f99afed0b8da21"
@@ -87944,7 +87980,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "20cd06ee03726d15db0b8d3b7abb0cb692eadd51b4b41660b3b436d36184287e"
@@ -88006,7 +88042,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "ec0edb3456108c4dd78a756ca62eefdea034bb288ce88e884ebb2e30e5bb8a13"
@@ -88068,7 +88104,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "fa84b2049c91b16c4962ae783159d144f556d039a8ec0dd91c34833259ccab14"
@@ -88130,7 +88166,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "15d80e7ec8f6a2e6499cf5f32aecfad75e30c3a6387eeae7dfe5d7e6d9f0cc61"
@@ -88192,7 +88228,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "43c351b9081fc5ea421adc64057cc828873a9d83e79d3bc5f1e15a6ee5f31a3b"
@@ -88254,7 +88290,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "33dcad01aacdcd9a8fc2f7599117cc2825f25186e6fcfbdddfca3a28b75b6bcd"
@@ -88316,7 +88352,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "350b08a96951f52ba133d47271e919c690f0855f350f5ecbaed425cfe57d1665"
@@ -88378,7 +88414,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "4741dad0a7ec9cd018c81f338cf07bc0e8a9714be48254de0ce254a8c7105c6d"
@@ -88440,7 +88476,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "358351601496a7958712f124b8c26488b02dad02e22722bc9a12d8ab10d2429d"
@@ -88502,7 +88538,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "0a41fde207976ee5df4c3bfed2c90d659870f109656a215ce8e11d2e3537d7c0"
@@ -88564,7 +88600,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "7142cf39b3b26cd5e6727b236dd35e2e54b74133590be7978a30555c14ec25b6"
@@ -88626,7 +88662,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "75bc9195a340beda39d3b9784150891ff3d3e288ab2af78b857ef5a915ed1de5"
@@ -88688,7 +88724,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "4877cdb4ce2e6f81d7c3eee4cf375631297888d377b6f20bfda91aa1e241dc35"
@@ -88750,7 +88786,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "cb49e02709a82db5e4752b9c479284402cb0eff8d61eed5e5da1036d8279e355"
@@ -88812,7 +88848,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "bbd64b8c299d4145c041fcb4ee5f07f34800b28d1d6dbeb69f766c0ddfac03f6"
@@ -88874,7 +88910,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "491b9ed493768cf2b00abf255d72a26124b34f9c7b5631a5550e7c4fd7a929c9"
@@ -88936,7 +88972,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "ceac022ca4a86c9a763509ae36b630bcea96965dc460ded96384b11e42b3e6ac"
@@ -88998,7 +89034,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "c99ea6c6cde9962309cae082776a77fb78fa4c9ffd072f6acdb57b1329ed054e"
@@ -89060,7 +89096,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "0db28f4c43db265bb95b9ce291943dc2e5d579b368c12ff90c96045418ad43d8"
@@ -89122,7 +89158,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "f57fa441a58b62ad71aa8a19fc44c2d893edf9fc45ded8eee12aa192e7bf24d1"
@@ -89184,7 +89220,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "1e9882cf4f4afd2a99ca8f32d3304901c7d90f876eb866a778b5068bd4ba9be1"
@@ -89246,7 +89282,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "068f76c0af0fff155330a0cbfd85c0c18ce9d1eb4c91ca9ee44c04098350e8d3"
@@ -89308,7 +89344,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "69f8b77a21a3bc3eab6f11fcba83146dab5f9bce8657621920ad11dc3d3fc66e"
@@ -89371,7 +89407,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "9871f624a4d12763de4173e6ca199b7a881a83f239efa0c25234a95e04013709"
@@ -89433,7 +89469,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "1622191bcff1bf9d503229bcae187055b2e28631408db5478ab15093f315cb34"
@@ -89495,7 +89531,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "9c36d03db4b5bfcb314b42ad8fbb11bd1aa1f364565610499946471dc5c3e7db"
@@ -89557,7 +89593,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "432cb06726e049e5b8890a3b992e33e79b633a6b0f743e73a11b8a3249a695b5"
@@ -89619,7 +89655,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "4e3825cac504ae6e5caea0459948ea857e91ff2dfb3aaeb71390f8e4b4df2b08"
@@ -89681,7 +89717,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "2a079d5218115d699a8d027b3f1393d7329b96ea90d856d6e519c6ea06b91236"
@@ -89743,7 +89779,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "b61a833e2fcfd110ba045189fb3422ab69347717f600ba0f8936c81c2edd671b"
@@ -89805,7 +89841,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "513b60b439d6d202554864a68d9db70162f12b29b3d3c05bf344e7480a8367ff"
@@ -89868,7 +89904,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "64ae8ae86a2023da9bcf1d8dcbf21f84cc1bb55c80314ba4bc9c240743df1700"
@@ -89888,7 +89924,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "3510c558bf94f484c4388c4e65bce0287c90e4b0cf03ccada58bd6244f9758c4"
@@ -89901,7 +89937,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "fe8ce664cf76c8f65c8e452a81e20356368959be85194d44ac1f79ce5108a32f"
@@ -89914,7 +89950,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "79b8a2b570b419e07a1c79e56da4776f9a20e8d2360b833727018fdc09018353"
@@ -89927,7 +89963,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "6202c687aea942780c472786b662b27543d1660ccb91a020d4599d27dd3826c1"
@@ -89940,7 +89976,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "328f48f874269cf323443c7b424fb3f4d809a29c0c9909a87cade58a4f371dc0"
@@ -89953,7 +89989,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "b1c022e50d9ca4545d6411664627f052c5235296e027609d68c5ad290bb183ea"
@@ -89966,7 +90002,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "e8da687d7721e9b52b9a7dd98b612e9db6f4e23f753e731c78ef3617eb4a280f"
@@ -89979,7 +90015,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "2a0e2d99843fc9ca04b5d279691e5d2dd83ebbb34f574aec45accd394367b44a"
@@ -89992,7 +90028,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-258afc8672244972",
+    "run_id": "run-5ec293abb732dd30",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "7179b53dd72c4777691f760fec168174278b23082f434a979c1c0ddcaaee1432"
