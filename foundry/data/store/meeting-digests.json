@@ -3073,5 +3073,126 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "la-primegov-18467": {
+  "digest": "The City Council passed 44 items with minimal dissent, highlighted by Council Member Price Jr.'s absence throughout. Key decisions include: a $25.4 million bond for a 145-space mobile home park in Council District 2 and a $40 million bond for 145-unit Figueroa Heights affordable housing in Council District 8; approval for Mood Ring Inc. to sell alcohol on West Gin Ling Way; a continuing temporary ban on smoke/vape/tobacco retail permits in Council District 15; and authorization to review a Harbor Area Planning Commission denial regarding a coastal development permit. Committee reports on sober living facility concentration passed with dissent from Hernandez and Soto-Mart\u00ednez (and others on the second vote), while Council reorganization votes split Raman and Nazarian from the majority. Most items passed unanimously or near-unanimously with one absent member.",
+  "notable": [
+   "Two major affordable housing bonds totaling $65.4 million approved for mobile home park and scattered-site development",
+   "Sober living facilities concentration report passed with 4 council members voting no (Harris-Dawson, Hernandez, Jurado, Soto-Mart\u00ednez) on second reading",
+   "Alcohol permit approved for Mood Ring Inc. and temporary ban on smoke/vape/tobacco permits extended in Council District 15"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "la-primegov-18525": {
+  "digest": "City Council approved multiple items including amendments to a Kompan playground equipment contract and a lease amendment for a North Hills customer service center. The council voted on multiple items related to the 2028 Olympic Games Enhanced City Resources Master plan with significant dissent\u2014five council members (Hernandez, Jurado, Padilla, Raman, Soto-Mart\u00ednez) consistently opposed several of these reports. The council also established positions on state legislation regarding gender-affirming care and motor vehicle sideshows, created a new city homelessness governance structure, authorized a Petco Love grant and Subaru donation for Skid Row animal services, and approved various district-specific funding allocations for broadband, road maintenance, and redevelopment projects. The council authorized numerous closed-session meetings with legal counsel regarding pending litigation.",
+  "notable": [
+   "Multiple reports on the 2028 Olympics Enhanced City Resources Master plan faced consistent opposition from five council members (Hernandez, Jurado, Padilla, Raman, Soto-Mart\u00ednez), with votes ranging from 9-14 in favor and 3-5 opposed.",
+   "New City Homelessness Governance Structure established with mostly unanimous support, though Rodriguez and Hernandez/Hutt dissented on separate votes.",
+   "Council approved playground equipment contract amendment, North Hills customer service center lease, power agreements for Notch Peak Project, and multiple district funding allocations for broadband and infrastructure projects."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "la-primegov-17725": {
+  "digest": "The City Council passed 37 items in a routine meeting with three absent members. Key decisions included unfreezing city hiring and spending authority for fiscal year 2026-27, authorizing $26 million in bonds for a 70-unit affordable housing project at 1025 Crenshaw Boulevard, acquiring land to expand the electric bus depot, establishing new regulations for e-bikes and e-motos, and approving two liquor licenses. One councilmember (Soto-Mart\u00ednez) voted against a fireworks ordinance review, while all other votes were unanimous among those present.",
+  "notable": [
+   "$26 million authorized for 70-unit multifamily rental housing at 1025 Crenshaw Boulevard",
+   "E-bikes, e-motos, and electric mopeds regulations established",
+   "One dissent: Soto-Mart\u00ednez voted no on fireworks law review; all other motions passed unanimously"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "la-primegov-18560": {
+  "digest": "The City Council passed 19 measures on August 21, 2026, including infrastructure upgrades (electric vehicle charging stations, Convention Center expansion bonds), development approvals (a downtown mixed-use project at South Flower/Hope Streets), and departmental policies (preschool tuition fees, animal services expansion, parking restrictions). One measure on parking modifications drew dissent from Councilmember Raman, and Convention Center bond financing saw three no-votes (Raman, Rodriguez, Yaroslavsky). Four council members were absent for most votes.",
+  "notable": [
+   "Parking restrictions ordinance passed 11-1 with Raman opposed.",
+   "Convention Center expansion bonds passed 9-3 with Raman, Rodriguez, and Yaroslavsky voting no.",
+   "Downtown mixed-use development agreement approved at South Flower and South Hope Street locations."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "la-primegov-18463": {
+  "digest": "The City Council passed 32 items in this meeting with no dissenting votes, though 2-5 members were absent for each action. Key decisions included confirming six building code violation liens against properties across the city for unpaid remediation costs; approving Ben's Market's application to sell alcohol for off-site consumption on West Vanowen Street; establishing preferential parking in Park Mesa Heights; and approving various infrastructure improvements including safety work at West Adams Boulevard and West Boulevard intersections and expanded pedestrian improvements in Sepulveda Basin. The council also designated three new public squares and selected three towing companies for police garage services.",
+  "notable": [
+   "Six properties now have liens filed for unpaid building code violation remediation costs across multiple neighborhoods.",
+   "Council approved alcohol sales at Ben's Market for off-site consumption on West Vanowen Street.",
+   "New preferential parking district established in Park Mesa Heights to address parking management in that area."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "loudoun-bos-2026-09-01": {
+  "digest": "The Board of Supervisors held a largely ceremonial meeting, passing eleven routine items including recognition of Dr. Elahe Hessamfar's service, proclamations for September awareness months and observances, confirmation of board appointments, and adoption of 2025 capital intensity formulas for development fees. Supervisor Koran Saines was absent for all votes. The board recessed into closed session to discuss legal matters related to ongoing negotiations.",
+  "notable": [
+   "Adoption of 2025 capital intensity factor formulas for development fees on urban multifamily housing",
+   "Koran Saines absent from all votes; Juli Briskman and Kristen Umstattd also absent for the closed session motion"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "pittsburgh-legistar-12060": {
+  "digest": "The City Council meeting on August 28, 2026, proceeded with two absent members: Robert Charland and Erika Strassburger. No substantive actions, decisions, or motions were recorded in the provided meeting summary.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "princewilliam-bos-2026-09-01": {
+  "digest": "The Board of Supervisors passed 16 motions including land-use changes for the Manassas Tech Center (with Supervisor Stewart opposing and Bailey absent), a security partnership with Potomac Mills mall, and $48,000 in funding for the county's animal trap-neuter-vaccinate-release program. Supervisor Jefferson dissented on three items: the second Tech Center rezoning, overthrowing a denial of a home occupation certificate for Genesis Hernandez, and even the motion to end the meeting. Two supervisors abstained on a mall security drone memorandum of understanding.",
+  "notable": [
+   "Manassas Tech Center rezoning passed but split: Supervisor Stewart opposed the first version (with Bailey absent), and Supervisor Jefferson opposed the second version.",
+   "Supervisor Jefferson voted no on overturning an administrative denial of a home occupation certificate for Genesis Hernandez and on adjourning the meeting.",
+   "Board approved $48,000 transfer to expand animal trap-neuter-vaccinate-release services."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-08-11": {
+  "digest": "City Council unanimously reappointed all five members of the Indigenous Advisory Council through mid-2028 and filled multiple vacancies on the Seattle Center Advisory Commission and Central Waterfront Oversight Committee. The council passed a significant tenant protection ordinance requiring landlords to disclose rental fees upfront and banning certain fees, with one councilmember absent. Additional routine actions included budget adjustments, updates to City Light's renewable energy programs, and authorization for various administrative agreements.",
+  "notable": [
+   "Tenant protection ordinance strengthening rental fee disclosure and enforcement passed 8\u20130 (Councilmember Rivera absent)",
+   "Five Indigenous Advisory Council members reappointed unanimously through July 2028",
+   "Multiple routine appointments and budget adjustments approved without dissent"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }
