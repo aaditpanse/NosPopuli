@@ -21413,5 +21413,20 @@
   "plain_english": "No subject stated in the minutes; see the official record.",
   "topic": "procedural",
   "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-09-item-1": {
+  "plain_english": "Approves a zoning application for 862-868 Kent Avenue in Brooklyn.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-09-item-2": {
+  "plain_english": "Approves a land use application with modifications and refers it to the City Planning Commission.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-09-Committee-on-Education-Eric-Dinowitz-Cha-item-1": {
+  "plain_english": "Requires New York schools to incorporate a 9/11 curriculum into their educational programs.",
+  "topic": "education",
+  "derived_by": "claude-haiku-4-5"
  }
 }

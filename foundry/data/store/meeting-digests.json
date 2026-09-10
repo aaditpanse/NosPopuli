@@ -3194,5 +3194,27 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "newyork-bos-2026-09-09": {
+  "digest": "The Subcommittee on Zoning and Franchises approved a zoning application for 862-868 Kent Avenue in Brooklyn and advanced a separate land use application (with modifications) to the City Planning Commission for further review. Both measures passed unanimously with 8 ayes.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-09-09-Committee-on-Education-Eric-Dinowitz-Cha": {
+  "digest": "The Committee on Education voted unanimously (with one absent member) to require New York schools to incorporate a 9/11 curriculum into their educational programs. The measure passed 12-0, with Krishnan absent from the vote.",
+  "notable": [
+   "Passed requirement for 9/11 curriculum in NY schools with 12 aye votes, 1 absent (Krishnan)"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }

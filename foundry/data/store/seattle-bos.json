@@ -1124,15 +1124,15 @@
    "body": "City Council",
    "date": "2026-07-28",
    "attendance": {
-    "Alexis Mercedes Rinck": "present",
-    "Debora Juarez": "present",
     "Dionne Foster": "present",
     "Robert Kettle": "present",
-    "Eddie Lin": "present",
-    "Maritza Rivera": "present",
     "Dan Strauss": "present",
+    "Joy Hollingsworth": "present",
+    "Debora Juarez": "present",
+    "Alexis Mercedes Rinck": "present",
+    "Maritza Rivera": "present",
     "Rob Saka": "present",
-    "Joy Hollingsworth": "present"
+    "Eddie Lin": "present"
    },
    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6839&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
    "data_source_url": "https://legistar2.granicus.com/seattle/meetings/2026/7/6839_M_City_Council_26-07-28_Full_Council_Meeting_Minutes.pdf",
@@ -1158,15 +1158,15 @@
    "body": "City Council",
    "date": "2026-08-04",
    "attendance": {
-    "Alexis Mercedes Rinck": "present",
-    "Debora Juarez": "present",
     "Dionne Foster": "present",
     "Robert Kettle": "present",
-    "Eddie Lin": "present",
-    "Maritza Rivera": "present",
     "Dan Strauss": "present",
+    "Joy Hollingsworth": "present",
+    "Debora Juarez": "present",
+    "Alexis Mercedes Rinck": "present",
+    "Maritza Rivera": "present",
     "Rob Saka": "present",
-    "Joy Hollingsworth": "present"
+    "Eddie Lin": "present"
    },
    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6847&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
    "data_source_url": "https://legistar2.granicus.com/seattle/meetings/2026/8/6847_M_City_Council_26-08-04_Full_Council_Meeting_Minutes.pdf",
@@ -1192,15 +1192,15 @@
    "body": "City Council",
    "date": "2026-07-21",
    "attendance": {
-    "Alexis Mercedes Rinck": "present",
+    "Dionne Foster": "present",
+    "Robert Kettle": "present",
     "Dan Strauss": "present",
     "Joy Hollingsworth": "present",
-    "Robert Kettle": "present",
-    "Eddie Lin": "present",
-    "Maritza Rivera": "present",
     "Debora Juarez": "present",
-    "Dionne Foster": "present",
-    "Rob Saka": "present"
+    "Alexis Mercedes Rinck": "present",
+    "Maritza Rivera": "present",
+    "Rob Saka": "present",
+    "Eddie Lin": "present"
    },
    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6834&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
    "data_source_url": "https://legistar2.granicus.com/seattle/meetings/2026/7/6834_M_City_Council_26-07-21_Full_Council_Meeting_Minutes.pdf",
@@ -35722,7 +35722,7 @@
     "source_id": "seattle-bos",
     "extractor_version": "1",
     "run_id": "seattle-bos-1",
-    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6854&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6847&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
     "certification": {
      "certified": true,
      "method": "legistar-rest-api+minutes-rollcall"
@@ -35735,7 +35735,7 @@
     "source_id": "seattle-bos",
     "extractor_version": "1",
     "run_id": "seattle-bos-1",
-    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6854&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6847&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
     "certification": {
      "certified": true,
      "method": "legistar-rest-api+minutes-rollcall"
@@ -35748,7 +35748,7 @@
     "source_id": "seattle-bos",
     "extractor_version": "1",
     "run_id": "seattle-bos-1",
-    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6854&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6847&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
     "certification": {
      "certified": true,
      "method": "legistar-rest-api+minutes-rollcall"
@@ -35761,7 +35761,7 @@
     "source_id": "seattle-bos",
     "extractor_version": "1",
     "run_id": "seattle-bos-1",
-    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6854&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6847&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
     "certification": {
      "certified": true,
      "method": "legistar-rest-api+minutes-rollcall"
@@ -35774,7 +35774,7 @@
     "source_id": "seattle-bos",
     "extractor_version": "1",
     "run_id": "seattle-bos-1",
-    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6854&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6847&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
     "certification": {
      "certified": true,
      "method": "legistar-rest-api+minutes-rollcall"
@@ -35787,7 +35787,7 @@
     "source_id": "seattle-bos",
     "extractor_version": "1",
     "run_id": "seattle-bos-1",
-    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6854&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6847&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
     "certification": {
      "certified": true,
      "method": "legistar-rest-api+minutes-rollcall"
@@ -35800,7 +35800,7 @@
     "source_id": "seattle-bos",
     "extractor_version": "1",
     "run_id": "seattle-bos-1",
-    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6854&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6847&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
     "certification": {
      "certified": true,
      "method": "legistar-rest-api+minutes-rollcall"
@@ -35813,7 +35813,7 @@
     "source_id": "seattle-bos",
     "extractor_version": "1",
     "run_id": "seattle-bos-1",
-    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6854&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6847&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
     "certification": {
      "certified": true,
      "method": "legistar-rest-api+minutes-rollcall"
@@ -35826,7 +35826,7 @@
     "source_id": "seattle-bos",
     "extractor_version": "1",
     "run_id": "seattle-bos-1",
-    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6854&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
+    "source_url": "https://seattle.legistar.com/MeetingDetail.aspx?LEGID=6847&GID=393&G=FFE3B678-CEF6-4197-84AC-5204EA4CFC0C",
     "certification": {
      "certified": true,
      "method": "legistar-rest-api+minutes-rollcall"
