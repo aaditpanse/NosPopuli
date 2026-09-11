@@ -3216,5 +3216,87 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "newyork-bos-2026-09-10": {
+  "digest": "The City Council passed six items including new outdoor lighting limits (1 footcandle maximum) for residential areas, with three opposing; co-named seven public thoroughfares; confirmed John Mangin to the Board of Standards and Appeals despite six no votes; and required the Department of Sanitation to inspect and enforce dog waste regulations on blocks with 7+ complaints within 14 days. Two motions passed without stated subjects in the minutes.",
+  "notable": [
+   "Outdoor lighting limits passed 46-3 with Ariola, Hudson, and Nurse opposed.",
+   "John Mangin's Board appointment confirmed 40-6 despite significant opposition from Ariola, Carr, Morano, Paladino, Vernikov, and Wong.",
+   "New dog waste enforcement protocol mandates Sanitation response to frequent complaint blocks."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-09-10-Committee-on-Environmental-Protection-an": {
+  "digest": "The Committee on Environmental Protection and Waterfronts unanimously approved new outdoor lighting limits for single- and two-family homes in low-density residential areas, capping brightness at 1 footcandle (11 lux). This regulation aims to reduce light pollution in these neighborhoods.",
+  "notable": [
+   "Outdoor lighting limits of 1 footcandle approved for residential areas (5 aye, no dissent)"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-09-10-Committee-on-Parks-and-Recreation-Ty-Han": {
+  "digest": "The Parks and Recreation Committee approved co-naming 26 city streets and public spaces based on requests from council members. Two committee members were absent during the vote.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-09-10-Committee-on-Transportation-and-Infrastr": {
+  "digest": "The Committee on Transportation and Infrastructure approved a requirement that the Department of Transportation or its permittees post warning signs at each end of blocks where disruptive construction work will occur, with signs posted at least 48 hours in advance. The vote was 10-0 in favor, with one member absent.",
+  "notable": [
+   "Signage requirement for construction work passed 10-0 to notify residents of disruptions at least 48 hours ahead"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-09-10-Committee-on-Health-Lynn-C-Schulman-Chai": {
+  "digest": "The Committee on Health passed a requirement for food service establishments to display warning icons and statements on menus about health risks, with seven votes in favor and one member absent. The measure will direct the Department of Health and Mental Hygiene to create and enforce these warning standards.",
+  "notable": [
+   "Passed unanimously among present members (7-0) with Chair Schulman, Ariola, and De La Rosa voting yes; Marte absent"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-09-10-Committee-on-Sanitation-and-Solid-Waste-": {
+  "digest": "The Committee on Sanitation and Solid Waste Management unanimously passed a new requirement that the Department of Sanitation must send inspectors within 14 days to any city block where residents report 7 or more dog waste complaints to evaluate and enforce existing regulations. This measure aims to improve neighborhood cleanliness by ensuring faster departmental response to high-complaint areas.",
+  "notable": [
+   "New rule requires Sanitation Department response to dog waste complaints within 14 days on affected blocks (passed 11-0)"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-09-10-Committee-on-Cultural-Affairs-Libraries-": {
+  "digest": "The Committee on Cultural Affairs, Libraries and International Relations passed five ceremonial and policy measures unanimously. The committee directed the Department of Records and Information Services to consult with agencies and experts to produce a public report on historical African American issues, and approved commemorations for the 25th anniversary of September 11, the Feast of San Gennaro and Ferragosto Festival, declared March 6 as Carmen de Lavallade Day, and honored the legacy of Alvin Ailey.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }

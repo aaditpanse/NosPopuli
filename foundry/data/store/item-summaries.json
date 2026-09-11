@@ -21428,5 +21428,85 @@
   "plain_english": "Requires New York schools to incorporate a 9/11 curriculum into their educational programs.",
   "topic": "education",
   "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-10-item-1": {
+  "plain_english": "Limits outdoor lighting on single- and two-family homes in low-density residential areas to a maximum of 1 footcandle (11 lux).",
+  "topic": "lighting regulation",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-10-item-2": {
+  "plain_english": "Co-names 7 thoroughfares and public places across the city based on council member requests, including 6 relocations or revisions of previously enacted co-namings.",
+  "topic": "street naming",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-10-item-3": {
+  "plain_english": "No subject stated in the minutes; see the official record.",
+  "topic": "general orders",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-10-item-4": {
+  "plain_english": "Confirms John Mangin's appointment to the Board of Standards and Appeals.",
+  "topic": "appointments",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-10-item-5": {
+  "plain_english": "Requires the Department of Sanitation to send employees within 14 days to evaluate and enforce dog waste regulations on any city block that receives 7 or more credible complaints within a 7-day period.",
+  "topic": "public sanitation",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-10-item-6": {
+  "plain_english": "No subject stated in the minutes; see the official record.",
+  "topic": "consent agenda",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-10-Committee-on-Environmental-Protection-an-item-1": {
+  "plain_english": "Limits outdoor lighting on single- and two-family homes in low-density residential areas to a maximum of 1 footcandle (11 lux).",
+  "topic": "lighting regulation",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-10-Committee-on-Parks-and-Recreation-Ty-Han-item-1": {
+  "plain_english": "Co-names 26 thoroughfares and public places across the city based on council member requests.",
+  "topic": "street naming",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-10-Committee-on-Transportation-and-Infrastr-item-1": {
+  "plain_english": "Requires the Department of Transportation or its permittees to post at least one sign at each end of every block where disruptive work will occur, at least 48 hours in advance.",
+  "topic": "public notification",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-10-Committee-on-Health-Lynn-C-Schulman-Chai-item-1": {
+  "plain_english": "Requires the Department of Health and Mental Hygiene to designate warning icons and statements to be displayed by food service establishments on menus or menu boards next to certain menu items.",
+  "topic": "public health",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-10-Committee-on-Sanitation-and-Solid-Waste--item-1": {
+  "plain_english": "Requires the Department of Sanitation to send employees within 14 days to evaluate and enforce dog waste regulations on any city block that receives 7 or more credible complaints within a 7-day period.",
+  "topic": "public sanitation",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-10-Committee-on-Cultural-Affairs-Libraries--item-1": {
+  "plain_english": "Requires the Department of Records and Information Services to consult with agencies, organizations and experts and provide a public report about historical African American burial sites.",
+  "topic": "historical documentation",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-10-Committee-on-Cultural-Affairs-Libraries--item-2": {
+  "plain_english": "Commemorates the 25th anniversary of the September 11 attacks.",
+  "topic": "commemoration",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-10-Committee-on-Cultural-Affairs-Libraries--item-3": {
+  "plain_english": "Celebrates the Feast of San Gennaro and the Ferragosto Festival.",
+  "topic": "cultural celebration",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-10-Committee-on-Cultural-Affairs-Libraries--item-5": {
+  "plain_english": "Declares March 6 as Carmen de Lavallade Day.",
+  "topic": "commemoration",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-10-Committee-on-Cultural-Affairs-Libraries--item-6": {
+  "plain_english": "Honors the life and legacy of Alvin Ailey.",
+  "topic": "cultural recognition",
+  "derived_by": "claude-haiku-4-5"
  }
 }
