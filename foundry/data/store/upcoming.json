@@ -2,51 +2,46 @@
  "la-primegov": {
   "upcoming": [
    {
-    "date": "2026-09-15",
-    "time": "10:00 AM",
-    "body": "City Council Meeting"
-   },
-   {
-    "date": "2026-09-15",
-    "time": "09:00 AM",
-    "body": "SPECIAL - Rules, Elections and Intergovernmental Relations Committee"
-   },
-   {
-    "date": "2026-09-15",
-    "time": "02:00 PM",
-    "body": "Budget and Finance Committee"
-   },
-   {
-    "date": "2026-09-15",
-    "time": "02:00 PM",
-    "body": "Public Safety Committee"
-   },
-   {
     "date": "2026-09-16",
     "time": "10:00 AM",
     "body": "City Council Meeting"
+   },
+   {
+    "date": "2026-09-16",
+    "time": "09:00 AM",
+    "body": "Transportation Committee"
+   },
+   {
+    "date": "2026-09-16",
+    "time": "02:00 PM",
+    "body": "Housing Committee"
+   },
+   {
+    "date": "2026-09-16",
+    "time": "02:00 PM",
+    "body": "Arts, Parks, and City Facilities Committee"
    }
   ],
   "next": {
-   "date": "2026-09-15",
+   "date": "2026-09-16",
    "time": "10:00 AM",
    "body": "City Council Meeting"
   },
-  "checked": "2026-09-14",
+  "checked": "2026-09-15",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "loudoun-bos": {
   "upcoming": [
    {
-    "date": "2026-09-15",
+    "date": "2026-10-06",
     "time": "4:00 PM",
     "body": "Board of Supervisors Business Meeting"
    },
    {
-    "date": "2026-10-06",
-    "time": "4:00 PM",
-    "body": "Board of Supervisors Business Meeting"
+    "date": "2026-10-14",
+    "time": "6:00 PM",
+    "body": "Board of Supervisors Public Hearing"
    },
    {
     "date": "2026-10-20",
@@ -59,113 +54,93 @@
     "body": "Board of Supervisors Business Meeting"
    },
    {
-    "date": "2026-11-17",
-    "time": "4:00 PM",
-    "body": "Board of Supervisors Business Meeting"
+    "date": "2026-11-12",
+    "time": "6:00 PM",
+    "body": "Board of Supervisors Public Hearing"
    }
   ],
   "next": {
-   "date": "2026-09-15",
+   "date": "2026-10-06",
    "time": "4:00 PM",
    "body": "Board of Supervisors Business Meeting"
   },
-  "checked": "2026-09-14",
+  "checked": "2026-09-15",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "pittsburgh-legistar": {
-  "upcoming": [
-   {
-    "date": "2026-09-15",
-    "time": "10:00 AM",
-    "body": "City Council"
-   },
-   {
-    "date": "2026-09-15",
-    "time": "10:01 AM",
-    "body": "City Council"
-   }
-  ],
-  "next": {
-   "date": "2026-09-15",
-   "time": "10:00 AM",
-   "body": "City Council"
-  },
-  "checked": "2026-09-14",
+  "upcoming": [],
+  "next": null,
+  "checked": "2026-09-15",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "princewilliam-bos": {
   "upcoming": [
    {
-    "date": "2026-09-15",
-    "time": "02:00 pm",
-    "body": "Board of County Supervisors Meeting - Work Session"
-   },
-   {
     "date": "2026-09-22",
-    "time": "02:00 pm",
+    "time": "14:00",
     "body": "Board of County Supervisors Meeting"
    },
    {
     "date": "2026-09-23",
-    "time": "06:00 pm",
+    "time": "18:00",
     "body": "Board of County Supervisors - Joint Meeting with the School Board"
+   },
+   {
+    "date": "2026-10-06",
+    "time": "14:00",
+    "body": "Board of County Supervisors Meeting"
    }
   ],
   "next": {
-   "date": "2026-09-15",
-   "time": "02:00 pm",
-   "body": "Board of County Supervisors Meeting - Work Session"
+   "date": "2026-09-22",
+   "time": "14:00",
+   "body": "Board of County Supervisors Meeting"
   },
-  "checked": "2026-09-14",
+  "checked": "2026-09-15",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "fairfax-bos": {
   "upcoming": [
    {
-    "date": "2026-09-15",
-    "time": "09:30",
-    "body": "Fairfax County Board of Supervisors"
-   },
-   {
     "date": "2026-09-29",
-    "time": "09:30",
+    "time": null,
     "body": "Fairfax County Board of Supervisors"
    },
    {
     "date": "2026-10-13",
-    "time": "09:30",
+    "time": null,
     "body": "Fairfax County Board of Supervisors"
    },
    {
     "date": "2026-10-27",
-    "time": "09:30",
+    "time": null,
     "body": "Fairfax County Board of Supervisors"
    },
    {
     "date": "2026-11-17",
-    "time": "09:30",
+    "time": null,
+    "body": "Fairfax County Board of Supervisors"
+   },
+   {
+    "date": "2026-12-08",
+    "time": null,
     "body": "Fairfax County Board of Supervisors"
    }
   ],
   "next": {
-   "date": "2026-09-15",
-   "time": "09:30",
+   "date": "2026-09-29",
+   "time": null,
    "body": "Fairfax County Board of Supervisors"
   },
-  "checked": "2026-09-14",
+  "checked": "2026-09-15",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "stafford-bos": {
   "upcoming": [
-   {
-    "date": "2026-09-15",
-    "time": "17:00",
-    "body": "September 15, 2026 Board of Supervisors Meeting"
-   },
    {
     "date": "2026-09-22",
     "time": "16:30",
@@ -185,14 +160,19 @@
     "date": "2026-10-20",
     "time": "17:00",
     "body": "October 20, 2026 Board of Supervisors Meeting"
+   },
+   {
+    "date": "2026-10-27",
+    "time": "17:00",
+    "body": "October 27, 2026 Board of Supervisors Meeting"
    }
   ],
   "next": {
-   "date": "2026-09-15",
-   "time": "17:00",
-   "body": "September 15, 2026 Board of Supervisors Meeting"
+   "date": "2026-09-22",
+   "time": "16:30",
+   "body": "September 22, 2026 Board of Supervisors Delegation Dinner"
   },
-  "checked": "2026-09-14",
+  "checked": "2026-09-15",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -229,7 +209,7 @@
    "time": "1:30 PM",
    "body": "City Council Stated Meeting"
   },
-  "checked": "2026-09-14",
+  "checked": "2026-09-15",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -238,62 +218,62 @@
    {
     "date": "2026-09-29",
     "time": null,
-    "body": "Board of Supervisors Meeting"
+    "body": "Board of Supervisors Meeting Summary available"
    },
    {
     "date": "2026-10-13",
     "time": null,
-    "body": "Board of Supervisors Meeting"
+    "body": "Board of Supervisors Meeting Summary available"
    },
    {
     "date": "2026-10-27",
     "time": null,
-    "body": "Board of Supervisors Meeting"
+    "body": "Board of Supervisors Meeting Summary available"
    },
    {
     "date": "2026-11-17",
     "time": null,
-    "body": "Board of Supervisors Meeting"
+    "body": "Board of Supervisors Meeting Summary available"
    },
    {
     "date": "2026-12-08",
     "time": null,
-    "body": "Board of Supervisors Meeting"
+    "body": "Board of Supervisors Meeting Summary available"
    }
   ],
   "next": {
    "date": "2026-09-29",
    "time": null,
-   "body": "Board of Supervisors Meeting"
+   "body": "Board of Supervisors Meeting Summary available"
   },
-  "checked": "2026-09-14",
+  "checked": "2026-09-15",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "princewilliam-cip": {
   "upcoming": [
    {
-    "date": "2026-09-15",
-    "time": "14:00",
-    "body": "Board of County Supervisors Meeting - Work Session"
-   },
-   {
     "date": "2026-09-22",
-    "time": "14:00",
+    "time": "02:00 pm",
     "body": "Board of County Supervisors Meeting"
    },
    {
     "date": "2026-09-23",
-    "time": "18:00",
+    "time": "06:00 pm",
     "body": "Board of County Supervisors - Joint Meeting with the School Board"
+   },
+   {
+    "date": "2026-10-06",
+    "time": "02:00 pm",
+    "body": "Board of County Supervisors Meeting"
    }
   ],
   "next": {
-   "date": "2026-09-15",
-   "time": "14:00",
-   "body": "Board of County Supervisors Meeting - Work Session"
+   "date": "2026-09-22",
+   "time": "02:00 pm",
+   "body": "Board of County Supervisors Meeting"
   },
-  "checked": "2026-09-14",
+  "checked": "2026-09-15",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -310,24 +290,14 @@
    "time": "15:00",
    "body": "City Council meeting"
   },
-  "checked": "2026-09-14",
+  "checked": "2026-09-15",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "seattle-bos": {
-  "upcoming": [
-   {
-    "date": "2026-09-15",
-    "time": "2:00 PM",
-    "body": "City Council"
-   }
-  ],
-  "next": {
-   "date": "2026-09-15",
-   "time": "2:00 PM",
-   "body": "City Council"
-  },
-  "checked": "2026-09-14",
+  "upcoming": [],
+  "next": null,
+  "checked": "2026-09-15",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -336,15 +306,15 @@
    {
     "date": "2026-09-23",
     "time": "15:00",
-    "body": "City Council meeting at City Council Chamber, 2nd Floor, City Hall, 121 North LaSalle Street - Chicago, IL 60602"
+    "body": "City Council Meeting"
    }
   ],
   "next": {
    "date": "2026-09-23",
    "time": "15:00",
-   "body": "City Council meeting at City Council Chamber, 2nd Floor, City Hall, 121 North LaSalle Street - Chicago, IL 60602"
+   "body": "City Council Meeting"
   },
-  "checked": "2026-09-14",
+  "checked": "2026-09-15",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  }
