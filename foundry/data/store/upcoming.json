@@ -9,6 +9,11 @@
    {
     "date": "2026-09-18",
     "time": "02:00 PM",
+    "body": "Ad Hoc Committee for Boyle Heights Fire Recovery"
+   },
+   {
+    "date": "2026-09-18",
+    "time": "02:00 PM",
     "body": "Economic Development and Jobs Committee"
    }
   ],
@@ -17,7 +22,7 @@
    "time": "10:00 AM",
    "body": "City Council Meeting"
   },
-  "checked": "2026-09-16",
+  "checked": "2026-09-17",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -54,14 +59,14 @@
    "time": "4:00 PM",
    "body": "Board of Supervisors Business Meeting"
   },
-  "checked": "2026-09-16",
+  "checked": "2026-09-17",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "pittsburgh-legistar": {
   "upcoming": [],
   "next": null,
-  "checked": "2026-09-16",
+  "checked": "2026-09-17",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -88,17 +93,12 @@
    "time": "02:00 pm",
    "body": "Board of County Supervisors Meeting"
   },
-  "checked": "2026-09-16",
+  "checked": "2026-09-17",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "fairfax-bos": {
   "upcoming": [
-   {
-    "date": "2026-09-29",
-    "time": null,
-    "body": "Fairfax County Board of Supervisors"
-   },
    {
     "date": "2026-10-13",
     "time": null,
@@ -121,11 +121,11 @@
    }
   ],
   "next": {
-   "date": "2026-09-29",
+   "date": "2026-10-13",
    "time": null,
    "body": "Fairfax County Board of Supervisors"
   },
-  "checked": "2026-09-16",
+  "checked": "2026-09-17",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -162,7 +162,7 @@
    "time": "16:30",
    "body": "September 22, 2026 Board of Supervisors Delegation Dinner"
   },
-  "checked": "2026-09-16",
+  "checked": "2026-09-17",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -199,7 +199,7 @@
    "time": "1:30 PM",
    "body": "City Council Stated Meeting"
   },
-  "checked": "2026-09-16",
+  "checked": "2026-09-17",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -208,35 +208,35 @@
    {
     "date": "2026-09-29",
     "time": null,
-    "body": "Board of Supervisors Meeting Summary"
+    "body": "Board of Supervisors Meeting"
    },
    {
     "date": "2026-10-13",
     "time": null,
-    "body": "Board of Supervisors Meeting Summary"
+    "body": "Board of Supervisors Meeting"
    },
    {
     "date": "2026-10-27",
     "time": null,
-    "body": "Board of Supervisors Meeting Summary"
+    "body": "Board of Supervisors Meeting"
    },
    {
     "date": "2026-11-17",
     "time": null,
-    "body": "Board of Supervisors Meeting Summary"
+    "body": "Board of Supervisors Meeting"
    },
    {
     "date": "2026-12-08",
     "time": null,
-    "body": "Board of Supervisors Meeting Summary"
+    "body": "Board of Supervisors Meeting"
    }
   ],
   "next": {
    "date": "2026-09-29",
    "time": null,
-   "body": "Board of Supervisors Meeting Summary"
+   "body": "Board of Supervisors Meeting"
   },
-  "checked": "2026-09-16",
+  "checked": "2026-09-17",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -244,26 +244,26 @@
   "upcoming": [
    {
     "date": "2026-09-22",
-    "time": "14:00",
+    "time": "02:00 pm",
     "body": "Board of County Supervisors Meeting"
    },
    {
     "date": "2026-09-23",
-    "time": "18:00",
+    "time": "06:00 pm",
     "body": "Board of County Supervisors - Joint Meeting with the School Board"
    },
    {
     "date": "2026-10-06",
-    "time": "14:00",
+    "time": "02:00 pm",
     "body": "Board of County Supervisors Meeting"
    }
   ],
   "next": {
    "date": "2026-09-22",
-   "time": "14:00",
+   "time": "02:00 pm",
    "body": "Board of County Supervisors Meeting"
   },
-  "checked": "2026-09-16",
+  "checked": "2026-09-17",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -272,22 +272,22 @@
    {
     "date": "2026-09-23",
     "time": "15:00",
-    "body": "City Council meeting scheduled at City Council Chamber, 2nd Floor, City Hall, 121 North LaSalle Street - Chicago, IL 60602"
+    "body": "City Council meeting at City Council Chamber, 2nd Floor, City Hall, 121 North LaSalle Street - Chicago, IL 60602"
    }
   ],
   "next": {
    "date": "2026-09-23",
    "time": "15:00",
-   "body": "City Council meeting scheduled at City Council Chamber, 2nd Floor, City Hall, 121 North LaSalle Street - Chicago, IL 60602"
+   "body": "City Council meeting at City Council Chamber, 2nd Floor, City Hall, 121 North LaSalle Street - Chicago, IL 60602"
   },
-  "checked": "2026-09-16",
+  "checked": "2026-09-17",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "seattle-bos": {
   "upcoming": [],
   "next": null,
-  "checked": "2026-09-16",
+  "checked": "2026-09-17",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -296,15 +296,15 @@
    {
     "date": "2026-09-23",
     "time": "15:00",
-    "body": "City Council Meeting"
+    "body": "City Council"
    }
   ],
   "next": {
    "date": "2026-09-23",
    "time": "15:00",
-   "body": "City Council Meeting"
+   "body": "City Council"
   },
-  "checked": "2026-09-16",
+  "checked": "2026-09-17",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  }
