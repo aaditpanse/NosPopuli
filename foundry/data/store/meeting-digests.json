@@ -3298,5 +3298,81 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "la-primegov-18595": {
+  "digest": "City Council approved 23 items including a liquor license for Sam First & Lounge, $20 million in revenue bonds for a 70-unit affordable housing project at the St. George Hotel, funding for various neighborhood services (pool hours, bus service, street cleaning, security cameras), and repairs to Encino Franklin Fields Bridge. One motion to amend the Municipal Improvement bond fund drew three 'no' votes from Raman, Rodriguez, and Yaroslavsky. Four council members (Harris-Dawson, Lee, Padilla, Price Jr.) were absent throughout.",
+  "notable": [
+   "$20 million affordable housing bond for St. George Hotel passed 11-0 with 4 absent",
+   "Bond fund amendment opposed by Raman, Rodriguez, Yaroslavsky (8-3 vote)",
+   "Four council members absent for entire meeting"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "la-primegov-18604": {
+  "digest": "The City Council passed a decarbonization workbook review for municipal buildings and approved several commission appointments and reappointments through 2031, including new appointments to the Cultural Heritage and South Valley Area Planning Commissions. The council also continued work on police garage towing contracts, allocated funding for a Council District 13 special event on September 25, repealed a municipal code section related to the Lopez v. City of Los Angeles lawsuit, and requested an IT Agency update on Channel 35 contracting. Four council members (Harris-Dawson, Hutt, Padilla, and Price Jr.) were absent from all votes; all items passed unanimously among those present.",
+  "notable": [
+   "Decarbonization workbook for existing municipal buildings approved, signaling continued climate action commitment",
+   "LAMC Section 55.14 repealed in connection with Lopez v. City of Los Angeles lawsuit",
+   "Five council members absent for an extended stretch of votes, with one voting present on the first item only"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "la-primegov-18414": {
+  "digest": "City Council passed multiple items including amendments to the Fair Work Week Ordinance extending protections to fast food workers (one version failed 5-7 with six members opposing), approved the reappointment of Jenny Chavez to the Board of Public Works, and advanced the Oceanwide Plaza development project with economic incentives. The council also approved zoning changes for a Culver Boulevard property, designated a historic monument, funded various district-level services and community programs, and implemented street takeover deterrence measures in Harbor Gateway. Three council members were absent throughout the meeting.",
+  "notable": [
+   "Fair Work Week Ordinance amendments passed multiple times but one version failed 5-7, with Harris-Dawson, Hernandez, Jurado, Hutt, Raman, and Soto-Mart\u00ednez opposing.",
+   "Oceanwide Plaza economic development incentives approved unanimously (12-0) to facilitate hotel completion.",
+   "Council District 3 members Blumenfield, Price Jr., and Rodriguez were absent from all votes."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "pittsburgh-legistar-12076": {
+  "digest": "City Council unanimously passed 23 items including two major grant applications: up to $3 million for Boulevard of the Allies downtown renovation and $1.1 million for Sheraden Station and Wabash Street safety improvements. The council also approved significant spending increases for legal services ($1.1 million for labor dispute consulting and $135,000 for construction-related counsel), engineering contracts totaling over $4 million for various city projects, and redirected $200,000 from the Stop the Violence Trust Fund to Parks and Recreation for youth programs. Additional votes covered infrastructure work on multiple bridges and streets, training programs, and routine operational expenses.",
+  "notable": [
+   "$3 million state grant application for Boulevard of the Allies renovation approved unanimously.",
+   "$200,000 transferred from Stop the Violence Trust Fund to youth out-of-school programs at Dunlap Family Center.",
+   "All 23 items passed with 9 aye votes and no dissent or failed motions."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "pittsburgh-legistar-12069": {
+  "digest": "City Council approved three routine matters: a liquor license transfer from McCrossins Landing Pub to Silver Ashes Hospitality Group at a new location on Copeland Street; a $59,180 equipment lease increase for Public Works trailers; and a 90-day contract extension for the Acting Fire Chief through early December. All three passed unanimously with eight yes votes (one council member absent).",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "pittsburgh-legistar-12062": {
+  "digest": "The provided meeting record contains only a date and body name with no substantive information about what was discussed, decided, or voted on. Without details about motions, votes, resolutions, or council actions, there is nothing to report about what the City Council actually did at this meeting.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }

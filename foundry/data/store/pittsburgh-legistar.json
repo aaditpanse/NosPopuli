@@ -1562,10 +1562,118 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-5ec293abb732dd30",
+    "run_id": "run-674295cd40cb66c4",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "c91eb86283415d2f6c19e984c57853bec6cb294ba4ba6eb9a1aa97fea0d911f5"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-12076": {
+   "meeting_id": "pittsburgh-legistar-12076",
+   "body": "City Council",
+   "date": "2026-09-15",
+   "attendance": {
+    "Robert Charland": "present",
+    "Anthony Coghill": "present",
+    "Deborah L. Gross": "present",
+    "R. Daniel Lavelle": "present",
+    "Khari Mosley": "present",
+    "Kim Salinetro": "present",
+    "Erika Strassburger": "present",
+    "Barbara Warwick": "present",
+    "Bobby Wilson": "present"
+   },
+   "source_url": "https://pittsburgh.legistar.com/MeetingDetail.aspx?LEGID=12076&GID=115&G=B84377D7-CD7F-434A-A5AB-A7BCD775D91D",
+   "legistar_event_id": 12076,
+   "time": "10:00 AM",
+   "location": "Council Chambers",
+   "agenda_url": "https://pittsburgh.legistar1.com/pittsburgh/meetings/2026/9/12076_A_City_Council_26-09-15_Regular_Meeting_Agenda.pdf",
+   "minutes_url": "https://pittsburgh.legistar1.com/pittsburgh/meetings/2026/9/12076_M_City_Council_26-09-15_Meeting_Minutes.pdf",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "b98b7d85d01557b32bd5e53bda200417bf66104f5c8f5e042176a233a6c69b80"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-12069": {
+   "meeting_id": "pittsburgh-legistar-12069",
+   "body": "City Council",
+   "date": "2026-09-09",
+   "attendance": {
+    "Robert Charland": "present",
+    "Anthony Coghill": "absent",
+    "Deborah L. Gross": "present",
+    "R. Daniel Lavelle": "present",
+    "Khari Mosley": "present",
+    "Kim Salinetro": "present",
+    "Erika Strassburger": "present",
+    "Barbara Warwick": "present",
+    "Bobby Wilson": "present"
+   },
+   "source_url": "https://pittsburgh.legistar.com/MeetingDetail.aspx?LEGID=12069&GID=115&G=B84377D7-CD7F-434A-A5AB-A7BCD775D91D",
+   "legistar_event_id": 12069,
+   "time": "10:00 AM",
+   "location": "Council Chambers",
+   "agenda_url": "https://pittsburgh.legistar1.com/pittsburgh/meetings/2026/9/12069_A_City_Council_26-09-09_Regular_Meeting_Agenda.pdf",
+   "minutes_url": "https://pittsburgh.legistar1.com/pittsburgh/meetings/2026/9/12069_M_City_Council_26-09-09_Meeting_Minutes.pdf",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "b45f3e553b18a28bbcb566a356d05e1fd1aca4117d40b41fd8ff9703f0f2ea0c"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-12062": {
+   "meeting_id": "pittsburgh-legistar-12062",
+   "body": "City Council",
+   "date": "2026-09-01",
+   "attendance": {
+    "Robert Charland": "present",
+    "Anthony Coghill": "present",
+    "Deborah L. Gross": "present",
+    "R. Daniel Lavelle": "present",
+    "Khari Mosley": "present",
+    "Kim Salinetro": "present",
+    "Erika Strassburger": "present",
+    "Barbara Warwick": "present",
+    "Bobby Wilson": "present"
+   },
+   "source_url": "https://pittsburgh.legistar.com/MeetingDetail.aspx?LEGID=12062&GID=115&G=B84377D7-CD7F-434A-A5AB-A7BCD775D91D",
+   "legistar_event_id": 12062,
+   "time": "10:00 AM",
+   "location": "Council Chambers",
+   "agenda_url": "https://pittsburgh.legistar1.com/pittsburgh/meetings/2026/9/12062_A_City_Council_26-09-01_Regular_Meeting_Agenda.pdf",
+   "minutes_url": "https://pittsburgh.legistar1.com/pittsburgh/meetings/2026/9/12062_M_City_Council_26-09-01_Meeting_Minutes.pdf",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "c2524a01ac433ad20b67f65bcdd43c410418e523755d312dc228205acbbade16"
     }
    },
    "certification": {
@@ -50823,6 +50931,2949 @@
     "method": "cross-source",
     "note": null
    }
+  },
+  "pittsburgh-legistar-item-381907": {
+   "item_id": "pittsburgh-legistar-item-381907",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0871",
+   "title": "NOW, THEREFORE, BE IT RESOLVED, that the Council of the City of Pittsburgh does hereby declare the month of September 2026 to be \u201cAddiction Recovery Month\u201d in the City of Pittsburgh, and recognizes Daniel Garrighan, William Petrosky, and Jodie Pagano for their extraordinary efforts to support recovery in our region.",
+   "action": "Adopted",
+   "result": "pass",
+   "matter_type": "Proclamation",
+   "matter_status": "Adopted",
+   "action_text": "A motion was made that this matter be Adopted. The motion carried.",
+   "agenda_sequence": 5,
+   "legistar_matter_id": 33613,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "3beb945420e832afe167e64c8e5974965c37dc8636cb868e2424d34689ee064b"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381911": {
+   "item_id": "pittsburgh-legistar-item-381911",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0872",
+   "title": "Resolution amending Resolution 760 of 2025, which authorized the Mayor and the Director of the Department of Human Resources and Civil Service to enter into an Agreement with DAYFORCE for services relating to the administration of the City of Pittsburgh\u2019s Human Capital Management system which includes Payroll and Benefits, by increasing the approved amount by Six Hundred Seventy-Seven Thousand Seven Hundred Ninety dollars ($677,790.00), for a new total cost not to exceed Six Million Two Hundred Eighteen Thousand Five Hundred Forty dollars ($6,218,540.00) over twelve (12) years.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "In Standing Committee",
+   "action_text": "Read and referred to the Committee on Human Resources",
+   "agenda_sequence": 14,
+   "legistar_matter_id": 33614,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "3e604208cfdb476de644a86fd6e5eeb4f7867412599d7126d9dd37727fb2ea8b"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381913": {
+   "item_id": "pittsburgh-legistar-item-381913",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0873",
+   "title": "Resolution authorizing, pursuant to Ch. 210 (\u201cAcceptance of Gifts to City\u201d) of the City Code, the Mayor and the Director of the Department of Public Safety to accept a donation from SaveStation of an outdoor AED cabinet and a Zoll 3 AED valued at EIGHT THOUSAND THREE HUNDRED AND NINETY-NINE ($8,399.00) dollars, to be installed in a public area.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "In Standing Committee",
+   "action_text": "Read and referred to the Committee on Public Safety and Wellness",
+   "agenda_sequence": 16,
+   "legistar_matter_id": 33615,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "bde222de37812312c21fbab7f53d36aec3658e921918c63bf45c689785bc7cfb"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381914": {
+   "item_id": "pittsburgh-legistar-item-381914",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0874",
+   "title": "Resolution authorizing the Mayor and Director of Public Safety to enter into a Lease Agreement or Agreements between the City of Pittsburgh and East End Cooperative Ministries for space rental for the Office of Community Health & Safety, at a cost not to exceed TWENTY-THREE THOUSAND SEVEN HUNDRED FORTY-FIVE DOLLARS ($23,745.00) over two years.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "In Standing Committee",
+   "action_text": "Read and referred to the Committee on Public Safety and Wellness",
+   "agenda_sequence": 17,
+   "legistar_matter_id": 33616,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "052f67fded51ba716a24936ccd0fbeac071f314fdbe432b9f550902d0d8396df"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381916": {
+   "item_id": "pittsburgh-legistar-item-381916",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0875",
+   "title": "Resolution authorizing the Mayor, on behalf of the City of Pittsburgh, to enter into an agreement, agreements, and / or a memorandum of understanding with the University of Pittsburgh, on behalf of its Center on Race and Social Problems at the School of Social Work and the David. C. Frederick Honors College, for the purpose of hosting university students as part of a Civic Engagement Internship Program at no cost to the City.",
+   "action": "Waived under Rule 8",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Reported from Standing Committee",
+   "action_text": "A motion was made that this matter be Waived under Rule 8. The motion carried.",
+   "agenda_sequence": 21,
+   "legistar_matter_id": 33617,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "4e4008cb37722dd6474ed9ca92a1023d87c35fcde7e388f80fed22ff232ce7ff"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381918": {
+   "item_id": "pittsburgh-legistar-item-381918",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0876",
+   "title": "Resolution authorizing the Mayor, the Director of the Office of Management and Budget, the Director of the Department of Public Works, and the Director of the Department of City Planning to enter into an Agreement or Agreements with the Pennsylvania Department of Community and Economic Development for the purpose of receiving grant funds from the Community and Economic Assistance Program in the amount not to exceed TWO HUNDRED THOUSAND ($200,000.00) dollars for upgrades at Farmhouse Field in Highland Park, new water fountains, and the Allegheny Riverfront Trail Connectivity Planning Project.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "In Standing Committee",
+   "action_text": "Read and referred to the Committee on Public Works and Infrastructure",
+   "agenda_sequence": 23,
+   "legistar_matter_id": 33618,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "e4e1a273ca5bf746ed3e166d5b12a3fe8918e743d238ecb3af3224cc90b706b9"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381919": {
+   "item_id": "pittsburgh-legistar-item-381919",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0877",
+   "title": "Resolution authorizing The Mayor, the Director of the Office of Management and Budget and the Department of Mobility and Infrastructure to enter into an Agreement or Agreements with the Pennsylvania Department of Transportation for the purpose of receiving grant funds from the Multimodal Transportation Fund in the amount of THREE MILLION ($3,000,000.00) dollars for the renovation of the Boulevard of the Allies in the Central Business District in the City of Pittsburgh between Commonwealth and Grant Street. The grant requires a match from the City of Pittsburgh in the amount not to exceed NINE HUNDRED THOUSAND ($900,000.00) dollars for this stated purpose for a total project cost under this grant not to exceed THREE MILLION NINE HUNDRED THOUSAND ($3,900.000.00) dollars.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "In Standing Committee",
+   "action_text": "Read and referred to the Committee on Public Works and Infrastructure",
+   "agenda_sequence": 24,
+   "legistar_matter_id": 33619,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "10737dd752429d890d1db3394a34f4ea66cc6e0116a98610572a972ff1cf5724"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381920": {
+   "item_id": "pittsburgh-legistar-item-381920",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0878",
+   "title": "Resolution authorizing the Mayor, the Director of the Office of Management and Budget, and the Department of Mobility and Infrastructure to enter into an Agreement or Agreements with the Pennsylvania Department of Transportation\u2019s Green Light Go Program for the purpose of receiving grant funds in the amount of ONE MILLION FIVE HUNDRED THIRTY THREE THOUSAND THREE HUNDRED FIFTEEN DOLLARS AND SIXTY NINE CENTS ($1,533,315.69) for intersection upgrades at Bingham Street and 10th Street, Butler Street and Main Street, East Liberty Boulevard and Larimer Avenue in the City of Pittsburgh. The grant requires a match from the City of Pittsburgh in the amount of TWO HUNDRED FIFTY SEVEN THOUSAND NINE HUNDRED EIGHTY EIGHT DOLLARS AND NINETY NINE CENTS ($257,988.99) and pending grant transfers from local organizations in the amount of ONE HUNDRED TWENTY FIVE THOUSAND THREE HUNDRED THIRTY NINE DOLLARS AND NINETY FOUR CENTS ($125,339.94) for a total project cost of ONE MILLION NINE HUNDRED SIXTEEN THOUSAND SIX HUNDRED FORTY FOUR DOLLARS AND SIXTY TWO CENTS ($1,916,644.62).",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "In Standing Committee",
+   "action_text": "Read and referred to the Committee on Public Works and Infrastructure",
+   "agenda_sequence": 25,
+   "legistar_matter_id": 33620,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "13d355e99510f31a0fdaff75baedc3baf52b3751395a19ca34212f042998f988"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381923": {
+   "item_id": "pittsburgh-legistar-item-381923",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0879",
+   "title": "Resolution amending Resolution 77 of 2026, which authorized the Mayor and the City Solicitor to enter into a Professional Services Agreement with Fisher Phillips, LLP for legal consulting services in connection with labor disputes to extend the term, expand the scope of work, and allocate additional funding in an amount not to exceed ONE HUNDRED AND FIFTY THOUSAND DOLLARS ($150,000) over one [1] year.\r\n(Waiver of Competitive Process Received)\r\n(Executive Session scheduled for 9/15/26)",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "In Standing Committee",
+   "action_text": "Read and referred to the Committee on Finance and Law",
+   "agenda_sequence": 27,
+   "legistar_matter_id": 33621,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "a2099d228d604a6f5b9784b1a1c112d3dbdf1699c0fd7d7e16d3b423b24dc4ae"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381925": {
+   "item_id": "pittsburgh-legistar-item-381925",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0880",
+   "title": "Communication from Rea Price, Acting Director of the Office of Management and Budget, submitting to City Council the attached status update from the Grants Office for the week ended September 11, 2026.",
+   "action": "Read, Received and Filed",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Read, Received and Filed",
+   "action_text": "A motion was made that this matter be Read, Received and Filed. The motion carried.",
+   "agenda_sequence": 29,
+   "legistar_matter_id": 33622,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "50d543c323005c09c4879259ca76f322c3df6472d659e284a4955929152087d7"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381929": {
+   "item_id": "pittsburgh-legistar-item-381929",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0864",
+   "title": "Report of the Committee on Finance and Law for September 9, 2026 with an Affirmative Recommendation.",
+   "action": "Read, Received and Filed",
+   "result": "pass",
+   "matter_type": "Report",
+   "matter_status": "Read, Received and Filed",
+   "action_text": "A motion was made that this matter be Read, Received and Filed. The motion carried.",
+   "agenda_sequence": 33,
+   "legistar_matter_id": 33606,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "203427634ec257940842dd4e8b47b924dd3fd39750a8a348efe27623f5fdffe4"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381930": {
+   "item_id": "pittsburgh-legistar-item-381930",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0829",
+   "title": "Resolution further amending Resolution No. 886 of 2021, effective December 27, 2021, as amended, entitled \u201cResolution adopting and approving the 2022 Capital Budget and the 2022 Community Development Block Grant Program, and the 2022 through 2027 Capital Improvement Program\u201d by reducing PARK RECONSTRUCTION - PARKS TA by Ten Thousand Dollars ($10,000.00), and increasing SPORTS FACILITIES by Ten Thousand Dollars ($10,000.00).",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 34,
+   "legistar_matter_id": 33571,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "30d5366aa23c8691e82dbcf41caa17447415dc3b3314fd3b58729f5c9650726d"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381931": {
+   "item_id": "pittsburgh-legistar-item-381931",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0830",
+   "title": "Resolution amending 741 of 2025, which amended Resolution 413 of 2025, which authorized the Mayor and the City Solicitor to enter into a Professional Services Agreement with Block & Associates for legal services in connection with a current City construction project, by further authorizing an amendment to said Professional Services Agreement to amend the scope of work and allocate additional funding for a new not-to-exceed cost of ONE HUNDRED AND THIRTY-FIVE THOUSAND DOLLARS AND ZERO CENTS ($135,000.00) over two (2) years.\r\n(Executive Session held 9/1/26)\r\n(Waiver of Competitive Process Received)",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 35,
+   "legistar_matter_id": 33572,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "2ae591da378d1fcb34cc8141f6e0747cccc1e67d2edfaf4df3d03b179cc1b561"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381932": {
+   "item_id": "pittsburgh-legistar-item-381932",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0831",
+   "title": "Resolution amending Resolution 78 of 2026, which authorized the Mayor and the City Solicitor to enter into a Professional Services Agreement with Fisher Phillips, LLP for legal consulting services in connection with labor disputes to amend the scope of work, adjust hourly rates, extend the term, and allocate additional funding in an amount not to exceed ONE MILLION AND TEN THOUSAND FOUR-HUNDRED DOLLARS ($1,010,400.00) over three (3) years.\r\n(Executive Session held 9/1/26)\r\n(Waiver of Competitive Process Received)",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 36,
+   "legistar_matter_id": 33573,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "332f3329225611276b5ff00874f5cf34af5e65ac45e3040a56ecb5a832bf2e53"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381934": {
+   "item_id": "pittsburgh-legistar-item-381934",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0865",
+   "title": "Report of the Committee on Public Safety and Wellness for September 9, 2026 with an Affirmative Recommendation.",
+   "action": null,
+   "result": null,
+   "matter_type": "Report",
+   "matter_status": "Read, Received and Filed",
+   "action_text": null,
+   "agenda_sequence": 38,
+   "legistar_matter_id": 33607,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "c29515a3093bb190bcbcd57c45a476ec37bc2e92a66f92bbc133abb5ac190609"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381935": {
+   "item_id": "pittsburgh-legistar-item-381935",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0806",
+   "title": "Ordinance amending the Pittsburgh City Code Title Six: Conduct, Article I: Regulated Rights and Actions, Chapter 625: Red Light Enforcement Systems.",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Ordinance",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 39,
+   "legistar_matter_id": 33548,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "ebc383b0d890fc6137099da2dbf32e964fd5826eabf2087725aeb3b9dd00395f"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381936": {
+   "item_id": "pittsburgh-legistar-item-381936",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0816",
+   "title": "Resolution authorizing the issuance of a warrant in favor of Bucks County Community College in an amount not to exceed THIRTY-ONE THOUSAND SEVEN HUNDRED FIVE DOLLARS AND NO CENTS ($31,705.00), for rescue certification and training for the Bureau of Emergency Medical Services.",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 40,
+   "legistar_matter_id": 33558,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "c60f7adcd7d471fe486e57404d2320b5b8a90298306f6a49b3104b5780dcd8c2"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381938": {
+   "item_id": "pittsburgh-legistar-item-381938",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0866",
+   "title": "Report of the Committee on Public Works and Infrastructure for September 9, 2026 with an Affirmative Recommendation.",
+   "action": "Read, Received and Filed",
+   "result": "pass",
+   "matter_type": "Report",
+   "matter_status": "Read, Received and Filed",
+   "action_text": "A motion was made that this matter be Read, Received and Filed. The motion carried.",
+   "agenda_sequence": 42,
+   "legistar_matter_id": 33608,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "9d77b82b2b60143ff6102bc1ff9a44b0bbb6be5c5caa6bfdf15254265927621b"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381939": {
+   "item_id": "pittsburgh-legistar-item-381939",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0822",
+   "title": "Resolution authorizing the Mayor of the City of Pittsburgh, and the Office of Management and Budget to apply for a grant from Pennsylvania Department of Economic Development\u2019s Multimodal Transportation Fund for the Renovation of the Boulevard of the Allies in the Central Business District.  The grant proposal includes an ask not to exceed THREE MILLION ($3,000,000.00) dollars for this stated purpose.",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 43,
+   "legistar_matter_id": 33564,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "d7e9e4a0fef52761b12bea8e09d6456cef2997f63baef26dcc0e639108e6fb05"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381940": {
+   "item_id": "pittsburgh-legistar-item-381940",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0823",
+   "title": "Resolution authorizing the Mayor of the City of Pittsburgh, and the Office of Management and Budget to apply for a grant from Pennsylvania Department of Economic Development\u2019s Multimodal Transportation Fund for the Sheraden Station Plaza Intersection Safety Improvement and the Wabash Street Community Connector projects. The grant proposal includes an ask not to exceed ONE MILLION ONE HUNDRED TWENTY TWO THOUSAND NINE HUNDRED NINETY SIX ($1,122,996.00) dollars for this stated purpose.",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 44,
+   "legistar_matter_id": 33565,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "6f6648181185563288abcaf3789aef4800cdb5a5b89333bf917f08089f9f86ce"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381941": {
+   "item_id": "pittsburgh-legistar-item-381941",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0824",
+   "title": "Resolution approving the recommendation made by the Director of the Department of Mobility and Infrastructure that the concrete portion of Fernhill Avenue from Belbrook Street to Elmbank Street should be paved with asphalt in accordance with Section 417.06 of the Pittsburgh Code of Ordinances.",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 45,
+   "legistar_matter_id": 33566,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "53d10734a0a784d02e35bc72c857f2852d30afc1c5135bd96649500b8a40efc8"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381942": {
+   "item_id": "pittsburgh-legistar-item-381942",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0825",
+   "title": "Resolution providing for an amended agreement with CSXT Transportation, Inc. for Preliminary Engineering work on the Frazier Street/Swinburne Bridge Replacement Project; and providing for the payment of the costs thereof, not to exceed Thirty-Two Thousand Seven Hundred Eighty Dollars ($32,780.00), an increase of Twelve Thousand Seven Hundred Sixty Dollars ($12,760.00) from the previously executed agreement, reimbursable at 95%.",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 46,
+   "legistar_matter_id": 33567,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "f92aec376ec04271828fad990f006db8c22d6250630714790a739eeaf4218f45"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381943": {
+   "item_id": "pittsburgh-legistar-item-381943",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0826",
+   "title": "Resolution authorizing the Mayor and the Director of the Department of Mobility and Infrastructure, on behalf of the City of Pittsburgh, to enter into a supplemental agreement or agreements with CDR Maguire, Inc., for Project Design Management Services and Reviews in connection with various City of Pittsburgh projects to add funding for the Preliminary Engineering phase increasing the total not to exceed to Three Million Nine Hundred Sixty-Eight Thousand Two Hundred Thirty-Seven Dollars and Thirteen Cents ($3,968,237.13), a net increase of Sixty-Seven Thousand Seven Hundred Seventy-Three Dollars and Ninety-Four Cents ($67,773.94), reimbursable at various rates.",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 47,
+   "legistar_matter_id": 33568,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "0fbcd8a09616c0ca342cdbb628613d3cffc30ca60bfdb6997f680b1c59e46608"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381944": {
+   "item_id": "pittsburgh-legistar-item-381944",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0827",
+   "title": "Resolution authorizing the Mayor and the Director of the Department of Mobility and Infrastructure, on behalf of the City of Pittsburgh, to enter into a supplemental agreement or agreements with CDR Maguire, Inc., for Project Design Management Services and Reviews in connection with various City of Pittsburgh projects to add funding for the Preliminary Engineering and Final Design phases increasing the total not to exceed Four Million Sixty-Four Thousand Eight Hundred Seventy-Six Dollars and Ninety-One Cents ($4,064,876.91), an increase of Zero Dollars ($0.00) from the previously authorized agreement, reimbursable at 100%.",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 48,
+   "legistar_matter_id": 33569,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "efcb048135ee1916335bb4f92725b21d1706955c0e358b2aaf86ab4f315b5957"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381945": {
+   "item_id": "pittsburgh-legistar-item-381945",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0828",
+   "title": "Resolution providing for an amended agreement with CSXT Transportation, Inc. for Preliminary Engineering work on the West Carson Street Bridge Project; and providing for the payment of the costs thereof, not to exceed Twenty-Eight Thousand Six Hundred Dollars ($28,600.00), an increase of Twelve Thousand Three Hundred Twenty Dollars ($12,320.00) from the previously executed agreement, reimbursable at 95%.",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 49,
+   "legistar_matter_id": 33570,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "2d0e3fc06ca5e48b3c751b8251248224337a1db7187bb9f0ccd91b72cb528f52"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381947": {
+   "item_id": "pittsburgh-legistar-item-381947",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0867",
+   "title": "Report of the Committee on Human Resources for September 9, 2026 with an Affirmative Recommendation.",
+   "action": "Read, Received and Filed",
+   "result": "pass",
+   "matter_type": "Report",
+   "matter_status": "Read, Received and Filed",
+   "action_text": "A motion was made that this matter be Read, Received and Filed. The motion carried.",
+   "agenda_sequence": 52,
+   "legistar_matter_id": 33609,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "3646e3810640b12c82dc4c9d640506f793b527735e7a3bc9ad3a926f0a1c75b7"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381948": {
+   "item_id": "pittsburgh-legistar-item-381948",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0838",
+   "title": "Resolution authorizing the Mayor and the Director of Human Resources and Civil Service, for the issuance of a warrant in favor of the NeoGov, for the online employment application database, personnel requisition database, Civil Service examination question database, exam scheduling and scoring processes, and applicant and examination statistics reporting at a cost not to exceed Fifty-Seven Thousand Nine Hundred Eight Dollars and Zero Cents ($57,908.00).",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 53,
+   "legistar_matter_id": 33580,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "a0cf8c2e87a33cfe4bf9868cf40f932e210fd0759fe7d9231254b232458589a4"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381950": {
+   "item_id": "pittsburgh-legistar-item-381950",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0868",
+   "title": "Report of the Committee on Land Use and Economic Development for September 9, 2026 with an Affirmative Recommendation.",
+   "action": "Read, Received and Filed",
+   "result": "pass",
+   "matter_type": "Report",
+   "matter_status": "Read, Received and Filed",
+   "action_text": "A motion was made that this matter be Read, Received and Filed. The motion carried.",
+   "agenda_sequence": 55,
+   "legistar_matter_id": 33610,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "2d0f3908457860cae4302a3ef8c3976296a0733e4975502f7e40bacc9c16ab4b"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381951": {
+   "item_id": "pittsburgh-legistar-item-381951",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0832",
+   "title": "Resolution authorizing the Office of the Mayor, on behalf of the City of Pittsburgh, to enter into two-year reimbursement agreements for the 2026 Love Your Block program at a cost not to exceed Twenty Thousand Dollars ($20,000).",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 56,
+   "legistar_matter_id": 33574,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "ef88a86455bd727910698149abc9a41ae9fba071427c686780e645133537bc35"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381952": {
+   "item_id": "pittsburgh-legistar-item-381952",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0833",
+   "title": "Resolution authorizing the Mayor and the Director of Permits, Licenses, and Inspections, for the issuance of a warrant in favor of the Building & Fire Code Academy (\u201cBFCA\u201d), to provide a 2-Day Legal Aspects of Code Enforcement Training for all PLI staff that are required to have International Code Council (ICC) certifications as part of their job description at a cost not to exceed Seven Thousand Dollars and Zero Cents ($7,000.00).",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 57,
+   "legistar_matter_id": 33575,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "a969daf3d0f627038baeb92be90fdb198db3290d3385a6fdaea081438102e164"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381954": {
+   "item_id": "pittsburgh-legistar-item-381954",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0869",
+   "title": "Report of the Committee on Recreation, Youth, and Senior Services for September 9, 2026 with an Affirmative Recommendation.",
+   "action": "Read, Received and Filed",
+   "result": "pass",
+   "matter_type": "Report",
+   "matter_status": "Read, Received and Filed",
+   "action_text": "A motion was made that this matter be Read, Received and Filed. The motion carried.",
+   "agenda_sequence": 59,
+   "legistar_matter_id": 33611,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "913463d61957859309df8c9335954c052730c063d08e029aa31378e4df344c0f"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381955": {
+   "item_id": "pittsburgh-legistar-item-381955",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0805",
+   "title": "Resolution transferring the amount of two hundred thousand dollars ($200,000) to the Department of Parks and Recreation (CitiParks) from the Stop the Violence Trust Fund for staffing and supplies to support out-of-school time services and programming at The Dunlap Family Center.",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 60,
+   "legistar_matter_id": 33547,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "f789b597bb7a6cb3d299a6cb9086c8fa4f82e5788e218874a2819fb5f9c00ce5"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381957": {
+   "item_id": "pittsburgh-legistar-item-381957",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0870",
+   "title": "Report of the Committee on Intergovernmental and Educational Affairs for September 9, 2026 with an Affirmative Recommendation.",
+   "action": "Read, Received and Filed",
+   "result": "pass",
+   "matter_type": "Report",
+   "matter_status": "Read, Received and Filed",
+   "action_text": "A motion was made that this matter be Read, Received and Filed. The motion carried.",
+   "agenda_sequence": 62,
+   "legistar_matter_id": 33612,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "19d4b92fe351404a87b19a4a2a7e43d9550ad833e0aec15b07f3910b53fcf8d5"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381958": {
+   "item_id": "pittsburgh-legistar-item-381958",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0817",
+   "title": "Resolution authorizing the issuance of a warrant payable in favor of Allegheny League of Municipalities for one year membership dues in an amount not to exceed NINE THOUSAND DOLLARS and ZERO CENTS ($9,000.00).",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 63,
+   "legistar_matter_id": 33559,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "f2a97ef0b17332d6277da7a928029d86244adc762d89dea02f1d1b46bc75069f"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381959": {
+   "item_id": "pittsburgh-legistar-item-381959",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0818",
+   "title": "Resolution adopting Plan Revision to the City of Pittsburgh\u2019s Official Sewage Facilities Plan for 6212 Walnut Street, Pittsburgh, PA 15206, at no cost to the City.",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 64,
+   "legistar_matter_id": 33560,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "7dd1e796bb619e913781da582726761ec9aa4d12a0f51a13eb38bfae52352155"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381960": {
+   "item_id": "pittsburgh-legistar-item-381960",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0819",
+   "title": "Resolution adopting Plan Revision to the City of Pittsburgh\u2019s Official Sewage Facilities Plan for 2225 Smallman Street, Pittsburgh PA 15222, at no cost to the City.",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 65,
+   "legistar_matter_id": 33561,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "4941aafde9569fcdb58ec1cceaa084c40a57c26862c5215edc63684e2c2693ee"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381961": {
+   "item_id": "pittsburgh-legistar-item-381961",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0820",
+   "title": "Resolution adopting Plan Revision to the City of Pittsburgh\u2019s Official Sewage Facilities Plan for 132-134 Prospect Street, Pittsburgh, PA 15211, at no cost to the City.",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 66,
+   "legistar_matter_id": 33562,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "f5fbf86fddf4cd3ec40606f18dd18ecf6d5461d3ca90fd885f55e4bb51bf67ba"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381962": {
+   "item_id": "pittsburgh-legistar-item-381962",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0821",
+   "title": "Resolution adopting Plan Revision to the City of Pittsburgh\u2019s Official Sewage Facilities Plan for 630 North Aiken Avenue, Pittsburgh, PA 15214, at no cost to the City.",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 67,
+   "legistar_matter_id": 33563,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "744bb858b04f386424b75b528099a4fff464c35cdf8a67d52a8fd4bb4baeb4fb"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381967": {
+   "item_id": "pittsburgh-legistar-item-381967",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0844",
+   "title": "Resolution authorizing the Mayor and the Director of the Department of Finance, on behalf of the City of Pittsburgh, to enter into a temporary easement agreement with North River Pittsburgh I, LLC for temporary placement of City vehicles onto certain properties along 32nd and 31st Street in the 6th Ward of Pittsburgh in order to allow necessary resurfacing work to occur at the City\u2019s Environmental Services Center at 3001 Railroad Street.",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 50,
+   "legistar_matter_id": 33586,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "9fa9302c36172afaee0c5c2e276421ca313148c0f94209083d2a97cd4f2e2aa1"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381972": {
+   "item_id": "pittsburgh-legistar-item-381972",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0881",
+   "title": "WHEREAS, the Observatory Hill Development Corporation (\u201cOHDC\u201d) is engaged in an ongoing issue with the Housing Authority of the City of Pittsburgh (\u201cHACP\u201d) concerning the rents of two Housing Choice Voucher units at 3917-3925 Perrysville Ave that could ultimately result in the displacement of two long-term residents; and",
+   "action": "Adopted",
+   "result": "pass",
+   "matter_type": "Will of Council",
+   "matter_status": "Adopted",
+   "action_text": "A motion was made that this matter be Adopted. The motion carried.",
+   "agenda_sequence": 10,
+   "legistar_matter_id": 33623,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "c6a1a678f826a13cb562517113cc2d261cb49cb5719f80caafb3ceaedcd2db5a"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381973": {
+   "item_id": "pittsburgh-legistar-item-381973",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0882",
+   "title": "NOW, THEREFORE BE IT RESOLVED, that the Council of the City of Pittsburgh does hereby declare Saturday September 19, 2026 to be \u201cWalk & Roll for GBS/CIDP Day\u201d in the City of Pittsburgh.",
+   "action": "Adopted",
+   "result": "pass",
+   "matter_type": "Proclamation",
+   "matter_status": "Adopted",
+   "action_text": "A motion was made that this matter be Adopted. The motion carried.",
+   "agenda_sequence": 6,
+   "legistar_matter_id": 33624,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "ab22e60a9ec769b2e5c42657a5e2a16bae044f2cd75e4032bcf1ae8a7e3a2af2"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381974": {
+   "item_id": "pittsburgh-legistar-item-381974",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0883",
+   "title": "NOW, THEREFORE, BE IT RESOLVED, that the Council of the City of Pittsburgh commends Maria Cohen for seven years of dedicated service to Squirrel Hill and recognizes her lasting contributions to the neighborhood and its residents; and,\r\n\r\nBE IT FURTHER RESOLVED, that the Council of the City of Pittsburgh does hereby declare Tuesday, September 15, 2026, to be \u201cMARIA COHEN DAY\u201d in the City of Pittsburgh.",
+   "action": "Adopted",
+   "result": "pass",
+   "matter_type": "Proclamation",
+   "matter_status": "Adopted",
+   "action_text": "A motion was made that this matter be Adopted. The motion carried.",
+   "agenda_sequence": 7,
+   "legistar_matter_id": 33625,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "e6c54d0be8a9ed3d3535929521acec36d4697f8eec08f55c0302554e29bf6310"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381977": {
+   "item_id": "pittsburgh-legistar-item-381977",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0884",
+   "title": "NOW, THEREFORE BE IT RESOLVED, that the Council of the City of Pittsburgh does hereby celebrate Annie \u201cLois\u201d Carter on the milestone of her 90th Birthday and thank her for her service to our city; and,\r\n\r\nBE IT FURTHER RESOLVED that the Council of the City of Pittsburgh does hereby declare, September 19, 2026, to be \u201cAnnie \u2018Lois\u2019 Carter Day\u201d in the City of Pittsburgh.",
+   "action": "Adopted",
+   "result": "pass",
+   "matter_type": "Proclamation",
+   "matter_status": "Adopted",
+   "action_text": "A motion was made that this matter be Adopted. The motion carried.",
+   "agenda_sequence": 8,
+   "legistar_matter_id": 33626,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "2ea2637832b839a3e068d55c9b2b4bb32f9d9d0e4be73838210687da2a81eb1d"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381979": {
+   "item_id": "pittsburgh-legistar-item-381979",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0885",
+   "title": "Resolution authorizing Council\u2019s consent to an extension, pursuant to \u00a7 922.05.D of the Pittsburgh Code of Ordinances (the \u201cZoning Code\u201d), of the deadline for the Planning Commission to act on Council Bill #2026-0009.",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 19,
+   "legistar_matter_id": 33627,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "019218362b7a8fdabe6f8990cc48543e1eb065606c1f7411c1e6a4f22910b68f"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-382008": {
+   "item_id": "pittsburgh-legistar-item-382008",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0865",
+   "title": "Report of the Committee on Public Safety and Wellness for September 9, 2026 with an Affirmative Recommendation.",
+   "action": "Read, Received and Filed",
+   "result": "pass",
+   "matter_type": "Report",
+   "matter_status": "Read, Received and Filed",
+   "action_text": "A motion was made that this matter be Read, Received and Filed. The motion carried.",
+   "agenda_sequence": null,
+   "legistar_matter_id": 33607,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "e95d1fda9f4e9ff590670da2ccfbbc351621503443f271f5f1e0c20c126ce166"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-382009": {
+   "item_id": "pittsburgh-legistar-item-382009",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "file_number": "2026-0875",
+   "title": "Resolution authorizing the Mayor, on behalf of the City of Pittsburgh, to enter into an agreement, agreements, and / or a memorandum of understanding with the University of Pittsburgh, on behalf of its Center on Race and Social Problems at the School of Social Work and the David. C. Frederick Honors College, for the purpose of hosting university students as part of a Civic Engagement Internship Program at no cost to the City.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Reported from Standing Committee",
+   "action_text": "Read and referred to the Committee on Intergovernmental and Educational Affairs",
+   "agenda_sequence": null,
+   "legistar_matter_id": 33617,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "d5a85847dc91d2242b01214ebf3147be1996f8457b9cf1c6a3c91d886b8d8071"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381671": {
+   "item_id": "pittsburgh-legistar-item-381671",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0860",
+   "title": "NOW, THEREFORE, BE IT RESOLVED that the City of Pittsburgh hereby honors the service and dedication of Saint Bede\u2019s School. And congratulates you on your 100th Year Anniversary.",
+   "action": "Adopted",
+   "result": "pass",
+   "matter_type": "Proclamation",
+   "matter_status": "Adopted",
+   "action_text": "A motion was made that this matter be Adopted. The motion carried.",
+   "agenda_sequence": 5,
+   "legistar_matter_id": 33602,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "e47aca3c79abe9be076955162a042b72fc912ddcc0d535890c6123aa38e96dd1"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381672": {
+   "item_id": "pittsburgh-legistar-item-381672",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0861",
+   "title": "NOW, THEREFORE, BE IT RESOLVED, that the Council of the City of Pittsburgh does hereby commend Vernard Alexander for a job well done in the community engagement arena & hereby declares September 6, 2026, to be \u201cVernard Alexander Day\u201d in the City of Pittsburgh.",
+   "action": "Adopted",
+   "result": "pass",
+   "matter_type": "Proclamation",
+   "matter_status": "Adopted",
+   "action_text": "A motion was made that this matter be Adopted. The motion carried.",
+   "agenda_sequence": 6,
+   "legistar_matter_id": 33603,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "190723fe556019925282761ae794b3d9715618c96816ba423579899cc0e322a6"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381673": {
+   "item_id": "pittsburgh-legistar-item-381673",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0862",
+   "title": "NOW, THEREFORE BE IT RESOLVED, that the Council of the City of Pittsburgh does hereby declare September 12th, 2026 to be \u201cAlphabet Trail and Tales Day\u201d in the City of Pittsburgh.",
+   "action": "Adopted",
+   "result": "pass",
+   "matter_type": "Proclamation",
+   "matter_status": "Adopted",
+   "action_text": "A motion was made that this matter be Adopted. The motion carried.",
+   "agenda_sequence": 7,
+   "legistar_matter_id": 33604,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "7d4b852a3fa6b9710ba2e0df8feb848433d9319be4b3554ce0552872d695ca07"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381677": {
+   "item_id": "pittsburgh-legistar-item-381677",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0838",
+   "title": "Resolution authorizing the Mayor and the Director of Human Resources and Civil Service, for the issuance of a warrant in favor of the NeoGov, for the online employment application database, personnel requisition database, Civil Service examination question database, exam scheduling and scoring processes, and applicant and examination statistics reporting at a cost not to exceed Fifty-Seven Thousand Nine Hundred Eight Dollars and Zero Cents ($57,908.00).",
+   "action": "Waived under Rule 8",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Waived under Rule 8. The motion carried.",
+   "agenda_sequence": 11,
+   "legistar_matter_id": 33580,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "3490b4fd4465315ed2ff4bb2bb571075c6eef1525b46d8370ea3d2f28afe0463"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381679": {
+   "item_id": "pittsburgh-legistar-item-381679",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0839",
+   "title": "Resolution authorizing the Mayor of the City of Pittsburgh, and the Office of Management and Budget to apply for a grant from the Redevelopment Authority of Allegheny County\u2019s Gaming Economic Development Tourism Fund for the Pittsburgh EMS Hazardous Material Medical Group Project. The grant proposal includes an ask not to exceed ONE HUNDRED SEVENTY NINE THOUSAND EIGHT HUNDRED TWENTY SIX DOLLARS AND ELEVEN CENTS ($179,826.11) for this stated purpose.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Reported from Standing Committee",
+   "action_text": "Read and referred to the Committee on Public Safety and Wellness",
+   "agenda_sequence": 13,
+   "legistar_matter_id": 33581,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "84ef731f910810e0a321a3222426f8fdc1e277f32ca2c92f50bf21d7c9d9a3ac"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381680": {
+   "item_id": "pittsburgh-legistar-item-381680",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0840",
+   "title": "Resolution authorizing, pursuant to Ch. 210 (\u201cAcceptance of Gifts to City\u201d) of the City Code, the Mayor and the Director of the Department of Public Safety to accept a donation from The University of Pittsburgh Medical Center of 229 trauma kits, associated training, and ongoing supplies to restock the kits, with a value not to exceed ONE HUNDRED THOUSAND ($100,000.00) dollars.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Reported from Standing Committee",
+   "action_text": "Read and referred to the Committee on Public Safety and Wellness",
+   "agenda_sequence": 14,
+   "legistar_matter_id": 33582,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "07cd985b52e8abecc2d37cf3842a87fa15f80fb72a260f80bd4662c4a47e93da"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381682": {
+   "item_id": "pittsburgh-legistar-item-381682",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0841",
+   "title": "Resolution amending Resolution No. 579 of 2025, which authorized the City of Pittsburgh to extend a Professional Service Agreement(s) with STR Grants, LLC for software services relating to the eProperties Plus profiling system, by extending the term by one year at an additional cost not to exceed Sixty-Two Thousand, Five Hundred and Forty-Two Dollars and Sixty-One Cents ($62,542.61).",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Reported from Standing Committee",
+   "action_text": "Read and referred to the Committee on Innovation, Performance, Asset Management, and Technology",
+   "agenda_sequence": 16,
+   "legistar_matter_id": 33583,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "4f7629e493c400d34562687cc363cf43726994aa420d8252b824b06d295d9361"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381683": {
+   "item_id": "pittsburgh-legistar-item-381683",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0842",
+   "title": "Resolution amending Resolution 410-2024, authorizing the Mayor and the Director of the Department of Innovation & Performance, on behalf of the City of Pittsburgh, to enter into an agreement or agreements or amendments thereto with Social Pinpoint for EngagePGH online engagement platform subscription with enhanced translation, by increasing the total amount by Ten Thousand Six Hundred Seventy-Two Dollars ($10,672.00) at a cost not-to-exceed One Hundred Twenty-Four Thousand Nine Hundred Seventy-Two Dollars ($124,972.00) over five (5) years, subject to future appropriation by City Council.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Reported from Standing Committee",
+   "action_text": "Read and referred to the Committee on Innovation, Performance, Asset Management, and Technology",
+   "agenda_sequence": 17,
+   "legistar_matter_id": 33584,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "3041070970eb4bcf51a9f51a5ed423e089bc258606c1b69afed01075a091bd95"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381684": {
+   "item_id": "pittsburgh-legistar-item-381684",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0843",
+   "title": "Resolution amending Resolution 664-2025, authorizing the Mayor and the Director of the Department of Innovation & Performance, on behalf of the City of Pittsburgh, to enter into an agreement or agreements or amendments thereto with Change Agents Training for access to their Learning Management System and consultative assistance to adapt the City of Pittsburgh Gold Belt Workshop for e-Learning, by increasing the approved amount by Eighteen Thousand Dollars ($18,000) for an amended total cost not-to-exceed One Hundred and Eight Thousand Dollars ($108,000) over six (6) years.\r\n(Waiver of Competitive Process Received)",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Reported from Standing Committee",
+   "action_text": "Read and referred to the Committee on Innovation, Performance, Asset Management, and Technology",
+   "agenda_sequence": 18,
+   "legistar_matter_id": 33585,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "a1e095f2fbee27fae3f254e72a0240b0120b2dc8db9b5b17cadeabf1dbd03107"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381686": {
+   "item_id": "pittsburgh-legistar-item-381686",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0844",
+   "title": "Resolution authorizing the Mayor and the Director of the Department of Finance, on behalf of the City of Pittsburgh, to enter into a temporary easement agreement with North River Pittsburgh I, LLC for temporary placement of City vehicles onto certain properties along 32nd and 31st Street in the 6th Ward of Pittsburgh in order to allow necessary resurfacing work to occur at the City\u2019s Environmental Services Center at 3001 Railroad Street.",
+   "action": "Waived under Rule 8",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Waived under Rule 8. The motion carried.",
+   "agenda_sequence": 20,
+   "legistar_matter_id": 33586,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "de251618dda058e7ea55df10e24a0962c83a88dfcb1311100820459f799d0388"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381687": {
+   "item_id": "pittsburgh-legistar-item-381687",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0845",
+   "title": "Resolution authorizing the Mayor of the City of Pittsburgh, and the Office of Management and Budget to apply for a grant from the Redevelopment Authority of Allegheny County\u2019s Gaming Economic Development Tourism Fund for the Schenley Heights Pavilion at Robert E. Williams Memorial Park. The grant proposal includes an ask not to exceed FIVE HUNDRED THOUSAND ($500,000.00) dollars for this stated purpose.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Reported from Standing Committee",
+   "action_text": "Read and referred to the Committee on Public Works and Infrastructure",
+   "agenda_sequence": 21,
+   "legistar_matter_id": 33587,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "2e95c8d16c41aa0617529f92cae1065250f634473b3c1b35619a50eb824dc8cf"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381688": {
+   "item_id": "pittsburgh-legistar-item-381688",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0846",
+   "title": "Resolution authorizing the taking, appropriating, and condemning by the City of Pittsburgh of certain property rights in temporary construction easements and public right of way necessary for the completion of the comprehensive rehabilitation project for the Swindell Bridge, in the 26 Ward, for public transportation purposes through eminent domain and further authorizing the payment of just compensation and necessary and incidental acquisition costs related thereto at an amount to be distributed amongst property owners that in aggregate shall not to exceed Five Thousand Four Hundred Dollars ($5,400.00), reimbursable at 95%.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Reported from Standing Committee",
+   "action_text": "Read and referred to the Committee on Public Works and Infrastructure",
+   "agenda_sequence": 22,
+   "legistar_matter_id": 33588,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "608a8824b88705030b8d9c6a4c14b43a5c0b95cba1149b293268d3512a7a7862"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381691": {
+   "item_id": "pittsburgh-legistar-item-381691",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0847",
+   "title": "Resolution authorizing the issuance of a warrant payable in favor of Vibrant Pittsburgh for one year membership dues in an amount not to exceed FIFTY THOUSAND DOLLARS and ZERO CENTS ($50,000.00).",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Held in Standing Committee",
+   "action_text": "Read and referred to the Committee on Finance and Law",
+   "agenda_sequence": 24,
+   "legistar_matter_id": 33589,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "07f8666ff5996fc0096e99f3bb194981cf7d99e3ccbb5b39e29dd090d85c654b"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381692": {
+   "item_id": "pittsburgh-legistar-item-381692",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0848",
+   "title": "Resolution authorizing the issuance of a warrant in favor of Regina Stewart in an amount not to exceed TWO THOUSAND NINE HUNDRED SIXTY-ONE DOLLARS AND THRITY-FOUR CENTS ($2,961.34) over one year, in full and final settlement of a claim (2025-CLAIM-0319) for damage to her parked vehicle near 1029 Findley Drive from a City Fire vehicle on or about November 17, 2025.\n(Executive Session held 9/9/26)",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Reported from Standing Committee",
+   "action_text": "Read and referred to the Committee on Finance and Law",
+   "agenda_sequence": 25,
+   "legistar_matter_id": 33590,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "7d827c7fac320bb3200d9686dd674bebefe7c547015ba5a603d3333b661b72db"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381693": {
+   "item_id": "pittsburgh-legistar-item-381693",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0849",
+   "title": "Resolution authorizing the issuance of a warrant in favor of James Matthews, Jr. in an amount not to exceed SEVEN THOUSAND SIX HUNDRED FIFTEEN DOLLARS AND SIXTY-ONE CENTS ($7,615.61) over one year, in full and final settlement of a claim (2026-CLAIM-0029) for damage to his parked vehicle near 104 East Woodford Avenue from a City DPW salt truck vehicle on or about December 3, 2025.\n(Executive Session held 9/9/26)",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Reported from Standing Committee",
+   "action_text": "Read and referred to the Committee on Finance and Law",
+   "agenda_sequence": 26,
+   "legistar_matter_id": 33591,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "7551ea7412e86a66201c8f1de36ecdc3dec772ded78c97a6dec23f4ffae311ed"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381694": {
+   "item_id": "pittsburgh-legistar-item-381694",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0850",
+   "title": "Resolution authorizing the issuance of a warrant in favor of Anthony Rollins in an amount not to exceed FIVE THOUSAND EIGHT HUNDRED SIXTY-NINE DOLLARS AND NINETY-EIGHT CENTS ($5,869.98) over one year, in full and final settlement of a claim (2026-CLAIM-0030) for damage to his parked vehicle on Kenberma and Cape May Avenue from a City DPW vehicle on January 12, 2026.\n(Executive Session held 9/9/26)",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Reported from Standing Committee",
+   "action_text": "Read and referred to the Committee on Finance and Law",
+   "agenda_sequence": 27,
+   "legistar_matter_id": 33592,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "efbaae0e48e9a40fa8ecdf2ec08ddd86b49807c374b028de554546b4971666ce"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381698": {
+   "item_id": "pittsburgh-legistar-item-381698",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0851",
+   "title": "Resolution reappointing Tanika Harris to the Housing Opportunity Fund Advisory Board with a term to expire September 6, 2030.",
+   "action": "Approved",
+   "result": "pass",
+   "matter_type": "Appointment-Requiring Vote",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Approved. The motion carried.",
+   "agenda_sequence": 29,
+   "legistar_matter_id": 33593,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "a1ad289b8117a1968399c085e02f5386bbf83a03c86bf0bb9594be5a9220317f"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381699": {
+   "item_id": "pittsburgh-legistar-item-381699",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0852",
+   "title": "Resolution appointing DeAnna Davis to the Housing Opportunity Fund Advisory Board with a term to expire September 6, 2030.",
+   "action": "Held, Pending Interview",
+   "result": "pass",
+   "matter_type": "Appointment-Requiring Vote",
+   "matter_status": "In Standing Committee",
+   "action_text": "A motion was made that this matter be Held, Pending Interview to the Committee on Hearings and Policy. The motion carried.",
+   "agenda_sequence": 30,
+   "legistar_matter_id": 33594,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "6650495bd7ab04d12ecd356dd4c873a10a0cee938c58ba80f7c8dd36d81c5fef"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381700": {
+   "item_id": "pittsburgh-legistar-item-381700",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0853",
+   "title": "Resolution appointing Jennifer Cash Wade to the Housing Opportunity Fund Advisory Board with a term to expire September 6, 2030.",
+   "action": "Held, Pending Interview",
+   "result": "pass",
+   "matter_type": "Appointment-Requiring Vote",
+   "matter_status": "In Standing Committee",
+   "action_text": "A motion was made that this matter be Held, Pending Interview to the Committee on Hearings and Policy. The motion carried.",
+   "agenda_sequence": 31,
+   "legistar_matter_id": 33595,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "e3d210e252f76fc9e0186cb471cec6d3e79161e81156b73a453774ec3baa793a"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381701": {
+   "item_id": "pittsburgh-legistar-item-381701",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0854",
+   "title": "Resolution appointing Oliver Beasley to the Housing Opportunity Fund Advisory Board with a term to expire September 6, 2030.",
+   "action": "Held, Pending Interview",
+   "result": "pass",
+   "matter_type": "Appointment-Requiring Vote",
+   "matter_status": "In Standing Committee",
+   "action_text": "A motion was made that this matter be Held, Pending Interview to the Committee on Hearings and Policy. The motion carried.",
+   "agenda_sequence": 32,
+   "legistar_matter_id": 33596,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "b49386c6018bdec90caa71271e76701ea69841212bc802cdbf752e0d8d1e0cad"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381702": {
+   "item_id": "pittsburgh-legistar-item-381702",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0855",
+   "title": "Resolution appointing Walter Lewis to the Housing Opportunity Fund Advisory Board with a term to expire September 6, 2030.",
+   "action": "Held, Pending Interview",
+   "result": "pass",
+   "matter_type": "Appointment-Requiring Vote",
+   "matter_status": "In Standing Committee",
+   "action_text": "A motion was made that this matter be Held, Pending Interview to the Committee on Hearings and Policy. The motion carried.",
+   "agenda_sequence": 33,
+   "legistar_matter_id": 33597,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "060f2e9252736fca97cc4caa87b71bad30d87dd53a0c9a57f952cbc75a0cd768"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381703": {
+   "item_id": "pittsburgh-legistar-item-381703",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0856",
+   "title": "Resolution appointing John Katz to the Housing Opportunity Fund Advisory Board with a term to expire September 6, 2030.",
+   "action": "Held, Pending Interview",
+   "result": "pass",
+   "matter_type": "Appointment-Requiring Vote",
+   "matter_status": "In Standing Committee",
+   "action_text": "A motion was made that this matter be Held, Pending Interview to the Committee on Hearings and Policy. The motion carried.",
+   "agenda_sequence": 34,
+   "legistar_matter_id": 33598,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "a42057306f434139f00616d5f13dce7e52f107f51bef8dfaab73ef23636a9c48"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381704": {
+   "item_id": "pittsburgh-legistar-item-381704",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0857",
+   "title": "Communication from Sylvia Harris, Acting Director of the Department of Innovation and Preference, submitting a Surveillance Technology Report, dated September 2, 2026.",
+   "action": "Read, Received and Filed",
+   "result": "pass",
+   "matter_type": "Communication",
+   "matter_status": "Read, Received and Filed",
+   "action_text": "A motion was made that this matter be Read, Received and Filed. The motion carried.",
+   "agenda_sequence": 35,
+   "legistar_matter_id": 33599,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "2e56145bd4f4392cfc69db061d37cc6e4603b72c94b5ed2b6cb67b9993691db4"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381705": {
+   "item_id": "pittsburgh-legistar-item-381705",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0858",
+   "title": "Communication from Rea Price, Acting Director of the Office of Management and Budget, submitting to City Council the attached status update from the Grants Office for the week ended September 4, 2026.",
+   "action": "Read, Received and Filed",
+   "result": "pass",
+   "matter_type": "Communication",
+   "matter_status": "Read, Received and Filed",
+   "action_text": "A motion was made that this matter be Read, Received and Filed. The motion carried.",
+   "agenda_sequence": 36,
+   "legistar_matter_id": 33600,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "f155065e104f3cb5e098e9f192c3231cdf774be960a3a743a426a9cb8066f288"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381706": {
+   "item_id": "pittsburgh-legistar-item-381706",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0859",
+   "title": "Communication from City Controller Rachael Heisler submitting a Special Report on the Parks Trust Fund Follow-Up: Challenges and Opportunities at Year Five, dated September 2026.",
+   "action": "Read, Received and Filed",
+   "result": "pass",
+   "matter_type": "Communication",
+   "matter_status": "Read, Received and Filed",
+   "action_text": "A motion was made that this matter be Read, Received and Filed. The motion carried.",
+   "agenda_sequence": 37,
+   "legistar_matter_id": 33601,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "e82a080add73e45825c14209e771019849e7fc97ad57c10c45bfd45ffab896bb"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381710": {
+   "item_id": "pittsburgh-legistar-item-381710",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0837",
+   "title": "Report of the Committee on Intergovernmental and Educational Affairs for September 2, 2026 with an Affirmative Recommendation.",
+   "action": "Read, Received and Filed",
+   "result": "pass",
+   "matter_type": "Report",
+   "matter_status": "Read, Received and Filed",
+   "action_text": "A motion was made that this matter be Read, Received and Filed. The motion carried.",
+   "agenda_sequence": 42,
+   "legistar_matter_id": 33579,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "3c0b33dd132fa5e4c8569803665d4597242a53dcca9b041d4c46defd0be5389a"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381711": {
+   "item_id": "pittsburgh-legistar-item-381711",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0606",
+   "title": "Resolution requesting the approval of an inter-municipal transfer of a liquor license, License No. R-6114, from McCrossins Landing Pub LLC, located at 13 Edsel Lane, Monongahela, PA 15063 to the Applicant, Silver Ashes Hospitality Group, LLC located at 728 Copeland Street, Pittsburgh, PA 15232, pursuant to amended Pennsylvania Liquor Code, \u00a74-461.\r\n(Public Hearing held 9/1/26)",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 43,
+   "legistar_matter_id": 33347,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "2780a81eca6f4a3122c06b093c860e4fe1ad86a1ff3678c49384fa212a7844fe"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381712": {
+   "item_id": "pittsburgh-legistar-item-381712",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0804",
+   "title": "Resolution amending Resolution 37, 126 and 399, which authorized an amendment to the cooperation agreement or agreements with the City of Pittsburgh Equipment Leasing Authority for the purchase and leasing of vehicles, equipment and accessories, equipment support infrastructure, and professional services in fiscal year 2026, by the increasing the authorized amount by Fifty Nine Thousand One Hundred and Eighty Dollars and Zero Cents ($59,180.00) to purchase Trailers for the Department of Public Works for a new not-to-exceed total of Twenty-Six Million Three Hundred Forty-Eight Thousand Four Hundred Forty-Nine Dollars and Zero Cents ($26,348,449.00).",
+   "action": "Passed Finally",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Passed Finally. The motion carried by the following vote:",
+   "agenda_sequence": 44,
+   "legistar_matter_id": 33546,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "75098fce0b379aeee9d8870eb35c9165b9888849abc138ca40210953919f44f9"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381722": {
+   "item_id": "pittsburgh-legistar-item-381722",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0863",
+   "title": "Resolution authorizing an extension of the term of the Acting Chief of the Bureau of Fire for 90 additional days, to run through December 8, 2026.",
+   "action": "Approved",
+   "result": "pass",
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "A motion was made that this matter be Approved. The motion carried by the following vote:",
+   "agenda_sequence": 38,
+   "legistar_matter_id": 33605,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "8e5a01f913d556c47132bdd56c01c058241b41dbdb07b024b7b65eb5bf777cab"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381747": {
+   "item_id": "pittsburgh-legistar-item-381747",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0838",
+   "title": "Resolution authorizing the Mayor and the Director of Human Resources and Civil Service, for the issuance of a warrant in favor of the NeoGov, for the online employment application database, personnel requisition database, Civil Service examination question database, exam scheduling and scoring processes, and applicant and examination statistics reporting at a cost not to exceed Fifty-Seven Thousand Nine Hundred Eight Dollars and Zero Cents ($57,908.00).",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Human Resources",
+   "agenda_sequence": null,
+   "legistar_matter_id": 33580,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "28966485eee78ec46270aeba6cc649e914801e76a75e991af325559885a0959c"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381748": {
+   "item_id": "pittsburgh-legistar-item-381748",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "file_number": "2026-0844",
+   "title": "Resolution authorizing the Mayor and the Director of the Department of Finance, on behalf of the City of Pittsburgh, to enter into a temporary easement agreement with North River Pittsburgh I, LLC for temporary placement of City vehicles onto certain properties along 32nd and 31st Street in the 6th Ward of Pittsburgh in order to allow necessary resurfacing work to occur at the City\u2019s Environmental Services Center at 3001 Railroad Street.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Public Works and Infrastructure",
+   "agenda_sequence": null,
+   "legistar_matter_id": 33586,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "1689805afd82bfc9882308c7c5a635c559e33f856582ce54f4713c7a93f4f55b"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381441": {
+   "item_id": "pittsburgh-legistar-item-381441",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0810",
+   "title": "NOW, THEREFORE BE IT RESOLVED, that the Council of the City of Pittsburgh joins with communities across America and does hereby declare September 2026 to be HUNGER ACTION MONTH in the City of Pittsburgh, and calls this observance to the attention of our citizens.",
+   "action": null,
+   "result": null,
+   "matter_type": "Proclamation",
+   "matter_status": "Adopted",
+   "action_text": null,
+   "agenda_sequence": 5,
+   "legistar_matter_id": 33552,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "c44c23a90afc6125dc9e26008db71ffa9657427fa2acd9171d18905eca7b4c2c"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381442": {
+   "item_id": "pittsburgh-legistar-item-381442",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0835",
+   "title": "NOW, THEREFORE, BE IT PROCLAIMED, that the City of Pittsburgh hereby honors the life and legacy of Mr. William Cary Allen and his enduring impact on our community. May his memory forever be a blessing, his spirit continues to inspire and his legacy remain alive in the hearts of all who knew him.\n\nNOW, THEREFORE, BE IT RESOLVED, that the Council of the City of Pittsburgh does hereby honor and commend William Cary Allen for a job well done and an incredible legacy.",
+   "action": "Adopted",
+   "result": "pass",
+   "matter_type": "Proclamation",
+   "matter_status": "Adopted",
+   "action_text": "A motion was made that this matter be Adopted. The motion carried.",
+   "agenda_sequence": 6,
+   "legistar_matter_id": 33577,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "0c9b24278a267cf1b631a0c08cca4729638eef365288b6fdf0f08c6a5c8c902f"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381446": {
+   "item_id": "pittsburgh-legistar-item-381446",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0816",
+   "title": "Resolution authorizing the issuance of a warrant in favor of Bucks County Community College in an amount not to exceed THIRTY-ONE THOUSAND SEVEN HUNDRED FIVE DOLLARS AND NO CENTS ($31,705.00), for rescue certification and training for the Bureau of Emergency Medical Services.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Public Safety and Wellness",
+   "agenda_sequence": 10,
+   "legistar_matter_id": 33558,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "887c7a2567aa7499067eff77de7849b55ee870711e1f11381fb4be963e1153ca"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381448": {
+   "item_id": "pittsburgh-legistar-item-381448",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0817",
+   "title": "Resolution authorizing the issuance of a warrant payable in favor of Allegheny League of Municipalities for one year membership dues in an amount not to exceed NINE THOUSAND DOLLARS and ZERO CENTS ($9,000.00).",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Intergovernmental and Educational Affairs",
+   "agenda_sequence": 12,
+   "legistar_matter_id": 33559,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "f040e552d1d13e300f99663abab9296439a35a2161071a0067d9fc844ccdd650"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381449": {
+   "item_id": "pittsburgh-legistar-item-381449",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0818",
+   "title": "Resolution adopting Plan Revision to the City of Pittsburgh\u2019s Official Sewage Facilities Plan for 6212 Walnut Street, Pittsburgh, PA 15206, at no cost to the City.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Intergovernmental and Educational Affairs",
+   "agenda_sequence": 13,
+   "legistar_matter_id": 33560,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "a294b7bb619d7a8745f2d9a73ed3a1d5e30d4f13f8848cf45f58903fd8a79b8a"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381450": {
+   "item_id": "pittsburgh-legistar-item-381450",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0819",
+   "title": "Resolution adopting Plan Revision to the City of Pittsburgh\u2019s Official Sewage Facilities Plan for 2225 Smallman Street, Pittsburgh PA 15222, at no cost to the City.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Intergovernmental and Educational Affairs",
+   "agenda_sequence": 14,
+   "legistar_matter_id": 33561,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "35cc035660feeef6d60a2de2ce17e5372e0bfeb468cb5a37bd3fd100cba4b5f7"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381451": {
+   "item_id": "pittsburgh-legistar-item-381451",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0820",
+   "title": "Resolution adopting Plan Revision to the City of Pittsburgh\u2019s Official Sewage Facilities Plan for 132-134 Prospect Street, Pittsburgh, PA 15211, at no cost to the City.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Intergovernmental and Educational Affairs",
+   "agenda_sequence": 15,
+   "legistar_matter_id": 33562,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "55f31f4e3014cee747e61b816f28f8c007f5bda96d2c4f422ecf02c7f618886c"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381452": {
+   "item_id": "pittsburgh-legistar-item-381452",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0821",
+   "title": "Resolution adopting Plan Revision to the City of Pittsburgh\u2019s Official Sewage Facilities Plan for 630 North Aiken Avenue, Pittsburgh, PA 15214, at no cost to the City.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Intergovernmental and Educational Affairs",
+   "agenda_sequence": 16,
+   "legistar_matter_id": 33563,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "d4a2e5fd11a142475d0267e73290360c6c681994b6f4d094707a31a683654365"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381454": {
+   "item_id": "pittsburgh-legistar-item-381454",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0805",
+   "title": "Resolution transferring the amount of two hundred thousand dollars ($200,000) to the Department of Parks and Recreation (CitiParks) from the Stop the Violence Trust Fund for staffing and supplies to support out-of-school time services and programming at The Dunlap Family Center.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Recreation, Youth, and Senior Services",
+   "agenda_sequence": 18,
+   "legistar_matter_id": 33547,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "75609b608aff87727c83612828966d43e19325d04f734d10fd921b08b3861a63"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381455": {
+   "item_id": "pittsburgh-legistar-item-381455",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0822",
+   "title": "Resolution authorizing the Mayor of the City of Pittsburgh, and the Office of Management and Budget to apply for a grant from Pennsylvania Department of Economic Development\u2019s Multimodal Transportation Fund for the Renovation of the Boulevard of the Allies in the Central Business District.  The grant proposal includes an ask not to exceed THREE MILLION ($3,000,000.00) dollars for this stated purpose.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Public Works and Infrastructure",
+   "agenda_sequence": 19,
+   "legistar_matter_id": 33564,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "d8c4ab189b3abcfd0ca729b94573414dc6e3268823cfec7b4406b8f782a92a0f"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381456": {
+   "item_id": "pittsburgh-legistar-item-381456",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0823",
+   "title": "Resolution authorizing the Mayor of the City of Pittsburgh, and the Office of Management and Budget to apply for a grant from Pennsylvania Department of Economic Development\u2019s Multimodal Transportation Fund for the Sheraden Station Plaza Intersection Safety Improvement and the Wabash Street Community Connector projects. The grant proposal includes an ask not to exceed ONE MILLION ONE HUNDRED TWENTY TWO THOUSAND NINE HUNDRED NINETY SIX ($1,122,996.00) dollars for this stated purpose.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Public Works and Infrastructure",
+   "agenda_sequence": 20,
+   "legistar_matter_id": 33565,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "41c4a3d44cc57e004d808eb0d5ac15744548a843c3700d330b16e6c116d121de"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381457": {
+   "item_id": "pittsburgh-legistar-item-381457",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0824",
+   "title": "Resolution approving the recommendation made by the Director of the Department of Mobility and Infrastructure that the concrete portion of Fernhill Avenue from Belbrook Street to Elmbank Street should be paved with asphalt in accordance with Section 417.06 of the Pittsburgh Code of Ordinances.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Public Works and Infrastructure",
+   "agenda_sequence": 21,
+   "legistar_matter_id": 33566,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "9e283596307abe3863583d41b3c6fb608b487e3f7f19bd0dd99b1d9cfadcb0a6"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381458": {
+   "item_id": "pittsburgh-legistar-item-381458",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0825",
+   "title": "Resolution providing for an amended agreement with CSXT Transportation, Inc. for Preliminary Engineering work on the Frazier Street/Swinburne Bridge Replacement Project; and providing for the payment of the costs thereof, not to exceed Thirty-Two Thousand Seven Hundred Eighty Dollars ($32,780.00), an increase of Twelve Thousand Seven Hundred Sixty Dollars ($12,760.00) from the previously executed agreement, reimbursable at 95%.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Public Works and Infrastructure",
+   "agenda_sequence": 22,
+   "legistar_matter_id": 33567,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "900d5f20df0a0dbed9673530a132cdea26797e0ded67055dfe638a502e5c26da"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381459": {
+   "item_id": "pittsburgh-legistar-item-381459",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0826",
+   "title": "Resolution authorizing the Mayor and the Director of the Department of Mobility and Infrastructure, on behalf of the City of Pittsburgh, to enter into a supplemental agreement or agreements with CDR Maguire, Inc., for Project Design Management Services and Reviews in connection with various City of Pittsburgh projects to add funding for the Preliminary Engineering phase increasing the total not to exceed to Three Million Nine Hundred Sixty-Eight Thousand Two Hundred Thirty-Seven Dollars and Thirteen Cents ($3,968,237.13), a net increase of Sixty-Seven Thousand Seven Hundred Seventy-Three Dollars and Ninety-Four Cents ($67,773.94), reimbursable at various rates.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Public Works and Infrastructure",
+   "agenda_sequence": 23,
+   "legistar_matter_id": 33568,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "5044adc361fd4c040a0fd052a9b80bb4ab107342ca896b608975031c23b1aa76"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381460": {
+   "item_id": "pittsburgh-legistar-item-381460",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0827",
+   "title": "Resolution authorizing the Mayor and the Director of the Department of Mobility and Infrastructure, on behalf of the City of Pittsburgh, to enter into a supplemental agreement or agreements with CDR Maguire, Inc., for Project Design Management Services and Reviews in connection with various City of Pittsburgh projects to add funding for the Preliminary Engineering and Final Design phases increasing the total not to exceed Four Million Sixty-Four Thousand Eight Hundred Seventy-Six Dollars and Ninety-One Cents ($4,064,876.91), an increase of Zero Dollars ($0.00) from the previously authorized agreement, reimbursable at 100%.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Public Works and Infrastructure",
+   "agenda_sequence": 24,
+   "legistar_matter_id": 33569,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "6b67b5004354fd365175bf0fab02df8e6128c833e35dcde72a69c33acb07927c"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381461": {
+   "item_id": "pittsburgh-legistar-item-381461",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0828",
+   "title": "Resolution providing for an amended agreement with CSXT Transportation, Inc. for Preliminary Engineering work on the West Carson Street Bridge Project; and providing for the payment of the costs thereof, not to exceed Twenty-Eight Thousand Six Hundred Dollars ($28,600.00), an increase of Twelve Thousand Three Hundred Twenty Dollars ($12,320.00) from the previously executed agreement, reimbursable at 95%.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Public Works and Infrastructure",
+   "agenda_sequence": 25,
+   "legistar_matter_id": 33570,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "5d25d9aea09ee1dec20f3f4d5d1d8dd6db49e6c3572054bed0cf24833ad7f819"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381464": {
+   "item_id": "pittsburgh-legistar-item-381464",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0806",
+   "title": "Ordinance amending the Pittsburgh City Code Title Six: Conduct, Article I: Regulated Rights and Actions, Chapter 625: Red Light Enforcement Systems.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Ordinance",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Public Safety and Wellness",
+   "agenda_sequence": 27,
+   "legistar_matter_id": 33548,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "221c5f4da54db99640006660bbc75cee31e2582cfe859bdf8e04ba3cda8a8778"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381465": {
+   "item_id": "pittsburgh-legistar-item-381465",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0829",
+   "title": "Resolution further amending Resolution No. 886 of 2021, effective December 27, 2021, as amended, entitled \u201cResolution adopting and approving the 2022 Capital Budget and the 2022 Community Development Block Grant Program, and the 2022 through 2027 Capital Improvement Program\u201d by reducing PARK RECONSTRUCTION - PARKS TA by Ten Thousand Dollars ($10,000.00), and increasing SPORTS FACILITIES by Ten Thousand Dollars ($10,000.00).",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Finance and Law",
+   "agenda_sequence": 28,
+   "legistar_matter_id": 33571,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "6648e9924910cc2ae5dc2d47b18aed2dc8492c167d04351b0b18084ddd303f01"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381466": {
+   "item_id": "pittsburgh-legistar-item-381466",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0830",
+   "title": "Resolution amending 741 of 2025, which amended Resolution 413 of 2025, which authorized the Mayor and the City Solicitor to enter into a Professional Services Agreement with Block & Associates for legal services in connection with a current City construction project, by further authorizing an amendment to said Professional Services Agreement to amend the scope of work and allocate additional funding for a new not-to-exceed cost of ONE HUNDRED AND THIRTY-FIVE THOUSAND DOLLARS AND ZERO CENTS ($135,000.00) over two (2) years.\r\n(Executive Session held 9/1/26)\r\n(Waiver of Competitive Process Received)",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Finance and Law",
+   "agenda_sequence": 29,
+   "legistar_matter_id": 33572,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "5c69979073195bac205f3f620a2889c9ea217b25c05697e0d60a0ec154c845ca"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381467": {
+   "item_id": "pittsburgh-legistar-item-381467",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0831",
+   "title": "Resolution amending Resolution 78 of 2026, which authorized the Mayor and the City Solicitor to enter into a Professional Services Agreement with Fisher Phillips, LLP for legal consulting services in connection with labor disputes to amend the scope of work, adjust hourly rates, extend the term, and allocate additional funding in an amount not to exceed ONE MILLION AND TEN THOUSAND FOUR-HUNDRED DOLLARS ($1,010,400.00) over three (3) years.\r\n(Executive Session held 9/1/26)\r\n(Waiver of Competitive Process Received)",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Finance and Law",
+   "agenda_sequence": 30,
+   "legistar_matter_id": 33573,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "48fc464ccfbd5acedcebc6e8373c5da40d1b6c516e3e2d79f9f354e519f13e5c"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381470": {
+   "item_id": "pittsburgh-legistar-item-381470",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0832",
+   "title": "Resolution authorizing the Office of the Mayor, on behalf of the City of Pittsburgh, to enter into two-year reimbursement agreements for the 2026 Love Your Block program at a cost not to exceed Twenty Thousand Dollars ($20,000).",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Land Use and Economic Development",
+   "agenda_sequence": 32,
+   "legistar_matter_id": 33574,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "62a50da70d8374111a40ee677ef6c6a0e536cbaaa041726a5642a34b93dc8761"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381471": {
+   "item_id": "pittsburgh-legistar-item-381471",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0833",
+   "title": "Resolution authorizing the Mayor and the Director of Permits, Licenses, and Inspections, for the issuance of a warrant in favor of the Building & Fire Code Academy (\u201cBFCA\u201d), to provide a 2-Day Legal Aspects of Code Enforcement Training for all PLI staff that are required to have International Code Council (ICC) certifications as part of their job description at a cost not to exceed Seven Thousand Dollars and Zero Cents ($7,000.00).",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Passed Finally",
+   "action_text": "Read and referred to the Committee on Land Use and Economic Development",
+   "agenda_sequence": 33,
+   "legistar_matter_id": 33575,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "ec9439e9735fa587b51fcdbd07f0467de9f2b1f220c1d44fb84345b59af64d1f"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381472": {
+   "item_id": "pittsburgh-legistar-item-381472",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0834",
+   "title": "Ordinance amending the Pittsburgh Code, Title Nine, Zoning Code, Article I, Introduction and Establishment, Chapter 901 General Provisions; Chapter 902 Zoning Districts in General; Article II, Base Zoning District Chapter 903 Residential Zoning Districts; Chapter 904 Mixed Use Zoning Districts; Chapter 905 Special Purpose Districts; Article III, Overlay Zoning Districts, Chapter 906 Environmental Overlay Districts; Chapter 907 Development Overlay Districts; Article IV, Planning Districts, Chapter 908 Public Realm Districts; Chapter 909 Planned Development Districts; Chapter 910 Downtown Districts; Article V, Use Regulations; Chapter 911 Primary Uses; Chapter 912 Accessory Uses and Structures; Chapter 913 Use Exceptions and Conditions Not Listed in Use Table; Article VI, Development Standards, Chapter 915 Environmental Performance Standards; Chapter 916 Residential Compatibility Standards; Chapter 918 Landscaping and Screening Standards; Chapter 919 Signs; Chapter 920 Child Care Regulations; Article VII, Nonconformities, Chapter 921 Nonconformities; Article VIII, Review and Enforcement, Chapter 922 Development Review Procedures; Article IX Measurements and Definitions, Chapter 925, Measurements; Chapter 926 Definitions. \n(Public Hearing scheduled for 10/13/26)",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Ordinance",
+   "matter_status": "Held In Council",
+   "action_text": "Read and referred to the Committee on Land Use and Economic Development",
+   "agenda_sequence": 34,
+   "legistar_matter_id": 33576,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "7a026a9f8dabe8650315d72395b7a0ec172fb3c7c025a7895ec61655e5307fa2"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381474": {
+   "item_id": "pittsburgh-legistar-item-381474",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0807",
+   "title": "Communication from Rachael Heisler, City Controller, submitting a summary worksheet highlighting Overtime and Premium Pay budget use in the second quarter of 2026, dated August 2026.",
+   "action": "Read, Received and Filed",
+   "result": "pass",
+   "matter_type": "Communication",
+   "matter_status": "Read, Received and Filed",
+   "action_text": "A motion was made that this matter be Read, Received and Filed. The motion carried.",
+   "agenda_sequence": 39,
+   "legistar_matter_id": 33549,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "393e072c1572223f791117c37b180993ea5505285da9a1ab5cae75deb82cd2e4"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381475": {
+   "item_id": "pittsburgh-legistar-item-381475",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0808",
+   "title": "Communication from Rachael Heisler, City Controller, submitting a fiscal audit of the American Rescue Plan Trust Fund (ARPTF), dated August 2026.",
+   "action": "Read, Received and Filed",
+   "result": "pass",
+   "matter_type": "Communication",
+   "matter_status": "Read, Received and Filed",
+   "action_text": "A motion was made that this matter be Read, Received and Filed. The motion carried.",
+   "agenda_sequence": 40,
+   "legistar_matter_id": 33550,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "30f18bb4b3d885148ff77920dd2112d5e7cffbdfb9e293654af6a0bc39434499"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381476": {
+   "item_id": "pittsburgh-legistar-item-381476",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0809",
+   "title": "Petition received in the City Clerk\u2019s Office requesting a public hearing before City Council relative to the procurement call for design of a Department of Public Works Schenley Division Facility, including buildings, garages, and storage warehouses, on Prospect Drive in Schenley Park. This facility would cause light pollution, sound pollution, create impervious surface and runoff, remove trees, disrupt trails, and remove forest land from a historical landmark and protected park in our City.  The Petition is valid in accordance with the Home Rule Charter.",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Petition",
+   "matter_status": "Withdrawn",
+   "action_text": "Read and referred to the Committee on Public Works and Infrastructure",
+   "agenda_sequence": 42,
+   "legistar_matter_id": 33551,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "245352cd2da1937fcd5e26106fe8b4acc7022c67649d4c8c0205e58d629bff47"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381477": {
+   "item_id": "pittsburgh-legistar-item-381477",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0811",
+   "title": "Resolution further amending and supplementing Resolution 362 of 2025, as amended, entitled \u201cResolution further amending and supplementing Resolution 539 of 2016, as amended, entitled \"authorizing the Mayor, City Clerk and/or Director of the Department of Innovation and Performance to enter into a Contract or Contracts or Agreement or Agreements with Granicus, Inc., for software upgrades, server hosting services and annual maintenance of Legistar agenda management and video streaming\" in order to extend the contract an additional 12 months, for an additional cost of sixty-four thousand eighty-seven dollars and sixty-three cents ($64,087.63) for a total cost not to exceed five hundred sixty-two thousand one hundred seventy-five dollars and seventy cents ($562,175.70).\u201d in order to extend the contract an additional 3 years, for an additional cost of two hundred thirty-three thousand three hundred fourty-three dollars and four cents ($233,343.04) for a new total cost not to exceed seven hundred ninety-five five hundred eighteen dollars and seventy-four cents ($795,518.74).",
+   "action": "Read and referred",
+   "result": null,
+   "matter_type": "Resolution",
+   "matter_status": "Reported from Standing Committee",
+   "action_text": "Read and referred to the Committee on Innovation, Performance, Asset Management, and Technology",
+   "agenda_sequence": 43,
+   "legistar_matter_id": 33553,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "fc6e8e8e7201033e003517d47f3449692d4b0fa320fd9152b4102c890f58bbd7"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381478": {
+   "item_id": "pittsburgh-legistar-item-381478",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0812",
+   "title": "Communication from City Controller Rachael Heisler submitting a Special Report on the 2026 Update on City Water Fountains, dated August 2026.",
+   "action": "Read, Received and Filed",
+   "result": "pass",
+   "matter_type": "Communication",
+   "matter_status": "Read, Received and Filed",
+   "action_text": "A motion was made that this matter be Read, Received and Filed. The motion carried.",
+   "agenda_sequence": 41,
+   "legistar_matter_id": 33554,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "ed40f7a9738f9d47aad1385ae3cfdcb62b1c4e694b5bb2a2d2e449c2216949f9"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381479": {
+   "item_id": "pittsburgh-legistar-item-381479",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0813",
+   "title": "Communication from Rea Price, Acting Director of the Office of Management and Budget, submitting to City Council the attached status update from the Grants Office for the week ended August 28, 2026.",
+   "action": "Read, Received and Filed",
+   "result": "pass",
+   "matter_type": "Communication",
+   "matter_status": "Read, Received and Filed",
+   "action_text": "A motion was made that this matter be Read, Received and Filed. The motion carried.",
+   "agenda_sequence": 36,
+   "legistar_matter_id": 33555,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "feae18beefa68e06d52207a7246f92ff0b2e36340ff25b5dddfeef94280ade78"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381480": {
+   "item_id": "pittsburgh-legistar-item-381480",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0814",
+   "title": "Communication from Rea Price, Acting Director of the Office of Management and Budget, submitting an acting pay request on behalf of the Office of Management and Budget for Kathleen Cottom and the Department of Innovation and Performance for Alexis Barone-Katze.",
+   "action": "Read, Received and Filed",
+   "result": "pass",
+   "matter_type": "Communication",
+   "matter_status": "Read, Received and Filed",
+   "action_text": "A motion was made that this matter be Read, Received and Filed. The motion carried.",
+   "agenda_sequence": 37,
+   "legistar_matter_id": 33556,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "5b1f2f817b2c09ebd55a0710fd66cc608cbccf683394e7717af992208244c563"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381481": {
+   "item_id": "pittsburgh-legistar-item-381481",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0815",
+   "title": "Communication from Rea Price, Acting Director of the Office of Management and Budget, submitting the Quarterly Financial & Performance Report for the period ending June 30, 2026.",
+   "action": "Read, Received and Filed",
+   "result": "pass",
+   "matter_type": "Communication",
+   "matter_status": "Read, Received and Filed",
+   "action_text": "A motion was made that this matter be Read, Received and Filed. The motion carried.",
+   "agenda_sequence": 38,
+   "legistar_matter_id": 33557,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "e9f04654e7c6d02d67768a596babf38cf57fde213b38690300fde5b04e3006ad"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-item-381494": {
+   "item_id": "pittsburgh-legistar-item-381494",
+   "meeting_id": "pittsburgh-legistar-12062",
+   "file_number": "2026-0810",
+   "title": "NOW, THEREFORE BE IT RESOLVED, that the Council of the City of Pittsburgh joins with communities across America and does hereby declare September 2026 to be HUNGER ACTION MONTH in the City of Pittsburgh, and calls this observance to the attention of our citizens.",
+   "action": "Adopted",
+   "result": "pass",
+   "matter_type": "Proclamation",
+   "matter_status": "Adopted",
+   "action_text": "A motion was made that this matter be Adopted. The motion carried.",
+   "agenda_sequence": null,
+   "legistar_matter_id": 33552,
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "76b6f0f5927eed0b0e0eca2d192e5a12906a16d76ed673dd13f804f743088e9a"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
   }
  },
  "vote_events": {
@@ -89915,6 +92966,1621 @@
     "method": null,
     "note": null
    }
+  },
+  "pittsburgh-legistar-vote-381930": {
+   "vote_id": "pittsburgh-legistar-vote-381930",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381930",
+   "file_number": "2026-0829",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "50c28657277c3702e0ce8d5f81ff190e71a4239b7b309b5a98deb7596ad664ee"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381931": {
+   "vote_id": "pittsburgh-legistar-vote-381931",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381931",
+   "file_number": "2026-0830",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "17c907d8d72d74a9dedbe7b6a913216c9b0827c472f0562dac392740742b24b4"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381932": {
+   "vote_id": "pittsburgh-legistar-vote-381932",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381932",
+   "file_number": "2026-0831",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "b5a2657ac8fce6aa7818a672c1a726eebbb3011461c5089d07ce70309b7dad70"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381935": {
+   "vote_id": "pittsburgh-legistar-vote-381935",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381935",
+   "file_number": "2026-0806",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "babf1b9a023cd8dca1a352bc7c8602955580f06f9e7fdbe0d49556c54f490afe"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381936": {
+   "vote_id": "pittsburgh-legistar-vote-381936",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381936",
+   "file_number": "2026-0816",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "b5ffcc455614581a4399a4d997dd49a43596f84fb3f51fe15a6071e8900f865f"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381939": {
+   "vote_id": "pittsburgh-legistar-vote-381939",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381939",
+   "file_number": "2026-0822",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "9e0251e2ccfe26f0f712d4a0f8ba7bd6c52f3ce4ccad9ccd64a7f88af7893a47"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381940": {
+   "vote_id": "pittsburgh-legistar-vote-381940",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381940",
+   "file_number": "2026-0823",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "bc757f65f0799f0580daf09d5296e3fb64e2dd324ef1f702e01a48ecd29a8ac7"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381941": {
+   "vote_id": "pittsburgh-legistar-vote-381941",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381941",
+   "file_number": "2026-0824",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "62aee7658831e97966bef0ee5da6a65f07d8186b1315e1c2cfbee64a49b0905f"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381942": {
+   "vote_id": "pittsburgh-legistar-vote-381942",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381942",
+   "file_number": "2026-0825",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "8089027a58bb9cf6c1c938938ef36b0d7de68f386ef4b715617e086345ebc0bc"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381943": {
+   "vote_id": "pittsburgh-legistar-vote-381943",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381943",
+   "file_number": "2026-0826",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "e3071ffd1900ae0bea4f092d6eea7ecf3e339b57f3423a7ff075d718f3d34669"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381944": {
+   "vote_id": "pittsburgh-legistar-vote-381944",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381944",
+   "file_number": "2026-0827",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "be69994007ddb72ebd5bf205e4606b56f3d37f539eb09030a55d6031be350199"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381945": {
+   "vote_id": "pittsburgh-legistar-vote-381945",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381945",
+   "file_number": "2026-0828",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "a7782dc67f336987e836cf7bc6b1eb549f7ed8d96f7725a973fbfb33139720bf"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381948": {
+   "vote_id": "pittsburgh-legistar-vote-381948",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381948",
+   "file_number": "2026-0838",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "ba5c306b5fdec4028796929d98b7a0b6343e29bec61e506de8ac3bcc8edce09c"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381951": {
+   "vote_id": "pittsburgh-legistar-vote-381951",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381951",
+   "file_number": "2026-0832",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "61efae128273491b2b8e4f90ff37d5cd54b7964be7c1d8dcaf0b726647b03615"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381952": {
+   "vote_id": "pittsburgh-legistar-vote-381952",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381952",
+   "file_number": "2026-0833",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "bb7927bcba229694e9dec40bf2c72a34644a120507eeece6ad43377063ae85bb"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381955": {
+   "vote_id": "pittsburgh-legistar-vote-381955",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381955",
+   "file_number": "2026-0805",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "589d39aa68a78c2f46fde0102307762bfa6036cf4ef40ab812a537faf4b56a92"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381958": {
+   "vote_id": "pittsburgh-legistar-vote-381958",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381958",
+   "file_number": "2026-0817",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "241123e9adee2320f092b5ecbb71b291dd17d71811f24df248e617de6a22afe4"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381959": {
+   "vote_id": "pittsburgh-legistar-vote-381959",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381959",
+   "file_number": "2026-0818",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "622b3aeb196fa5945c2975e3ffeccf78e9b3595f48d9b0b9170fba82ba0bd9cf"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381960": {
+   "vote_id": "pittsburgh-legistar-vote-381960",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381960",
+   "file_number": "2026-0819",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "d690608a795f9e0509a0165ef9712e3f91ff6d8ea013ddd981e0a89f5c353cd1"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381961": {
+   "vote_id": "pittsburgh-legistar-vote-381961",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381961",
+   "file_number": "2026-0820",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "8308bc1c130e8b27f6d6ec91b72ef6659a9667eebc8e4581943c06cd18f3f3c0"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381962": {
+   "vote_id": "pittsburgh-legistar-vote-381962",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381962",
+   "file_number": "2026-0821",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "ff6dcc15590f78922e611f8392f86968b2d440d93016a9af25f8e515cdf04195"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381967": {
+   "vote_id": "pittsburgh-legistar-vote-381967",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381967",
+   "file_number": "2026-0844",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "a3849b4c0616528cf1e4ff8b4f15daeb9218c42447e4aac91a23d6652f60ac05"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381979": {
+   "vote_id": "pittsburgh-legistar-vote-381979",
+   "meeting_id": "pittsburgh-legistar-12076",
+   "item_id": "pittsburgh-legistar-item-381979",
+   "file_number": "2026-0885",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "aye"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 9
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "37e95e57d8fa841b7ecefa48f6c444ce079e8952722f8d4715fbbb5f4f4e37c6"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381711": {
+   "vote_id": "pittsburgh-legistar-vote-381711",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "item_id": "pittsburgh-legistar-item-381711",
+   "file_number": "2026-0606",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "absent"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 8,
+    "absent": 1
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "24a136a557541a4fbaf05c4ca3fbbe6c1cce86e0a7dca851d657038b54799bdd"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381712": {
+   "vote_id": "pittsburgh-legistar-vote-381712",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "item_id": "pittsburgh-legistar-item-381712",
+   "file_number": "2026-0804",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "absent"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 8,
+    "absent": 1
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "b9329454c54ce08acaa9c10b4df6d3aa3c8b032f2713ab44728350dd72b94bf7"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
+  },
+  "pittsburgh-legistar-vote-381722": {
+   "vote_id": "pittsburgh-legistar-vote-381722",
+   "meeting_id": "pittsburgh-legistar-12069",
+   "item_id": "pittsburgh-legistar-item-381722",
+   "file_number": "2026-0863",
+   "positions": [
+    {
+     "member": "Robert Charland",
+     "position": "aye"
+    },
+    {
+     "member": "Anthony Coghill",
+     "position": "absent"
+    },
+    {
+     "member": "Deborah L. Gross",
+     "position": "aye"
+    },
+    {
+     "member": "R. Daniel Lavelle",
+     "position": "aye"
+    },
+    {
+     "member": "Khari Mosley",
+     "position": "aye"
+    },
+    {
+     "member": "Kim Salinetro",
+     "position": "aye"
+    },
+    {
+     "member": "Erika Strassburger",
+     "position": "aye"
+    },
+    {
+     "member": "Barbara Warwick",
+     "position": "aye"
+    },
+    {
+     "member": "Bobby Wilson",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 8,
+    "absent": 1
+   },
+   "result": "pass",
+   "provenance": {
+    "source_id": "pittsburgh-legistar",
+    "extractor_version": "2",
+    "run_id": "run-674295cd40cb66c4",
+    "certification": {
+     "algorithm": "sha256",
+     "content_hash": "75fc1785093ba9c867a65c51813af36a39a5173cb26b17aa0b01613d4c9e0283"
+    }
+   },
+   "certification": {
+    "status": "certified",
+    "method": "cross-source",
+    "note": null
+   }
   }
  },
  "members": {
@@ -89924,7 +94590,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-5ec293abb732dd30",
+    "run_id": "run-674295cd40cb66c4",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "3510c558bf94f484c4388c4e65bce0287c90e4b0cf03ccada58bd6244f9758c4"
@@ -89937,7 +94603,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-5ec293abb732dd30",
+    "run_id": "run-674295cd40cb66c4",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "fe8ce664cf76c8f65c8e452a81e20356368959be85194d44ac1f79ce5108a32f"
@@ -89950,7 +94616,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-5ec293abb732dd30",
+    "run_id": "run-674295cd40cb66c4",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "79b8a2b570b419e07a1c79e56da4776f9a20e8d2360b833727018fdc09018353"
@@ -89963,7 +94629,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-5ec293abb732dd30",
+    "run_id": "run-674295cd40cb66c4",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "6202c687aea942780c472786b662b27543d1660ccb91a020d4599d27dd3826c1"
@@ -89976,7 +94642,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-5ec293abb732dd30",
+    "run_id": "run-674295cd40cb66c4",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "328f48f874269cf323443c7b424fb3f4d809a29c0c9909a87cade58a4f371dc0"
@@ -89989,7 +94655,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-5ec293abb732dd30",
+    "run_id": "run-674295cd40cb66c4",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "b1c022e50d9ca4545d6411664627f052c5235296e027609d68c5ad290bb183ea"
@@ -90002,7 +94668,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-5ec293abb732dd30",
+    "run_id": "run-674295cd40cb66c4",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "e8da687d7721e9b52b9a7dd98b612e9db6f4e23f753e731c78ef3617eb4a280f"
@@ -90015,7 +94681,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-5ec293abb732dd30",
+    "run_id": "run-674295cd40cb66c4",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "2a0e2d99843fc9ca04b5d279691e5d2dd83ebbb34f574aec45accd394367b44a"
@@ -90028,7 +94694,7 @@
    "provenance": {
     "source_id": "pittsburgh-legistar",
     "extractor_version": "2",
-    "run_id": "run-5ec293abb732dd30",
+    "run_id": "run-674295cd40cb66c4",
     "certification": {
      "algorithm": "sha256",
      "content_hash": "7179b53dd72c4777691f760fec168174278b23082f434a979c1c0ddcaaee1432"
