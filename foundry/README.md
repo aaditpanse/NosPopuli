@@ -5,14 +5,13 @@ its records, write a scraper, keep it honest" into a repeatable pipeline: an
 LLM **discovers** the source, **synthesizes** a deterministic extractor,
 a **gate** validates the output, an **oracle** certifies it against a second
 source, and a deterministic **refresh** keeps it current. The durable asset
-is the schema and the gate; extractors are disposable. It began as the M0–M4
-prototype of `docs/spec_self_building_pipelines.md` (Pittsburgh + LA, origin
-notes at the bottom) and has since grown into three data domains served by a
-lab console at **`/foundry`**.
+is the schema and the gate; extractors are disposable. It began as an M0–M4
+prototype over Pittsburgh and LA (origin notes at the bottom) and has since
+grown into three data domains served by a lab console at **`/foundry`**.
 
 The one rule everything obeys: **certified and uncertified data are never
 interchangeable.** A record that no independent source affirms is *ingested,
-never published* — and the UI always says so. Missing data is framed as our
+never published* — and the UI always says so. Missing data is framed as my
 gap, explicitly, not the jurisdiction's.
 
 ## Three domains
@@ -57,6 +56,17 @@ discover  →  synthesize  →  gate  →  certify  →  refresh / deepen  →  
   the plain-English layer (Haiku, pennies): item summaries, per-meeting
   digests, next-meeting schedules. Machine-derived, advisory, never certified.
 
+- **health.py** — the ledger of what every stage did, written to
+  `data/health/health.json` (committed, so the scheduled run's verdicts
+  outlive the runner that produced them). Each `record()` is one event:
+  stage, verdict, and the detail that stage already computed — the
+  extractor's error, the gate's findings, the oracle's agreement rate, what
+  merged. Repeats of the same verdict collapse into a counter, so a source
+  that has drifted the same way for a month is one line, not thirty.
+  `summarize()` derives a source's status from its store plus its events;
+  the console and the CLI read the same vocabulary. Recording never raises
+  into a pipeline run.
+
 **budget.py** is the spend governor: a JSONL ledger + a daily cap
 (`FOUNDRY_DAILY_BUDGET` in `.env`). Synthesis and discovery check it before
 starting; enrichment is recorded but never blocked. Known gap: the cap is
@@ -71,8 +81,9 @@ per-attempt ceiling is owed.
 |---|---|---|
 | Pittsburgh City Council | Legistar API + clerk minutes | yes (oracle wired) |
 | Los Angeles City Council | PrimeGov Journal + City Clerk CFMS | yes (strongest oracle) |
-| Loudoun County BOS | Laserfiche Action Reports | ingest-only |
-| Fairfax / Prince William / Stafford County BOS | CivicClerk / Granicus | quarantined (single-source) |
+| Loudoun County BOS | Laserfiche Action Reports | partial (oracle: clerk Minutes; only the meetings whose minutes are published) |
+| Prince William County BOS | Granicus VoteLog + MinutesViewer Briefs | yes (synthesized oracle) |
+| Fairfax / Stafford County BOS | CivicClerk / Granicus | quarantined (single-source) |
 | New York City Council | Legistar (InSite calendar scrape) | quarantined |
 
 **Public works** (CIP): **Fairfax** (`cip_extractor.py`, the hand-built
@@ -99,6 +110,22 @@ opening a modal. Clicking an *un-onboarded* county opens an honest empty
 dashboard centered on it. Elections are matched to any of the 721 jurisdictions
 by county name, not a hardcoded list.
 
+## The health console (`/admin/foundry`)
+
+A dev-only operator view of the scraper fleet, gated by `MONITOR_SECRET`
+(unset → every `/admin/*` route returns 503). One row per store: freshness
+against `upcoming.json`, record counts, the certified share, **why** the
+rest is not certified, oracle status, and the last verdict from each stage
+with its findings verbatim. Expanding a row gives the event history and
+three buttons: *Refresh* and *Recertify* ($0, secret only) and *Synthesize
+oracle* (Opus — localhost or `FOUNDRY_ONBOARD=on`, and it honours the daily
+cap).
+
+The distinction the page exists to draw is between **my** gap and the
+clerk's calendar. A record quarantined because no oracle was ever wired is a
+task; one quarantined because the minutes are not published yet is honest
+lag. They are counted separately and never blurred.
+
 ## Run it
 
 ```
@@ -109,7 +136,8 @@ cd foundry
 ../.venv/bin/python geocode_projects.py --source <slug>-cip  # map the projects ($0)
 ../.venv/bin/python ingest_ledb.py --commit                  # national historical elections ($0)
 ../.venv/bin/python ingest_va_enr.py --commit                # VA 2023 recent elections ($0)
-../.venv/bin/python refresh.py --all                         # deterministic refresh + deepen + enrich
+../.venv/bin/python run_oracle.py <slug> --attempts 3        # certify a source against its second source (Opus)
+../.venv/bin/python refresh.py --all                         # refresh + deepen + recertify + enrich ($0)
 python budget.py                                             # today's / this month's spend
 ```
 
@@ -128,6 +156,7 @@ deterministic paths (refresh, deepen, geocoding, elections ingest) cost $0.
 | `harness.py` · `certify.py` · `run_oracle.py` | the meter (structural/consistency) · quarantine→certify · re-certify |
 | `skeptic.py` | semantic "read it as a citizen" gate pass (Sonnet, fail-open) |
 | `refresh.py` · `deepen.py` | deterministic refresh + drift detection · $0 history deepening |
+| `health.py` | per-stage health ledger (`data/health/health.json`) behind `/admin/foundry` |
 | `budget.py` | spend ledger + daily cap |
 | `cip_extractor.py` | Fairfax CIP reference extractor (pdftotext table parse, subtotal reconciliation) |
 | `cip_discover.py` · `cip_onboard.py` | autonomous CIP discovery · synthesis loop |
@@ -142,10 +171,21 @@ deterministic paths (refresh, deepen, geocoding, elections ingest) cost $0.
 
 ## Honest caveats
 
-- **Most data is single-source, quarantined.** Only Pittsburgh and LA have a
-  wired oracle. CIP and elections have *no* second source yet — the certified
-  canvass (elections) and meeting-vote reconciliation (CIP) are the natural
-  oracles, not yet built.
+- **Most data is single-source, quarantined.** CIP and elections have *no*
+  second source yet — the certified canvass (elections) and meeting-vote
+  reconciliation (CIP) are the natural oracles, not yet built.
+- **An uncertified record is not automatically my failure.** Two different
+  things wear the same badge: a source I never wired an oracle for, and a
+  meeting whose minutes the clerk has not published yet. Loudoun is the clear
+  case — its Board approves minutes months in arrears, so most of its record
+  is waiting on a document that does not exist, not on us.
+  `/admin/foundry` counts the two separately; do not collapse them.
+- **Certification is re-earned every cycle, not stored once.** `refresh.py`
+  re-runs every promoted oracle at the end of each run, so a certification
+  only persists while the second source still affirms it. The one guard: if
+  the second source returns no covered meetings at all while the store holds
+  certified records, the pass is rejected and the store is left alone — a
+  transient outage must not read as a mass decertification.
 - **Elections coverage = the dataset's coverage:** >50k-population places,
   1989–2021 for the national layer; recent data is Virginia-only (Clarity, the
   national vendor family, turned anti-bot, so recent results are state-by-state).
@@ -156,12 +196,26 @@ deterministic paths (refresh, deepen, geocoding, elections ingest) cost $0.
   William landed 5/6 categories). Enrichment tags (work type, bond year) rely
   on Fairfax/PW phrasing and degrade elsewhere.
 - **NYC can't backfill past ~June** — its Legistar calendar hides history behind
-  Telerik postback pagination the GET-only sandbox can't reach; the fix is its
-  Socrata second source, not built.
-- **Refresh isn't automated on prod.** The store is committed static files
-  served read-only; refresh runs offline and is pushed. The systemd timer is
-  local-only (no systemd on Railway/containers); the UI's next-meeting guard
-  makes any staleness *honest* rather than wrong.
+  Telerik postback pagination the GET-only sandbox can't reach.
+- **The GET-only sandbox is now the binding constraint on two oracles.**
+  `rt.fetch_json` / `fetch_text` issue GETs and nothing else, so a second
+  source published through a JavaScript query app is unreachable however
+  good the extractor is. Stafford is the clear case: its Hyland OnBase
+  portal really does hold the adopted minutes, but the page has no form and
+  no GET-addressable search endpoint, and three Opus attempts returned zero
+  assertions before I read the shell and found out why. Check that a second
+  source is GET-reachable *before* spending synthesis attempts on it.
+- **Refresh does not run on the API host.** The store is committed static
+  files served read-only; `.github/workflows/foundry-refresh.yml` runs the
+  cycle daily and pushes, which is what deploys it. `foundry/systemd/` is the
+  superseded local timer. So the console's action buttons write real data
+  only on localhost — on the deployed host the write lasts until the next
+  deploy, and the page says so.
+- **Some jurisdictions serve a certificate chain Python does not trust.**
+  Loudoun's Laserfiche portal presents a root that is in `certifi` but not in
+  the interpreter's default store, which silently cost us that source for
+  weeks (it read as extractor drift). `sandbox2` now prefers the `certifi`
+  bundle; verification is never disabled.
 
 ## Provenance & licensing
 

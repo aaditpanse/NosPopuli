@@ -3,10 +3,14 @@
 venv/
 aaditpanse/
 agent_log.json
+agent_log.jsonl
+agent_log.json.migrated
 __pycache__/
 *.pyc
 .DS_Store
 search_log.json
+search_log.jsonl
+search_log.json.migrated
 flags.json
 /test_*.py
 .discovery_cache_*.json
@@ -22,3 +26,15 @@ foundry/data/*
 foundry/data/store/*.bak
 !foundry/data/discovery/
 foundry/data/discovery/*_http_cache.json
+# ...and the health ledger, so the scheduled refresh's verdicts survive the
+# run that produced them (CI commits foundry/data)
+!foundry/data/health/
+foundry/data/health/*.tmp
+
+# Foundry: extractor synthesis is iterative and each attempt is regenerable.
+# Only the promoted artifact (named in a store's meta) is load-bearing; the
+# superseded attempts and their findings are scratch, and the golden http
+# caches are replayable fixtures, not source.
+foundry/extractors/*/*.findings.json
+foundry/golden/*/http_cache.json
+!foundry/golden/pittsburgh/http_cache.json
