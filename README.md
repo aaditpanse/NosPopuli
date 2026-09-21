@@ -57,6 +57,39 @@ elections.
 
 ## Where it's going
 
+### What the map is for
+
+A search engine can find you a document. It cannot tell you how the person you elected
+voted, because that answer doesn't live in a document — it lives in a **join** between
+a county vote record, a board roster, an election result and your address. Nobody has
+made that join, so nobody can answer it, so people stop asking.
+
+That is the end goal: **questions whose answers require crossing layers of government
+become a walk across the map, and every step can show its source.**
+
+Two things follow, and they're worth separating because they come from different places:
+
+- **Specificity comes from the joins, not from volume.** More rows in more silos buys
+  nothing. "Which supervisors approved the rezoning and who funded them" needs
+  vote → person → seat → contest → money to be one connected path. That is what mapping
+  buys, and it's the only thing that buys it.
+- **Accuracy comes from certification, not from mapping.** A complete map can be
+  confidently wrong — this app currently answers "LA County" as off-topic with 0.95
+  confidence. So every edge carries whether an independent source affirms it, and every
+  answer reports the weakest hop it crossed.
+
+And note what is *not* the goal: anticipating the questions. I can't enumerate what
+people will ask, and trying to is the mistake that produced the classifier. The
+entity types and edge types are finite — a body, a seat, a person, an instrument, a
+vote, a contest, about a dozen relations — while their **combinations** are unbounded.
+Model the domain, and the question space takes care of itself.
+
+The reason this is worth the effort is in the paragraph below: the local layer is the
+one that touches people most and the one nobody has charted. A map of it does something
+a search box can't — search answers the question you asked, a map shows you the
+question you didn't know to ask, which is usually that the rezoning passed 7–3 and two
+of the ayes were seated by 900 votes.
+
 The original framing was "make an API wrapper, then escape the wrapper by generating my
 own pipelines." Foundry did that. But building it taught me the wrapper was never the
 real limit — **classification** was.

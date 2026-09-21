@@ -44,6 +44,14 @@ with provenance** that gets traversed. Classification is a projection and it dis
 the half of a mixed question that made it interesting. v1 of the graph is Virginia top
 to bottom. The skeleton is small enough for two Postgres tables — no graph database.
 
+**What the map is for:** questions whose answers require crossing layers of government
+— how the person I elected actually voted — become a walk across the map, with every
+step able to show its source. Specificity comes from the **joins**, not from volume;
+accuracy comes from **certification**, not from mapping. Anticipating the questions is
+explicitly not the goal: the entity and edge types are finite, their combinations are
+not. Model the domain, don't enumerate the asks. Longer version in `README.md` under
+"What the map is for".
+
 ## Rules
 
 Full list in `README.md`. The ones most often broken:
