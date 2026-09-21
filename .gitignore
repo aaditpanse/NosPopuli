@@ -16,7 +16,6 @@ flags.json
 .discovery_cache_*.json
 .claude/
 .pytest_cache/
-CLAUDE.md
 specs/
 correspondence.db
 # Foundry: ignore regenerable http caches and run outputs, but keep the
