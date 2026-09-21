@@ -27,6 +27,8 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 
+import health
+
 FOUNDRY = pathlib.Path(__file__).parent
 STORE = FOUNDRY / "data" / "store"
 LOG_PATH = FOUNDRY / "data" / "refresh_log.jsonl"
@@ -50,7 +52,7 @@ def source_ids():
     not by name, so new enrichment sidecar files can't break the cycle."""
     out = []
     for p in sorted(STORE.glob("*.json")):
-        if p.stem in SKIP or "item-facts" in p.stem:
+        if p.stem in SKIP or p.stem.startswith("_") or "item-facts" in p.stem:
             continue
         try:
             if isinstance(json.loads(p.read_text()).get("meetings"), dict):
@@ -96,7 +98,11 @@ def refresh_curated(source_id, log):
             fresh = {k: v for k, v in cache.items() if "rss" not in k.lower()}
             if len(fresh) != len(cache):
                 cache_path.write_text(json.dumps(fresh))
-        backfill.backfill_loudoun([datetime.date.today().year])
+        # recertify=False: main() runs the certification pass for every
+        # promoted oracle at the end of the cycle, so doing it here too would
+        # fetch the whole second source twice.
+        backfill.backfill_loudoun([datetime.date.today().year],
+                                  recertify=False)
     else:
         return False
     return True
@@ -105,7 +111,6 @@ def refresh_curated(source_id, log):
 def refresh_generic(source_id, store, log):
     import harness
     import run_onboard
-    import run_oracle
     import sandbox2
     from backfill import merge
 
@@ -113,19 +118,36 @@ def refresh_generic(source_id, store, log):
     rel = meta.get("artifact")
     if not rel or not (FOUNDRY / rel).exists():
         log("  no promoted artifact recorded — cannot refresh")
+        health.record(source_id, "refresh", "skipped",
+                      {"reason": "no promoted artifact recorded"})
         return False
     slug = source_id[: -len("-bos")]
     cache_path = FOUNDRY / "data" / "onboard" / f"{slug}_refresh_cache.json"
     cache_path.unlink(missing_ok=True)  # fresh listings every refresh
     out_path = FOUNDRY / "data" / "onboard" / f"{slug}_refresh_out.json"
+    # Read the previous run's row counts BEFORE the artifact overwrites them:
+    # a window that suddenly returns half of what it returned yesterday is
+    # the classic silent-drift signature, and the harness can only see it
+    # with a prior to compare against. (Work dirs are gitignored, so CI runs
+    # from a fresh checkout have no prior and simply skip the check.)
+    prior_run_meta = None
+    if out_path.exists():
+        try:
+            prior_run_meta = json.loads(out_path.read_text()).get("run_meta")
+        except ValueError:
+            prior_run_meta = None
+    if not (prior_run_meta or {}).get("row_counts"):
+        prior_run_meta = None
     records, error = sandbox2.run_artifact(
         FOUNDRY / rel, [meta.get("meetings_arg", 3)], out_path, cache_path)
     if error is not None:
         log("  DRIFT: extractor failed — "
             + error.strip().splitlines()[-1][:140])
         log("  not merged; re-synthesize offline (run_onboard.py)")
+        health.record(source_id, "refresh", "error",
+                      {"artifact": rel, "error": error.strip()})
         return False
-    findings = harness.run_all(records)
+    findings = harness.run_all(records, prior_run_meta=prior_run_meta)
     if not any(f["check"] == "malformed_root" for f in findings):
         findings += run_onboard.floors(
             records, json.loads(cache_path.read_text())
@@ -134,25 +156,42 @@ def refresh_generic(source_id, store, log):
         log(f"  DRIFT: {len(findings)} gate findings — not merged")
         for f in findings[:4]:
             log(f"    [{f['layer']}/{f['check']}] {f['ref']}: {f['msg'][:110]}")
+        health.record(source_id, "refresh", "drift",
+                      {"artifact": rel, "findings": findings})
         return False
+    # A source with a promoted oracle is quarantined only until the
+    # certification pass at the end of the cycle reaches it; saying "no
+    # oracle wired" about a source that has one would be a lie the UI shows
+    # to readers.
     note = ("synthesized from agent-discovered profile; single-source, no "
             "oracle wired — ingested, never certifiable as-is")
+    if meta.get("oracle_artifact"):
+        note = "ingest-only until the promoted oracle recertifies"
     for rtype in ("meetings", "agenda_items", "vote_events"):
         for rec in records[rtype]:
             rec["certification"] = {"status": "quarantined", "method": None,
                                     "note": note}
-    merge(source_id, records, 0)
-    if meta.get("oracle_artifact"):
-        run_oracle.recertify(slug, log)
+    merged = merge(source_id, records, 0)
+    health.record(source_id, "refresh", "ok",
+                  {"artifact": rel, **(merged or {}),
+                   "row_counts": {k: len(v) for k, v in records.items()
+                                  if isinstance(v, list)}})
+    # Recertification is no longer conditional on THIS source merging
+    # cleanly: main() runs every promoted oracle at the end of the cycle, so
+    # a drifted primary can no longer freeze a source's certification.
     return True
 
 
 def enrich(log):
+    tails = {}
     for script in ("summarize_items.py", "meeting_digests.py", "upcoming.py"):
         proc = subprocess.run([sys.executable, str(FOUNDRY / script)],
                               capture_output=True, text=True, timeout=900)
         tail = (proc.stdout or proc.stderr).strip().splitlines()
-        log(f"  {script}: {tail[-1][:110] if tail else f'exit {proc.returncode}'}")
+        line = tail[-1][:110] if tail else f"exit {proc.returncode}"
+        tails[script] = line
+        log(f"  {script}: {line}")
+    return tails
 
 
 def main():
@@ -184,15 +223,21 @@ def main():
         print(f"refreshing {sid} ({why})")
         try:
             store = json.loads((STORE / f"{sid}.json").read_text())
-            ok = (refresh_curated(sid, print) if store.get("meta") is None
-                  or sid in ("pittsburgh-legistar", "la-primegov", "loudoun-bos")
+            curated = (store.get("meta") is None
+                       or sid in ("pittsburgh-legistar", "la-primegov",
+                                  "loudoun-bos"))
+            ok = (refresh_curated(sid, print) if curated
                   else refresh_generic(sid, store, print))
             results[sid] = "ok" if ok else "drift-or-skipped"
+            if curated:
+                health.record(sid, "refresh", "ok" if ok else "skipped",
+                              {"path": "curated", "why": why})
         except (Exception, SystemExit) as exc:
             # backfill raises SystemExit on extractor failure — contain it so
             # one bad source never kills the rest of the cycle.
             print(f"  ERROR: {exc}")
             results[sid] = f"error: {str(exc)[:120]}"
+            health.record(sid, "refresh", "error", {"error": str(exc)})
     # History deepening rides the same cycle: deterministic, $0, and merges
     # only meetings the store doesn't have (never touches certified records).
     # A stalled/gate-failed source escalates to AT MOST ONE budget-gated
@@ -214,16 +259,50 @@ def main():
         except Exception as exc:
             print(f"  deepen {sid} ERROR: {exc}")
             results[f"deepen:{sid}"] = f"error: {str(exc)[:120]}"
+            health.record(sid, "deepen", "error", {"error": str(exc)})
+
+    # Certification pass: re-run every promoted oracle against the current
+    # store. Deterministic, $0, and UNCONDITIONAL by design — it used to fire
+    # only after a clean merge, which meant a source whose primary drifted
+    # (or one refreshed through the curated path) could never have its
+    # records certified again. The oracle reads only the second source, so a
+    # stale primary is no reason to withhold certification from records that
+    # are already in the store.
+    import run_oracle
+    for sid in source_ids():
+        if not sid.endswith("-bos"):
+            continue
+        try:
+            store = json.loads((STORE / f"{sid}.json").read_text())
+        except ValueError:
+            continue
+        if not store.get("meta", {}).get("oracle_artifact"):
+            continue
+        print(f"recertifying {sid}")
+        try:
+            counts = run_oracle.recertify(sid[: -len("-bos")], print)
+            results[f"recertify:{sid}"] = (
+                f"{counts['certified']}/{counts['total']}" if counts
+                else "skipped (oracle unreachable or no coverage)")
+        except (Exception, SystemExit) as exc:
+            print(f"  ERROR: {exc}")
+            results[f"recertify:{sid}"] = f"error: {str(exc)[:120]}"
+            health.record(sid, "recertify", "error", {"error": str(exc)})
 
     # Enrichment runs LAST so refreshed AND deepened meetings get their
     # plain-English layer in the same cycle. Idempotent — costs ~$0 when
     # nothing is new.
+    enriched = {}
     if todo or any(k.startswith("deepen:") for k in results):
-        enrich(print)
+        enriched = enrich(print)
 
     with LOG_PATH.open("a") as fh:
         fh.write(json.dumps({"ts": datetime.datetime.now().isoformat(
             timespec="seconds"), "results": results}) + "\n")
+    # The jsonl above is gitignored, so it never survives a CI run; the
+    # health ledger is the copy an operator (or the console) can actually
+    # read after the fact.
+    health.record_cycle(results, enriched)
     return 0
 
 

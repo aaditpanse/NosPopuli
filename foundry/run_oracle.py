@@ -22,6 +22,7 @@ import time
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 
 import harness
+import health
 import sandbox2
 import synthesize
 from run_onboard import _norm_ws
@@ -465,10 +466,54 @@ def reconcile(store, assertions, source_id):
     return findings, affirmed
 
 
+# Findings whose ref is a meeting id but whose subject is the MEETING RECORD
+# alone. An attendance disagreement says the two clerks wrote down the room
+# differently; it says nothing about how anyone voted on any item. Letting it
+# cascade cost Prince William every vote of one session over one supervisor.
+# A member whose recorded POSITION actually conflicts surfaces as a
+# vote_mismatch on that vote's own ref, which still quarantines it.
+MEETING_ONLY_CHECKS = {"attendance_mismatch"}
+
+
+def _by_check(findings):
+    """Findings grouped by check name — the shape of a failure in one line.
+    'twelve vote_mismatch, one attendance_mismatch' is a diagnosis; a list of
+    twelve messages is a wall."""
+    out = {}
+    for f in findings or []:
+        key = f.get("check", "?")
+        out[key] = out.get(key, 0) + 1
+    return out
+
+
+def _write_attempt_findings(artifact, findings, rate, clean, covered):
+    """Persist WHY an oracle attempt landed where it did, next to the
+    artifact it judges.
+
+    This goes in extractors/ rather than data/oracle/ deliberately: the
+    latter is gitignored, so three failed Fairfax attempts left no trace of
+    what they got wrong and the next run had to rediscover it by spending
+    Opus again. The sidecar is a few KB and commits with the code.
+    """
+    try:
+        artifact.with_suffix(".findings.json").write_text(json.dumps({
+            "agreement_rate": None if rate is None else round(rate, 4),
+            "affirmed_votes": clean, "covered_votes": covered,
+            "by_check": _by_check(findings),
+            "findings": findings}, indent=1))
+    except OSError as exc:  # never fail a run over a debug artifact
+        print(f"  (could not write findings sidecar: {exc})")
+
+
 def certify(store, assertions, findings, affirmed, method):
     disputed = {}
     for f in findings:
-        disputed.setdefault(f["ref"], []).append(f["msg"])
+        disputed.setdefault(f["ref"], []).append(f)
+    vote_blocking = {ref for ref, fs in disputed.items()
+                     if any(f["check"] not in MEETING_ONLY_CHECKS for f in fs)}
+
+    def notes(ref):
+        return "; ".join(f["msg"] for f in disputed.get(ref, [])) or None
 
     def mark(rec, ok, note=None, evidence=None):
         rec["certification"] = {"status": "certified" if ok else "quarantined",
@@ -481,17 +526,17 @@ def certify(store, assertions, findings, affirmed, method):
     for meeting in store["meetings"].values():
         mid = meeting["meeting_id"]
         ok = meeting["date"] in assertions and mid not in disputed
-        n["certified"] += mark(meeting, ok, "; ".join(disputed.get(mid, [])) or None)
+        n["certified"] += mark(meeting, ok, notes(mid))
         n["total"] += 1
 
     vote_ok = {}
     for ve in store["vote_events"].values():
         mid = ve["meeting_id"]
         ref, entry = affirmed.get(ve["vote_id"], (None, None))
-        ok = ref is not None and ref not in disputed and mid not in disputed
+        ok = ref is not None and ref not in disputed and mid not in vote_blocking
         tier3 = bool(entry and entry.get("_tier3"))
         n["certified"] += mark(ve, ok,
-                               "; ".join(disputed.get(ref, [])) if ref else None,
+                               notes(ref) if ref else None,
                                evidence=None if tier3
                                else (entry or {}).get("evidence") if ok else None)
         if ok and tier3:
@@ -536,6 +581,8 @@ def run(slug, attempts=3, log=print):
             code, assistant_content, usage = synthesize.generate(messages)
         except RuntimeError as exc:
             log(f"  synthesis failed: {str(exc)[:140]} — fresh attempt")
+            health.record(source_id, "oracle", "error",
+                          {"attempt": attempt, "error": str(exc)})
             continue
         usages.append(usage)
         artifact = artifacts / f"v1_attempt{attempt}.py"
@@ -544,6 +591,7 @@ def run(slug, attempts=3, log=print):
         assertions, error = sandbox2.run_artifact(
             artifact, [n_meetings], out_path, cache_path)
         findings = []
+        rate, clean, n_covered = None, None, None
         if error is None:
             run_meta = json.loads(out_path.read_text()).get("run_meta") or {}
             findings = oracle_floors(
@@ -567,10 +615,16 @@ def run(slug, attempts=3, log=print):
                         and affirmed[ve["vote_id"]][0] not in disputed
                         and ve["meeting_id"] not in disputed)
             rate = clean / len(covered) if covered else 0.0
+            n_covered = len(covered)
             if rate >= 0.6:
                 passed = True
                 log(f"  ORACLE GATE PASSED (agreement rate {rate:.0%}: "
                     f"{clean}/{len(covered)} votes affirmed on covered meetings)")
+                _write_attempt_findings(artifact, [], rate, clean, len(covered))
+                health.record(source_id, "oracle", "attempt-passed",
+                              {"attempt": attempt, "artifact": artifact.name,
+                               "rate": round(rate, 3), "clean": clean,
+                               "covered": len(covered)})
                 break
             findings = rec_findings[:8] + [{
                 "layer": "gate", "check": "low_agreement", "ref": "run",
@@ -585,13 +639,22 @@ def run(slug, attempts=3, log=print):
         log(f"  gate failed: {len(findings)} findings")
         for f in findings[:6]:
             log(f"    [{f['layer']}/{f['check']}] {f['ref']}: {f['msg'][:120]}")
+        _write_attempt_findings(artifact, findings, rate, clean, n_covered)
+        health.record(source_id, "oracle", "attempt-failed",
+                      {"attempt": attempt, "artifact": artifact.name,
+                       "rate": None if rate is None else round(rate, 3),
+                       "by_check": _by_check(findings), "findings": findings,
+                       "error": error})
         messages.append({"role": "assistant", "content": assistant_content})
         messages.append(synthesize.feedback_message(error, findings))
 
-    log(f"oracle cost: {len(usages)} attempts, ${synthesize.cost_usd(usages):.2f}, "
+    cost = synthesize.cost_usd(usages)
+    log(f"oracle cost: {len(usages)} attempts, ${cost:.2f}, "
         f"{(time.time() - t0) / 60:.1f} min")
     if not passed:
         log("verdict: FAILED — no oracle candidate cleared the gate")
+        health.record(source_id, "oracle", "failed",
+                      {"attempts": len(usages), "cost_usd": round(cost, 2)})
         return None
 
     (FOUNDRY / "data" / "oracle" / f"{slug}_assertions.json").write_text(
@@ -614,6 +677,12 @@ def run(slug, attempts=3, log=print):
     pct = counts["certified"] / counts["total"] if counts["total"] else 0
     log(f"certified: {counts['certified']}/{counts['total']} ({pct:.0%}), "
         f"{counts['disputes']} disputed refs -> {store_path.name}")
+    health.record(source_id, "oracle", "certified",
+                  {"artifact": str(artifact.relative_to(FOUNDRY)),
+                   "certified": counts["certified"], "total": counts["total"],
+                   "disputes": counts["disputes"],
+                   "by_check": _by_check(findings),
+                   "cost_usd": round(cost, 2)})
     return counts
 
 
@@ -632,6 +701,7 @@ def recertify(slug, log=print):
     # fresh cache every run: the write-through cache would otherwise pin
     # listing pages to the day they were first fetched
     cache_path = FOUNDRY / "data" / "oracle" / f"{slug}_recert_cache.json"
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
     cache_path.unlink(missing_ok=True)
     out_path = FOUNDRY / "data" / "oracle" / f"{slug}_assertions_raw.json"
     assertions, error = sandbox2.run_artifact(
@@ -639,14 +709,40 @@ def recertify(slug, log=print):
     if error is not None:
         log(f"  oracle artifact failed: {error.strip().splitlines()[-1][:120]}"
             " — DRIFT, needs re-synthesis (run_oracle.py)")
+        health.record(source_id, "recertify", "error",
+                      {"artifact": rel, "error": error.strip()})
         return None
     findings, affirmed = reconcile(store, assertions, source_id)
     method = ("cross-source: primary extractor × independent second-source "
               f"document ({(profile.get('second_source') or {}).get('system', '')[:60]})")
+    # Guard against a transient second-source outage decertifying a whole
+    # store: certification is a claim we have to be able to defend, but so is
+    # the absence of one. If the oracle reached nothing at all while the store
+    # holds certifications from a run that did, keep them and say so.
+    was_certified = sum(
+        1 for rtype in ("meetings", "agenda_items", "vote_events")
+        for r in store[rtype].values()
+        if (r.get("certification") or {}).get("status") == "certified")
+    covered = sum(1 for m in store["meetings"].values()
+                  if m["date"] in assertions)
+    if was_certified and not covered:
+        log(f"  {source_id}: second source returned no covered meetings while "
+            f"{was_certified} records are certified — keeping them, store "
+            "untouched (transient outage, not a decertification)")
+        health.record(source_id, "recertify", "rejected",
+                      {"artifact": rel, "kept_certified": was_certified,
+                       "reason": "second source returned no covered meetings"})
+        return None
     counts = certify(store, assertions, findings, affirmed, method)
     store_path.write_text(json.dumps(store, indent=1))
     log(f"  recertified {source_id}: {counts['certified']}/{counts['total']} "
-        f"({counts['disputes']} disputed refs)")
+        f"({counts['disputes']} disputed refs, {covered} meetings covered)")
+    health.record(source_id, "recertify", "ok",
+                  {"artifact": rel, "certified": counts["certified"],
+                   "total": counts["total"], "disputes": counts["disputes"],
+                   "covered_meetings": covered,
+                   "store_meetings": len(store["meetings"]),
+                   "by_check": _by_check(findings)})
     return counts
 
 

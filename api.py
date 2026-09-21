@@ -37,13 +37,14 @@ from district_resolver import resolve_address, resolve_point, resolve_geoid
 import search_cache
 import httpx
 import asyncio
+import io
 import anthropic
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-from router_agent import route_query, extract_president_congress, fast_route, fast_route_state
+from router_agent import route_query, extract_president_congress, fast_route, fast_route_state, intents_from_structured
 from search_agent import search_bills, search_summaries
 from title_search_agent import search_by_title
 from bill_fetcher import fetch_bill
@@ -56,6 +57,7 @@ from historian_agent import (
 )
 from documentor_agent import log_action
 from result_validator_agent import validate_results, validate_results_batch
+from search_rank import rank_by_relevance
 from state_search_agent import (
     search_state_bills,
     get_recent_state_bills,
@@ -77,12 +79,28 @@ from state_member_search_agent import (
     fetch_state_member_bills,
 )
 
+from ledger_agent import (
+    classify_question,
+    build_funnel,
+    stories_from_results,
+    enrich_stories,
+    district_impact,
+    district_impact_key,
+    fallback_headline,
+    foundry_place_coverage,
+    STATE_NAMES,
+    build_shelves,
+    shelf_cache_key,
+    member_headline,
+)
 from correspondence.router import router as correspondence_router
 from correspondence.db import (
     list_known_elections as db_list_known_elections,
     add_known_election as db_add_known_election,
     delete_known_election as db_delete_known_election,
     get_bill_lobbying as db_get_bill_lobbying,
+    get_disk_cache,
+    set_disk_cache,
 )
 from elections_agent import (
     fetch_elections, fetch_election_detail, fetch_election_polling,
@@ -188,6 +206,12 @@ class SearchRequest(BaseModel):
     fresh: bool = False  # debug: bypass search cache for this request
 
 
+class LedgerAsk(BaseModel):
+    question: str
+    state_code: Optional[str] = None
+    max_results: int = 10
+
+
 class BillRequest(BaseModel):
     congress: int
     bill_type: str
@@ -227,6 +251,12 @@ class PointRequest(BaseModel):
 
 class GeoidRequest(BaseModel):
     geoid: str
+
+
+class DistrictImpactRequest(BaseModel):
+    geoid: str
+    question: str
+    stories: list = []
 
 
 class StateBillRequest(BaseModel):
@@ -672,17 +702,28 @@ async def handle_legislation_search(structured, question, loop):
         # Run validator on history batch too — relaxed threshold (4 vs 5) so
         # "somewhat related" older bills pass, but tuna acts and impeachment
         # resolutions don't. Batched in groups of 20 to stay within token limits.
+        ranked = rank_by_relevance(
+            merged, question,
+            extra=(structured.get("keywords") or []) + (structured.get("expanded_terms") or []),
+        )
         raw_results = await loop.run_in_executor(
-            None, validate_results_batch, question, merged, get_client(), 4
+            None, validate_results_batch, question, ranked, get_client(), 4
+        )
+        raw_results = rank_by_relevance(
+            raw_results, question,
+            extra=(structured.get("keywords") or []) + (structured.get("expanded_terms") or []),
         )
     else:
         target = structured.get("result_count", 5)
-        # Feed more candidates to the validator so filtering doesn't drop us below target
-        candidates = merged[: target * 2]
+        extra = (structured.get("keywords") or []) + (structured.get("expanded_terms") or [])
+        ranked = rank_by_relevance(merged, question, extra=extra)
+        # Feed the lexically strongest candidates to the validator so a
+        # recency-lucky unrelated bill never occupies a slot the real match needs.
+        candidates = ranked[: max(target * 3, 12)]
         validated = await loop.run_in_executor(
             None, validate_results, question, candidates, get_client()
         )
-        raw_results = validated[:target]
+        raw_results = rank_by_relevance(validated, question, extra=extra)[:target]
 
     log_search(
         query=question,
@@ -1178,23 +1219,67 @@ async def resolve_district_endpoint(request: Request, body: GeoidRequest):
     return result
 
 
+@app.post("/ledger/district")
+@limiter.limit("30/minute")
+async def ledger_district(request: Request, body: DistrictImpactRequest):
+    """Clicking a district on a ledger map: who represents it, and what the
+    bills on the page would mean there. The rep lookup is local and instant;
+    the impact paragraph is one Haiku call, cached a day per district+ask."""
+    loop = asyncio.get_event_loop()
+    district = await loop.run_in_executor(None, resolve_geoid, body.geoid)
+    if district.get("error"):
+        raise HTTPException(status_code=404, detail=district["error"])
+    stories = [s for s in (body.stories or []) if isinstance(s, dict)][:10]
+    impact = None
+    if body.question.strip() and stories:
+        key = district_impact_key(body.geoid, body.question, stories)
+        try:
+            impact = get_disk_cache(key, 86400)
+        except Exception:
+            impact = None
+        if not impact:
+            try:
+                impact = await asyncio.wait_for(
+                    loop.run_in_executor(
+                        None, lambda: district_impact(body.question, district, stories, get_client())
+                    ),
+                    timeout=8.0,
+                )
+            except Exception as e:
+                print(f"[LEDGER] district impact timed out or failed: {e}")
+                impact = None
+            if impact:
+                try:
+                    set_disk_cache(key, impact)
+                except Exception:
+                    pass
+    return {**district, "question": body.question, "impact": impact}
+
+
 @app.post("/feed")
 @limiter.limit("10/minute")
 async def get_feed(request: Request, body: FeedRequest):
     """Returns personalized feed based on interests and representatives."""
     try:
         loop = asyncio.get_event_loop()
-        items = await loop.run_in_executor(
+        result = await loop.run_in_executor(
             None,
             fetch_feed,
             body.interests,
             body.senator_bioguides,
             body.rep_bioguide,
-            30,
+            60,
             3,
             body.state_code,
         )
-        return {"items": items, "count": len(items)}
+        if isinstance(result, dict):
+            items = result.get("items") or []
+            return {
+                "items": items,
+                "count": len(items),
+                "state_status": result.get("state_status", "skipped"),
+            }
+        return {"items": result, "count": len(result), "state_status": "skipped"}
     except HTTPException:
         raise
     except Exception as e:
@@ -1226,6 +1311,7 @@ def _resolve_routing(body: "SearchRequest") -> dict:
         structured = route_query(body.question, get_client(), full_history=body.full_history)
     else:
         print(f"[ROUTER] fast-path hit: {structured.get('_fast_path')}")
+    structured["intents"] = intents_from_structured(structured)
     return structured
 
 
@@ -1388,6 +1474,265 @@ async def search(request: Request, body: SearchRequest):
         raise HTTPException(status_code=500, detail="Search failed. Please try again.")
 
 
+def _client_ip(request: Request) -> str:
+    xff = request.headers.get("x-forwarded-for") or ""
+    if xff:
+        return xff.split(",")[0].strip()
+    cf = request.headers.get("cf-connecting-ip")
+    if cf:
+        return cf.strip()
+    return (request.client.host if request.client else "") or ""
+
+
+@app.get("/geo/guess")
+@limiter.limit("30/minute")
+async def geo_guess(request: Request):
+    """Best-effort state from the connection. Fail-open to unknown — never a gate."""
+    ip = _client_ip(request)
+    if not ip or ip.startswith(("127.", "10.", "192.168.", "0.")) or ip == "::1":
+        return {"state": None, "state_code": None, "source": "unknown"}
+    try:
+        async with httpx.AsyncClient(timeout=2.5) as client:
+            r = await client.get(
+                f"http://ip-api.com/json/{ip}",
+                params={"fields": "status,countryCode,regionName,region"},
+            )
+            data = r.json()
+        if data.get("status") == "success" and data.get("countryCode") == "US" and data.get("region"):
+            return {
+                "state": data.get("regionName"),
+                "state_code": data.get("region"),
+                "source": "ip",
+            }
+    except Exception as e:
+        print(f"[GEO] guess failed: {e}")
+    return {"state": None, "state_code": None, "source": "unknown"}
+
+
+def _ndjson_lines(*objs):
+    async def gen():
+        for obj in objs:
+            yield json.dumps(obj) + "\n"
+    return StreamingResponse(gen(), media_type="application/x-ndjson", headers=STREAM_HEADERS)
+
+
+async def _ledger_shelves(question, stories, member):
+    key = shelf_cache_key(question, stories, member)
+    try:
+        cached = get_disk_cache(key, 1800)
+    except Exception:
+        cached = None
+    if cached:
+        return cached
+    shelves = build_shelves(question, stories, member)
+    if shelves:
+        try:
+            set_disk_cache(key, shelves)
+        except Exception:
+            pass
+    return shelves
+
+
+async def _ledger_member_and_search(structured, search_body, question, loop):
+    """XOR /search dispatch stays intact. Ledger may fetch member + bills together."""
+    intents = structured.get("intents") or intents_from_structured(structured)
+    member_name = next((i.get("name") for i in intents if i.get("kind") == "member" and i.get("name")), None)
+    has_topic = any(i.get("kind") == "topic" for i in intents)
+    qtype = structured.get("query_type")
+
+    async def run_member():
+        mstruct = dict(structured)
+        mstruct["query_type"] = "member"
+        mstruct["entity_name"] = member_name
+        return await handle_member_search(mstruct, question, loop)
+
+    async def run_legis():
+        lstruct = dict(structured)
+        lstruct["query_type"] = "legislation"
+        return await _dispatch_legislation_subtype(lstruct, question, loop)
+
+    member_out = None
+    search_out = {"query_type": "legislation", "results": []}
+
+    if qtype == "off_topic":
+        return None, _off_topic_response(structured, question)
+    if qtype == "committee" and not has_topic and not member_name:
+        return None, await _dispatch(structured, search_body, question, loop)
+    if member_name and has_topic:
+        member_out, search_out = await asyncio.gather(run_member(), run_legis())
+        return member_out, search_out
+    if member_name and not has_topic:
+        member_out = await run_member()
+        return member_out, member_out or search_out
+    if qtype == "member" and structured.get("entity_name"):
+        member_out = await handle_member_search(structured, question, loop)
+        return member_out, member_out or search_out
+    search_out = await _dispatch(structured, search_body, question, loop)
+    if search_out.get("query_type") == "member":
+        return search_out, search_out
+    return None, search_out
+
+
+@app.post("/ledger")
+@limiter.limit("20/minute")
+async def ledger_ask(request: Request, body: LedgerAsk):
+    """Classify an ask, then stream plate → member → shelves so first paint is not blocked."""
+    classified = classify_question(body.question, body.state_code)
+    plate = classified.get("plate")
+    if plate in ("home", "watching"):
+        return _ndjson_lines({"section": "plate", **classified}, {"section": "done"})
+    if plate == "uncharted":
+        place = classified["place"]
+        classified["coverage"] = foundry_place_coverage(place["slug"])
+        return _ndjson_lines({"section": "plate", **classified}, {"section": "done"})
+    if plate == "bill":
+        return _ndjson_lines({"section": "plate", **classified}, {"section": "done"})
+    if plate == "elections":
+        try:
+            data = await fetch_elections(zip_code=None, state_code=classified.get("state_code"))
+        except Exception as e:
+            print(f"[LEDGER] elections error: {e}")
+            data = {}
+        return _ndjson_lines({
+            "section": "plate", **classified,
+            "upcoming": (data or {}).get("upcoming") or [],
+            "recent": (data or {}).get("recent") or [],
+        }, {"section": "done"})
+
+    loop = asyncio.get_event_loop()
+    state_code = classified.get("state_code") or body.state_code
+    search_body = SearchRequest(
+        question=body.question,
+        max_results=body.max_results or 10,
+        state_code=None,
+    )
+    search_out = {"query_type": "legislation", "results": []}
+    member_out = None
+    structured = {}
+    try:
+        structured = _resolve_routing(search_body)
+        _apply_request_flags(structured, search_body)
+        _apply_presidential_term_filter(structured, body.question)
+        _disambiguate_president_query(structured, body.question)
+        if structured.get("_fast_path") != "state_bill_id":
+            structured["jurisdiction"] = "federal"
+            structured.pop("state_code", None)
+            if structured.get("query_type") in ("state_legislation", "state_member"):
+                structured["query_type"] = "legislation"
+        structured["intents"] = intents_from_structured(structured)
+        member_out, search_out = await _ledger_member_and_search(
+            structured, search_body, body.question, loop
+        )
+    except HTTPException:
+        raise
+    except Exception:
+        import traceback
+        print(f"[LEDGER] search error: {traceback.format_exc()}")
+
+    if structured.get("_fast_path") in ("bill_id", "state_bill_id") or structured.get("specific_bill"):
+        rows = search_out.get("results") or []
+        if len(rows) == 1 and rows[0].get("congress") and rows[0].get("number"):
+            r = rows[0]
+            return _ndjson_lines({
+                "section": "plate",
+                "plate": "bill",
+                "congress": r["congress"],
+                "bill_type": (r.get("type") or "").lower(),
+                "number": int(r["number"]),
+            }, {"section": "done"})
+
+    out_type = search_out.get("query_type")
+    if out_type == "off_topic":
+        return _ndjson_lines({
+            "section": "plate", "plate": "off_topic", "question": body.question,
+            "reason": search_out.get("ambiguity_reason") or "",
+        }, {"section": "done"})
+
+    committee = None
+    if out_type == "committee":
+        if not search_out.get("found"):
+            return _ndjson_lines({
+                "section": "plate", "plate": "off_topic", "question": body.question,
+                "kind": "committee",
+                "reason": "We could not match that to a House or Senate committee. Try its full name, like \"Senate Finance Committee\".",
+            }, {"section": "done"})
+        committee = search_out.get("committee") or {}
+        # Committee hits arrive as `bills`, newest first; they are the stories.
+        search_out = dict(search_out, results=search_out.get("bills") or [])
+
+    results = search_out.get("results") or []
+    stories = stories_from_results(results, limit=body.max_results or 10)
+    # Search hits are an id and a title. One Congress.gov fetch per story
+    # (parallel, cached, 3s budget) gives the cards something to say and makes
+    # the funnel true instead of "all introduced".
+    await enrich_stories(stories, fetch_bill, budget=3.0)
+    extra = (structured.get("keywords") or []) + (structured.get("expanded_terms") or [])
+    stories = rank_by_relevance(stories, body.question, extra=extra)
+    if committee:
+        for s in stories:
+            if not s.get("latest_action"):
+                s["stage"] = "unknown"  # still no action data; do not draw a stage
+    # The funnel counts stages from the same enriched rows the cards show.
+    funnel_rows = stories or results
+    place_name = classified.get("place_name") or STATE_NAMES.get((state_code or "").upper())
+    src = member_out if isinstance(member_out, dict) else {}
+    member = None
+    legislation = None
+    if src.get("query_type") == "member" and src.get("found"):
+        member = src.get("member")
+        legislation = src.get("legislation")
+
+    # A person-only ask has no topic hits. The funnel and headline then describe
+    # the person's own recent bills; sponsored rows are not passed off as search hits.
+    person_only = bool(member) and not results
+    if person_only:
+        sponsored = (legislation or {}).get("sponsored") or []
+        funnel = build_funnel(sponsored)
+        headline = member_headline(member, sponsored)
+        deck = "The bars are how far this member's recent bills got."
+    elif committee:
+        # GovInfo committee hits carry no latest action, so a funnel would
+        # read "all introduced" and lie. Send none; the page shows the list.
+        funnel = []
+        n = len(stories)
+        headline = f"{committee.get('name') or 'This committee'}. {n} recent bill{'s' if n != 1 else ''}."
+        deck = "The newest bills this committee has handled. Committees are where most bills stop."
+    else:
+        funnel = build_funnel(funnel_rows)
+        headline = fallback_headline(body.question, place_name, stories)
+        deck = "Most bills never leave committee. Click a bar to read only that stage."
+
+    plate_payload = {
+        "section": "plate",
+        "plate": "ledger",
+        "question": body.question,
+        "state_code": state_code,
+        "place_name": place_name,
+        "person_only": person_only,
+        "funnel": funnel,
+        "headline": headline,
+        "deck": deck,
+        "stories": stories,
+        "committee": committee,
+        "query_type": out_type,
+        "cached": search_out.get("cached"),
+    }
+
+    async def gen():
+        yield json.dumps(plate_payload) + "\n"
+        if member:
+            yield json.dumps({
+                "section": "member",
+                "member": member,
+                "legislation": legislation or {},
+            }) + "\n"
+        shelves = await _ledger_shelves(body.question, stories, member)
+        yield json.dumps({"section": "shelves", "shelves": shelves}) + "\n"
+        yield json.dumps({"section": "done"}) + "\n"
+
+    return StreamingResponse(gen(), media_type="application/x-ndjson", headers=STREAM_HEADERS)
+
+
 # Headers that opt a StreamingResponse out of gzip + proxy buffering, so the
 # instant `meta` line reaches the client immediately. GZipMiddleware buffers a
 # stream's small early chunks until it accumulates enough bytes, which would
@@ -1459,11 +1804,11 @@ def _bill_detail_stream(bill_data, meta_extra, user_context, *, log_kind, noun="
         # plain-English explanation isn't held hostage by the reference lookup.
         async def _translate_core():
             txt = await text_task
-            translation, refs = await ex(
+            translation, refs, plate = await ex(
                 translate_bill_core, bill_data, get_client(), user_context,
                 txt,  # full slice; translate_bill_core digests it down itself
             )
-            return (translation or f"Translation unavailable for this {noun}.", refs or [])
+            return (translation or f"Translation unavailable for this {noun}.", refs or [], plate or {})
         translate_core_task = asyncio.ensure_future(_translate_core())
 
         async def sec_meta():
@@ -1488,16 +1833,17 @@ def _bill_detail_stream(bill_data, meta_extra, user_context, *, log_kind, noun="
             return {"section": "sponsors", "sponsors": sponsors, "cosponsors": cos or []}
 
         async def sec_translation():
-            translation, refs = await translate_core_task
+            translation, refs, plate = await translate_core_task
             return {
                 "section": "translation",
                 "translation": translation,
                 "became_law": became_law,
                 "has_background": bool(refs),
+                "plate": plate or {},
             }
 
         async def sec_background():
-            _translation, refs = await translate_core_task
+            _translation, refs, _plate = await translate_core_task
             items = await ex(resolve_bill_background, bill_data, refs, get_client())
             return {"section": "background", "items": items or []}
 
@@ -1529,7 +1875,7 @@ def _bill_detail_stream(bill_data, meta_extra, user_context, *, log_kind, noun="
         async def sec_connections():
             # "amends" is parsed from the translation text, so this waits on the
             # translation core (not the slow Background) plus the related fetches.
-            (translation, _refs), related, amendments, reports = await asyncio.gather(
+            (translation, _refs, _plate), related, amendments, reports = await asyncio.gather(
                 translate_core_task, related_task, amend_task, reports_task
             )
             connections = _build_connections(
@@ -1938,6 +2284,24 @@ async def bill_full_text(request: Request, congress: int, bill_type: str, number
     return {"text": txt or None}
 
 
+@app.get("/bill/{congress}/{bill_type}/{number}/text")
+@limiter.limit("30/minute")
+async def bill_text_reader(request: Request, congress: int, bill_type: str, number: int):
+    """The whole bill as a readable page: Congress.gov's typescript reflowed
+    into paragraphs with its outline intact. This is where "open in a new tab"
+    goes; the JSON endpoint above is for the in-app reader."""
+    from bill_text_format import bill_text_page
+    loop = asyncio.get_event_loop()
+    bt = bill_type.lower()
+    txt, bill = await asyncio.gather(
+        loop.run_in_executor(None, fetch_bill_text, congress, bt, number, 1_000_000),
+        loop.run_in_executor(None, fetch_bill, congress, bt, number),
+    )
+    title = (((bill or {}).get("bill") or {}).get("title") or "").strip() or None
+    page = await asyncio.to_thread(bill_text_page, congress, bt, number, txt, title)
+    return HTMLResponse(page, headers=_SHELL_HEADERS)
+
+
 @app.get("/api/bill/{congress}/{bill_type}/{number}/market")
 @limiter.limit("15/minute")
 async def bill_market_link(request: Request, congress: int, bill_type: str, number: int):
@@ -2103,19 +2467,11 @@ async def member_pac_interests_endpoint(request: Request, cid: str, cycle: int, 
         return {"cycle": cycle, "interests": []}
 
 
-_house_stocks = None
-
-
 def _load_house_stocks():
-    """Load + cache the pre-built House stock-trade dataset (read-only)."""
-    global _house_stocks
-    if _house_stocks is None:
-        try:
-            with open("data/house_stocks.json") as f:
-                _house_stocks = json.load(f)
-        except Exception:
-            _house_stocks = {"members": {}, "generated": None, "cycles": []}
-    return _house_stocks
+    """The pre-built House stock-trade dataset, parsed once per process and
+    shared with bill_market (which used to parse the same 2 MB file again)."""
+    from bill_market import load_house_stocks
+    return load_house_stocks()
 
 
 @app.get("/member/stocks")
@@ -2161,24 +2517,22 @@ async def member_stocks_endpoint(request: Request, bioguide: str):
     }
 
 
-_all_trades_flat = None
+_all_trades_index = None
 
 
 def _flatten_trades():
-    """One-time flat, date-sorted list of every disclosed trade across members."""
-    global _all_trades_flat
-    if _all_trades_flat is None:
+    """One-time date-sorted index of every disclosed trade: (name, bioguide,
+    trade) tuples that point at the already-parsed dataset rather than a
+    second copy of every trade dict. Rows are materialized per page by
+    _trade_row."""
+    global _all_trades_index
+    if _all_trades_index is None:
         data = _load_house_stocks()
         rows = []
         for bg, m in (data.get("members") or {}).items():
             name = m.get("name", "")
             for t in m.get("trades", []):
-                rows.append({
-                    "member": name, "bioguide": bg,
-                    "ticker": t.get("ticker"), "asset": t.get("asset"),
-                    "type": t.get("type"), "date": t.get("date"),
-                    "amount": t.get("amount"), "owner": t.get("owner", ""),
-                })
+                rows.append((name, bg, t))
 
         def key(d):
             try:
@@ -2186,9 +2540,19 @@ def _flatten_trades():
                 return (int(yy), int(mm), int(dd))
             except Exception:
                 return (0, 0, 0)
-        rows.sort(key=lambda r: key(r["date"]), reverse=True)
-        _all_trades_flat = rows
-    return _all_trades_flat
+        rows.sort(key=lambda r: key(r[2].get("date") or ""), reverse=True)
+        _all_trades_index = rows
+    return _all_trades_index
+
+
+def _trade_row(entry):
+    name, bg, t = entry
+    return {
+        "member": name, "bioguide": bg,
+        "ticker": t.get("ticker"), "asset": t.get("asset"),
+        "type": t.get("type"), "date": t.get("date"),
+        "amount": t.get("amount"), "owner": t.get("owner", ""),
+    }
 
 
 @app.get("/stocks/notable")
@@ -2209,13 +2573,13 @@ async def stocks_all_endpoint(request: Request, q: str = "", page: int = 0, page
     ql = (q or "").strip().lower()
     rows = _flatten_trades()
     if ql:
-        rows = [r for r in rows if ql in (r["member"] or "").lower()
-                or ql in (r["ticker"] or "").lower()]
+        rows = [r for r in rows if ql in (r[0] or "").lower()
+                or ql in (r[2].get("ticker") or "").lower()]
     page = max(0, page)
     page_size = min(max(page_size, 10), 100)
     start = page * page_size
     return {"total": len(rows), "page": page, "page_size": page_size,
-            "trades": rows[start:start + page_size]}
+            "trades": [_trade_row(r) for r in rows[start:start + page_size]]}
 
 
 @app.get("/stock/perf")
@@ -2337,7 +2701,7 @@ async def election_detail_page(election_id: str):
 
 
 # ── SEO / social meta ─────────────────────────────────────────
-# The SPA serves one index.html for every route, so link previews would all
+# The SPA serves one shell for every route, so link previews would all
 # show the homepage card. The head carries a <!-- meta:start/end --> block that
 # gets rewritten per route: bills/laws get their real title (bill_fetcher is
 # TTL-cached, and crawlers are the main consumers of these paths), tab routes
@@ -2414,20 +2778,26 @@ async def _route_meta(path: str):
     return (f"{label}: {title} — NosPopuli", desc)
 
 
-async def _index_with_meta(path: str) -> HTMLResponse:
+# The shell is tiny and carries the ?v= cache-buster for the JS, so it must
+# always be revalidated; otherwise a browser keeps an old shell pointing at an
+# old script and no deploy ever shows up.
+_SHELL_HEADERS = {"Cache-Control": "no-cache"}
+
+
+async def _ledger_with_meta(path: str) -> HTMLResponse:
     html = await asyncio.to_thread(
-        pathlib.Path("frontend/index.html").read_text)
+        pathlib.Path("frontend/test.html").read_text)
     meta = await _route_meta(path.strip("/"))
     if meta:
         html = _META_BLOCK_RE.sub(
             lambda _: _meta_block(meta[0], meta[1], path), html, count=1)
-    return HTMLResponse(html)
+    return HTMLResponse(html, headers=_SHELL_HEADERS)
 
 
 @app.get("/")
 @app.head("/")
 async def root():
-    return await _index_with_meta("")
+    return await _ledger_with_meta("")
 
 
 @app.get("/robots.txt", include_in_schema=False)
@@ -2454,7 +2824,7 @@ async def favicon():
 
 @app.get("/test")
 async def test_home():
-    return FileResponse("frontend/test.html")
+    return await _ledger_with_meta("")
 
 
 @app.post("/flag/search")
@@ -2575,21 +2945,21 @@ async def monitor(request: Request):
 
 
 @app.get("/monitor/stream")
-async def monitor_stream(request: Request):
+async def monitor_stream(request: Request, after: int = 0):
+    """Agent-log entries appended since byte offset `after`. The monitor page
+    polls with the last offset it was given, so each poll carries only new
+    lines instead of the whole (ever-growing) log."""
     _require_monitor_auth(request)
-    try:
-        with open("agent_log.json", "r") as f:
-            log = json.load(f)
-        return log
-    except:
-        return []
+    from documentor_agent import read_log
+    entries, offset = await asyncio.to_thread(read_log, after)
+    return {"entries": entries, "offset": offset}
 
 
 @app.post("/monitor/clear-search-log")
 async def clear_search_log(request: Request):
     _require_monitor_auth(request)
-    with open("search_log.json", "w") as f:
-        json.dump([], f)
+    import search_logger
+    search_logger.clear_log()
     return {"status": "cleared"}
 
 
@@ -2614,6 +2984,7 @@ async def get_analysis(request: Request):
 # records are displayed with warnings, never silently mixed with certified.
 
 import pathlib as _pathlib
+import threading as _threading
 
 _FOUNDRY_STORE = _pathlib.Path("foundry/data/store")
 
@@ -2623,19 +2994,154 @@ async def foundry_page():
     return FileResponse("frontend/foundry.html")
 
 
+_FOUNDRY_HEALTH_PATH = _pathlib.Path("foundry/data/health/health.json")
+# Serialized /api/foundry/data body, keyed on the store's file signature. The
+# store is ~26 MB of JSON that parses into ~100 MB of Python objects; building
+# it per request ratcheted the process RSS up by that much and never gave it
+# back. Only the bytes stay resident now; the object tree is dropped after
+# one json.dumps.
+_FOUNDRY_PAYLOAD = {"sig": None, "body": None}
+_FOUNDRY_PAYLOAD_LOCK = _threading.Lock()
+
+
+def _foundry_store_signature():
+    """(name, mtime_ns, size) for every store file plus the health ledger —
+    the whole input set of the public payload."""
+    sig = []
+    for p in sorted(_FOUNDRY_STORE.glob("*.json")):
+        try:
+            st = p.stat()
+        except OSError:
+            continue
+        sig.append((p.name, st.st_mtime_ns, st.st_size))
+    if _FOUNDRY_HEALTH_PATH.exists():
+        st = _FOUNDRY_HEALTH_PATH.stat()
+        sig.append(("health.json", st.st_mtime_ns, st.st_size))
+    return tuple(sig)
+
+
+def _foundry_payload_bytes():
+    sig = _foundry_store_signature()
+    with _FOUNDRY_PAYLOAD_LOCK:
+        if _FOUNDRY_PAYLOAD["sig"] == sig and _FOUNDRY_PAYLOAD["body"] is not None:
+            return _FOUNDRY_PAYLOAD["body"]
+    body = _build_foundry_payload_bytes()
+    with _FOUNDRY_PAYLOAD_LOCK:
+        _FOUNDRY_PAYLOAD["sig"] = sig
+        _FOUNDRY_PAYLOAD["body"] = body
+    return body
+
+
+def _invalidate_foundry_payload():
+    with _FOUNDRY_PAYLOAD_LOCK:
+        _FOUNDRY_PAYLOAD["sig"] = None
+        _FOUNDRY_PAYLOAD["body"] = None
+
+
 @app.get("/api/foundry/data")
 async def foundry_data():
-    sources = {}
-    capital_projects = {}
-    elections = {}
-    for path in sorted(_FOUNDRY_STORE.glob("*.json")):
-        if ("item-facts" in path.name or "item-summaries" in path.name
-                or path.name in ("upcoming.json", "meeting-digests.json")):
-            continue
+    body = await asyncio.to_thread(_foundry_payload_bytes)
+    return Response(content=body, media_type="application/json")
+
+
+def _foundry_store_paths():
+    """(source stores, sidecars) — the same partition the old per-request
+    builder used. Leading underscore = a sidecar that is not a source. The
+    store dir is globbed by seven code paths; this keeps a new one from
+    being rendered as a jurisdiction."""
+    return [p for p in sorted(_FOUNDRY_STORE.glob("*.json"))
+            if not (p.name.startswith("_") or "item-facts" in p.name
+                    or "item-summaries" in p.name
+                    or p.name in ("upcoming.json", "meeting-digests.json"))]
+
+
+def _read_store_json(name):
+    p = _FOUNDRY_STORE / name
+    return json.loads(p.read_text()) if p.exists() else {}
+
+
+def _build_foundry_payload_bytes():
+    """Serialize the public payload straight into a byte buffer, one store
+    file at a time. Each store is parsed only to read its kind and compute
+    certification, then dropped; the bytes that go out are the file's own
+    JSON (already valid), so no second copy of the whole payload is ever
+    built. Peak is one parsed store, not all of them. Shape is identical to
+    _build_foundry_payload."""
+    def dumps(o):
+        return json.dumps(o, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+
+    buckets = {"sources": [], "capital_projects": [], "elections": []}
+    certification = {}
+    upcoming = _read_store_json("upcoming.json")
+    try:
+        doc = _health.load()
+        today = _dt.date.today().isoformat()
+    except Exception:
+        doc = None
+    for path in _foundry_store_paths():
+        raw = path.read_bytes()
+        store = json.loads(raw)
+        kind = store.get("meta", {}).get("kind")
+        bucket = ("capital_projects" if kind == "capital_projects"
+                  else "elections" if kind == "elections" else "sources")
+        buckets[bucket].append((path.stem, raw.strip()))
+        # Per-source certification context for the reader. Uncertified
+        # records are shown, never hidden — but "uncertified" on its own
+        # tells a reader nothing, and the honest answer ("their minutes are
+        # really an agenda", "the clerk has not published yet") is already
+        # in the health ledger. Only reader-facing fields cross this
+        # boundary: no artifact paths, no costs, no model names, no traces.
+        if bucket == "sources" and doc is not None:
+            try:
+                events = _health.events_for(doc, path.stem)
+                row = _health.summarize(path.stem, store, events, today,
+                                        upcoming.get(path.stem))
+                certification[path.stem] = {
+                    "certified": row["total_certified"],
+                    "total": row["total_records"],
+                    "pct": row["certified_pct"],
+                    "reasons": row["quarantine_reasons"],
+                    "oracle_status": row["oracle"]["status"],
+                    "note": _health.public_note(row, events),
+                }
+            except Exception:
+                certification = {}  # the ledger is advisory; never fail the page
+                doc = None
+        del store, raw
+    if not buckets["sources"] and not buckets["capital_projects"]:
+        raise HTTPException(status_code=404, detail="foundry store is empty — run foundry/backfill.py")
+
+    out = io.BytesIO()
+    out.write(b"{")
+
+    def write_bucket(name, first):
+        if not first:
+            out.write(b",")
+        out.write(dumps(name) + b":{")
+        for i, (stem, raw) in enumerate(buckets[name]):
+            if i:
+                out.write(b",")
+            out.write(dumps(stem) + b":" + raw)
+        out.write(b"}")
+        buckets[name] = None
+
+    write_bucket("sources", True)
+    out.write(b',"item_facts":' + dumps(_read_store_json("loudoun-bos-item-facts.json")))
+    out.write(b',"item_summaries":' + dumps(_read_store_json("item-summaries.json")))
+    out.write(b',"upcoming":' + dumps(upcoming))
+    out.write(b',"meeting_digests":' + dumps(_read_store_json("meeting-digests.json")))
+    write_bucket("capital_projects", False)
+    write_bucket("elections", False)
+    out.write(b',"certification":' + dumps(certification) + b"}")
+    return out.getvalue()
+
+
+def _build_foundry_payload():
+    """Reference (dict) builder, kept for tests and one-off scripts. The
+    served endpoint uses _build_foundry_payload_bytes."""
+    sources, capital_projects, elections = {}, {}, {}
+    for path in _foundry_store_paths():
         store = json.loads(path.read_text())
-        # Non-meetings record types (CIP capital projects, local elections)
-        # ride in their own maps so the meetings timeline renderer never sees
-        # a shape it can't read.
         kind = store.get("meta", {}).get("kind")
         if kind == "capital_projects":
             capital_projects[path.stem] = store
@@ -2643,20 +3149,34 @@ async def foundry_data():
             elections[path.stem] = store
         else:
             sources[path.stem] = store
-    facts_path = _FOUNDRY_STORE / "loudoun-bos-item-facts.json"
-    item_facts = json.loads(facts_path.read_text()) if facts_path.exists() else {}
-    summaries_path = _FOUNDRY_STORE / "item-summaries.json"
-    item_summaries = json.loads(summaries_path.read_text()) if summaries_path.exists() else {}
-    upcoming_path = _FOUNDRY_STORE / "upcoming.json"
-    upcoming = json.loads(upcoming_path.read_text()) if upcoming_path.exists() else {}
-    digests_path = _FOUNDRY_STORE / "meeting-digests.json"
-    digests = json.loads(digests_path.read_text()) if digests_path.exists() else {}
+    item_facts = _read_store_json("loudoun-bos-item-facts.json")
+    item_summaries = _read_store_json("item-summaries.json")
+    upcoming = _read_store_json("upcoming.json")
+    digests = _read_store_json("meeting-digests.json")
     if not sources and not capital_projects:
         raise HTTPException(status_code=404, detail="foundry store is empty — run foundry/backfill.py")
+    certification = {}
+    try:
+        doc = _health.load()
+        today = _dt.date.today().isoformat()
+        for source_id, store in list(sources.items()):
+            events = _health.events_for(doc, source_id)
+            row = _health.summarize(source_id, store, events, today,
+                                    upcoming.get(source_id))
+            certification[source_id] = {
+                "certified": row["total_certified"],
+                "total": row["total_records"],
+                "pct": row["certified_pct"],
+                "reasons": row["quarantine_reasons"],
+                "oracle_status": row["oracle"]["status"],
+                "note": _health.public_note(row, events),
+            }
+    except Exception:
+        certification = {}
     return {"sources": sources, "item_facts": item_facts,
             "item_summaries": item_summaries, "upcoming": upcoming,
             "meeting_digests": digests, "capital_projects": capital_projects,
-            "elections": elections}
+            "elections": elections, "certification": certification}
 
 
 # --- Foundry search-onboarding: probe a named jurisdiction, preview-extract
@@ -2670,11 +3190,37 @@ import threading as _threading
 import uuid as _uuid
 
 _sys.path.insert(0, "foundry")
-import legistar_family as _legistar_family
-import discover as _discover
-import run_onboard as _run_onboard
+# legistar_family / discover / run_onboard (and the whole synthesis + oracle
+# pipeline behind run_onboard) are imported inside _foundry_onboard_job: they
+# are only needed by the admin onboarding thread, not to serve pages.
 
 _FOUNDRY_JOBS = {}
+_FOUNDRY_JOBS_MAX = 20
+_FOUNDRY_JOB_LOG_MAX = 500
+
+
+def _new_foundry_job(job_id, **fields):
+    """Register a job record, evicting the oldest finished jobs so the dict
+    (and the per-job log lists) cannot grow for the life of the process."""
+    finished = [jid for jid, j in _FOUNDRY_JOBS.items() if j.get("status") != "running"]
+    while len(_FOUNDRY_JOBS) >= _FOUNDRY_JOBS_MAX and finished:
+        _FOUNDRY_JOBS.pop(finished.pop(0), None)
+    log = _BoundedLog(_FOUNDRY_JOB_LOG_MAX)
+    _FOUNDRY_JOBS[job_id] = {"status": "running", "log": log, "result": None, **fields}
+    return _FOUNDRY_JOBS[job_id]
+
+
+class _BoundedLog(list):
+    """A list that keeps only its last N lines. Job code only ever calls
+    .append and reads it whole, so this stays a plain list to callers."""
+    def __init__(self, maxlen):
+        super().__init__()
+        self._maxlen = maxlen
+
+    def append(self, line):
+        super().append(line)
+        if len(self) > self._maxlen:
+            del self[: len(self) - self._maxlen]
 _FOUNDRY_PREVIEWS = _pathlib.Path("foundry/data/preview")
 
 
@@ -2713,6 +3259,9 @@ class _FoundryJobCancelled(Exception):
 
 
 def _foundry_onboard_job(job_id, name):
+    import legistar_family as _legistar_family
+    import discover as _discover
+    import run_onboard as _run_onboard
     job = _FOUNDRY_JOBS[job_id]
     _raw_log = job["log"]
 
@@ -2866,8 +3415,7 @@ async def foundry_onboard(body: _FoundryOnboardBody, request: Request):
                    "ledger is read-only here (set FOUNDRY_ONBOARD=on to allow "
                    "search-triggered pipeline runs)")
     job_id = _uuid.uuid4().hex[:12]
-    _FOUNDRY_JOBS[job_id] = {"status": "running", "log": [], "result": None,
-                             "progress": {"pct": 0, "stage": "queued"}}
+    _new_foundry_job(job_id, progress={"pct": 0, "stage": "queued"})
     _threading.Thread(target=_foundry_onboard_job, args=(job_id, body.name),
                       daemon=True).start()
     return {"job_id": job_id}
@@ -2898,11 +3446,246 @@ async def foundry_onboard_cancel(job_id: str, request: Request):
     return {"status": job["status"], "cancelling": bool(job.get("cancel"))}
 
 
+# ---------------------------------------------------------------------------
+# Foundry scraper-health console (/admin/foundry).
+#
+# The pipeline's verdicts used to live in a CI log nobody reads and a jsonl
+# the runner throws away. foundry/health.py now writes them to a committed
+# ledger; this serves that ledger next to what the stores actually contain,
+# so "is this scraper healthy, and why is this county not certified?" is one
+# page instead of an archaeology session.
+#
+# Gating: reading is MONITOR_SECRET. The $0 actions (refresh, recertify) are
+# too. Oracle synthesis spends Opus, so it additionally needs localhost or
+# FOUNDRY_ONBOARD=on — the same rule the search-onboarding path uses.
+
+import datetime as _dt
+import subprocess as _subprocess
+
+_sys.path.insert(0, "foundry")
+import health as _health  # noqa: E402
+import budget as _budget  # noqa: E402
+
+_FOUNDRY_ACTIVE = set()   # source_ids with a job in flight
+_FOUNDRY_HEALTH_SKIP = ("item-facts", "item-summaries")
+
+
+def _foundry_llm_open(request: Request) -> bool:
+    local = bool(request.client and request.client.host in ("127.0.0.1", "::1"))
+    return local or os.environ.get("FOUNDRY_ONBOARD") == "on"
+
+
+def _foundry_ci_runs(limit=8):
+    """Recent scheduled-refresh runs, when the gh CLI is available. On prod
+    it is not, and the honest answer is "unknown" rather than a guess."""
+    try:
+        proc = _subprocess.run(
+            ["gh", "run", "list", "--workflow=foundry-refresh.yml",
+             "--limit", str(limit), "--json",
+             "status,conclusion,createdAt,url,displayTitle"],
+            capture_output=True, text=True, timeout=20)
+        if proc.returncode != 0:
+            return None
+        return {"available": True, "runs": json.loads(proc.stdout)}
+    except (OSError, ValueError, _subprocess.SubprocessError):
+        return None
+
+
+@app.get("/admin/foundry", response_class=HTMLResponse)
+async def foundry_health_page(request: Request):
+    _require_monitor_auth(request)
+    return FileResponse("frontend/foundry_health.html")
+
+
+# Summaries only (small) — never the parsed stores — cached on the same
+# store signature as the public payload.
+_FOUNDRY_HEALTH_ROWS = {"sig": None, "rows": None}
+
+
+def _foundry_health_rows(doc, today):
+    sig = (_foundry_store_signature(), today)
+    with _FOUNDRY_PAYLOAD_LOCK:
+        if _FOUNDRY_HEALTH_ROWS["sig"] == sig:
+            return _FOUNDRY_HEALTH_ROWS["rows"]
+    upcoming_path = _FOUNDRY_STORE / "upcoming.json"
+    upcoming = json.loads(upcoming_path.read_text()) if upcoming_path.exists() else {}
+    rows = []
+    for path in sorted(_FOUNDRY_STORE.glob("*.json")):
+        if path.name.startswith("_") or path.stem in ("upcoming", "item-summaries",
+                                                      "meeting-digests"):
+            continue
+        if any(skip in path.name for skip in _FOUNDRY_HEALTH_SKIP):
+            continue
+        try:
+            store = json.loads(path.read_text())
+        except ValueError:
+            continue
+        events = _health.events_for(doc, path.stem)
+        row = _health.summarize(path.stem, store, events, today,
+                                upcoming.get(path.stem))
+        del store
+        row["events"] = events
+        rows.append(row)
+    with _FOUNDRY_PAYLOAD_LOCK:
+        _FOUNDRY_HEALTH_ROWS["sig"] = sig
+        _FOUNDRY_HEALTH_ROWS["rows"] = rows
+    return rows
+
+
+@app.get("/admin/foundry/health")
+async def foundry_health_data(request: Request):
+    _require_monitor_auth(request)
+    doc = _health.load()
+    today = _dt.date.today().isoformat()
+    sources = await asyncio.to_thread(_foundry_health_rows, doc, today)
+    for row in sources:
+        row["busy"] = row["source_id"] in _FOUNDRY_ACTIVE
+
+    # Extractor directories with no store behind them: onboarding attempts
+    # that never landed. Their only record today is an empty directory, so
+    # the console names them rather than letting them disappear.
+    landed = {row["source_id"] for row in sources}
+    orphans = []
+    extractors = _pathlib.Path("foundry/extractors")
+    if extractors.is_dir():
+        for d in sorted(extractors.iterdir()):
+            if not d.is_dir() or d.name.endswith("-oracle"):
+                continue
+            if d.name in landed:
+                continue
+            attempts = sorted(f.name for f in d.glob("v*_attempt*.py"))
+            orphans.append({"source_id": d.name, "attempts": len(attempts),
+                            "last_attempt": attempts[-1] if attempts else None})
+
+    ledger = _budget.LEDGER
+    return {
+        "generated_at": _dt.datetime.now().isoformat(timespec="seconds"),
+        "today": today,
+        "gates": {"local": bool(request.client
+                                and request.client.host in ("127.0.0.1", "::1")),
+                  "llm_open": _foundry_llm_open(request)},
+        "budget": {"cap_usd": float(os.environ.get("FOUNDRY_DAILY_BUDGET",
+                                                   _budget.DEFAULT_DAILY_USD)),
+                   "today_usd": round(_budget.spent_since(today), 4),
+                   "month_usd": round(_budget.spent_since(today[:7]), 4),
+                   "ledger_present": ledger.exists()},
+        "last_run": doc.get("last_run"),
+        "ci": _foundry_ci_runs(),
+        "sources": sources,
+        "orphan_extractors": orphans,
+        "jobs": {jid: {"status": j["status"],
+                       "source_id": j.get("source_id"),
+                       "action": j.get("action"),
+                       "progress": j.get("progress")}
+                 for jid, j in _FOUNDRY_JOBS.items() if j.get("action")},
+    }
+
+
+def _foundry_action_job(job_id, source_id, action, attempts):
+    """Run one pipeline action in a thread, logging into the job record."""
+    job = _FOUNDRY_JOBS[job_id]
+    log = job["log"].append
+    _sys.path.insert(0, "foundry")
+    try:
+        import refresh as _refresh
+        import run_oracle as _run_oracle
+        _refresh.load_env()
+        slug = source_id[: -len("-bos")] if source_id.endswith("-bos") else source_id
+        if action == "refresh":
+            store = json.loads((_FOUNDRY_STORE / f"{source_id}.json").read_text())
+            curated = (store.get("meta") is None
+                       or source_id in ("pittsburgh-legistar", "la-primegov",
+                                        "loudoun-bos"))
+            ok = (_refresh.refresh_curated(source_id, log) if curated
+                  else _refresh.refresh_generic(source_id, store, log))
+            job.update(status="done", result={"ok": bool(ok)})
+        elif action == "recertify":
+            counts = _run_oracle.recertify(slug, log)
+            job.update(status="done", result={"counts": counts})
+        elif action == "oracle":
+            counts = _run_oracle.run(slug, attempts=attempts, log=log)
+            job.update(status="done", result={"counts": counts})
+        else:
+            job.update(status="error")
+            log(f"unknown action {action}")
+    except (Exception, SystemExit) as exc:
+        log(f"error: {exc}")
+        job.update(status="error")
+    finally:
+        _FOUNDRY_ACTIVE.discard(source_id)
+        _invalidate_foundry_payload()
+
+
+def _start_foundry_action(request: Request, source_id, action, attempts=3):
+    if not (_FOUNDRY_STORE / f"{source_id}.json").exists():
+        raise HTTPException(status_code=404, detail=f"unknown source {source_id}")
+    if source_id in _FOUNDRY_ACTIVE:
+        raise HTTPException(status_code=409,
+                            detail=f"{source_id} already has a job running")
+    local = bool(request.client and request.client.host in ("127.0.0.1", "::1"))
+    job_id = _uuid.uuid4().hex[:12]
+    _new_foundry_job(job_id, source_id=source_id, action=action,
+                     progress={"pct": 0, "stage": action})
+    _FOUNDRY_ACTIVE.add(source_id)
+    _threading.Thread(target=_foundry_action_job,
+                      args=(job_id, source_id, action, attempts),
+                      daemon=True).start()
+    # On Railway the store is a committed artifact served read-only: a write
+    # here lives until the next deploy and no further. Say so rather than
+    # letting the operator think they changed prod.
+    return {"job_id": job_id, "ephemeral": not local}
+
+
+@app.post("/admin/foundry/refresh/{source_id}")
+async def foundry_admin_refresh(source_id: str, request: Request):
+    _require_monitor_auth(request)
+    return _start_foundry_action(request, source_id, "refresh")
+
+
+@app.post("/admin/foundry/recertify/{source_id}")
+async def foundry_admin_recertify(source_id: str, request: Request):
+    _require_monitor_auth(request)
+    return _start_foundry_action(request, source_id, "recertify")
+
+
+@app.post("/admin/foundry/oracle/{source_id}")
+async def foundry_admin_oracle(source_id: str, request: Request,
+                               attempts: int = 3):
+    _require_monitor_auth(request)
+    if not _foundry_llm_open(request):
+        raise HTTPException(
+            status_code=403,
+            detail="oracle synthesis spends Opus — allowed from localhost, "
+                   "or set FOUNDRY_ONBOARD=on to enable it on this deployment")
+    try:
+        _budget.check("oracle")
+    except RuntimeError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    return _start_foundry_action(request, source_id, "oracle",
+                                 attempts=max(1, min(attempts, 5)))
+
+
+@app.get("/admin/foundry/jobs/{job_id}")
+async def foundry_admin_job(job_id: str, request: Request):
+    _require_monitor_auth(request)
+    job = _FOUNDRY_JOBS.get(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="unknown job")
+    if job["status"] != "running":
+        job["progress"] = {"pct": 100, "stage": job["status"]}
+    return job
+
+
 @app.get("/{full_path:path}", include_in_schema=False)
 async def spa_fallback(full_path: str):
-    """Serve the single-page app for client-side routes (/bill/..., /member/...,
-    /trades, /lobbying, /notifications) so deep links and refresh work. Paths
-    that look like an API call or a file 404 normally instead of returning HTML."""
+    """Serve the ask SPA for every in-app route, so deep links and refresh work.
+
+    The old tabbed app that used to own /newspaper, /trades, /lobbying,
+    /notifications, /law/* and /state/* is gone; those capabilities are listed
+    in README.md under "Rebuilding the newspaper capabilities" and their
+    endpoints still work. Until each view is rebuilt in ledger.js, those paths
+    land on the ask SPA, which does not know them yet.
+    """
     if full_path.startswith(("api/", "static/")) or "." in full_path.split("/")[-1]:
         raise HTTPException(status_code=404, detail="Not found")
-    return await _index_with_meta(full_path)
+    return await _ledger_with_meta(full_path)

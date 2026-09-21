@@ -6,12 +6,21 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 _DATA_PATH = os.path.join(_HERE, "data", "legislators-current.json")
 _ZIP3_PATH = os.path.join(_HERE, "data", "zip3_to_state.json")
 
-try:
-    with open(_DATA_PATH) as f:
-        LEGISLATORS = json.load(f)
-except FileNotFoundError:
-    print(f"[CIVIC] WARNING: legislators file not found at {_DATA_PATH}")
-    LEGISLATORS = []
+_LEGISLATORS = None
+
+
+def legislators():
+    """The current-legislators roster (1.4 MB JSON, ~6.5 MB parsed), loaded
+    on first use rather than at import so the API boots without it."""
+    global _LEGISLATORS
+    if _LEGISLATORS is None:
+        try:
+            with open(_DATA_PATH) as f:
+                _LEGISLATORS = json.load(f)
+        except FileNotFoundError:
+            print(f"[CIVIC] WARNING: legislators file not found at {_DATA_PATH}")
+            _LEGISLATORS = []
+    return _LEGISLATORS
 
 try:
     with open(_ZIP3_PATH) as f:
@@ -47,7 +56,7 @@ def resolve_zip(zip_code):
     senators = []
     representative = None
     
-    for member in LEGISLATORS:
+    for member in legislators():
         terms = member.get("terms", [])
         if not terms:
             continue

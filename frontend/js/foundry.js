@@ -5,6 +5,9 @@
 // machine-derived next-meeting lookups (upcoming.py), keyed by source id —
 // advisory display metadata, never part of the certified record
 let UPCOMING = {};
+// Per-source certification context from the health ledger: why this
+// jurisdiction's records are or are not cross-checked, in a reader's words.
+let CERTINFO = {};
 // machine-derived per-meeting digests (meeting_digests.py), keyed by meeting_id
 let DIGESTS = {};
 
@@ -614,12 +617,21 @@ function regionSection(sourceId, store, itemFacts, summaries) {
 
   if (uncertified > 0) {
     const pct = Math.round(100 * certified / all.length);
+    const info = CERTINFO[sourceId] || {};
+    // Everything below is shown either way — withholding a jurisdiction's own
+    // published record helps nobody. What certification changes is what we
+    // are willing to VOUCH for, so say exactly that, then say why it is
+    // missing. "Not wired yet" was the old answer and it is now usually a
+    // lie: we know precisely what stopped each one.
+    const lead = certified === 0
+      ? `Everything below comes straight from the jurisdiction's own published
+         record. None of it has been checked against a second, independent
+         source, so we show it without vouching for it.`
+      : `${pct}% of the records here are affirmed by an independent second
+         source. The rest are shown too, each marked individually.`;
     section.appendChild(el("div", "warnbox",
-      `<strong>⚠ ${uncertified} uncertified record${uncertified === 1 ? "" : "s"}</strong>
-       ${certified === 0
-         ? "No independent second source is wired for this jurisdiction yet — every record is ingested only, none is publishable."
-         : `${pct}% of records are affirmed by an independent second source. The remainder is quarantined:
-            source disagreements, second-source gaps, or items with no final action to affirm.`}`));
+      `<strong>⚠ ${uncertified} record${uncertified === 1 ? "" : "s"} not independently confirmed</strong>
+       ${lead}${info.note ? " " + esc(info.note) : ""}`));
   }
 
   // worth your attention: the deviations — failed motions, dissents,
@@ -751,19 +763,32 @@ async function runSearch(query) {
   window._foundryCancelJob = async () => {
     await fetch(`/api/foundry/onboard/${job_id}/cancel`, { method: "POST" });
   };
+  // Build the log frame once; each tick only updates text and the bar width,
+  // rather than re-parsing the whole accumulated log as HTML.
+  log.innerHTML = `<div class="jl-head">Pipeline: ${esc(query)} — <span class="jl-stage"></span>
+      <button class="jl-cancel" onclick="_foundryCancelJob()" hidden>cancel run</button></div>
+    <div class="pbar"><div class="pfill" style="width:0%"></div></div><span class="jl-body"></span>`;
+  const stageEl = log.querySelector(".jl-stage"), cancelEl = log.querySelector(".jl-cancel");
+  const fillEl = log.querySelector(".pfill"), bodyEl = log.querySelector(".jl-body");
   const timer = setInterval(async () => {
-    const job = await (await fetch(`/api/foundry/onboard/${job_id}`)).json();
+    let job;
+    try {
+      job = await (await fetch(`/api/foundry/onboard/${job_id}`)).json();
+    } catch (e) {
+      clearInterval(timer);
+      bodyEl.textContent += "\n\nlost contact with the pipeline — reload to check on it";
+      return;
+    }
     const p = job.progress || { pct: 0, stage: job.status };
-    const cancelBtn = job.status === "running"
-      ? ` <button class="jl-cancel" onclick="_foundryCancelJob()">cancel run</button>` : "";
-    log.innerHTML = `<div class="jl-head">Pipeline: ${esc(query)} — ${esc(p.stage)}${cancelBtn}</div>
-      <div class="pbar"><div class="pfill" style="width:${p.pct}%"></div></div>`
-      + job.log.map(esc).join("\n");
+    stageEl.textContent = p.stage;
+    cancelEl.hidden = job.status !== "running";
+    fillEl.style.width = `${p.pct}%`;
+    bodyEl.textContent = (job.log || []).join("\n");
     if (job.status === "running") return;
     clearInterval(timer);
     const result = job.result;
     if (!result || result.platform_only) {
-      if (result && result.message) log.innerHTML += `\n\n${esc(result.message)}`;
+      if (result && result.message) bodyEl.textContent += `\n\n${result.message}`;
       return;
     }
     if (result.onboarded) {
@@ -772,6 +797,7 @@ async function runSearch(query) {
       const data = await (await fetch("/api/foundry/data")).json();
       UPCOMING = data.upcoming || {};
       DIGESTS = data.meeting_digests || {};
+      CERTINFO = data.certification || {};
       if (!data.sources[result.source_id]) return;
       renderCounties(data);
       renderMap(data);
@@ -789,7 +815,7 @@ async function runSearch(query) {
     const section = regionSection(result.source_id, toStoreShape(result.records), {}, {});
     section.id = `region-${result.source_id}`;
     log.appendChild(section);
-    section.scrollIntoView({ behavior: "smooth" });
+    section.scrollIntoView();
   }, 1500);
 }
 
@@ -892,21 +918,16 @@ function modalLink(label, title, build) {
 }
 
 function openModal(title, contentEl) {
-  const overlay = el("div", "modal-overlay");
-  const modal = el("div", "modal");
-  const bar = el("div", "modal-bar");
-  const h = el("div", "modal-h", esc(title));
-  const close = el("button", "modal-close", "✕");
-  const dismiss = () => overlay.remove();
-  close.addEventListener("click", dismiss);
-  overlay.addEventListener("click", e => { if (e.target === overlay) dismiss(); });
-  document.addEventListener("keydown", function esc2(e) {
-    if (e.key === "Escape") { dismiss(); document.removeEventListener("keydown", esc2); }
-  });
-  bar.append(h, close);
-  modal.append(bar, contentEl);
-  overlay.appendChild(modal);
-  document.body.appendChild(overlay);
+  const dlg = document.getElementById("fmodal");
+  document.getElementById("fmodal-h").textContent = title;
+  const body = document.getElementById("fmodal-body");
+  body.replaceChildren(contentEl);
+  if (!dlg._wired) {
+    dlg._wired = true;
+    dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+    dlg.addEventListener("close", () => body.replaceChildren());  // drop the content, free the nodes
+  }
+  if (!dlg.open) dlg.showModal();
 }
 
 function dashMeetings(c, data) {
@@ -922,12 +943,14 @@ function dashMeetings(c, data) {
     sec.id = `region-${sourceId}`;
     const blocks = [...sec.querySelectorAll("details.meeting")];
     if (blocks.length > 3) {
-      blocks.slice(3).forEach(b => b.style.display = "none");
+      // Meetings past the third are tagged once; the fold itself is CSS on
+      // the section's .meet-folded class.
+      blocks.slice(3).forEach(b => b.classList.add("meeting-extra"));
+      sec.classList.add("meet-folded");
       const btn = el("button", "dash-more", `view all ${blocks.length} meetings →`);
       btn.addEventListener("click", () => {
-        const hidden = blocks[3].style.display === "none";
-        blocks.slice(3).forEach(b => b.style.display = hidden ? "" : "none");
-        btn.textContent = hidden ? "show fewer ↑" : `view all ${blocks.length} meetings →`;
+        const folded = sec.classList.toggle("meet-folded");
+        btn.textContent = folded ? `view all ${blocks.length} meetings →` : "show fewer ↑";
       });
       sec.appendChild(btn);
     }
@@ -1086,9 +1109,9 @@ function tip(html, evt) {
   const t = document.getElementById("maptip");
   if (!html) { t.style.opacity = 0; return; }
   t.innerHTML = html;
-  t.style.opacity = 1;
-  t.style.left = (evt.clientX + 12) + "px";
+  t.style.left = (evt.clientX + 12) + "px";   // position before the fade-in
   t.style.top = (evt.clientY + 12) + "px";
+  t.style.opacity = 1;
 }
 
 function svgPath(d, cls, fill) {
@@ -1099,10 +1122,21 @@ function svgPath(d, cls, fill) {
   return p;
 }
 
+// counties-10m.json is 840 KB of TopoJSON; topojson.feature() on it makes a
+// much larger GeoJSON. Do that once, keep only the GeoJSON, drop the topology.
+let _usGeo = null;
+function usGeo() {
+  if (!_usGeo) {
+    _usGeo = { states: topojson.feature(_usTopo, _usTopo.objects.states),
+               counties: topojson.feature(_usTopo, _usTopo.objects.counties) };
+    _usTopo = null;
+  }
+  return _usGeo;
+}
+
 function drawMapUS(cov) {
   const host = document.getElementById("usmap");
-  const states = topojson.feature(_usTopo, _usTopo.objects.states);
-  const counties = topojson.feature(_usTopo, _usTopo.objects.counties);
+  const { states, counties } = usGeo();
   const totalByState = new Map();
   for (const c of counties.features) {
     const s = String(c.id).slice(0, 2);
@@ -1117,18 +1151,33 @@ function drawMapUS(cov) {
       <span class="legend-swatch" style="background:${stateFill(2)}"></span>covered</span></div>`;
   const svg = document.createElementNS(SVG_NS, "svg");
   svg.setAttribute("viewBox", "0 0 975 610");
+  // Listeners live on the <svg>, not on each of ~50 state paths (and ~3,200
+  // county paths in the state view); the path carries an index into `feats`.
+  const feats = [];
   for (const f of states.features) {
     const d = path(f);
     if (!d) continue;  // territories outside geoAlbersUsa
     const count = cov.byState.get(String(f.id)) || 0;
     const el = svgPath(d, "geo-area clickable", stateFill(count));
-    const total = totalByState.get(String(f.id)) || 0;
-    el.addEventListener("mousemove", e => tip(
-      `<b>${esc(f.properties.name)}</b> — ${count} of ${total} counties covered`, e));
-    el.addEventListener("mouseleave", () => tip(null));
-    el.addEventListener("click", () => { tip(null); drawMapState(f.id, f.properties.name, cov); });
+    el.dataset.i = feats.push(f) - 1;
     svg.appendChild(el);
   }
+  const featOf = e => {
+    const p = e.target && e.target.closest ? e.target.closest("path") : null;
+    return p && p.dataset.i !== undefined ? feats[p.dataset.i] : null;
+  };
+  svg.addEventListener("mousemove", e => {
+    const f = featOf(e);
+    if (!f) { tip(null); return; }
+    const count = cov.byState.get(String(f.id)) || 0;
+    const total = totalByState.get(String(f.id)) || 0;
+    tip(`<b>${esc(f.properties.name)}</b> — ${count} of ${total} counties covered`, e);
+  });
+  svg.addEventListener("mouseleave", () => tip(null));
+  svg.addEventListener("click", e => {
+    const f = featOf(e);
+    if (f) { tip(null); drawMapState(f.id, f.properties.name, cov); }
+  });
   host.appendChild(svg);
 }
 
@@ -1150,12 +1199,12 @@ function openEmptyCounty(feature, stateName) {
   const existing = document.getElementById(`county-${key}`);
   if (existing) existing.replaceWith(box); else root.appendChild(box);
   selectCounty(key);
-  box.scrollIntoView({ behavior: "smooth" });
+  box.scrollIntoView();
 }
 
 function drawMapState(stateFips, stateName, cov) {
   const host = document.getElementById("usmap");
-  const counties = topojson.feature(_usTopo, _usTopo.objects.counties)
+  const counties = usGeo().counties
     .features.filter(c => String(c.id).slice(0, 2) === String(stateFips));
   const fc = { type: "FeatureCollection", features: counties };
   const path = d3.geoPath(d3.geoAlbersUsa().fitSize([975, 610], fc));
@@ -1169,34 +1218,47 @@ function drawMapState(stateFips, stateName, cov) {
   host.querySelector(".map-back").addEventListener("click", () => drawMapUS(cov));
   const svg = document.createElementNS(SVG_NS, "svg");
   svg.setAttribute("viewBox", "0 0 975 610");
+  const feats = [];
   for (const c of counties) {
     const d = path(c);
     if (!d) continue;
     const place = cov.fipsToPlace.get(String(c.id));
     const el = svgPath(d, "geo-area clickable",
       place ? lerpColor(UNCOVERED, COVERED, 1) : lerpColor(UNCOVERED, [245, 240, 232], 0.5));
-    el.addEventListener("mousemove", e => tip(
-      `<b>${esc(c.properties.name)}</b> — ${place ? "covered" : "nothing yet — click to see"}`, e));
-    el.addEventListener("mouseleave", () => tip(null));
-    el.addEventListener("click", () => {
-      tip(null);
-      if (place) {
-        selectCounty(place);
-        const box = document.getElementById(`county-${place}`);
-        if (box) box.scrollIntoView({ behavior: "smooth" });
-      } else {
-        openEmptyCounty(c, stateName);  // clicked an un-onboarded county
-      }
-    });
+    el.dataset.i = feats.push(c) - 1;
     svg.appendChild(el);
   }
+  const featOf = e => {
+    const p = e.target && e.target.closest ? e.target.closest("path") : null;
+    return p && p.dataset.i !== undefined ? feats[p.dataset.i] : null;
+  };
+  svg.addEventListener("mousemove", e => {
+    const c = featOf(e);
+    if (!c) { tip(null); return; }
+    const place = cov.fipsToPlace.get(String(c.id));
+    tip(`<b>${esc(c.properties.name)}</b> — ${place ? "covered" : "nothing yet — click to see"}`, e);
+  });
+  svg.addEventListener("mouseleave", () => tip(null));
+  svg.addEventListener("click", e => {
+    const c = featOf(e);
+    if (!c) return;
+    tip(null);
+    const place = cov.fipsToPlace.get(String(c.id));
+    if (place) {
+      selectCounty(place);
+      const box = document.getElementById(`county-${place}`);
+      if (box) box.scrollIntoView();
+    } else {
+      openEmptyCounty(c, stateName);  // clicked an un-onboarded county
+    }
+  });
   host.appendChild(svg);
 }
 
 async function renderMap(data) {
   if (typeof d3 === "undefined" || typeof topojson === "undefined") return;  // assets absent
   try {
-    if (!_usTopo)
+    if (!_usGeo && !_usTopo)
       _usTopo = await (await fetch("/static/geo/counties-10m.json")).json();
     drawMapUS(coverageIndex(data));
   } catch (e) { /* map is a nav aid; never block the ledger on it */ }
@@ -1217,6 +1279,7 @@ async function init() {
   const data = await resp.json();
   UPCOMING = data.upcoming || {};
   DIGESTS = data.meeting_digests || {};
+  CERTINFO = data.certification || {};
   renderCounties(data);
   document.getElementById("loading").remove();
   renderMap(data);  // async, non-blocking — the ledger renders without waiting on geo

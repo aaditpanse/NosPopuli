@@ -17,10 +17,23 @@ for the map to use, but resolving statehouse members needs a state dataset.
 """
 
 import json
+import ssl
 import urllib.parse
 import urllib.request
 
-from civic_resolver import LEGISLATORS
+from civic_resolver import legislators
+
+# python.org macOS builds ship without a CA bundle, so bare urllib fails with
+# CERTIFICATE_VERIFY_FAILED against census.gov. Use certifi's when available.
+try:
+    import certifi
+    _SSL = ssl.create_default_context(cafile=certifi.where())
+except Exception:  # pragma: no cover
+    _SSL = ssl.create_default_context()
+
+
+def _open(url_or_req, timeout):
+    return urllib.request.urlopen(url_or_req, timeout=timeout, context=_SSL)
 
 GEOCODER = "https://geocoding.geo.census.gov/geocoder/geographies/"
 BENCHMARK, VINTAGE = "Public_AR_Current", "Current_Current"
@@ -69,7 +82,7 @@ def resolve_district(state_abbr, district):
     """Given a state (USPS) and a congressional district number, return the
     exact House member plus both senators from the shipped legislators file."""
     senators, representative = [], None
-    for member in LEGISLATORS:
+    for member in legislators():
         terms = member.get("terms", [])
         if not terms:
             continue
@@ -106,7 +119,7 @@ def resolve_geoid(geoid):
 
 def _geocode(url):
     try:
-        with urllib.request.urlopen(url, timeout=20) as r:
+        with _open(url, 20) as r:
             return json.load(r)
     except Exception:
         return None
@@ -149,17 +162,48 @@ def _resolve(geo, coords, method):
     return out
 
 
+NOMINATIM = "https://nominatim.openstreetmap.org/search?"
+
+
+def _place_to_point(place):
+    """Town-level fallback. The Census geocoder only matches street addresses,
+    so 'Austin, TX' returns nothing there. Nominatim resolves place names to a
+    centroid, which resolve_point then turns into a district."""
+    q = urllib.parse.urlencode({"q": place, "format": "json", "countrycodes": "us", "limit": 1})
+    req = urllib.request.Request(NOMINATIM + q, headers={"User-Agent": "NosPopuli/1.0 (nospopuli.org)"})
+    try:
+        with _open(req, 10) as r:
+            hits = json.load(r)
+    except Exception:
+        return None
+    if not hits:
+        return None
+    hit = hits[0]
+    try:
+        return float(hit["lat"]), float(hit["lon"]), hit.get("display_name", place)
+    except (KeyError, TypeError, ValueError):
+        return None
+
+
 def resolve_address(address):
     q = urllib.parse.urlencode({"address": address, "benchmark": BENCHMARK,
                                 "vintage": VINTAGE, "layers": "all", "format": "json"})
     data = _geocode(GEOCODER + "onelineaddress?" + q)
     matches = (((data or {}).get("result") or {}).get("addressMatches")) or []
-    if not matches:
-        return {"error": "address not found — check it or try nearby", "method": "address"}
-    m = matches[0]
-    result = _resolve(_districts_from(m.get("geographies", {})), m.get("coordinates"), "address")
-    result["matched_address"] = m.get("matchedAddress")
-    return result
+    if matches:
+        m = matches[0]
+        result = _resolve(_districts_from(m.get("geographies", {})), m.get("coordinates"), "address")
+        result["matched_address"] = m.get("matchedAddress")
+        return result
+    point = _place_to_point(address)
+    if point:
+        lat, lon, label = point
+        result = resolve_point(lat, lon)
+        if not result.get("error"):
+            result["method"] = "place"
+            result["matched_address"] = label
+            return result
+    return {"error": "address not found — check it or try nearby", "method": "address"}
 
 
 def resolve_point(lat, lon):

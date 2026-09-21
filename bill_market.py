@@ -86,6 +86,22 @@ def _cache_set(key, value):
 
 
 # ---------------------------------------------------------------- holdings
+_HOUSE_STOCKS = None
+
+
+def load_house_stocks():
+    """The pre-built House stock-trade dataset (read-only), parsed once per
+    process. api.py's /member/stocks and /stocks/all read the same object."""
+    global _HOUSE_STOCKS
+    if _HOUSE_STOCKS is None:
+        try:
+            with open(_HS_PATH) as f:
+                _HOUSE_STOCKS = json.load(f)
+        except Exception:
+            _HOUSE_STOCKS = {"members": {}, "generated": None, "cycles": []}
+    return _HOUSE_STOCKS
+
+
 @functools.lru_cache(maxsize=1)
 def _holdings():
     """Return (ticker_index, company_names).
@@ -94,8 +110,7 @@ def _holdings():
                              trades:[{date, type, amount, owner}]}}
     company_names: TICKER -> best asset description seen.
     """
-    with open(_HS_PATH) as f:
-        d = json.load(f)
+    d = load_house_stocks()
     idx, companies = {}, {}
     members = d.get("members", {})
     for m in (members.values() if isinstance(members, dict) else members):

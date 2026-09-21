@@ -108,7 +108,7 @@ body {
 .agent-pill {
   display: flex; align-items: center; gap: 0.6rem;
   padding: 0.5rem 1rem; cursor: pointer;
-  transition: background 0.1s;
+  transition: background 0.1s, border-left-color 0.15s;
   border-left: 2px solid transparent;
 }
 .agent-pill:hover { background: rgba(255,255,255,0.03); }
@@ -116,14 +116,13 @@ body {
   background: rgba(137,180,250,0.08);
   border-left-color: var(--blue);
 }
-.agent-pill.firing {
-  background: rgba(166,227,161,0.08);
-  border-left-color: var(--green);
-  animation: flash 0.4s ease;
-}
+/* The flash IS the keyframe: it ends at the resting look, so removing the
+   class on animationend changes nothing visually. */
+.agent-pill.firing { animation: flash 0.8s ease both; }
 @keyframes flash {
-  0% { background: rgba(166,227,161,0.25); }
-  100% { background: rgba(166,227,161,0.08); }
+  0%   { background: rgba(166,227,161,0.25); border-left-color: var(--green); }
+  60%  { background: rgba(166,227,161,0.08); border-left-color: var(--green); }
+  100% { background: transparent; border-left-color: transparent; }
 }
 
 .agent-dot {
@@ -151,6 +150,7 @@ body {
 .feed {
   flex: 1;
   overflow-y: auto;
+  scroll-behavior: smooth;
   padding: 1rem 1.5rem;
   display: flex;
   flex-direction: column;
@@ -268,10 +268,12 @@ body {
   transition: all 0.2s;
   background: rgba(0,0,0,0.2);
 }
-.flow-node.lit {
-  border-color: var(--green);
-  background: rgba(166,227,161,0.06);
+.flow-node.lit { animation: lit 1.5s ease both; }  /* class removed on animationend */
+@keyframes lit {
+  0%, 60% { border-color: var(--green); background: rgba(166,227,161,0.06); }
+  100%    { border-color: var(--border); background: rgba(0,0,0,0.2); }
 }
+@keyframes lit-arrow { 0%, 60% { color: var(--green); } 100% { color: var(--border); } }
 .flow-node-icon { font-size: 0.8rem; width: 20px; text-align: center; }
 .flow-node-name { font-size: 0.68rem; color: var(--muted); }
 .flow-node.lit .flow-node-name { color: var(--green); }
@@ -285,7 +287,7 @@ body {
   font-size: 0.7rem; margin: 0.1rem 0;
   padding-left: 1.5rem;
 }
-.flow-arrow.lit { color: var(--green); }
+.flow-arrow.lit { animation: lit-arrow 1.5s ease both; }
 
 /* ── TABS ── */
 .tabs {
@@ -300,14 +302,20 @@ body {
   background: none; border-left: none; border-right: none; border-top: none;
 }
 .tab:hover { color: var(--text); }
-.tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+/* body[data-tab] is the single source of truth for which tab is open */
+body[data-tab="agents"] .tab[data-tab="agents"],
+body[data-tab="analytics"] .tab[data-tab="analytics"],
+body[data-tab="flags"] .tab[data-tab="flags"] { color: var(--blue); border-bottom-color: var(--blue); }
 
 /* ── ANALYTICS PANEL ── */
 .analytics-panel {
   flex: 1; overflow-y: auto; padding: 1.5rem;
   display: none;
 }
-.analytics-panel.active { display: block; }
+.main { display: none; }
+body[data-tab="agents"] #tab-agents { display: flex; }
+body[data-tab="analytics"] #tab-analytics { display: block; }
+body[data-tab="flags"] #tab-flags { display: block; }
 
 .stat-cards {
   display: grid; grid-template-columns: repeat(3, 1fr);
@@ -356,3 +364,44 @@ body {
   transition: all 0.15s; margin-bottom: 1.5rem;
 }
 .refresh-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+
+/* ── Paused / disconnected state on the status dot ── */
+/* Pause (not stop) the live dot when paused, disconnected, or the tab is hidden */
+body.paused .status-dot { animation-play-state: paused; opacity: 0.3; }
+body.bg .status-dot, body.disconnected .status-dot { animation-play-state: paused; }
+body.disconnected .status-dot { background: var(--red); opacity: 1; }
+
+/* ── Agent filter: the feed keeps every entry; a data-filter on the feed hides
+   the rest. One rule per agent id (see AGENTS in monitor.js). ── */
+.feed[data-filter="router"] .entry:not([data-agent="router"]) { display: none; }
+.feed[data-filter="search"] .entry:not([data-agent="search"]) { display: none; }
+.feed[data-filter="orchestrator"] .entry:not([data-agent="orchestrator"]) { display: none; }
+.feed[data-filter="bill_fetcher"] .entry:not([data-agent="bill_fetcher"]) { display: none; }
+.feed[data-filter="translator"] .entry:not([data-agent="translator"]) { display: none; }
+.feed[data-filter="historian"] .entry:not([data-agent="historian"]) { display: none; }
+.feed[data-filter="vote_parser"] .entry:not([data-agent="vote_parser"]) { display: none; }
+.feed[data-filter="vote_fetcher"] .entry:not([data-agent="vote_fetcher"]) { display: none; }
+.feed[data-filter="vote_mapper"] .entry:not([data-agent="vote_mapper"]) { display: none; }
+.feed[data-filter="member_search"] .entry:not([data-agent="member_search"]) { display: none; }
+.feed[data-filter="title_search"] .entry:not([data-agent="title_search"]) { display: none; }
+.feed[data-filter="dispatcher"] .entry:not([data-agent="dispatcher"]) { display: none; }
+.feed[data-filter="result_validator"] .entry:not([data-agent="result_validator"]) { display: none; }
+.feed[data-filter="api"] .entry:not([data-agent="api"]) { display: none; }
+.feed[data-filter="state_search"] .entry:not([data-agent="state_search"]) { display: none; }
+.feed[data-filter="state_fetcher"] .entry:not([data-agent="state_fetcher"]) { display: none; }
+.feed[data-filter="state_member"] .entry:not([data-agent="state_member"]) { display: none; }
+.feed[data-filter="unknown"] .entry:not([data-agent="unknown"]) { display: none; }
+
+/* Tab panels fade in on switch */
+.main, .analytics-panel { transition: opacity 0.18s ease; }
+@starting-style { body[data-tab="agents"] #tab-agents, body[data-tab="analytics"] #tab-analytics, body[data-tab="flags"] #tab-flags { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

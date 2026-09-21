@@ -14,12 +14,26 @@ import importlib.util
 import json
 import os
 import pathlib
+import ssl
 import subprocess
 import sys
 import tempfile
 import time
 import urllib.parse
 import urllib.request
+
+# Some jurisdictions serve a chain whose root is newer than the interpreter's
+# default trust store — Loudoun's Laserfiche portal presents the Sectigo
+# Public Server Authentication root, which Python rejects as "self-signed
+# certificate in certificate chain" on both this machine and the CI runner
+# while curl accepts it. certifi carries the modern bundle, so prefer it and
+# fall back to the default context when it isn't installed. Verification is
+# never disabled: an unverifiable source is a finding, not a shrug.
+try:
+    import certifi
+    SSL_CONTEXT = ssl.create_default_context(cafile=certifi.where())
+except Exception:  # pragma: no cover - certifi is in requirements.txt
+    SSL_CONTEXT = ssl.create_default_context()
 
 
 class Runtime:
@@ -37,7 +51,8 @@ class Runtime:
             if not self.allow_live:
                 raise RuntimeError(f"cache miss with live fetch disabled: {key}")
             req = urllib.request.Request(key, headers={"User-Agent": "nospopuli-foundry-lab"})
-            body = urllib.request.urlopen(req, timeout=60).read()
+            body = urllib.request.urlopen(req, timeout=60,
+                                          context=SSL_CONTEXT).read()
             if kind == "json":
                 data = json.loads(body)
             elif body[:5] == b"%PDF-":

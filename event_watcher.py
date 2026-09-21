@@ -118,37 +118,38 @@ def _unsubscribe_url(email, bill_id):
             f"?email={requests.utils.quote(email)}&bill_id={requests.utils.quote(bill_id)}")
 
 
-def send_notification(to_email, bill_id, bill_title, event_phrase):
+def send_notification(to_email, bill_id, bill_title, event_phrase, kind="bill"):
     subject = f"Update on {bill_id}"
     bill_link  = _bill_url(bill_id)
     unsub_link = _unsubscribe_url(to_email, bill_id)
+    verb = "This place has" if kind == "place" else "This bill has"
 
     text_body = (
         f"{bill_id} — {bill_title}\n\n"
-        f"This bill has {event_phrase}.\n\n"
-        f"View bill: {bill_link}\n\n"
+        f"{verb} {event_phrase}.\n\n"
+        f"View: {bill_link}\n\n"
         f"—\nYou're receiving this because you subscribed to updates on NosPopuli.\n"
         f"Unsubscribe: {unsub_link}"
     )
     html_body = f"""
 <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;color:#0e0e0e">
   <p style="font-size:0.75rem;color:#6b6355;letter-spacing:0.08em;text-transform:uppercase">
-    NosPopuli · Bill Update
+    NosPopuli · {"Place Update" if kind == "place" else "Bill Update"}
   </p>
   <h2 style="margin:0.5rem 0 0.25rem">{bill_id}</h2>
   <p style="margin:0 0 1.5rem;color:#6b6355">{bill_title}</p>
-  <p style="font-size:1.05rem">This bill has <strong>{event_phrase}</strong>.</p>
+  <p style="font-size:1.05rem">{verb} <strong>{event_phrase}</strong>.</p>
   <p style="margin-top:1.5rem">
     <a href="{bill_link}"
        style="background:#8b1a1a;color:#fff;padding:0.5rem 1.2rem;text-decoration:none;
               font-family:'IBM Plex Mono',monospace;font-size:0.75rem;letter-spacing:0.1em;
               text-transform:uppercase">
-      View bill →
+      View →
     </a>
   </p>
   <hr style="margin:2rem 0;border:none;border-top:1px solid #c8bfaa">
   <p style="font-size:0.7rem;color:#6b6355">
-    You subscribed to updates on this bill via NosPopuli.<br>
+    You subscribed to updates via NosPopuli.<br>
     <a href="{unsub_link}" style="color:#6b6355">Unsubscribe</a>
   </p>
 </div>"""
@@ -191,6 +192,35 @@ def _fetch_actions(congress, bill_type, bill_number):
     return []
 
 
+def _run_place_watches():
+    """Email place-watch subscribers once Foundry certifies that county."""
+    from correspondence.db import get_place_subscriptions, update_subscription_state
+    from ledger_agent import foundry_place_coverage
+
+    rows = get_place_subscriptions()
+    sent = 0
+    for sub in rows:
+        bill_id = sub.get("bill_id") or ""
+        slug = bill_id.split(":", 1)[-1]
+        if not slug:
+            continue
+        cov = foundry_place_coverage(slug)
+        if not cov.get("certified"):
+            continue
+        if sub.get("last_notified_state") == "charted":
+            continue
+        send_notification(
+            sub["email"],
+            bill_id,
+            sub.get("bill_title") or slug,
+            "been charted — local votes are now on the record",
+            kind="place",
+        )
+        update_subscription_state(sub["email"], bill_id, "charted")
+        sent += 1
+    return sent
+
+
 def run_watcher():
     from correspondence.db import get_active_subscribed_bills, get_subscriptions_for_bill, update_subscription_state
 
@@ -223,6 +253,11 @@ def run_watcher():
 
             if old_state != new_state:
                 update_subscription_state(sub["email"], bill_id, new_state)
+
+    try:
+        notifications_sent += _run_place_watches()
+    except Exception as e:
+        print(f"[WATCHER] Place watches skipped: {e}")
 
     print(f"[WATCHER] Done. {notifications_sent} notification(s) sent.")
     return {"bills_checked": len(bills), "notifications_sent": notifications_sent}

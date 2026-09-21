@@ -75,6 +75,7 @@ def expand_query(keywords, topic, client):
     message = client.messages.create(
         model="claude-haiku-4-5",
         max_tokens=256,
+        temperature=0,
         messages=[{"role": "user", "content": prompt}]
     )
     

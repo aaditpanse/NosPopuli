@@ -351,6 +351,16 @@ def deactivate_subscription(email, bill_id):
         )
 
 
+def get_subscriptions_for_email(email):
+    """Active watches for one address — bills, topics, and places."""
+    with _cursor() as cur:
+        cur.execute(
+            "SELECT * FROM subscriptions WHERE email=%s AND active=TRUE ORDER BY bill_title",
+            (email,),
+        )
+        return cur.fetchall()
+
+
 def get_active_subscribed_bills():
     """Returns distinct federal bills with at least one active subscription."""
     with _cursor() as cur:
@@ -359,6 +369,17 @@ def get_active_subscribed_bills():
             FROM subscriptions
             WHERE active=TRUE AND congress IS NOT NULL
         """)
+        return cur.fetchall()
+
+
+def get_place_subscriptions():
+    """Active place watches (bill_id like place:slug). Congress is null so the
+    bill poller skips them; the watcher checks Foundry coverage instead."""
+    with _cursor() as cur:
+        cur.execute(
+            "SELECT * FROM subscriptions WHERE active=TRUE AND bill_id LIKE %s",
+            ("place:%",),
+        )
         return cur.fetchall()
 
 

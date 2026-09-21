@@ -27,6 +27,7 @@ No `pytest` install required — these use stdlib `unittest` only.
 | `test_router_fast_paths.py` | `fast_route` (federal) + `fast_route_state` (state) regex paths | Highest-traffic query type; breaks silently turn every "HB 1234" into a slow LLM round-trip |
 | `test_state_vote_mapper.py` | Committee-vs-floor vote disambiguation, participation threshold | Two real bugs caught in production this month (VA HB 191 committee tally, CA SB 1407 fake Assembly vote) |
 | `test_parse_amends.py` | "To amend the X Act of YYYY" extraction in the Connections panel | Pure regex; if it silently degrades, every bill detail page loses its primary law reference |
+| `test_foundry_health.py` | `foundry/health.py` — the scraper-health status vocabulary (`summarize`) and the ledger's bounds | The console at `/admin/foundry` reads nothing else; if `summarize` mislabels a source, the operator is told a scraper is healthy when it is not. Also pins the rule that a quarantine caused by publication lag is never reported as a failure |
 
 ## What's NOT covered (and why)
 

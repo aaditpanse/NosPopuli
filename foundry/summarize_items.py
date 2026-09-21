@@ -93,7 +93,8 @@ def voted_items():
     appended so the summary can name the actual subject."""
     out = {}
     for path in STORE.glob("*.json"):
-        if path.name in (OUT.name,) or "item-facts" in path.name:
+        if (path.name in (OUT.name,) or path.name.startswith("_")
+                or "item-facts" in path.name):
             continue
         store = json.loads(path.read_text())
         items = store.get("agenda_items", {})

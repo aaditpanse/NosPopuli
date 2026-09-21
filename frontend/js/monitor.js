@@ -1,5 +1,5 @@
 const _monitorSecret = new URLSearchParams(window.location.search).get('secret') || '';
-const _mfetch = (url, opts = {}) => fetch(`${url}?secret=${encodeURIComponent(_monitorSecret)}`, opts);
+const _mfetch = (url, opts = {}) => fetch(`${url}${url.includes('?') ? '&' : '?'}secret=${encodeURIComponent(_monitorSecret)}`, opts);
 
 const AGENTS = [
   { id: 'router',        label: 'Router',        icon: '⇄' },
@@ -64,39 +64,20 @@ AGENTS.forEach((agent, i) => {
   }
 });
 
+// Filtering is a CSS attribute match (see monitor.css [data-filter] rules):
+// the feed keeps its DOM, nothing is rebuilt.
 function filterAgent(agentId) {
-  if (activeFilter === agentId) {
-    activeFilter = null;
-    document.querySelectorAll('.agent-pill').forEach(p => p.classList.remove('active'));
-  } else {
-    activeFilter = agentId;
-    document.querySelectorAll('.agent-pill').forEach(p => p.classList.remove('active'));
-    document.getElementById(`pill-${agentId}`)?.classList.add('active');
-  }
-  rebuildFeed();
-}
-
-let allEntries = [];
-
-function rebuildFeed() {
+  activeFilter = activeFilter === agentId ? null : agentId;
+  document.querySelectorAll('.agent-pill').forEach(p =>
+    p.classList.toggle('active', p.id === `pill-${activeFilter}`));
   const feed = document.getElementById('feed');
-  const empty = document.getElementById('empty-state');
-
-  const filtered = activeFilter
-    ? allEntries.filter(e => e.agent === activeFilter)
-    : allEntries;
-
-  feed.innerHTML = '';
-
-  if (filtered.length === 0) {
-    feed.appendChild(empty || createEmpty());
-    return;
-  }
-
-  filtered.forEach(entry => {
-    feed.appendChild(createEntryEl(entry));
-  });
+  if (activeFilter) feed.dataset.filter = activeFilter;
+  else delete feed.dataset.filter;
 }
+
+// Entries kept in the DOM. Older ones are dropped so a monitor tab left open
+// for a day does not grow without bound.
+const MAX_ENTRIES = 2000;
 
 function createEntryEl(entry) {
   const agent = entry.agent || 'unknown';
@@ -105,6 +86,7 @@ function createEntryEl(entry) {
 
   const el = document.createElement('div');
   el.className = 'entry';
+  el.dataset.agent = agent;
 
   const inputKeys = Object.entries(entry.input || {}).filter(([k,v]) => v !== null && v !== '' && JSON.stringify(v) !== '{}');
   const outputKeys = Object.entries(entry.output || {}).filter(([k,v]) => v !== null && v !== '' && JSON.stringify(v) !== '{}');
@@ -136,66 +118,65 @@ function createEntryEl(entry) {
   return el;
 }
 
-function flashAgent(agentId) {
-  const pill = document.getElementById(`pill-${agentId}`);
-  const flowNode = document.getElementById(`flow-${agentId}`);
-  const arrow = document.getElementById(`farrow-${agentId}`);
-
-  if (pill) {
-    pill.classList.add('firing');
-    setTimeout(() => pill.classList.remove('firing'), 800);
-  }
-  if (flowNode) {
-    flowNode.classList.add('lit');
-    if (arrow) arrow.classList.add('lit');
-    setTimeout(() => {
-      flowNode.classList.remove('lit');
-      if (arrow) arrow.classList.remove('lit');
-    }, 1500);
-  }
+// The flash/lit looks are CSS animations; the class is dropped on
+// animationend (one delegated listener below) instead of a timer per flash.
+function _restart(el, cls) {
+  if (!el) return;
+  el.classList.remove(cls);
+  void el.offsetWidth;
+  el.classList.add(cls);
 }
+function flashAgent(agentId) {
+  _restart(document.getElementById(`pill-${agentId}`), 'firing');
+  _restart(document.getElementById(`flow-${agentId}`), 'lit');
+  _restart(document.getElementById(`farrow-${agentId}`), 'lit');
+}
+document.addEventListener('animationend', e => {
+  if (e.animationName === 'flash') e.target.classList.remove('firing');
+  else if (e.animationName === 'lit' || e.animationName === 'lit-arrow') e.target.classList.remove('lit');
+});
 
 let autoScroll = true;
+let logOffset = 0;  // byte offset into the server's JSONL log
 
 async function poll() {
-  if (paused) return;
+  if (paused || document.hidden) return;
 
   try {
-    const res = await _mfetch('/monitor/stream');
-    const log = await res.json();
+    const res = await _mfetch(`/monitor/stream?after=${logOffset}`);
+    const data = await res.json();
+    const entries = data.entries || [];
+    logOffset = data.offset || logOffset;
+    document.body.classList.remove('disconnected');
+    if (!entries.length) return;
 
-    if (log.length > seenCount) {
-      const newEntries = log.slice(seenCount);
-      const empty = document.getElementById('empty-state');
-      if (empty) empty.remove();
+    const empty = document.getElementById('empty-state');
+    if (empty) empty.remove();
+    const feed = document.getElementById('feed');
 
-      newEntries.forEach(entry => {
-        allEntries.push(entry);
-        const agent = entry.agent || 'unknown';
+    entries.forEach(entry => {
+      const agent = entry.agent || 'unknown';
 
-        agentCounts[agent] = (agentCounts[agent] || 0) + 1;
-        const cntEl = document.getElementById(`cnt-${agent}`);
-        if (cntEl) cntEl.textContent = agentCounts[agent];
+      agentCounts[agent] = (agentCounts[agent] || 0) + 1;
+      const cntEl = document.getElementById(`cnt-${agent}`);
+      if (cntEl) cntEl.textContent = agentCounts[agent];
 
-        flashAgent(agent);
+      flashAgent(agent);
+      feed.appendChild(createEntryEl(entry));
 
-        if (!activeFilter || activeFilter === agent) {
-          const feed = document.getElementById('feed');
-          const el = createEntryEl(entry);
-          feed.appendChild(el);
-          if (autoScroll) feed.scrollTop = feed.scrollHeight;
-        }
+      const ftimeEl = document.getElementById(`ftime-${agent}`);
+      if (ftimeEl) ftimeEl.textContent = (entry.timestamp || '').slice(11, 19);
+    });
+    while (feed.children.length > MAX_ENTRIES) feed.removeChild(feed.firstChild);
+    if (autoScroll) feed.scrollTop = feed.scrollHeight;
 
-        const ftimeEl = document.getElementById(`ftime-${agent}`);
-        if (ftimeEl) ftimeEl.textContent = (entry.timestamp || '').slice(11, 19);
-      });
-
-      seenCount = log.length;
-      document.getElementById('count-badge').textContent = `${seenCount} events`;
-    }
+    seenCount += entries.length;
+    document.getElementById('count-badge').textContent = `${seenCount} events`;
+    document.getElementById('status-label').textContent = paused ? 'Paused' : 'Monitoring';
   } catch(e) {
     document.getElementById('status-label').textContent = 'Disconnected';
-    document.getElementById('status-dot').style.background = 'var(--red)';
+    document.body.classList.add('disconnected');
+    return;
   }
 }
 
@@ -205,12 +186,10 @@ function togglePause() {
   btn.textContent = paused ? 'Resume' : 'Pause';
   btn.classList.toggle('active', paused);
   document.getElementById('status-label').textContent = paused ? 'Paused' : 'Monitoring';
-  document.getElementById('status-dot').style.animation = paused ? 'none' : '';
-  document.getElementById('status-dot').style.opacity = paused ? '0.3' : '';
+  document.body.classList.toggle('paused', paused);
 }
 
 function clearLog() {
-  allEntries = [];
   seenCount = 0;
   agentCounts = {};
   document.getElementById('feed').innerHTML = `
@@ -236,28 +215,20 @@ document.getElementById('feed').addEventListener('scroll', function() {
   autoScroll = feed.scrollTop + feed.clientHeight >= feed.scrollHeight - 50;
 });
 
-setInterval(poll, 500);
+// 2 s is plenty for a human-readable feed; each poll carries only new lines.
+// Paused while the tab is hidden; catches up as soon as it is visible again.
+setInterval(poll, 2000);
+document.addEventListener('visibilitychange', () => {
+  document.body.classList.toggle('bg', document.hidden);  // CSS pauses the live dot while hidden
+  if (!document.hidden) poll();
+});
 poll();
 
-// ── Tab switching ──
+// ── Tab switching: body[data-tab] drives visibility and the active tab in CSS ──
 function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.main, .analytics-panel').forEach(p => {
-    p.style.display = 'none';
-  });
-
-  if (tab === 'agents') {
-    document.getElementById('tab-agents').style.display = 'flex';
-    document.querySelectorAll('.tab')[0].classList.add('active');
-  } else if (tab === 'analytics') {
-    document.getElementById('tab-analytics').style.display = 'block';
-    document.querySelectorAll('.tab')[1].classList.add('active');
-    loadAnalytics();
-  } else if (tab === 'flags') {
-    document.getElementById('tab-flags').style.display = 'block';
-    document.querySelectorAll('.tab')[2].classList.add('active');
-    loadFlags();
-  }
+  document.body.dataset.tab = tab;
+  if (tab === 'analytics') loadAnalytics();
+  else if (tab === 'flags') loadFlags();
 }
 
 // ── Flags loading ──
@@ -365,5 +336,3 @@ async function clearSearchLog() {
   }
 }
 
-// Initialize — show agent feed by default
-document.getElementById('tab-analytics').style.display = 'none';

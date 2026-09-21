@@ -2,7 +2,7 @@ import json
 import time
 import os
 
-LOG_FILE = "agent_log.json"
+from documentor_agent import read_log, LOG_FILE
 last_size = 0
 last_count = 0
 
@@ -31,11 +31,9 @@ while True:
             time.sleep(0.5)
             continue
 
-        with open(LOG_FILE, "r") as f:
-            log = json.load(f)
+        new_entries, _offset = read_log(last_count)
 
-        if len(log) > last_count:
-            new_entries = log[last_count:]
+        if new_entries:
             for entry in new_entries:
                 agent = entry.get("agent", "unknown")
                 action = entry.get("action", "")

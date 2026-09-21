@@ -36,19 +36,33 @@ def merge(source_id, records, reconcile_findings_count):
         {"meetings": {}, "agenda_items": {}, "vote_events": {}, "members": {}}
     id_fields = {"meetings": "meeting_id", "agenda_items": "item_id",
                  "vote_events": "vote_id", "members": "name"}
-    added = 0
+    counts = {"added": 0, "replaced": 0, "unchanged": 0}
     for rtype, id_field in id_fields.items():
         for rec in records.get(rtype, []):
             key = rec[id_field]
-            added += key not in store[rtype]
+            prior = store[rtype].get(key)
+            if prior is None:
+                counts["added"] += 1
+            elif json.dumps(prior, sort_keys=True) == json.dumps(rec, sort_keys=True):
+                # Byte-identical content: leave the stored record alone.
+                # Several synthesized extractors build attendance from a set,
+                # so re-serializing an unchanged record reorders its keys and
+                # produces a daily commit that carries no data. Comparing
+                # canonically keeps the diff honest about what actually moved.
+                counts["unchanged"] += 1
+                continue
+            else:
+                counts["replaced"] += 1
             store[rtype][key] = rec
     path.write_text(json.dumps(store, indent=1))
     totals = {k: len(v) for k, v in store.items()}
     certified = sum(1 for k in ("meetings", "agenda_items", "vote_events")
                     for r in store[k].values()
                     if r.get("certification", {}).get("status") == "certified")
-    print(f"  store: +{added} new records -> {totals} "
+    print(f"  store: +{counts['added']} new, {counts['replaced']} updated, "
+          f"{counts['unchanged']} unchanged -> {totals} "
           f"({certified} certified total, {reconcile_findings_count} open disputes this run)")
+    return counts
 
 
 def backfill_pittsburgh(window):
@@ -73,7 +87,7 @@ def backfill_losangeles(window):
     merge("la-primegov", records, len(new))
 
 
-def backfill_loudoun(years):
+def backfill_loudoun(years, recertify=True):
     cache_path = FOUNDRY / "data" / "discovery" / "loudoun_http_cache.json"
     rt = sandbox2.Runtime(json.loads(cache_path.read_text())
                           if cache_path.exists() else {})
@@ -85,11 +99,19 @@ def backfill_loudoun(years):
         for rec in records[rtype]:
             rec["certification"] = {
                 "status": "quarantined", "method": None,
-                "note": "ingest-only: no second source wired for Loudoun yet"}
+                "note": "ingest-only until the promoted oracle recertifies"}
     print(f"  extracted {run_meta['row_counts']} | parser flags: "
           f"{run_meta['flags'] or 'none'} | tally-inconsistent: "
           f"{len(inconsistent)} ({', '.join(inconsistent[:4])})")
     merge("loudoun-bos", records, 0)
+    # The merge above re-stamps every re-extracted record as quarantined, so
+    # certification has to be re-earned in the same breath — otherwise a
+    # routine backfill silently un-certifies a source that has a promoted
+    # oracle. Local import: run_oracle imports run_onboard, which imports us.
+    store = json.loads((STORE / "loudoun-bos.json").read_text())
+    if recertify and store.get("meta", {}).get("oracle_artifact"):
+        import run_oracle
+        run_oracle.recertify("loudoun", print)
 
 
 def _report(source_id, records, validation, new_disputes, counts):

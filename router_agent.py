@@ -384,6 +384,61 @@ def fast_route_state(user_question: str, state_code: str | None = None):
     }
 
 
+def intents_from_structured(structured):
+    """Member + topic intents for the ledger. Never changes query_type.
+
+    Haiku may already have filled `intents`. If not, derive from the exclusive
+    routing fields so /search stays XOR while /ledger can fetch both.
+    """
+    def _clean(raw):
+        out = []
+        seen = set()
+        for item in raw or []:
+            if not isinstance(item, dict):
+                continue
+            kind = (item.get("kind") or "").strip().lower()
+            if kind not in ("member", "topic", "committee"):
+                continue
+            name = (item.get("name") or item.get("label") or "").strip()
+            if not name:
+                continue
+            key = (kind, name.lower())
+            if key in seen:
+                continue
+            seen.add(key)
+            if kind == "topic":
+                out.append({"kind": "topic", "label": name})
+            else:
+                out.append({"kind": kind, "name": name})
+        return out
+
+    cleaned = _clean(structured.get("intents") if isinstance(structured, dict) else None)
+    qtype = (structured or {}).get("query_type") or "legislation"
+    entity = ((structured or {}).get("entity_name") or "").strip()
+    if qtype != "member" and not entity:
+        cleaned = [i for i in cleaned if i.get("kind") != "member"]
+    if cleaned:
+        return cleaned
+
+    out = []
+    topic = ((structured or {}).get("topic") or "").strip()
+    keywords = (structured or {}).get("keywords") or []
+    if qtype == "member" and entity:
+        out.append({"kind": "member", "name": entity})
+        if keywords:
+            label = topic or " ".join(str(k) for k in keywords if k)
+            if label:
+                out.append({"kind": "topic", "label": label})
+    elif qtype == "committee" and entity:
+        out.append({"kind": "committee", "name": entity})
+    elif qtype == "legislation":
+        if entity:
+            out.append({"kind": "member", "name": entity})
+        label = topic or " ".join(str(k) for k in keywords if k) or "legislation"
+        out.append({"kind": "topic", "label": label})
+    return out
+
+
 def route_query(user_question, client, full_history=False):
     """
     Takes a plain English question and returns a structured search query.
@@ -457,7 +512,15 @@ Rules for ambiguity_reason:
 Rules for entity_name:
 - For member queries: extract the person's name only
 - For committee queries: extract the committee name
-- For legislation queries: null
+- For mixed person + topic (e.g. "Kennedy healthcare"): extract the person's name even when query_type stays "legislation"
+- For legislation with no person: null
+
+Rules for intents:
+- Always return 1–3 objects. kind is member | topic | committee.
+- A person plus a subject → BOTH a member intent and a topic intent. Keep query_type as "legislation" (the primary path) and still set entity_name to the person.
+- Only a person → query_type "member", intents: [{{"kind": "member", "name": "..."}}]
+- Only a subject → intents: [{{"kind": "topic", "label": "..."}}]
+- A named committee → intents: [{{"kind": "committee", "name": "..."}}]
 
 Rules for result_count:
 - "a bill", "one bill", "a law", "an example" → 1
@@ -510,13 +573,13 @@ Examples:
 {{"query_type": "legislation", "query_subtype": "concept", "named_entity": null, "time_filter": false, "confidence": 1.0, "ambiguity_reason": null, "entity_name": null, "keywords": [], "topic": "specific bill HR 3590", "time_range": "last 5 years", "bill_type": "hr", "result_count": 1, "specific_bill": {{"type": "hr", "number": 3590, "congress": null}}, "status": "any"}}
 
 "Kennedy healthcare" →
-{{"query_type": "legislation", "query_subtype": "concept", "named_entity": null, "time_filter": false, "confidence": 0.5, "ambiguity_reason": "Kennedy could refer to Senator Ted Kennedy or legislation named after Kennedy", "entity_name": null, "keywords": ["healthcare"], "topic": "Kennedy healthcare legislation", "time_range": "last 5 years", "bill_type": "all", "result_count": 5, "specific_bill": null, "status": "any"}}
+{{"query_type": "legislation", "query_subtype": "concept", "named_entity": null, "time_filter": false, "confidence": 0.5, "ambiguity_reason": "Kennedy could refer to Senator Ted Kennedy or legislation named after Kennedy", "entity_name": "Ted Kennedy", "keywords": ["healthcare"], "topic": "Kennedy healthcare legislation", "time_range": "last 5 years", "bill_type": "all", "result_count": 5, "specific_bill": null, "status": "any", "intents": [{{"kind": "member", "name": "Ted Kennedy"}}, {{"kind": "topic", "label": "healthcare"}}]}}
 
 "Ted Kennedy" →
-{{"query_type": "member", "query_subtype": "concept", "named_entity": null, "time_filter": false, "confidence": 0.95, "ambiguity_reason": null, "entity_name": "Ted Kennedy", "keywords": [], "topic": "", "time_range": "last 5 years", "bill_type": "all", "result_count": 5, "specific_bill": null, "status": "any"}}
+{{"query_type": "member", "query_subtype": "concept", "named_entity": null, "time_filter": false, "confidence": 0.95, "ambiguity_reason": null, "entity_name": "Ted Kennedy", "keywords": [], "topic": "", "time_range": "last 5 years", "bill_type": "all", "result_count": 5, "specific_bill": null, "status": "any", "intents": [{{"kind": "member", "name": "Ted Kennedy"}}]}}
 
 "Senate Judiciary Committee" →
-{{"query_type": "committee", "query_subtype": "concept", "named_entity": null, "time_filter": false, "confidence": 1.0, "ambiguity_reason": null, "entity_name": "Senate Judiciary Committee", "keywords": [], "topic": "", "time_range": "last 5 years", "bill_type": "all", "result_count": 5, "specific_bill": null, "status": "any"}}
+{{"query_type": "committee", "query_subtype": "concept", "named_entity": null, "time_filter": false, "confidence": 1.0, "ambiguity_reason": null, "entity_name": "Senate Judiciary Committee", "keywords": [], "topic": "", "time_range": "last 5 years", "bill_type": "all", "result_count": 5, "specific_bill": null, "status": "any", "intents": [{{"kind": "committee", "name": "Senate Judiciary Committee"}}]}}
 
 Return ONLY this JSON structure:
 {{
@@ -535,13 +598,15 @@ Return ONLY this JSON structure:
     "specific_bill": null,
     "status": "any",
     "jurisdiction": "federal",
-    "state_code": null
+    "state_code": null,
+    "intents": [{{"kind": "topic", "label": "keyword1"}}]
 }}
 """
     
     message = client.messages.create(
         model="claude-haiku-4-5-20251001",
-        max_tokens=256,
+        max_tokens=400,
+        temperature=0,
         messages=[
             {"role": "user", "content": prompt}
         ]
@@ -675,6 +740,8 @@ Return ONLY this JSON structure:
                     structured["query_type"] = "legislation"
                     structured["entity_name"] = None
 
+    structured["intents"] = intents_from_structured(structured)
+
     log_action(
     agent_name="router",
     action="route_query",
@@ -685,6 +752,7 @@ Return ONLY this JSON structure:
         "ambiguity_reason": structured.get("ambiguity_reason"),
         "keywords": structured.get("keywords"),
         "entity_name": structured.get("entity_name"),
+        "intents": structured.get("intents"),
     }
 )
     

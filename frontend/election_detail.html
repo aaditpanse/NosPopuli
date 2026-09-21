@@ -190,15 +190,9 @@
   <div id="ed-content" style="display:none"></div>
 </div>
 
+<script src="/static/js/elections_shared.js?v=1"></script>
 <script>
-const PREFS_KEY = 'np_preferences';
-const TRACKED_KEY = 'np_tracked_elections';
-
-function getPrefs() {
-  try { return JSON.parse(localStorage.getItem(PREFS_KEY)) || null; } catch { return null; }
-}
-let _tracked = new Set(JSON.parse(localStorage.getItem(TRACKED_KEY) || '[]'));
-function _saveTracked() { localStorage.setItem(TRACKED_KEY, JSON.stringify([..._tracked])); }
+// getPrefs, the tracked-elections set and _candidateInitials: elections_shared.js
 
 function _partyClass(party) {
   const p = (party || '').toLowerCase();
@@ -212,10 +206,6 @@ function _fmtDate(dateStr) {
     return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US',
       { weekday:'long', month:'long', day:'numeric', year:'numeric' });
   } catch { return dateStr; }
-}
-
-function _initials(name) {
-  return (name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
 }
 
 function _renderStageRail(stage, isPast) {
@@ -381,10 +371,10 @@ function _renderCandidates(contests) {
     const candidatesHtml = (c.candidates || []).length
       ? c.candidates.map(cand => {
           const photoEl = cand.photo_url
-            ? `<img class="candidate-photo" src="${cand.photo_url}" alt="${cand.name}"
+            ? `<img class="candidate-photo" src="${cand.photo_url}" alt="${cand.name}" loading="lazy" decoding="async"
                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
             : '';
-          const initialsEl = `<div class="candidate-initials" style="${cand.photo_url ? 'display:none' : ''}">${_initials(cand.name)}</div>`;
+          const initialsEl = `<div class="candidate-initials" style="${cand.photo_url ? 'display:none' : ''}">${_candidateInitials(cand.name)}</div>`;
           const links = [];
           if (cand.candidate_url) links.push(`<a href="${cand.candidate_url}" target="_blank" rel="noopener">Website ↗</a>`);
           if (cand.email) links.push(`<a href="mailto:${cand.email}">${cand.email}</a>`);
@@ -431,19 +421,6 @@ function _renderParticipation(data) {
   </div>`;
 }
 
-function toggleTrack(id, btn) {
-  if (_tracked.has(id)) {
-    _tracked.delete(id);
-    btn.textContent = 'Track this election';
-    btn.classList.remove('tracked');
-  } else {
-    _tracked.add(id);
-    btn.textContent = 'Tracking ✓';
-    btn.classList.add('tracked');
-  }
-  _saveTracked();
-}
-
 function renderDetail(data, ctx) {
   const days = data.countdown_days ?? null;
   const isPast = data.is_past || false;
@@ -456,7 +433,7 @@ function renderDetail(data, ctx) {
 
   const typeBadge = data.type || data.stage || '';
   const sourceBadge = data.source === 'web_search' ? `<span class="ed-source-badge">Web search supplement</span>` : '';
-  const isTracked = _tracked.has(data.id);
+  const isTracked = _trackedElections.has(data.id);
 
   document.title = `${data.name} — NosPopuli`;
 
@@ -471,7 +448,7 @@ function renderDetail(data, ctx) {
       ${countdownHtml}
       <div style="margin-top:0.75rem">
         <button class="ed-track-btn ${isTracked ? 'tracked' : ''}"
-          onclick="toggleTrack('${data.id}', this)">
+          onclick="toggleTrackElection('${data.id}', this, { off: 'Track this election' })">
           ${isTracked ? 'Tracking ✓' : 'Track this election'}
         </button>
       </div>

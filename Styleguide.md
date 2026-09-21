@@ -100,17 +100,9 @@ font-family: 'IBM Plex Mono'; font-size: 0.7rem; color: var(--accent); letter-sp
 4rem      /* Page breathing room */
 ```
 
-### Page background texture
-```css
-background-image: repeating-linear-gradient(
-  0deg,
-  transparent,
-  transparent 27px,
-  rgba(0,0,0,0.03) 27px,
-  rgba(0,0,0,0.03) 28px
-);
-```
-This creates subtle ruled lines like aged paper. Always apply to `body`.
+### Page background
+`body` is flat `--paper`. No texture, no ruled lines, no gradient. The paper
+comes from the colour and the typography; the ruling was noise behind text.
 
 ---
 
@@ -306,7 +298,7 @@ Never use `<hr>` directly — always apply border-top to a container.
 - No box-shadow
 - No purple, blue, or green in the palette
 - No Inter, Roboto, or system fonts
-- No gradients except the page texture
+- No gradients, and no background texture or ruled-line overlay
 - No icons except text characters (→, ▶, ▼, ·)
 - No full-bleed images
 - No dark mode (the paper aesthetic IS the theme)

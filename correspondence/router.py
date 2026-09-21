@@ -16,6 +16,7 @@ from .db import (
     save_correspondence, get_user_correspondence,
     get_correspondence_by_id, save_reply, get_replies,
     upsert_subscription, get_subscription, deactivate_subscription,
+    get_subscriptions_for_email,
 )
 from .auth import get_auth_url, exchange_code, make_user_id, issue_jwt, verify_jwt
 from .gmail import screen_email_username, send_email, check_thread_replies, FOOTER
@@ -377,6 +378,24 @@ async def unsubscribe(body: UnsubscribeRequest, request: Request):
 async def subscription_status(bill_id: str, email: str):
     sub = get_subscription(email, bill_id)
     return {"subscribed": bool(sub and sub["active"])}
+
+
+@router.get("/correspondence/subscriptions")
+async def list_subscriptions(email: str):
+    loop = asyncio.get_event_loop()
+    rows = await loop.run_in_executor(None, get_subscriptions_for_email, email) or []
+    return {
+        "watching": [
+            {
+                "id": r["bill_id"],
+                "title": r.get("bill_title") or r["bill_id"],
+                "congress": r.get("congress"),
+                "bill_type": r.get("bill_type"),
+                "bill_number": r.get("bill_number"),
+            }
+            for r in rows
+        ]
+    }
 
 
 # ── Follow-up draft ──

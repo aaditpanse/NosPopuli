@@ -235,6 +235,7 @@ def main():
     sources = args.sources or sorted(
         p.stem for p in STORE.glob("*.json")
         if p.stem not in ("upcoming", "item-summaries")
+        and not p.stem.startswith("_")
         and "item-facts" not in p.stem)
     client = anthropic.Anthropic()
     out = json.loads(OUT.read_text()) if OUT.exists() else {}

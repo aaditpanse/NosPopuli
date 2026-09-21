@@ -78,6 +78,7 @@ Return ONLY this JSON:
         message = client.messages.create(
             model="claude-haiku-4-5-20251001",
             max_tokens=800,
+            temperature=0,
             messages=[{"role": "user", "content": prompt}]
         )
         raw = message.content[0].text.strip().replace("```json", "").replace("```", "")

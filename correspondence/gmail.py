@@ -2,8 +2,6 @@ import os
 import base64
 from email.mime.text import MIMEText
 
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
 
 GOOGLE_CLIENT_ID     = os.getenv("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "")
@@ -17,6 +15,10 @@ FOOTER = (
 
 
 def _service(refresh_token):
+    # Imported here: googleapiclient + google.oauth2 cost ~8 MB and are only
+    # needed once someone actually sends mail.
+    from google.oauth2.credentials import Credentials
+    from googleapiclient.discovery import build
     creds = Credentials(
         token=None,
         refresh_token=refresh_token,

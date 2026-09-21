@@ -29,6 +29,7 @@ import sys
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 
 import harness
+import health
 import run_onboard
 import sandbox2
 from backfill import merge
@@ -103,7 +104,8 @@ def deepen(source_id, target, max_n=60, repair=False, log=print):
         records, error = sandbox2.run_artifact(artifact, [n], out_path, cache_path)
         if error is not None:
             log(f"  execution failed: {error.strip().splitlines()[-1][:140]}")
-            return _escalate(source_id, slug, store, n, repair, log, "stalled")
+            return _escalate(source_id, slug, store, n, repair, log, "stalled",
+                             {"window": n, "error": error.strip()})
 
         cache = json.loads(cache_path.read_text()) if cache_path.exists() else {}
         findings = harness.run_all(records)
@@ -113,7 +115,9 @@ def deepen(source_id, target, max_n=60, repair=False, log=print):
             log(f"  gate failed ({len(findings)} findings) — store untouched")
             for f in findings[:4]:
                 log(f"    [{f['layer']}/{f['check']}] {f['msg'][:100]}")
-            return _escalate(source_id, slug, store, n, repair, log, "gate-failed")
+            return _escalate(source_id, slug, store, n, repair, log,
+                             "gate-failed",
+                             {"window": n, "findings": findings})
 
         got = sorted(m["date"] for m in records["meetings"])
         fresh, new_mids = _new_only(records, store)
@@ -130,29 +134,44 @@ def deepen(source_id, target, max_n=60, repair=False, log=print):
 
         if oldest and oldest <= target:
             log(f"  reached {target}")
+            health.record(source_id, "deepen", "done",
+                          {"window": n, "oldest": oldest, "target": target,
+                           "new_meetings": len(new_mids)})
             return "done"
         if len(got) < n:
             # asked for n, extractor found fewer: either the source has no
             # deeper parseable history, or enumeration is silently capped
             log("  extractor returned fewer meetings than the window — "
                 "source exhausted or enumeration stalled")
-            return _escalate(source_id, slug, store, n, repair, log, "exhausted")
+            return _escalate(source_id, slug, store, n, repair, log,
+                             "exhausted",
+                             {"window": n, "returned": len(got),
+                              "oldest": oldest, "target": target})
         if n >= max_n:
             log(f"  window cap {max_n} reached before {target}")
+            health.record(source_id, "deepen", "capped",
+                          {"window": n, "cap": max_n, "target": target})
             return "capped"
 
 
-def _escalate(source_id, slug, store, n, repair, log, verdict):
+def _escalate(source_id, slug, store, n, repair, log, verdict, detail=None):
+    detail = dict(detail or {})
     if not repair:
         log(f"  verdict: {verdict} (re-run with --repair to spend one "
             "synthesis attempt on it)")
+        health.record(source_id, "deepen", verdict, detail)
         return verdict
     if _certified_count(store):
         log(f"  verdict: {verdict} — repair REFUSED: source holds certified "
             "records and onboarding's merge is not certification-aware")
+        health.record(source_id, "deepen", "repair-refused",
+                      {**detail, "verdict": verdict,
+                       "certified": _certified_count(store)})
         return verdict
     log("  escalating to one budget-gated repair attempt (resume mode)")
     ok = run_onboard.onboard(slug, meetings=n, attempts=1, log=log, resume=True)
+    health.record(source_id, "deepen", "repaired" if ok else verdict,
+                  {**detail, "repair_attempted": True})
     return "repaired" if ok else verdict
 
 

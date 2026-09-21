@@ -5,8 +5,6 @@ import time
 from datetime import datetime, timedelta
 from threading import RLock
 
-from google_auth_oauthlib.flow import Flow
-from jose import jwt, JWTError
 
 GOOGLE_CLIENT_ID     = os.getenv("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "")
@@ -49,6 +47,7 @@ def _evict_stale_flows():
 
 
 def _build_flow():
+    from google_auth_oauthlib.flow import Flow  # lazy: only on sign-in
     return Flow.from_client_config(
         client_config={
             "web": {
@@ -110,6 +109,7 @@ def make_user_id(google_sub: str) -> str:
 
 
 def issue_jwt(user_id: str) -> str:
+    from jose import jwt
     payload = {
         "sub": user_id,
         "iat": datetime.utcnow(),
@@ -120,6 +120,7 @@ def issue_jwt(user_id: str) -> str:
 
 def verify_jwt(token: str) -> str:
     """Returns user_id or raises ValueError."""
+    from jose import jwt, JWTError
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         return payload["sub"]

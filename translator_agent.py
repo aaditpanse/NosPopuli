@@ -3,7 +3,6 @@ import json
 import os
 import re
 import hashlib
-from supabase import create_client
 from dotenv import load_dotenv
 from documentor_agent import log_action
 from state_search_agent import STATE_JURISDICTIONS
@@ -12,10 +11,20 @@ from correspondence.db import get_disk_cache, set_disk_cache
 
 load_dotenv()
 
-supabase = create_client(
-    os.getenv("SUPABASE_URL"),
-    os.getenv("SUPABASE_API_KEY")
-)
+_supabase_client = None
+
+
+def _supabase():
+    """Supabase client, built on first use (the package costs ~12 MB to
+    import; the API should not pay that at boot)."""
+    global _supabase_client
+    if _supabase_client is None:
+        from supabase import create_client
+        _supabase_client = create_client(
+            os.getenv("SUPABASE_URL"),
+            os.getenv("SUPABASE_API_KEY")
+        )
+    return _supabase_client
 
 def _cache_key(congress, bill_type, bill_number, fingerprint=None):
     # v3 prefix forced re-translation after the enacted-status fix. The
@@ -75,7 +84,7 @@ def _store_cached_bg(congress, bill_type, bill_number, bg_markdown):
 def _get_cached(congress, bill_type, bill_number, fingerprint=None):
     try:
         package_id = _cache_key(congress, bill_type, bill_number, fingerprint)
-        result = supabase.table("bill_translations") \
+        result = _supabase().table("bill_translations") \
             .select("translation") \
             .eq("package_id", package_id) \
             .execute()
@@ -91,7 +100,7 @@ def _store_cached(congress, bill_type, bill_number, translation, fingerprint=Non
     try:
         package_id = _cache_key(congress, bill_type, bill_number, fingerprint)
         print(f"[TRANSLATOR] Attempting cache write: {package_id}")
-        result = supabase.table("bill_translations").upsert({
+        result = _supabase().table("bill_translations").upsert({
             "package_id": package_id,
             "congress": int(congress),
             "bill_type": str(bill_type),
@@ -105,7 +114,7 @@ def _store_cached(congress, bill_type, bill_number, translation, fingerprint=Non
         # fingerprint-less v3 row — so the table keeps exactly one current row
         # per bill instead of one per historical state.
         if fingerprint:
-            supabase.table("bill_translations") \
+            _supabase().table("bill_translations") \
                 .delete() \
                 .eq("congress", int(congress)) \
                 .eq("bill_type", str(bill_type)) \
@@ -118,7 +127,7 @@ def _store_cached(congress, bill_type, bill_number, translation, fingerprint=Non
 
 def _get_cached_by_key(key):
     try:
-        result = supabase.table("bill_translations") \
+        result = _supabase().table("bill_translations") \
             .select("translation") \
             .eq("package_id", key) \
             .execute()
@@ -133,7 +142,7 @@ def _get_cached_by_key(key):
 
 def _store_cached_by_key(key, translation, jurisdiction='federal', state_code=None):
     try:
-        supabase.table("bill_translations").upsert({
+        _supabase().table("bill_translations").upsert({
             "package_id": key,
             "congress": 0,
             "bill_type": "state",
@@ -219,7 +228,7 @@ def _looks_like_raw_json(text):
 
 
 def _parse_translation_json(raw: str):
-    """Parse Haiku's JSON output. Returns (translation_markdown, unknown_refs).
+    """Parse Haiku's JSON output. Returns (translation_markdown, unknown_refs, plate).
 
     Robust to the two ways Haiku breaks the "return only JSON" instruction:
     wrapping the object in a ```json fence, and emitting literal (unescaped)
@@ -243,8 +252,9 @@ def _parse_translation_json(raw: str):
             if not isinstance(refs, list):
                 refs = []
             refs = [str(t).strip() for t in refs if str(t).strip()]
+            plate = parsed.get("plate") if isinstance(parsed.get("plate"), dict) else {}
             if translation:
-                return translation, refs
+                return translation, refs, plate
     except json.JSONDecodeError:
         pass
 
@@ -256,14 +266,14 @@ def _parse_translation_json(raw: str):
         except json.JSONDecodeError:
             translation = m.group(1).replace('\\n', '\n').replace('\\"', '"').replace('\\t', '\t')
         if translation.strip():
-            return translation.strip(), []
+            return translation.strip(), [], {}
 
     # Last resort: if it's still JSON we couldn't salvage, return blank (the
     # caller shows an "unavailable" message) rather than raw braces; otherwise
     # treat the whole response as plain-text markdown.
     if body.startswith("{"):
-        return "", []
-    return body, []
+        return "", [], {}
+    return body, [], {}
 
 
 def _split_source(body):
@@ -391,7 +401,7 @@ def translate_bill(bill_data, client, user_context=None, bill_text=None):
     can render in ~3s while the slow Background (a Sonnet web search) streams in
     behind it. Retained for any caller that wants the blocking, combined form.
     """
-    translation, unknown_refs = translate_bill_core(
+    translation, unknown_refs, _plate = translate_bill_core(
         bill_data, client, user_context, bill_text
     )
     items = resolve_bill_background(bill_data, unknown_refs, client)
@@ -401,7 +411,7 @@ def translate_bill(bill_data, client, user_context=None, bill_text=None):
 def translate_bill_core(bill_data, client, user_context=None, bill_text=None):
     """Fast half: the Haiku plain-English explanation only.
 
-    Returns (translation_markdown, unknown_refs). Does NOT resolve references
+    Returns (translation_markdown, unknown_refs, plate_dict). Does NOT resolve references
     — that's the slow Sonnet web search, handled separately by
     resolve_bill_background. Hits the translation cache row when warm.
     """
@@ -418,7 +428,7 @@ def translate_bill_core(bill_data, client, user_context=None, bill_text=None):
     # Translation core and the Background section live in SEPARATE cache rows
     # so bumping one prefix does not force the other to regenerate.
     cached_payload = _get_cached(congress, bill_type, bill_number, fingerprint)
-    cached_translation, cached_refs = _parse_cache_payload(cached_payload)
+    cached_translation, cached_refs, cached_plate = _parse_cache_payload(cached_payload)
 
     # Ignore poisoned rows (raw JSON scaffolding written by an old parse
     # failure) so they self-heal by re-translating with the fixed parser.
@@ -429,7 +439,7 @@ def translate_bill_core(bill_data, client, user_context=None, bill_text=None):
             input_data={"congress": congress, "type": bill_type, "number": bill_number},
             output_data={"source": "cache_translation"},
         )
-        return cached_translation, (cached_refs or [])
+        return cached_translation, (cached_refs or []), (cached_plate or {})
 
     title = bill.get("title", "Unknown")
     sponsors = bill.get("sponsors", [{}])
@@ -475,7 +485,17 @@ Policy Area: {policy_area}
 Return ONLY valid JSON, no markdown fences. Shape:
 {{
   "translation": "<the plain-English explanation as markdown — see structure below>",
-  "unknown_refs": ["<term>", ...]
+  "unknown_refs": ["<term>", ...],
+  "plate": {{
+    "headline": "<one sentence of what the bill would do, no bill number>",
+    "not_law": "<one or two sentences: is it law, what happened last, what still has to happen>",
+    "formal_name": "<short name if the bill has one, else empty string>",
+    "who": ["<who it changes things for>", "<practical effect for a person in a place>"],
+    "cost": ["<what it spends or requires>", "<who pays or absorbs the work>"],
+    "cost_honesty": "<what the bill does not say — never invent a CBO score or a missing consequence>",
+    "status_plain": "<where it is right now, in English>",
+    "glossary": [{{"term": "<jargon the bill uses without defining>", "meaning": "<one sentence>"}}]
+  }}
 }}
 
 The translation field is markdown with these four sections, in order:
@@ -495,16 +515,18 @@ listed terms will be covered separately in a Background section.
 
     message = client.messages.create(
         model="claude-haiku-4-5-20251001",
-        max_tokens=1500,
+        max_tokens=2000,
         messages=[{"role": "user", "content": prompt}],
     )
     raw = message.content[0].text.strip()
-    translation, unknown_refs = _parse_translation_json(raw)
+    translation, unknown_refs, plate = _parse_translation_json(raw)
+    if not isinstance(plate, dict):
+        plate = {}
     # Persist translation + refs as JSON so a future bg:vN bump can
     # regenerate Background without re-running Haiku.
     _store_cached(
         congress, bill_type, bill_number,
-        json.dumps({"translation": translation, "unknown_refs": unknown_refs}),
+        json.dumps({"translation": translation, "unknown_refs": unknown_refs, "plate": plate}),
         fingerprint,
     )
 
@@ -523,7 +545,7 @@ listed terms will be covered separately in a Background section.
         },
     )
 
-    return translation, unknown_refs
+    return translation, unknown_refs, plate
 
 
 def resolve_bill_background(bill_data, unknown_refs, client):
@@ -571,16 +593,17 @@ def _assemble(translation: str, bg: str) -> str:
 
 
 def _parse_cache_payload(raw):
-    """Cache rows are now JSON {translation, unknown_refs}. Older rows from
+    """Cache rows are now JSON {translation, unknown_refs, plate}. Older rows from
     before this split were plain markdown — treat those as a translation-only
-    hit with no known refs. Returns (translation_or_None, refs_list)."""
+    hit with no known refs. Returns (translation_or_None, refs_list, plate_dict)."""
     if not raw:
-        return None, []
+        return None, [], {}
     s = raw.strip() if isinstance(raw, str) else raw
     if isinstance(s, str) and s.startswith("{"):
         try:
             obj = json.loads(s)
-            return (obj.get("translation") or None, list(obj.get("unknown_refs") or []))
+            plate = obj.get("plate") if isinstance(obj.get("plate"), dict) else {}
+            return (obj.get("translation") or None, list(obj.get("unknown_refs") or []), plate)
         except json.JSONDecodeError:
             pass
-    return s, []
+    return s, [], {}

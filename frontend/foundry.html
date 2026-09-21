@@ -25,8 +25,6 @@
 body {
   margin: 0; color: var(--ink); background: var(--paper);
   font-family: 'Source Serif 4', serif; font-weight: 300; font-size: 0.95rem; line-height: 1.75;
-  background-image: repeating-linear-gradient(0deg, transparent, transparent 27px,
-    rgba(0,0,0,0.03) 27px, rgba(0,0,0,0.03) 28px);
 }
 main { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 .masthead { border-bottom: 3px double var(--ink); padding-bottom: 1rem; margin-bottom: 1rem; }
@@ -75,7 +73,7 @@ td.code, span.code { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
   padding: 0.35rem 0.55rem; border: 1px solid var(--rule); background: var(--card-bg);
   color: var(--ink); }
 .cpbar input { flex: 1; min-width: 140px; }
-.cptable td a { color: var(--accent); text-decoration: none; }
+.cptable td a { color: var(--accent); text-decoration: none; transition: color 0.15s; }
 .cptable td a:hover { text-decoration: underline; }
 .cpid { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; color: var(--muted);
   letter-spacing: 0.08em; margin-top: 0.15rem; }
@@ -150,10 +148,12 @@ details.meeting table { display: block; overflow-x: auto; max-width: 100%; }
   padding: 0.85rem 1rem 1rem; }
 .dash-mapcanvas { height: 420px; border: 1px solid var(--rule); background: var(--paper);
   margin-bottom: 0.5rem; }
-.modal-overlay { position: fixed; inset: 0; background: rgba(14,14,14,0.55); z-index: 1000;
-  display: flex; align-items: flex-start; justify-content: center; padding: 3vh 2vw; overflow: auto; }
-.modal { background: var(--paper); border: 1px solid var(--ink); max-width: 1000px; width: 100%;
-  padding: 0 1.5rem 1.5rem; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+html { scroll-behavior: smooth; }
+/* "view all" overlay is a native <dialog>: backdrop, Esc and focus handling
+   come from the browser, so no per-open keydown listener. */
+.modal { background: var(--paper); color: inherit; border: 1px solid var(--ink); max-width: 1000px; width: calc(100% - 4vw);
+  max-height: 94vh; margin: 3vh auto; padding: 0 1.5rem 1.5rem; box-shadow: 0 10px 40px rgba(0,0,0,0.3); overflow: auto; }
+.modal::backdrop { background: rgba(14,14,14,0.55); }
 .modal-bar { position: sticky; top: 0; background: var(--paper); display: flex; align-items: center;
   justify-content: space-between; padding: 1rem 0 0.75rem; border-bottom: 2px solid var(--ink);
   margin-bottom: 1rem; z-index: 2; }
@@ -168,7 +168,19 @@ details.meeting table { display: block; overflow-x: auto; max-width: 100%; }
   text-transform: uppercase; color: var(--accent); background: none; border: none;
   cursor: pointer; padding: 0.4rem 0; }
 .dash-more:hover { text-decoration: underline; }
+.dash-more, .memberchip, #joblog .jl-cancel { transition: color 0.15s, border-color 0.15s, background 0.15s; }
 .dash-full { margin-top: 0.5rem; }
+.meet-folded .meeting-extra { display: none; }
+.meeting-extra { transition: opacity 0.2s ease; }
+@starting-style { .meeting-extra { opacity: 0; } }
+:root { interpolate-size: allow-keywords; }
+details.meeting::details-content, details.consent::details-content, details.fullrecord::details-content {
+  block-size: 0; overflow-y: clip; transition: content-visibility 0.2s allow-discrete, block-size 0.2s ease; }
+details.meeting[open]::details-content, details.consent[open]::details-content, details.fullrecord[open]::details-content { block-size: auto; }
+.modal { opacity: 0; transform: translateY(6px); transition: opacity 0.18s, transform 0.18s, overlay 0.18s allow-discrete, display 0.18s allow-discrete; }
+.modal[open] { opacity: 1; transform: none; }
+@starting-style { .modal[open] { opacity: 0; transform: translateY(6px); } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } }
 .dash-next { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--muted); margin-bottom: 0.85rem; }
 .dash-when { display: block; font-family: 'Playfair Display', serif; font-size: 1.1rem;
@@ -307,11 +319,18 @@ a { color: var(--accent); }
   <div id="usmap"></div>
   <div id="regions"></div>
 </main>
+<dialog class="modal" id="fmodal">
+  <div class="modal-bar">
+    <div class="modal-h" id="fmodal-h"></div>
+    <button class="modal-close" type="button" onclick="document.getElementById('fmodal').close()">✕</button>
+  </div>
+  <div id="fmodal-body"></div>
+</dialog>
 <div class="map-tip" id="maptip"></div>
-<script src="/static/js/d3-array.min.js"></script>
-<script src="/static/js/d3-geo.min.js"></script>
-<script src="/static/js/topojson-client.min.js"></script>
-<script src="/static/js/leaflet.js"></script>
-<script src="/static/js/foundry.js?v=36"></script>
+<script defer src="/static/js/d3-array.min.js"></script>
+<script defer src="/static/js/d3-geo.min.js"></script>
+<script defer src="/static/js/topojson-client.min.js"></script>
+<script defer src="/static/js/leaflet.js"></script>
+<script defer src="/static/js/foundry.js?v=39"></script>
 </body>
 </html>

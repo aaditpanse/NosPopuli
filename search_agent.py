@@ -29,12 +29,22 @@ def search_bills(structured_query, max_results=None):
     keywords = structured_query.get("keywords") or []
     terms = expanded or keywords
 
-    # full_history mode: sort chronologically across all congresses
-    # Normal mode: relevance for named acts, recency otherwise
+    # Recency only when the user asked for it or is browsing. Topic asks
+    # use GovInfo's own relevance score so a new bill that merely mentions
+    # the term cannot outrank one that is actually about the topic.
     original = (structured_query.get("original_question") or "").lower()
     keywords_str = " ".join(keywords).lower()
     is_named_act = "act" in original or "act" in keywords_str or "law" in original
-    sort_field = "publishdate" if full_history else ("score" if is_named_act else "publishdate")
+    subtype = structured_query.get("query_subtype") or ""
+    time_range = (structured_query.get("time_range") or "").lower()
+    want_recent = (
+        full_history
+        or subtype == "browse"
+        or time_range in ("last 2 years", "last 2 year")
+        or "recent" in original
+        or structured_query.get("status") in ("enacted_recent", "introduced_recent", "moving")
+    )
+    sort_field = "publishdate" if want_recent else "score"
 
     # Extract any explicit program identifiers from the original question
     # (e.g. "340B", "CHIP", "ACA") so they can't be dropped by the 3-term cap

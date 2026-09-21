@@ -84,7 +84,7 @@ def main():
 
     for path in sorted(STORE.glob("*.json")):
         if path.stem in ("upcoming", "item-summaries", "meeting-digests") \
-                or "item-facts" in path.stem:
+                or path.stem.startswith("_") or "item-facts" in path.stem:
             continue
         store = json.loads(path.read_text())
         if not isinstance(store.get("meetings"), dict):

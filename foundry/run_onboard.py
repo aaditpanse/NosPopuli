@@ -22,6 +22,7 @@ import time
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 
 import harness
+import health
 import sandbox2
 import synthesize
 from backfill import merge
@@ -570,6 +571,8 @@ def onboard(slug, meetings=3, attempts=4, log=print, prog=None, resume=False):
             code, assistant_content, usage = synthesize.generate(messages)
         except RuntimeError as exc:
             log(f"  synthesis failed: {str(exc)[:140]} — fresh attempt")
+            health.record(source_id, "onboard", "error",
+                          {"attempt": attempt, "error": str(exc)})
             continue
         usages.append(usage)
         artifact = artifacts / f"v1_attempt{attempt}.py"
@@ -585,18 +588,26 @@ def onboard(slug, meetings=3, attempts=4, log=print, prog=None, resume=False):
         if error is None and not findings:
             passed = True
             log("  GATE PASSED (structural + consistency + floors; NO oracle)")
+            health.record(source_id, "onboard", "attempt-passed",
+                          {"attempt": attempt, "artifact": artifact.name})
             break
         log(f"  gate failed: {len(findings)} findings")
         for f in findings[:6]:
             log(f"    [{f['layer']}/{f['check']}] {f['ref']}: {f['msg'][:120]}")
+        health.record(source_id, "onboard", "attempt-failed",
+                      {"attempt": attempt, "artifact": artifact.name,
+                       "findings": findings, "error": error})
         messages.append({"role": "assistant", "content": assistant_content})
         messages.append(synthesize.feedback_message(
             error, findings, fetch_trace=fetch_trace(out_path, cache)))
 
+    cost = synthesize.cost_usd(usages)
     log(f"onboarding cost: {len(usages)} attempts, "
-        f"${synthesize.cost_usd(usages):.2f}, {(time.time() - t0) / 60:.1f} min")
+        f"${cost:.2f}, {(time.time() - t0) / 60:.1f} min")
     if not passed:
         log("verdict: FAILED — no candidate cleared the gate")
+        health.record(source_id, "onboard", "failed",
+                      {"attempts": len(usages), "cost_usd": round(cost, 2)})
         return None
 
     note = ("synthesized from agent-discovered profile; single-source, no "
@@ -616,6 +627,12 @@ def onboard(slug, meetings=3, attempts=4, log=print, prog=None, resume=False):
         "platform": platform_of(profile),
         "meetings_arg": meetings}
     store_path.write_text(json.dumps(store, indent=1))
+    health.record(source_id, "onboard", "ok",
+                  {"artifact": str(artifact.relative_to(FOUNDRY)),
+                   "attempts": len(usages), "cost_usd": round(cost, 2),
+                   "row_counts": {k: len(v) for k, v in records.items()
+                                  if isinstance(v, list)},
+                   "oracle": "not wired — run run_oracle.py to certify"})
     log("spot-check sample:")
     for ve in records["vote_events"][:4]:
         exc = [f"{p['member']}:{p['position']}" for p in ve["positions"]

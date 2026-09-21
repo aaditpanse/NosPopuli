@@ -43,7 +43,8 @@ _session.headers.update({"User-Agent": "NosPopuli/1.0 (civic transparency; nospo
 _session_cache  = TTLCache(maxsize=128,  ttl=86400)   # getSessionList — 24h
 _people_cache   = TTLCache(maxsize=128,  ttl=86400)   # getSessionPeople — 24h
 _bill_cache     = TTLCache(maxsize=512,  ttl=1800)    # getBill — 30 min
-_text_cache     = TTLCache(maxsize=256,  ttl=7200)    # getBillText — 2h (static doc)
+_text_cache     = TTLCache(maxsize=32,   ttl=7200)    # getBillText — 2h; full docs, so few slots + byte cap
+_TEXT_CACHE_MAX_BYTES = 512 * 1024
 _rollcall_cache = TTLCache(maxsize=512,  ttl=86400)   # getRollCall — static once issued
 _person_cache   = TTLCache(maxsize=512,  ttl=86400)   # getPerson — daily
 _search_cache   = TTLCache(maxsize=256,  ttl=3600)    # getSearch — 1h
@@ -215,8 +216,9 @@ def get_bill_text(doc_id) -> dict | None:
         return None
     text.pop("doc", None)  # drop the (large) base64 blob once decoded
 
-    with _lock:
-        _text_cache[doc_id] = text
+    if len(text.get("bytes") or b"") <= _TEXT_CACHE_MAX_BYTES:
+        with _lock:
+            _text_cache[doc_id] = text
     return text
 
 

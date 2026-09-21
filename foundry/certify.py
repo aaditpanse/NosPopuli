@@ -13,10 +13,18 @@ Returns (findings, summary). Mutates records in place, adding a
 import harness
 
 
+# An attendance disagreement is a fact about the meeting record, not about
+# any roll call in it — see MEETING_ONLY_CHECKS in run_oracle.py. It still
+# quarantines the meeting; it no longer cascades to the votes.
+MEETING_ONLY_CHECKS = {"attendance_mismatch"}
+
+
 def certify(records, assertions_by_meeting, adjudicated=None):
     findings = harness.reconcile(records, assertions_by_meeting)
     adjudicated = adjudicated or {}
     disputed = {f["ref"] for f in findings}
+    vote_blocking = {f["ref"] for f in findings
+                     if f["check"] not in MEETING_ONLY_CHECKS}
 
     def mark(rec, ok, ref=None):
         note = adjudicated.get(("vote_mismatch", ref)) if ref else None
@@ -35,7 +43,8 @@ def certify(records, assertions_by_meeting, adjudicated=None):
     vote_status = {}
     for ve in records["vote_events"]:
         mid, ref = ve["meeting_id"], f"{ve['meeting_id']}/{ve['file_number']}"
-        ok = mid in assertions_by_meeting and ref not in disputed and mid not in disputed
+        ok = (mid in assertions_by_meeting and ref not in disputed
+              and mid not in vote_blocking)
         n["certified"] += mark(ve, ok, ref)
         n["total"] += 1
         vote_status[(mid, ve["file_number"])] = ok

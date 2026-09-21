@@ -15,9 +15,7 @@ httpx==0.28.1
 idna==3.13
 jiter==0.14.0
 limits==5.8.0
-numpy==2.4.4
 packaging==26.2
-pandas==3.0.2
 pydantic==2.13.4
 pydantic_core==2.46.4
 python-dateutil==2.9.0.post0
@@ -41,4 +39,3 @@ google-api-python-client
 python-jose[cryptography]
 psycopg[binary]
 psycopg_pool
-voyageai  # only needed for ingest_bills.py (offline embedding pipeline)

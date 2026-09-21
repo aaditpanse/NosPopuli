@@ -23,7 +23,8 @@ _session = requests.Session()
 
 _bill_cache         = TTLCache(maxsize=256, ttl=3600)
 _actions_cache      = TTLCache(maxsize=256, ttl=1800)
-_text_cache         = TTLCache(maxsize=128, ttl=7200)
+_text_cache         = TTLCache(maxsize=32, ttl=7200)   # full texts: keep few, cap size
+_TEXT_CACHE_MAX_BYTES = 512 * 1024
 _related_cache      = TTLCache(maxsize=256, ttl=3600)
 _amendments_cache   = TTLCache(maxsize=256, ttl=3600)
 _cosponsors_cache   = TTLCache(maxsize=256, ttl=3600)
@@ -404,10 +405,22 @@ def fetch_bill_text(congress, bill_type, bill_number, max_chars=8000):
     if hit is not None:
         return hit
     result = _fetch_bill_text_uncached(congress, bill_type, bill_number, max_chars)
-    if result:
+    if result and _cacheable_size(result) <= _TEXT_CACHE_MAX_BYTES:
         with _text_cache_lock:
             _text_cache[key] = result
     return result
+
+
+def _cacheable_size(obj):
+    """Rough byte size of a cached text payload (str, bytes, or a dict of
+    them); big texts are served once and re-fetched rather than pinned."""
+    if isinstance(obj, (str, bytes)):
+        return len(obj)
+    if isinstance(obj, dict):
+        return sum(_cacheable_size(v) for v in obj.values())
+    if isinstance(obj, (list, tuple)):
+        return sum(_cacheable_size(v) for v in obj)
+    return 0
 
 
 def _fetch_bill_text_uncached(congress, bill_type, bill_number, max_chars=8000):

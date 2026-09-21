@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NosPopuli · Agent Monitor</title>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/monitor.css">
+  <link rel="stylesheet" href="/static/css/monitor.css?v=3">
 </head>
-<body>
+<body data-tab="agents">
 
 <div class="topbar">
   <div class="topbar-left">
@@ -27,9 +27,9 @@
 
 <!-- Tabs -->
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('agents')">Agent Feed</button>
-  <button class="tab" onclick="switchTab('analytics')">Analytics</button>
-  <button class="tab" onclick="switchTab('flags')">Flags</button>
+  <button class="tab" data-tab="agents" onclick="switchTab('agents')">Agent Feed</button>
+  <button class="tab" data-tab="analytics" onclick="switchTab('analytics')">Analytics</button>
+  <button class="tab" data-tab="flags" onclick="switchTab('flags')">Flags</button>
 </div>
 
 <div class="main" id="tab-agents">
@@ -110,6 +110,6 @@
   </div>
 </div>
 
-<script src="/static/js/monitor.js"></script>
+<script src="/static/js/monitor.js?v=3"></script>
 </body>
 </html>

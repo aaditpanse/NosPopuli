@@ -20,7 +20,8 @@ from threading import RLock
 import legiscan_client as legiscan
 from documentor_agent import log_action
 
-_text_cache = TTLCache(maxsize=256, ttl=7200)  # extracted text by doc_id — stable
+_text_cache = TTLCache(maxsize=32, ttl=7200)  # extracted text by doc_id — stable; few slots, byte cap
+_TEXT_CACHE_MAX_BYTES = 512 * 1024
 _text_lock  = RLock()
 
 
@@ -213,7 +214,7 @@ def fetch_state_bill_text(bill_data):
         return None
 
     result = _extract_text(record)
-    if result:
+    if result and len(result) <= _TEXT_CACHE_MAX_BYTES:
         with _text_lock:
             _text_cache[doc_id] = result
     return result

@@ -24,10 +24,6 @@ body {
   font-family: 'Source Serif 4', Georgia, serif;
   font-weight: 300;
   min-height: 100vh;
-  background-image: repeating-linear-gradient(
-    0deg, transparent, transparent 27px,
-    rgba(0,0,0,0.025) 27px, rgba(0,0,0,0.025) 28px
-  );
 }
 
 /* ── OPEN BETA BANNER ── */
@@ -276,16 +272,6 @@ body {
   border-bottom: 1px solid var(--rule);
   padding: 0.85rem 2rem 0.95rem;
 }
-.command-bar::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: repeating-linear-gradient(
-    0deg, transparent, transparent 27px,
-    rgba(0,0,0,0.025) 27px, rgba(0,0,0,0.025) 28px
-  );
-  pointer-events: none;
-}
 .command-inner {
   max-width: var(--content-width);
   margin: 0 auto;
@@ -384,13 +370,17 @@ body {
   color: white;
 }
 
-/* jurisdiction-btn alias (JS uses this class) */
-.jurisdiction-btn { }
+/* Jurisdiction toggle: radios drive the active look, no JS class swapping */
+.jurisdiction-toggle { display: flex; }
+.jurisdiction-radio { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
+.jurisdiction-btn { display: flex; align-items: center; }
+.jurisdiction-radio:checked + .jurisdiction-btn,
 .jurisdiction-btn.active {
   background: var(--ink);
   color: var(--paper);
   border-left: 1px solid var(--rule);
 }
+.jurisdiction-radio:focus-visible + .jurisdiction-btn { outline: 2px solid var(--accent); outline-offset: -2px; }
 
 /* ── STATUS BAR ── */
 .status-bar {
@@ -408,8 +398,10 @@ body {
   color: var(--accent);
   letter-spacing: 0.05em;
 }
-.status-step { opacity: 0; transform: translateY(4px); transition: all 0.3s; }
-.status-step.visible { opacity: 1; transform: translateY(0); }
+.status-step { opacity: 0; transform: translateY(4px); animation: status-step-in 0.3s ease forwards; }
+@keyframes status-step-in { to { opacity: 1; transform: translateY(0); } }
+
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 
 /* ── PAGES ── */
 .page { display: none; }
@@ -1566,7 +1558,9 @@ body {
 
 /* Onboarding steps show/hide (JS toggles .active) */
 .onboarding-step { display: none; }
-.onboarding-step.active { display: block; }
+.onboarding-step.active,
+#page-onboarding[data-step="1"] #step-1,
+#page-onboarding[data-step="2"] #step-2 { display: block; }
 
 .interests-grid {
   display: grid;
@@ -1593,11 +1587,16 @@ body {
   transition: background 0.15s, color 0.15s;
 }
 .interest-pill:hover { background: var(--card-bg); }
-.interest-pill.selected {
+.interest-pill { display: block; }
+.interest-check { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
+.interest-pill.selected,
+.interest-pill:has(.interest-check:checked) {
   background: var(--ink);
   color: var(--paper);
 }
-.interest-pill.selected .interest-rule { background: var(--accent); }
+.interest-pill.selected .interest-rule,
+.interest-pill:has(.interest-check:checked) .interest-rule { background: var(--accent); }
+.interest-pill:has(.interest-check:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
 .interest-rule {
   position: absolute;
   top: 0; left: 0; right: 0;
@@ -1609,15 +1608,31 @@ body {
 /* ── LOADING STATES                                       ── */
 /* ══════════════════════════════════════════════════════════ */
 .detail-loading { padding: 4rem 0; text-align: center; }
+/* Loading label: static text over a quietly sweeping rule. The old opacity
+   pulse blinked the whole label every 1.4 s, which read as flicker. */
 .loading-spinner {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.65rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--muted);
-  animation: pulse 1.4s ease-in-out infinite;
+  display: inline-block;
+  padding-bottom: 0.6rem;
+  position: relative;
 }
-@keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+.loading-spinner::after {
+  content: '';
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0 30%, var(--accent) 50%, transparent 70% 100%);
+  background-size: 200% 100%;
+  animation: rule-sweep 1.6s linear infinite;
+}
+@keyframes rule-sweep { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner::after { animation: none; background: var(--rule); }
+  .loading-step { animation: none; opacity: 1; }
+}
 .loading-steps {
   margin-top: 1.5rem;
   border-left: 2px solid var(--rule);
@@ -1625,6 +1640,8 @@ body {
   text-align: left;
   display: inline-block;
 }
+/* Steps fade in one after another via animation-delay. The animation restarts
+   whenever the loading panel goes from display:none to shown, so no timers. */
 .loading-step {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.65rem;
@@ -1632,10 +1649,13 @@ body {
   letter-spacing: 0.05em;
   margin-bottom: 0.25rem;
   opacity: 0;
-  transition: opacity 0.4s;
+  animation: loading-step-in 0.4s ease forwards;
 }
-.loading-step.visible { opacity: 1; }
-.loading-step.done { color: var(--accent); }
+.loading-step:nth-child(2) { animation-delay: 0.4s; }
+.loading-step:nth-child(3) { animation-delay: 0.9s; }
+.loading-step:nth-child(4) { animation-delay: 1.4s; }
+@keyframes loading-step-in { to { opacity: 1; } }
+.loading-step.done { color: var(--accent); opacity: 1; animation: none; }
 .elections-loading { text-align: center; padding: 3rem 0; }
 
 /* ══════════════════════════════════════════════════════════ */
@@ -1900,7 +1920,6 @@ a:hover > .stk-lawline { opacity: 1; stroke-width: 1.5; }
 .stk-clickable:hover { background: var(--aged); }
 .stk-caret { color: var(--muted); margin-left: 0.4rem; font-size: 0.7rem; display: inline-block;
   transition: transform 0.12s; }
-.stk-clickable.open .stk-caret { transform: rotate(90deg); }
 
 /* Trades page: dramatic-timing leaderboard + all filings */
 .trades-head { border-top: 2px solid var(--ink); margin-top: 1rem; padding-top: 1rem; }
@@ -1989,9 +2008,19 @@ a:hover > .stk-lawline { opacity: 1; stroke-width: 1.5; }
   font-size: 0.7rem;
   letter-spacing: 0.05em;
   color: var(--muted);
-  padding: 0.5rem 0;
-  animation: pulse 1.4s ease-in-out infinite;
+  padding: 0.5rem 0 0.7rem;
+  position: relative;
+  display: inline-block;
 }
+.section-loading::after {
+  content: '';
+  position: absolute; left: 0; right: 0; bottom: 0.2rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0 30%, var(--rule) 50%, transparent 70% 100%);
+  background-size: 200% 100%;
+  animation: rule-sweep 1.6s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) { .section-loading::after { animation: none; } }
 
 /* ══════════════════════════════════════════════════════════ */
 /* ── BILL DETAIL                                          ── */
@@ -2097,6 +2126,13 @@ a:hover > .stk-lawline { opacity: 1; stroke-width: 1.5; }
   display: block;
 }
 .explanation-expand-btn:hover { text-decoration: underline; }
+/* The fold is CSS: the label is only shown for a collapsed summary, and the
+   hidden checkbox before the explanation unfolds it. */
+.explanation-expand-btn { display: none; }
+.detail-explanation.explanation-collapsed ~ .explanation-expand-btn { display: block; }
+.explanation-more-input:checked ~ .explanation-expand-btn { display: none; }
+.explanation-more-input:checked ~ .detail-explanation.explanation-collapsed { max-height: none; }
+.explanation-more-input:checked ~ .detail-explanation.explanation-collapsed::after { display: none; }
 
 /* Full text toggle */
 .full-text-toggle {
@@ -2116,7 +2152,6 @@ a:hover > .stk-lawline { opacity: 1; stroke-width: 1.5; }
   color: var(--ink);
   transition: color 0.15s, transform 0.2s;
 }
-.chevron.open { transform: rotate(180deg); }
 .full-text-content {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.72rem;
@@ -2626,6 +2661,7 @@ a:hover > .stk-lawline { opacity: 1; stroke-width: 1.5; }
 }
 .policy-bar-track { flex: 1; height: 8px; background: var(--aged); }
 .policy-bar-fill { height: 100%; background: var(--ink); transition: width 0.6s ease; }
+@starting-style { .policy-bar-fill { width: 0 !important; } }
 .policy-bar-count {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.6rem;
@@ -3121,25 +3157,44 @@ footer.footer {
 /* ══════════════════════════════════════════════════════════ */
 /* ── WRITE-TO-REPS PANEL                                  ── */
 /* ══════════════════════════════════════════════════════════ */
+/* A native <dialog>: shown modally, so the backdrop, Esc and focus trapping
+   come from the browser. Slides in from the right on open. */
 .write-panel {
   position: fixed;
-  top: 0; right: -500px;
-  width: 460px; height: 100vh;
+  inset: 0 0 0 auto;
+  margin: 0; padding: 0;
+  width: 460px; max-width: 100vw;
+  height: 100vh; max-height: 100vh;
   background: var(--paper);
+  color: inherit;
+  border: none;
   border-left: 1.5px solid var(--ink);
   overflow-y: auto;
-  z-index: 300;
-  transition: right 0.3s ease;
-  display: flex;
   flex-direction: column;
 }
-.write-panel.open { right: 0; }
-.write-panel-backdrop {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.35);
-  z-index: 299; display: none;
+.write-panel {
+  transform: translateX(100%);
+  transition: transform 0.3s ease, overlay 0.3s allow-discrete, display 0.3s allow-discrete;
 }
-.write-panel.open ~ .write-panel-backdrop { display: block; }
+.write-panel[open] { display: flex; transform: none; }
+@starting-style { .write-panel[open] { transform: translateX(100%); } }
+.write-panel::backdrop {
+  background: rgba(0,0,0,0);
+  transition: background 0.3s, overlay 0.3s allow-discrete, display 0.3s allow-discrete;
+}
+.write-panel[open]::backdrop { background: rgba(0,0,0,0.35); }
+@starting-style { .write-panel[open]::backdrop { background: rgba(0,0,0,0); } }
+/* Panel steps: one data-state on the panel picks the visible step */
+.wp-state { display: none; transition: opacity 0.18s ease; }
+@starting-style { .wp-state { opacity: 0; } }
+.write-panel[data-state="wp-auth"] #wp-auth,
+.write-panel[data-state="wp-flagged"] #wp-flagged,
+.write-panel[data-state="wp-limit"] #wp-limit,
+.write-panel[data-state="wp-pick"] #wp-pick,
+.write-panel[data-state="wp-impact"] #wp-impact,
+.write-panel[data-state="wp-drafting"] #wp-drafting,
+.write-panel[data-state="wp-draft"] #wp-draft,
+.write-panel[data-state="wp-sent"] #wp-sent { display: block; }
 .wp-header {
   display: flex;
   align-items: center;
@@ -3197,7 +3252,11 @@ footer.footer {
   padding: 0.75rem 0; border-bottom: 1px solid var(--rule); cursor: pointer; transition: background 0.1s;
 }
 .wp-rep-row:hover { background: var(--aged); margin: 0 -1.5rem; padding: 0.75rem 1.5rem; }
-.wp-rep-row.selected { background: var(--aged); margin: 0 -1.5rem; padding: 0.75rem 1.5rem; border-left: 3px solid var(--accent); }
+.wp-rep-row.selected,
+.wp-rep-row:has(.wp-rep-radio:checked) { background: var(--aged); margin: 0 -1.5rem; padding: 0.75rem 1.5rem; border-left: 3px solid var(--accent); }
+.wp-rep-row { display: block; }
+.wp-rep-radio { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
+.wp-rep-row:has(.wp-rep-radio:focus-visible) { outline: 2px solid var(--accent); outline-offset: -2px; }
 .wp-rep-label {
   font-family: 'IBM Plex Mono', monospace; font-size: 0.52rem;
   letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.2rem;
@@ -3294,7 +3353,7 @@ footer.footer {
 .wp-sent-check {
   font-size: 2.5rem; text-align: center; margin-bottom: 0.75rem; color: var(--vote-yea);
 }
-@media (max-width: 700px) { .write-panel { width: 100%; right: -100%; } }
+@media (max-width: 700px) { .write-panel { width: 100%; } }
 
 /* ══════════════════════════════════════════════════════════ */
 /* ── RESPONSIVE                                           ── */
@@ -3346,7 +3405,7 @@ footer.footer {
 .e-head { padding: 1.2rem 1.25rem 0.3rem; text-align: center; cursor: pointer; }
 .elections-page { max-width: var(--content-width); margin: 0 auto; padding: 1.25rem 1.25rem 3rem; }
 
-/* ── State picker on command bar (ported from test UI) ─────────── */
+/* ── State picker on command bar: a native <select> ─────────── */
 .command-state {
   position: relative;
   display: flex;
@@ -3356,87 +3415,195 @@ footer.footer {
   cursor: pointer;
   outline: none;
   transition: background 0.15s, color 0.15s;
+  padding: 0;
 }
 .command-state:hover,
 .command-state:focus-within { background: var(--aged); }
-.command-state.active { background: var(--ink); }
-.command-state.active .state-cur,
-.command-state.active .state-cur::after { color: var(--paper); }
-.state-cur {
-  padding: 0 1rem;
-  display: flex;
-  align-items: center;
+.jurisdiction-radio:checked + .command-state { background: var(--ink); }
+.jurisdiction-radio:checked + .command-state .state-select { color: var(--paper); }
+.state-select {
+  appearance: none; -webkit-appearance: none;
+  border: none; outline: none; background: transparent;
+  padding: 0 1.6rem 0 1rem;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.78rem;
   letter-spacing: 0.14em;
   font-weight: 600;
   color: var(--ink);
   text-transform: uppercase;
-  min-width: 3.4rem;
-  justify-content: center;
-  transition: color 0.15s;
-}
-.state-cur::after {
-  content: '▾';
-  margin-left: 0.4rem;
-  font-size: 0.6rem;
-  color: var(--muted);
-  letter-spacing: 0;
-}
-.state-pop {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: 5.4rem;
-  background: var(--paper);
-  border: 1.5px solid var(--ink);
-  box-shadow: 2px 4px 0 rgba(0,0,0,0.12);
-  display: none;
-  flex-direction: column;
-  z-index: 50;
-  padding: 0.25rem 0;
-}
-.command-state:hover .state-pop,
-.command-state:focus-within .state-pop,
-.state-pop:hover { display: flex; }
-.state-pop-arrow {
-  background: transparent;
-  border: none;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.62rem;
-  color: var(--muted);
+  min-width: 4.4rem;
   cursor: pointer;
-  padding: 0.2rem 0;
-  letter-spacing: 0;
-  transition: color 0.15s;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 1rem) 50%, calc(100% - 0.75rem) 50%;
+  background-size: 0.25rem 0.25rem;
+  background-repeat: no-repeat;
 }
-.state-pop-arrow:hover { color: var(--ink); }
-.state-pop-arrow.disabled { opacity: 0.25; cursor: default; pointer-events: none; }
-.state-pop-cells {
-  display: flex;
-  flex-direction: column;
-  border-top: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule);
+.state-select option { color: var(--ink); background: var(--paper); }
+
+/* ── Chamber seat map: cursor comes from a class, not per-dot inline style ── */
+.chamber-svg circle.clickable { cursor: pointer; }
+
+/* ── Flag modal (native <dialog>) ── */
+.flag-modal {
+  background: var(--paper); color: inherit;
+  border: 1.5px solid var(--ink); padding: 2rem;
+  max-width: 480px; width: 90%; margin: auto;
 }
-.state-cell {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.82rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  text-align: center;
-  padding: 0.5rem 0;
-  color: var(--muted);
-  cursor: pointer;
-  font-weight: 500;
-  transition: background 0.12s, color 0.12s;
+.flag-modal {
+  opacity: 0; transform: scale(0.96);
+  transition: opacity 0.18s ease, transform 0.18s ease, overlay 0.18s allow-discrete, display 0.18s allow-discrete;
 }
-.state-cell.empty { visibility: hidden; }
-.state-cell:hover { background: var(--aged); color: var(--ink); }
-.state-cur-cell {
-  background: var(--ink);
-  color: var(--paper) !important;
-  font-weight: 700;
-  font-size: 0.95rem;
+.flag-modal[open] { opacity: 1; transform: none; }
+@starting-style { .flag-modal[open] { opacity: 0; transform: scale(0.96); } }
+.flag-modal::backdrop {
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.18s, overlay 0.18s allow-discrete, display 0.18s allow-discrete;
 }
-.state-cur-cell:hover { background: var(--ink); color: var(--paper) !important; }
+.flag-modal[open]::backdrop { background: rgba(0, 0, 0, 0.5); }
+@starting-style { .flag-modal[open]::backdrop { background: rgba(0, 0, 0, 0); } }
+.flag-modal-kicker {
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 1rem;
+}
+.flag-modal-title {
+  font-family: 'Playfair Display', serif; font-size: 1.1rem;
+  font-weight: 700; margin-bottom: 1.5rem;
+}
+.flag-reasons { margin-bottom: 1rem; }
+.flag-reason {
+  display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;
+  cursor: pointer; font-size: 0.88rem; font-family: 'Source Serif 4', serif;
+}
+.flag-notes {
+  width: 100%; padding: 0.75rem; font-family: 'Source Serif 4', serif;
+  font-size: 0.9rem; border: 1px solid var(--rule); background: white;
+  resize: vertical; min-height: 80px; margin-bottom: 1rem; outline: none;
+}
+.flag-modal-actions { display: flex; gap: 0.75rem; }
+.flag-submit, .flag-cancel {
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+  letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;
+}
+.flag-submit { flex: 1; padding: 0.75rem; background: var(--ink); color: var(--paper); border: none; }
+.flag-cancel { padding: 0.75rem 1rem; background: none; border: 1px solid var(--rule); color: var(--muted); }
+.flag-success {
+  margin-top: 1rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+  color: var(--vote-yea); text-align: center;
+}
+
+
+/* ── Native <details> folds on bill sections (full text, market) ── */
+details.bill-fold > summary { list-style: none; }
+details.bill-fold > summary::-webkit-details-marker { display: none; }
+details.bill-fold[open] > summary .chevron { transform: rotate(180deg); }
+
+/* ── Trade rows are <details>: caret turns when open, no JS class ── */
+details.stk-item > summary { list-style: none; }
+details.stk-item > summary::-webkit-details-marker { display: none; }
+details.stk-item[open] > summary .stk-caret { transform: rotate(90deg); }
+
+/* ── "Amended by": all rows rendered, five shown until .all ── */
+#connections-amended-by:not(.all) .conn-category-body > .member-bill-row:nth-child(n+6) { display: none; }
+
+/* ── Feed: rows past the first five fold behind "Show more" ── */
+#feed-section:not(.feed-expanded) .feed-row-extra { display: none; }
+#feed-section:not(.feed-expanded) .feed-less-link { display: none; }
+#feed-section.feed-expanded .feed-more-link { display: none; }
+
+
+/* ── Result cards stagger in by position (was an inline animation-delay per card) ── */
+.result-card:nth-child(2) { animation-delay: 0.05s; }
+.result-card:nth-child(3) { animation-delay: 0.10s; }
+.result-card:nth-child(4) { animation-delay: 0.15s; }
+.result-card:nth-child(5) { animation-delay: 0.20s; }
+.result-card:nth-child(6) { animation-delay: 0.25s; }
+.result-card:nth-child(7) { animation-delay: 0.30s; }
+.result-card:nth-child(8) { animation-delay: 0.35s; }
+.result-card:nth-child(9) { animation-delay: 0.40s; }
+.result-card:nth-child(10) { animation-delay: 0.45s; }
+.result-card:nth-child(11) { animation-delay: 0.50s; }
+.result-card:nth-child(12) { animation-delay: 0.55s; }
+.result-card:nth-child(n+13) { animation-delay: 0.6s; }
+.result-card--compact:nth-child(2) { animation-delay: 0.03s; }
+.result-card--compact:nth-child(3) { animation-delay: 0.06s; }
+.result-card--compact:nth-child(4) { animation-delay: 0.09s; }
+.result-card--compact:nth-child(5) { animation-delay: 0.12s; }
+.result-card--compact:nth-child(6) { animation-delay: 0.15s; }
+.result-card--compact:nth-child(7) { animation-delay: 0.18s; }
+.result-card--compact:nth-child(8) { animation-delay: 0.21s; }
+.result-card--compact:nth-child(9) { animation-delay: 0.24s; }
+.result-card--compact:nth-child(10) { animation-delay: 0.27s; }
+.result-card--compact:nth-child(11) { animation-delay: 0.30s; }
+.result-card--compact:nth-child(12) { animation-delay: 0.33s; }
+.result-card--compact:nth-child(n+13) { animation-delay: 0.36s; }
+
+/* Notification row leaves via animation; JS removes it on animationend */
+.notif-item.notif-out { animation: notif-out 0.2s ease forwards; }
+@keyframes notif-out { to { opacity: 0; } }
+
+
+/* ══════════════════════════════════════════════════════════ */
+/* ── MOTION: entrances, folds, hover, reduced motion       ── */
+/* ══════════════════════════════════════════════════════════ */
+:root { interpolate-size: allow-keywords; }
+
+/* Hover colours that used to jump */
+.result-card-arrow, .story-title, .feed-title { transition: color 0.15s ease; }
+.bg-source { transition: border-bottom-color 0.15s ease; }
+
+/* Page switch: the incoming page fades in (display none → block) */
+.page.active { opacity: 1; transition: opacity 0.2s ease; }
+@starting-style { .page.active { opacity: 0; } }
+
+/* Loading → content on bill, member, elections and lobbying pages */
+#detail-content, #member-page-content, #elections-content, #lobby-profile, #zip-result.visible {
+  opacity: 1; transition: opacity 0.2s ease;
+}
+@starting-style {
+  #detail-content, #member-page-content, #elections-content, #lobby-profile, #zip-result.visible { opacity: 0; }
+}
+
+/* Bill sections that stream in after the page has painted */
+.bill-section { opacity: 1; transform: none; transition: opacity 0.25s ease, transform 0.25s ease; }
+@starting-style { .bill-section { opacity: 0; transform: translateY(4px); } }
+
+/* Rows revealed by "show more" (feed, amended-by) */
+.feed-row-extra, #connections-amended-by .member-bill-row:nth-child(n+6) { transition: opacity 0.2s ease; }
+@starting-style { .feed-row-extra, #connections-amended-by .member-bill-row:nth-child(n+6) { opacity: 0; } }
+
+/* Trade rows appended by "show more" */
+.stk-item { animation: cardIn 0.2s ease both; }
+
+/* Native <details> folds: the body opens and closes smoothly, not just the chevron */
+details.bill-fold::details-content,
+details.stk-item::details-content,
+.onboard-zipfallback::details-content {
+  block-size: 0; overflow-y: clip;
+  transition: content-visibility 0.2s allow-discrete, block-size 0.2s ease;
+}
+details.bill-fold[open]::details-content,
+details.stk-item[open]::details-content,
+.onboard-zipfallback[open]::details-content { block-size: auto; }
+
+/* Status bar fades in instead of snapping */
+.status-bar { transition: opacity 0.2s ease; }
+@starting-style { .status-bar.visible { opacity: 0; } }
+
+/* Notification row being removed: dim while the request is in flight; the
+   fade-out keyframe then starts from full opacity */
+.notif-item.notif-busy { opacity: 0.6; pointer-events: none; transition: opacity 0.15s; }
+.notif-item.notif-out { opacity: 1; }
+
+/* Disabled buttons dim smoothly */
+.notify-btn, .btn-primary, .btn-secondary { transition-property: border-color, color, background, opacity; transition-duration: 0.15s; }
+
+/* Reduced motion: every animation and transition collapses to an instant */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

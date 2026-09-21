@@ -1,11 +1,11 @@
 import os
 import threading
 from datetime import datetime
-from supabase import create_client, Client
 
 _lock = threading.Lock()
 
-def _get_client() -> Client:
+def _get_client():
+    from supabase import create_client  # lazy: ~12 MB import
     url = os.environ["SUPABASE_URL"]
     key = os.environ["SUPABASE_API_KEY"]
     return create_client(url, key)
