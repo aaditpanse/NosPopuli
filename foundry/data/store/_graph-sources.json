@@ -1,6 +1,8 @@
 {
   "_comment": "Per-source facts the stores do not carry, read by graph.py. Leading underscore = sidecar, not a source (see api._foundry_store_paths). A county enters the graph by getting an entry here: its OCD slugs, the elections store that seats its members, and the statutory term (Virginia county supervisors take office January 1 after the November general, Va. Code 24.2-217 / 15.2-1400, four-year terms). `identities` is the human-asserted bridge between a local person (keyed county/surname/initial) and an external id; it is the residue name matching leaves for a person to decide.",
-  "states": {"va": "Virginia"},
+  "states": {
+    "va": "Virginia"
+  },
   "sources": {
     "fairfax-bos": {
       "state": "va",
@@ -23,6 +25,30 @@
       "election_jurisdiction": "Loudoun County",
       "election_office": "Board of Supervisors",
       "chair_district": "Loudoun County",
+      "term_start": "2024-01-01",
+      "term_expires": "2027-12-31"
+    },
+    "princewilliam-bos": {
+      "state": "va",
+      "county": "prince_william",
+      "county_name": "Prince William County",
+      "body_name": "Prince William County Board of Supervisors",
+      "elections_source": "va-elections",
+      "election_jurisdiction": "Prince William County",
+      "election_office": "Board of Supervisors",
+      "chair_district": "Prince William County",
+      "term_start": "2024-01-01",
+      "term_expires": "2027-12-31"
+    },
+    "stafford-bos": {
+      "state": "va",
+      "county": "stafford",
+      "county_name": "Stafford County",
+      "body_name": "Stafford County Board of Supervisors",
+      "elections_source": "va-elections",
+      "election_jurisdiction": "Stafford County",
+      "election_office": "Board of Supervisors",
+      "chair_district": "Stafford County",
       "term_start": "2024-01-01",
       "term_expires": "2027-12-31"
     }

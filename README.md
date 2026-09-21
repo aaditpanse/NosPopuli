@@ -196,6 +196,25 @@ begins. That is how the county loader, which can only see a successor's first
 meeting, learns that Walkinshaw left Braddock on 2025-09-09 rather than in January.
 Both bounds stay tagged `inferred`.
 
+*All four counties are in.* Prince William's roster is surnames only ("Gordy"), so a
+bare surname is a name, and a contest winner ("Thomas T. \"Tom\" Gordy") matches it when
+the surname is unique on that board; two members whose special elections are not on
+disk vote but hold no seat, and the answer says so. Stafford is the honest thin case:
+it staggers its terms, the 2023 results cover three of its seven seats, and its roster
+carries three different Allens, so a vote by "Allen" is refused as ambiguous rather
+than guessed — 249 positions dropped and counted, not silently assigned.
+
+*`sponsored` is the ninth predicate.* The snapshot now asks Congress.gov for every
+bill the session voted on: title, policy area, sponsor, and each cosponsor with the
+date they signed (`CONGRESS_API_KEY`; without it the snapshot carries votes only and
+the loader names the gap). Sponsorship is an instantaneous edge on that date, with
+the role on it. Titles now come from the record, and the policy area is the
+instrument's topic — Congress.gov's own subject, so a topic filter that matched it
+is not flagged advisory; only Haiku's county topics are. Two more question shapes:
+"who sponsored the Affordable HOMES Act" and "what did Kaine sponsor". Sponsors
+outside the loaded delegation are not loaded, and only bills with a recorded vote
+this session are on disk, so "what did X sponsor" is a floor, not a count.
+
 *A county enters the graph by an entry in `_graph-sources.json`* — its OCD slugs, the
 elections store that seats its members, the statutory term — not by editing code.
 `python graph.py load all` loads every entry and every state the sidecar names for
@@ -219,10 +238,10 @@ instead of going to Congress. The graph declines every other shape, and the call
 falls back with `allow_graph=False` when it parses a shape but knows neither the
 person nor the seat — so nothing the ledger answered before is lost.
 
-*Next for the graph, in order:* `sponsored` and a money predicate, because "who funded
-them" is the half of the mixed question the graph exists to keep. Then Prince William
-and Stafford (an entry each in the sidecar), the General Assembly, and the other 49
-delegations (`load us-congress` with no `--state`).
+*Next for the graph, in order:* a money predicate, because "who funded them" is the
+other half of the mixed question and the legislators file already carries FEC ids.
+Then the General Assembly, and the other 49 delegations (`load us-congress` with no
+`--state`; ~300k `voted_on` rows a session, which is a Supabase size decision).
 
 **7. Rebuild what `/newspaper` did.** See the next section — I deleted the old tabbed
 app rather than porting it, so these are rebuilds in `ledger.js`, not migrations. The

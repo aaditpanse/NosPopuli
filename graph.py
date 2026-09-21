@@ -116,8 +116,10 @@ def _looks_like_name(name):
     """The floor the Fairfax roster should have had: 'McKay extended thoughts
     and prayers to the Fairfax family' is a sentence, not a supervisor."""
     tokens = name.replace(",", "").split()
-    if not 1 < len(tokens) <= 5:
+    if not 1 <= len(tokens) <= 5:
         return False
+    if len(tokens) == 1 and not (tokens[0][0].isupper() and len(tokens[0]) > 1):
+        return False    # a bare surname (Prince William's roster) is a name; 'x' is not
     return not any(t.islower() and t not in _NAME_PARTICLES for t in tokens)
 
 
@@ -232,7 +234,15 @@ def resolve_members(store, cfg):
                 first_seen[p["member"]] = min(first_seen.get(p["member"], "9999"), d)
 
     by_key, rejects = {}, []
-    for m in store.get("members", {}).values():
+
+    def surname_matches(surname):
+        return [k for k in by_key if k.split("/")[0] == surname]
+
+    # Full names first, so a bare surname ('Allen') can find the one person
+    # it belongs to — or be refused when there are three Allens.
+    members = sorted(store.get("members", {}).values(),
+                     key=lambda m: (len(m["name"].replace(",", " ").split()) == 1, m["name"]))
+    for m in members:
         raw = m["name"]
         if not _looks_like_name(raw):
             rejects.append((raw, "not a person's name (failed the name floor)"))
@@ -241,9 +251,18 @@ def resolve_members(store, cfg):
         seat = "chair" if role.startswith("chair") else \
             _district_slug(m["district"], cfg) if m.get("district") else None
         name, alias = _display_name(raw)
-        key = f"{_person_key(name).lower()}/{_first_initial(name).lower()}"
+        surname, initial = _person_key(name).lower(), _first_initial(name).lower()
+        key = f"{surname}/{initial}"
         person = by_key.get(key)
-        if person and not _same_given_name(person["name"], name):
+        if not initial:
+            hits = surname_matches(surname)
+            if len(hits) == 1:
+                key, person = hits[0], by_key[hits[0]]
+            elif len(hits) > 1:
+                rejects.append((raw, f"ambiguous: {len(hits)} people named {name} on this roster "
+                                     f"({', '.join(by_key[h]['name'] for h in hits)})"))
+                continue
+        elif person and not _same_given_name(person["name"], name):
             rejects.append((raw, f"collides with {person['name']!r} on surname and initial "
                                  f"but is a different given name; not merged"))
             key = f"{key}/{name.split()[0].lower()}"
@@ -435,6 +454,15 @@ def build(source_id, store, contests, summaries):
             key = f"{_person_key(name).lower()}/{_first_initial(name).lower()}"
             pid = person_ids.get(key)
             if pid is None:
+                # A surname-only roster ('Gordy') meets a full-name contest
+                # ('Thomas T. "Tom" Gordy'): match when the surname is unique.
+                hits = [k for k in person_ids if k.split("/")[0] == key.split("/")[0]]
+                if len(hits) == 1:
+                    key, pid = hits[0], person_ids[hits[0]]
+                    if len(name) > len(g["nodes"][pid]["name"]):
+                        g["nodes"][pid]["props"]["aliases"].append(g["nodes"][pid]["name"])
+                        g["nodes"][pid]["name"] = name
+            if pid is None:
                 pid = person_ids[key] = person_node(key, name, [alias] if alias else [], c["contest_id"])
                 g["nodes"][pid]["source_id"] = cfg["elections_source"]
             else:
@@ -614,7 +642,17 @@ def build_congress(legislators, snapshots, states=None, today=None):
     # file. Votes by anyone outside the selected delegation are simply not
     # this load's business; votes by an id nobody has are a gap.
     skipped, unknown, considered_by = {}, {}, {}
+
+    def lookup_bioguide(bid):
+        pid = by_bioguide.get(bid)
+        if pid is None and states is None:
+            unknown[bid] = unknown.get(bid, 0) + 1
+        return pid
+
     for snap in snapshots:
+        if not snap.get("instruments"):
+            g["gaps"].append(f"snapshot {snap.get('meta', {}).get('congress')}/{snap.get('meta', {}).get('session')} "
+                             f"has no sponsor records (snapshot ran without CONGRESS_API_KEY); no `sponsored` edges from it")
         for v in snap.get("votes", []):
             chamber = v["chamber"]
             inst = _parse_instrument(chamber, v)
@@ -624,10 +662,35 @@ def build_congress(legislators, snapshots, states=None, today=None):
             itype, number = inst
             iid = f"instrument/us/{v['congress']}/{itype}/{number}"
             label = v.get("legis_num") or v.get("document_name") or f"{itype} {number}"
+            rec = (snap.get("instruments") or {}).get(f"{itype}/{number}") or {}
             if iid not in g["nodes"]:
-                _node(g, iid, "instrument", f"{label}: {v.get('description') or ''}".strip(": "),
-                      {"instrument_type": itype, "congress": v["congress"], "number": number,
-                       "jurisdiction": US}, v["source_id"], v["vote_id"])
+                props = {"instrument_type": itype, "congress": v["congress"], "number": number,
+                         "jurisdiction": US}
+                if rec.get("policy_area"):
+                    # Congress.gov's own subject, not a model's reading.
+                    props["topic"] = rec["policy_area"]
+                    props["topic_derived_by"] = "congress.gov policyArea"
+                if rec.get("introduced"):
+                    props["introduced"] = rec["introduced"]
+                name = f"{label}: {rec.get('title') or v.get('description') or ''}".strip(": ")
+                _node(g, iid, "instrument", name, props, v["source_id"], v["vote_id"])
+                # Who wrote it. Instantaneous edges on the date each name
+                # went on the bill; a withdrawn cosponsor keeps the edge and
+                # the withdrawal date, because they did sign it once.
+                ref = f"us/{v['congress']}/{itype}/{number}/sponsors"
+                for who in rec.get("sponsors", []):
+                    pid = lookup_bioguide(who)
+                    if pid:
+                        _edge(g, pid, "sponsored", iid, rec.get("introduced"), rec.get("introduced"),
+                              "ingested", "congress.gov", ref, g["nodes"][pid]["props"]["jurisdiction"],
+                              {"role": "sponsor"})
+                for co in rec.get("cosponsors", []):
+                    pid = lookup_bioguide(co["id"])
+                    if pid:
+                        _edge(g, pid, "sponsored", iid, co.get("date"), co.get("date"),
+                              "ingested", "congress.gov", ref, g["nodes"][pid]["props"]["jurisdiction"],
+                              {"role": "original cosponsor" if co.get("original") else "cosponsor",
+                               "withdrawn": co.get("withdrawn")})
             _edge(g, body_of[chamber], "considered", iid, v["date"], v["date"], "ingested",
                   v["source_id"], v["vote_id"], US,
                   {"question": v.get("question"), "result": v.get("result"),
@@ -774,14 +837,66 @@ def snapshot_congress(congress, session, year, out_path, max_misses=3, pause=0.1
                 errors.append(f"{url}: {type(e).__name__}: {e}")
             roll += 1
             time.sleep(pause)
+    instruments, sponsor_errors = fetch_sponsors(votes, s, congress)
+    errors += sponsor_errors
     out = {"meta": {"congress": congress, "session": session, "year": year,
                     "fetched": datetime.datetime.now().isoformat(timespec="seconds"),
                     "counts": {c: sum(1 for v in votes if v["chamber"] == c)
                                for c in ("house", "senate")},
                     "errors": errors},
-           "votes": votes}
+           "votes": votes, "instruments": instruments}
+    out["meta"]["counts"]["instruments"] = len(instruments)
     pathlib.Path(out_path).write_text(json.dumps(out, separators=(",", ":")))
     return out["meta"]
+
+
+_BILL_TYPES = {"hr", "s", "hres", "sres", "hjres", "sjres", "hconres", "sconres"}
+
+
+def fetch_sponsors(votes, session_, congress, pause=0.1):
+    """Congress.gov's record of who introduced and cosponsored each bill the
+    session voted on: title, policy area, sponsor, cosponsors with dates.
+    Needs CONGRESS_API_KEY; without it the snapshot carries votes only and
+    says so. Returns ({"hr/5184": {...}}, errors)."""
+    import os
+    key = os.getenv("CONGRESS_API_KEY")
+    wanted = {}
+    for v in votes:
+        inst = _parse_instrument(v["chamber"], v)
+        if inst and inst[0] in _BILL_TYPES:
+            wanted[f"{inst[0]}/{inst[1]}"] = inst
+    if not key:
+        return {}, [f"CONGRESS_API_KEY not set: {len(wanted)} bill(s) have no sponsor record"]
+    out, errors = {}, []
+    for label, (itype, number) in sorted(wanted.items()):
+        base = f"https://api.congress.gov/v3/bill/{congress}/{itype}/{number}"
+        try:
+            r = session_.get(base, params={"api_key": key, "format": "json"}, timeout=20)
+            if r.status_code != 200:
+                errors.append(f"{base}: HTTP {r.status_code}")
+                continue
+            bill = r.json().get("bill", {})
+            rec = {"title": bill.get("title"), "introduced": bill.get("introducedDate"),
+                   "policy_area": (bill.get("policyArea") or {}).get("name"),
+                   "sponsors": [sp.get("bioguideId") for sp in bill.get("sponsors", []) if sp.get("bioguideId")],
+                   "cosponsors": []}
+            url, params = base + "/cosponsors", {"api_key": key, "format": "json", "limit": 250}
+            while url:
+                r = session_.get(url, params=params, timeout=20)
+                if r.status_code != 200:
+                    errors.append(f"{url}: HTTP {r.status_code}")
+                    break
+                page = r.json()
+                rec["cosponsors"] += [{"id": c.get("bioguideId"), "date": c.get("sponsorshipDate"),
+                                       "original": bool(c.get("isOriginalCosponsor")),
+                                       "withdrawn": c.get("sponsorshipWithdrawnDate")}
+                                      for c in page.get("cosponsors", []) if c.get("bioguideId")]
+                url, params = (page.get("pagination") or {}).get("next"), {"api_key": key}
+            out[label] = rec
+        except Exception as e:
+            errors.append(f"{base}: {type(e).__name__}: {e}")
+        time.sleep(pause)
+    return out, errors
 
 
 # ---------------------------------------------------------------- temporal
@@ -834,7 +949,8 @@ def holders_as_of(hold_edges, as_of):
 
 # ------------------------------------------------------------------ answer
 
-def shape_answer(rows, persons, query, topic=None, total_votes=None, truncated=False):
+def shape_answer(rows, persons, query, topic=None, total_votes=None, truncated=False,
+                 predicate="voted_on"):
     """The response the API returns. Every hop crossed is listed with the
     weakest certification seen on it; the topic filter is flagged advisory
     because the topic is a model's reading of the title; an empty result
@@ -845,7 +961,7 @@ def shape_answer(rows, persons, query, topic=None, total_votes=None, truncated=F
     hops = []
     if rows:
         weakest = min(counts, key=CERTIFICATION_RANK.get)
-        hops.append({"predicate": "voted_on", "weakest": weakest, "counts": counts})
+        hops.append({"predicate": predicate, "weakest": weakest, "counts": counts})
     empty_reason = None
     if not persons:
         empty_reason = f"no person in the graph matches {query!r}"
@@ -861,7 +977,12 @@ def shape_answer(rows, persons, query, topic=None, total_votes=None, truncated=F
         "truncated": truncated,
         "hops": hops,
         "weak_hops": [h for h in hops if h["weakest"] != "certified"],
-        "advisory_fields": ["topic"] if topic else [],
+        # The topic filter is advisory only when a model produced the topic
+        # it matched; Congress.gov's policy area is the record's own.
+        "advisory_fields": ["topic"] if topic and any(
+            "claude" in (r.get("topic_derived_by") or "") or (r.get("topic_derived_by") or "") == "model"
+            for r in rows) else [],
+        "topic_sources": sorted({r.get("topic_derived_by") for r in rows if r.get("topic_derived_by")}),
         "empty_reason": empty_reason,
     }
 
@@ -1016,13 +1137,15 @@ def _pg_persons(cur, query):
 
 _VOTE_ROW_SQL = """
     SELECT p.id AS person_id, p.name AS person,
-           e.props->>'position' AS position, e.valid_from AS date,
+           COALESCE(e.props->>'position', e.props->>'role') AS position,
+           e.valid_from AS date,
            e.certification, e.source_ref AS vote_id,
            e.props->>'question' AS question,
            i.id AS item_id, i.name AS title,
            i.props->>'instrument_type' AS instrument_type,
            i.props->>'jurisdiction' AS jurisdiction,
-           i.props->>'topic' AS topic, i.props->>'result' AS result,
+           i.props->>'topic' AS topic, i.props->>'topic_derived_by' AS topic_derived_by,
+           i.props->>'result' AS result,
            i.props->>'meeting_id' AS meeting_id
     FROM graph_node p
     JOIN graph_edge e ON e.src = p.id AND e.predicate = 'voted_on'
@@ -1031,12 +1154,12 @@ _VOTE_ROW_SQL = """
 _TOPIC_SQL = " (i.props->>'topic' ILIKE %s OR i.name ILIKE %s)"
 
 
-def _pg_votes(cur, person_ids, topic, limit):
-    """(rows, total votes by these people, truncated)."""
+def _pg_votes(cur, person_ids, topic, limit, predicate="voted_on"):
+    """(rows, total edges of this predicate by these people, truncated)."""
     cur.execute("SELECT COUNT(*) AS n FROM graph_edge "
-                "WHERE predicate = 'voted_on' AND src = ANY(%s)", (person_ids,))
+                "WHERE predicate = %s AND src = ANY(%s)", (predicate, person_ids))
     total = cur.fetchone()["n"]
-    sql, args = _VOTE_ROW_SQL + " WHERE p.id = ANY(%s)", [person_ids]
+    sql, args = _VOTE_ROW_SQL.replace("'voted_on'", "%s") + " WHERE p.id = ANY(%s)", [predicate, person_ids]
     if topic:
         sql += " AND" + _TOPIC_SQL
         args += [f"{topic}%", f"%{topic}%"]
@@ -1109,6 +1232,16 @@ _ASK_HOLDER = re.compile(
 _ASK_VOTERS = re.compile(
     r"^\s*who\s+voted\s+(?:(?P<position>aye|yes|yea|no|nay|present|abstain(?:ed)?)\s+)?"
     r"(?P<connector>on|for|against)\s+(?:the\s+)?(?P<topic>.+?)\s*\??\s*$", re.I)
+_ASK_SPONSORS = re.compile(
+    r"^\s*who\s+(?:sponsored|cosponsored|co-sponsored|wrote|introduced|authored)\s+(?:the\s+)?"
+    r"(?P<topic>.+?)\s*\??\s*$", re.I)
+_ASK_SPONSORED = (
+    re.compile(r"^\s*(?:what|which\s+bills?)\s+(?:did|has|have)\s+(?P<person>.+?)\s+"
+               r"(?:sponsor(?:ed)?|cosponsor(?:ed)?|introduce[d]?|write|written|author(?:ed)?)\s*\??\s*$", re.I),
+    re.compile(r"^\s*(?P<person>[A-Z][A-Za-z.\-]*(?:'(?!s\b)[A-Za-z]+)?"
+               r"(?:\s+[A-Z][A-Za-z.\-]*(?:'(?!s\b)[A-Za-z]+)?){0,3})(?:'s)?\s+"
+               r"(?:bills|sponsorships|sponsored\s+bills)\s*\??\s*$"),
+)
 _ASK_VOTES = (
     re.compile(r"^\s*(?:how\s+did|how\s+has|how\s+does)\s+(?P<person>.+?)\s+voted?\s*"
                r"(?:on\s+(?P<topic>.+?))?\s*\??\s*$", re.I),
@@ -1154,6 +1287,13 @@ def parse_question(question, today=None):
     q = (question or "").strip()
     if not q:
         return None
+    m = _ASK_SPONSORS.match(q)
+    if m:
+        return {"ask": "sponsors", "topic": m.group("topic").strip()}
+    for rx in _ASK_SPONSORED:
+        m = rx.match(q)
+        if m:
+            return {"ask": "sponsored", "person": m.group("person").strip()}
     m = _ASK_VOTERS.match(q)
     if m:
         # "voted against X" and "voted for X" carry the position in the
@@ -1216,12 +1356,14 @@ def memory_backend(nodes, edges):
 
     def vote_row(e):
         p, i = by_id[e["src"]], by_id[e["dst"]]
-        return {"person_id": p["id"], "person": p["name"], "position": e["props"].get("position"),
+        return {"person_id": p["id"], "person": p["name"],
+                "position": e["props"].get("position") or e["props"].get("role"),
                 "date": e["valid_from"], "certification": e["certification"],
                 "vote_id": e["source_ref"], "question": e["props"].get("question"),
                 "item_id": i["id"], "title": i["name"],
                 "instrument_type": i["props"].get("instrument_type"),
                 "jurisdiction": i["props"].get("jurisdiction"), "topic": i["props"].get("topic"),
+                "topic_derived_by": i["props"].get("topic_derived_by"),
                 "result": i["props"].get("result"), "meeting_id": i["props"].get("meeting_id")}
 
     def topic_ok(i, topic):
@@ -1237,8 +1379,8 @@ def memory_backend(nodes, edges):
                             or any(q in a.lower() for a in n["props"].get("aliases", [])))),
                       key=lambda p: p["name"])
 
-    def votes_of(person_ids, topic, limit):
-        mine = [e for pid in person_ids for e in out.get(pid, []) if e["predicate"] == "voted_on"]
+    def votes_of(person_ids, topic, limit, predicate="voted_on"):
+        mine = [e for pid in person_ids for e in out.get(pid, []) if e["predicate"] == predicate]
         rows = [vote_row(e) for e in mine if not topic or topic_ok(by_id[e["dst"]], topic)]
         rows.sort(key=lambda r: (r["date"], r["item_id"]), reverse=True)
         return rows[:limit], len(mine), len(rows) > limit
@@ -1254,9 +1396,9 @@ def memory_backend(nodes, edges):
                  "props": e["props"], "name": by_id[e["src"]]["name"]}
                 for e in inn.get(post_id, []) if e["predicate"] == "holds"]
 
-    def voters(topic, position, limit):
+    def voters(topic, position, limit, predicate="voted_on"):
         rows = [vote_row(e) for n in nodes if n["kind"] == "instrument" and topic_ok(n, topic)
-                for e in inn.get(n["id"], []) if e["predicate"] == "voted_on"
+                for e in inn.get(n["id"], []) if e["predicate"] == predicate
                 and (position is None or e["props"].get("position") == position)]
         rows.sort(key=lambda r: (r["date"], r["item_id"], r["person"]), reverse=True)
         return rows[:limit], len(rows) > limit
@@ -1278,8 +1420,8 @@ def pg_backend():
     def persons(query):
         return run(lambda cur: _pg_persons(cur, query))
 
-    def votes_of(person_ids, topic, limit):
-        return run(lambda cur: _pg_votes(cur, person_ids, topic, limit))
+    def votes_of(person_ids, topic, limit, predicate="voted_on"):
+        return run(lambda cur: _pg_votes(cur, person_ids, topic, limit, predicate))
 
     def posts(seat_query):
         terms = _seat_terms(seat_query)
@@ -1306,9 +1448,10 @@ def pg_backend():
             return rows
         return run(q)
 
-    def voters(topic, position, limit):
+    def voters(topic, position, limit, predicate="voted_on"):
         def q(cur):
-            sql, args = _VOTE_ROW_SQL + " WHERE" + _TOPIC_SQL, [f"{topic}%", f"%{topic}%"]
+            sql = _VOTE_ROW_SQL.replace("'voted_on'", "%s") + " WHERE" + _TOPIC_SQL
+            args = [predicate, f"{topic}%", f"%{topic}%"]
             if position:
                 sql += " AND e.props->>'position' = %s"
                 args.append(position)
@@ -1359,6 +1502,24 @@ def answer(parsed, backend, limit=200):
         return {"ask": ask, "rows": [], "hops": [], "weak_hops": [],
                 "empty_reason": "graph not loaded: run `python graph.py load fairfax-bos`"}
     topic, place = strip_place(parsed["topic"]) if parsed.get("topic") else (None, None)
+    if ask == "sponsored":
+        persons = backend["persons"](parsed["person"])
+        if not persons:
+            return shape_answer([], [], parsed["person"], None) | {"ask": ask}
+        rows, total, truncated = backend["votes"]([p["id"] for p in persons], None, limit, "sponsored")
+        out = shape_answer(rows, persons, parsed["person"], None, total, truncated, predicate="sponsored")
+        if not rows:
+            out["empty_reason"] = (f"no bill on disk names {', '.join(p['name'] for p in persons)} "
+                                   f"as sponsor or cosponsor (only bills with a recorded vote this session are loaded)")
+        return out | {"ask": ask}
+    if ask == "sponsors":
+        rows, truncated = backend["voters"](topic, None, limit, "sponsored")
+        out = shape_answer(rows, [{"name": "anyone"}], topic, topic, None, truncated, predicate="sponsored")
+        out.update({"ask": ask, "persons": sorted({r["person"] for r in rows}), "place_ignored": place})
+        if not rows:
+            out["empty_reason"] = (f"no sponsor on disk for anything matching {topic!r} "
+                                   f"(sponsors are loaded only for the delegation and for bills with a recorded vote)")
+        return out
     if ask == "votes":
         persons = backend["persons"](parsed["person"])
         if not persons:

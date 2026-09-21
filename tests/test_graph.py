@@ -134,7 +134,9 @@ class ResolveMembersTest(unittest.TestCase):
         self.assertTrue(graph._looks_like_name("James N. Bierman, Jr."))
         self.assertTrue(graph._looks_like_name("Ana de la Cruz"))
         self.assertFalse(graph._looks_like_name(FRAGMENT))
-        self.assertFalse(graph._looks_like_name("Smith"))
+        self.assertTrue(graph._looks_like_name("Smith"))      # Prince William's roster is surnames
+        self.assertFalse(graph._looks_like_name("smith"))
+        self.assertFalse(graph._looks_like_name("X"))
 
     def test_display_name_strips_quoted_nickname_into_alias(self):
         self.assertEqual(graph._display_name('Patrick S. "Pat" Herrity'),
@@ -317,7 +319,8 @@ class ShapeAnswerTest(unittest.TestCase):
     P = [{"id": "ocd-person/x", "name": "Patrick S. Herrity"}]
 
     def test_weak_hop_is_reported(self):
-        rows = [{"certification": "ingested"}, {"certification": "certified"}]
+        rows = [{"certification": "ingested", "topic_derived_by": "claude-haiku-4-5"},
+                {"certification": "certified"}]
         out = graph.shape_answer(rows, self.P, "Herrity", topic="zoning")
         self.assertEqual(out["weak_hops"], [{"predicate": "voted_on", "weakest": "ingested",
                                              "counts": {"ingested": 1, "certified": 1}}])
@@ -651,3 +654,83 @@ class LedgerRoutingTest(unittest.TestCase):
     def test_fallback_when_the_graph_declines(self):
         out = self.classify("how did Herrity vote on Fairfax zoning", allow_graph=False)
         self.assertNotEqual(out["plate"], "graph")
+
+
+# ---------------------------------------------------------------- sponsors
+
+SNAPSHOT_WITH_SPONSORS = dict(SNAPSHOT, instruments={
+    "hr/5184": {"title": "Affordable HOMES Act", "introduced": "2025-09-08",
+                "policy_area": "Housing and Community Development",
+                "sponsors": ["G000568"],
+                "cosponsors": [{"id": "W000831", "date": "2025-10-01", "original": False, "withdrawn": None},
+                               {"id": "A000370", "date": "2025-09-08", "original": True, "withdrawn": None},
+                               {"id": "ZZ99999", "date": "2025-09-09", "original": False, "withdrawn": None}]},
+})
+
+
+class SponsoredTest(unittest.TestCase):
+    def setUp(self):
+        self.nodes, self.edges, self.gaps = graph.build_congress(
+            LEGISLATORS, [SNAPSHOT_WITH_SPONSORS], states=["VA"], today=TODAY)
+
+    def test_sponsor_and_cosponsor_edges_with_their_dates(self):
+        by_person = {}
+        for e in by_pred(self.edges, "sponsored"):
+            by_person[next(n["name"] for n in self.nodes if n["id"] == e["src"])] = e
+        self.assertEqual(sorted(by_person), ["H. Morgan Griffith", "James R. Walkinshaw"])  # Adams is NC
+        self.assertEqual((by_person["H. Morgan Griffith"]["valid_from"], by_person["H. Morgan Griffith"]["props"]["role"]),
+                         ("2025-09-08", "sponsor"))
+        self.assertEqual((by_person["James R. Walkinshaw"]["valid_from"], by_person["James R. Walkinshaw"]["props"]["role"]),
+                         ("2025-10-01", "cosponsor"))
+        self.assertEqual(by_person["James R. Walkinshaw"]["source_id"], "congress.gov")
+
+    def test_title_and_policy_area_come_from_the_record(self):
+        inst = next(n for n in self.nodes if n["id"] == "instrument/us/119/hr/5184")
+        self.assertEqual(inst["name"], "H R 5184: Affordable HOMES Act")
+        self.assertEqual(inst["props"]["topic"], "Housing and Community Development")
+        self.assertEqual(inst["props"]["topic_derived_by"], "congress.gov policyArea")
+
+    def test_snapshot_without_sponsors_is_a_named_gap(self):
+        _, edges, gaps = graph.build_congress(LEGISLATORS, [SNAPSHOT], states=["VA"], today=TODAY)
+        self.assertEqual(by_pred(edges, "sponsored"), [])
+        self.assertTrue(any("no sponsor records" in g for g in gaps))
+
+
+class SponsorSearchTest(unittest.TestCase):
+    def setUp(self):
+        ln, le, _ = graph.build("fairfax-bos", store(), CONTESTS, SUMMARIES)
+        fn, fe, _ = graph.build_congress(LEGISLATORS, [SNAPSHOT_WITH_SPONSORS], states=["VA"], today=TODAY)
+        self.b = graph.memory_backend(ln + fn, le + fe)
+
+    def ask(self, q):
+        return graph.search(q, self.b, today=TODAY)
+
+    def test_parse(self):
+        self.assertEqual(graph.parse_question("who sponsored the Affordable HOMES Act", today=TODAY),
+                         {"ask": "sponsors", "topic": "Affordable HOMES Act"})
+        self.assertEqual(graph.parse_question("what did Griffith sponsor?", today=TODAY),
+                         {"ask": "sponsored", "person": "Griffith"})
+        self.assertEqual(graph.parse_question("Griffith's bills", today=TODAY),
+                         {"ask": "sponsored", "person": "Griffith"})
+
+    def test_who_sponsored(self):
+        a = self.ask("who sponsored the Affordable HOMES Act")
+        self.assertEqual(a["persons"], ["H. Morgan Griffith", "James R. Walkinshaw"])
+        self.assertEqual({r["position"] for r in a["rows"]}, {"sponsor", "cosponsor"})
+        self.assertEqual(a["hops"][0]["predicate"], "sponsored")
+        # A policy-area topic is the record's own: the filter is not advisory.
+        h = self.ask("who sponsored Housing")
+        self.assertEqual(h["advisory_fields"], [])
+        self.assertEqual(h["topic_sources"], ["congress.gov policyArea"])
+
+    def test_what_did_they_sponsor_and_the_empty_state(self):
+        a = self.ask("what did Griffith sponsor")
+        self.assertEqual([(r["title"], r["position"]) for r in a["rows"]],
+                         [("H R 5184: Affordable HOMES Act", "sponsor")])
+        e = self.ask("what did Warner sponsor")
+        self.assertEqual(e["rows"], [])
+        self.assertIn("only bills with a recorded vote", e["empty_reason"])
+
+    def test_county_topic_filter_is_still_advisory(self):
+        a = self.ask("how did Herrity vote on zoning")
+        self.assertEqual(a["advisory_fields"], ["topic"])

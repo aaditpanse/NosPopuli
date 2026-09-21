@@ -1057,16 +1057,17 @@
     } else {
       const rows = G.rows || [];
       const who = G.ask === "voters" ? (G.persons || []).join(", ") : (G.persons || []).map(p => p.name).join(", ");
-      head = rows.length ? `${rows.length}${G.truncated ? "+" : ""} recorded vote${rows.length === 1 ? "" : "s"}.` : "No recorded votes.";
-      deck = G.ask === "voters"
-        ? `${G.position ? esc(G.position) + " on " : "On "}${esc(G.topic)} · ${who || "nobody"}`
-        : `${who || esc(G.query)}${G.topic ? " · on " + esc(G.topic) : ""}`;
+      const noun = (G.ask === "sponsors" || G.ask === "sponsored") ? "bill" : "recorded vote";
+      head = rows.length ? `${rows.length}${G.truncated ? "+" : ""} ${noun}${rows.length === 1 ? "" : "s"}.` : `No ${noun}s.`;
+      deck = G.ask === "voters" || G.ask === "sponsors"
+        ? `${G.ask === "sponsors" ? "Sponsored: " : G.position ? esc(G.position) + " on " : "On "}${esc(G.topic)} · ${who || "nobody"}`
+        : `${who || esc(G.query)}${G.topic ? " · on " + esc(G.topic) : ""}${G.ask === "sponsored" ? " · bills they put their name on" : ""}`;
       body = rows.map(r => `<div style="display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--rule)">
           <span class="read" style="margin:0">${G.ask === "voters" ? esc(r.person) + " · " : ""}${esc(r.title)}</span>${pos(r.position)}
           <span class="meta" style="grid-column:1/-1;margin:0">${esc(r.date)} · ${layer(r.jurisdiction)}${r.question ? " · " + esc(r.question) : ""}${r.topic ? " · topic: " + esc(r.topic) : ""} ${stamp(r.certification)}</span>
         </div>`).join("");
     }
-    const tries = ["how did Herrity vote on zoning", "who voted no on the Affordable HOMES Act", "who held the Braddock seat on 2025-11-18", "who represents VA-11"];
+    const tries = ["how did Herrity vote on zoning", "who voted no on the Affordable HOMES Act", "who held the Braddock seat on 2025-11-18", "who sponsored the Affordable HOMES Act", "what did Kaine sponsor"];
     return `<div class="view wrap">
       ${chromeBar({ search: true })}
       <div style="padding-top:28px;max-width:44em">
@@ -1075,7 +1076,8 @@
         <p class="read" style="margin:0 0 6px">${deck}</p>
         ${G.empty_reason ? `<p class="read" style="color:var(--muted)">${esc(G.empty_reason)}</p>` : ""}
         ${weak ? `<div class="meta" style="color:var(--accent);margin:0 0 4px">Weakest hop: ${esc(weak)}. Nothing in the graph is affirmed by a second source yet.</div>` : ""}
-        ${(G.advisory_fields || []).length ? `<div class="meta" style="margin:0 0 4px">The topic filter is a model's reading of each title, not the clerk's classification.</div>` : ""}
+        ${(G.advisory_fields || []).length ? `<div class="meta" style="margin:0 0 4px">The topic filter matched a model's reading of each title, not the clerk's classification.</div>` : ""}
+        ${G.place_ignored ? `<div class="meta" style="margin:0 0 4px">Ignored “${esc(G.place_ignored)}” in the topic: it is a place, and the graph already knows where these votes are.</div>` : ""}
         <div style="margin-top:14px">${body}</div>
         <div class="lbl" style="margin:26px 0 10px">Ask the graph something else</div>
         <div style="display:flex;flex-wrap:wrap;gap:10px">${tries.map(askBtn).join("")}</div>
@@ -1826,7 +1828,7 @@
     const rows = (focus.votes || []).map(v => `
       <div class="mtg-focus">
         <div>
-          <div style="font-family:var(--fb);font-size:15px;line-height:1.5">${esc(v.plain || v.title || "Motion recorded without a readable description")}</div>
+          <div style="font-family:var(--fb);font-size:15px;line-height:1.5;font-weight:600">${esc(v.plain || v.title || "Motion recorded without a readable description")}</div>
           <div class="meta">${esc([v.topic, (v.against || []).length ? "Against: " + v.against.join(", ") : "",
                                    (v.abstain || []).length ? "Abstained: " + v.abstain.join(", ") : ""]
                                   .filter(Boolean).join(" · "))}</div>
@@ -1842,6 +1844,7 @@
         Decisions in focus <span style="float:right;color:var(--muted)">Meeting of ${esc(longDate(focus.date))}</span>
       </div>
       <div class="focus-scroll" onscroll="onFocusScroll(this)"><div class="focus-inner">${rows}</div></div>
+      <div class="scroll-hint">↓ more decisions below</div>
       <div class="meta" style="display:flex;justify-content:space-between;gap:10px;align-items:baseline;padding:7px 0 0;margin-bottom:6px;border-top:1px solid var(--rule)">
         <span>${focus.votes.length} of ${focus.vote_total} decisions this meeting</span>
         <span>${focus.present.length} present${focus.absent.length ? ", " + focus.absent.length + " absent" : ""}</span>
