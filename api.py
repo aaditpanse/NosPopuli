@@ -17,24 +17,24 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 from typing import Optional
-from vote_parser_agent import parse_vote_references
-from vote_fetcher_agent import fetch_house_votes, fetch_senate_votes
-from vote_mapper_agent import map_house_votes, map_senate_votes
-from bill_fetcher import fetch_bill, fetch_law, fetch_bill_text, fetch_related_bills, fetch_amendments, parse_amends_from_title, fetch_cosponsors
-from committee_reports_fetcher import fetch_committee_reports_for_bill
-from member_search_agent import (
+from agents.vote_parser_agent import parse_vote_references
+from agents.vote_fetcher_agent import fetch_house_votes, fetch_senate_votes
+from agents.vote_mapper_agent import map_house_votes, map_senate_votes
+from sources.bill_fetcher import fetch_bill, fetch_law, fetch_bill_text, fetch_related_bills, fetch_amendments, parse_amends_from_title, fetch_cosponsors
+from sources.committee_reports_fetcher import fetch_committee_reports_for_bill
+from agents.member_search_agent import (
     search_member,
     fetch_member_profile,
     fetch_member_legislation,
 )
-from query_expander_agent import expand_query
-from search_logger import log_search, log_bill_opened, log_member_opened
-from analyst_agent import analyze
-from flag_logger import log_search_flag, log_bill_flag, get_flags
-from feed_agent import fetch_feed
-from civic_resolver import resolve_zip
-from district_resolver import resolve_address, resolve_point, resolve_geoid
-import search_cache
+from agents.query_expander_agent import expand_query
+from search.search_logger import log_search, log_bill_opened, log_member_opened
+from agents.analyst_agent import analyze
+from search.flag_logger import log_search_flag, log_bill_flag, get_flags
+from agents.feed_agent import fetch_feed
+from resolvers.civic_resolver import resolve_zip
+from resolvers.district_resolver import resolve_address, resolve_point, resolve_geoid
+from search import search_cache
 import httpx
 import asyncio
 import io
@@ -44,21 +44,21 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from router_agent import route_query, extract_president_congress, fast_route, fast_route_state, intents_from_structured
-from search_agent import search_bills, search_summaries
-from title_search_agent import search_by_title
-from bill_fetcher import fetch_bill
-from translator_agent import translate_bill, translate_state_bill, translate_bill_core, resolve_bill_background
-from historian_agent import (
+from agents.router_agent import route_query, extract_president_congress, fast_route, fast_route_state, intents_from_structured
+from agents.search_agent import search_bills, search_summaries
+from agents.title_search_agent import search_by_title
+from sources.bill_fetcher import fetch_bill
+from agents.translator_agent import translate_bill, translate_state_bill, translate_bill_core, resolve_bill_background
+from agents.historian_agent import (
     fetch_bill_actions,
     fetch_related_bills as historian_fetch_related_bills,
     summarize_history,
     structure_history,
 )
-from documentor_agent import log_action
-from result_validator_agent import validate_results, validate_results_batch
-from search_rank import rank_by_relevance
-from state_search_agent import (
+from agents.documentor_agent import log_action
+from agents.result_validator_agent import validate_results, validate_results_batch
+from search.search_rank import rank_by_relevance
+from agents.state_search_agent import (
     search_state_bills,
     get_recent_state_bills,
     ENABLED_STATES,
@@ -66,20 +66,20 @@ from state_search_agent import (
     filter_enacted,
     get_state_validator_floor,
 )
-from state_bill_fetcher import (
+from sources.state_bill_fetcher import (
     fetch_state_bill,
     fetch_state_bill_text,
     structure_state_actions,
 )
-from state_vote_mapper import select_floor_roll_call, map_roll_call
-import legiscan_client as legiscan
-from state_member_search_agent import (
+from render.state_vote_mapper import select_floor_roll_call, map_roll_call
+from sources import legiscan_client as legiscan
+from agents.state_member_search_agent import (
     search_state_member,
     fetch_state_member_profile,
     fetch_state_member_bills,
 )
 
-from ledger_agent import (
+from agents.ledger_agent import (
     classify_question,
     build_funnel,
     stories_from_results,
@@ -102,11 +102,11 @@ from correspondence.db import (
     get_disk_cache,
     set_disk_cache,
 )
-from elections_agent import (
+from agents.elections_agent import (
     fetch_elections, fetch_election_detail, fetch_election_polling,
     fetch_election_finance,
 )
-from lda_client import search_entities as lda_search_entities, get_entity_profile as lda_get_entity_profile
+from sources.lda_client import search_entities as lda_search_entities, get_entity_profile as lda_get_entity_profile
 
 # Quiet uvicorn access logs for the high-frequency SSE monitor stream — it
 # fires on every event and otherwise drowns out actually-useful request lines.
@@ -557,7 +557,7 @@ async def handle_named_entity_search(structured, question, loop):
     confidence = structured.get("confidence", 1.0)
     ambiguity_reason = structured.get("ambiguity_reason")
     if len(distinct_congresses) >= 3:
-        from router_agent import congress_to_years
+        from agents.router_agent import congress_to_years
         years = sorted(
             [congress_to_years(c)[0] for c in distinct_congresses if c],
             reverse=True
@@ -1932,7 +1932,7 @@ def _bill_detail_stream(bill_data, meta_extra, user_context, *, log_kind, noun="
             # introduced this bill, shown beside "Who's pushing this." Facts
             # side by side, no implied link (that's the OpenSecrets layer). FEC
             # is federal-only, so state-bill sponsors return nothing.
-            import fec_client
+            from sources import fec_client
             out = []
             for s in (sponsors or [])[:3]:
                 try:
@@ -2318,7 +2318,7 @@ async def bill_text_reader(request: Request, congress: int, bill_type: str, numb
     """The whole bill as a readable page: Congress.gov's typescript reflowed
     into paragraphs with its outline intact. This is where "open in a new tab"
     goes; the JSON endpoint above is for the in-app reader."""
-    from bill_text_format import bill_text_page
+    from render.bill_text_format import bill_text_page
     loop = asyncio.get_event_loop()
     bt = bill_type.lower()
     txt, bill = await asyncio.gather(
@@ -2337,7 +2337,7 @@ async def bill_market_link(request: Request, congress: int, bill_type: str, numb
     they moved around its key date, and which members traded them (flagging
     trades near that action). Lazy-loaded — slow (sector classification + price
     lookups) — and strictly juxtaposition, never a causal claim."""
-    import bill_market
+    from money import bill_market
     loop = asyncio.get_event_loop()
     bill_data = await loop.run_in_executor(
         None, fetch_bill, congress, bill_type.lower(), number)
@@ -2363,7 +2363,10 @@ async def stock_timeline(request: Request, ticker: str):
     """Stock-centric chart data: a ticker's daily price history, the enacted laws
     in its sector plotted as dated events, and the members who traded it.
     Juxtaposition only — a law on the chart is a dated marker, not a cause."""
-    import bill_market, law_corpus, stock_perf, datetime
+    from money import bill_market
+    from money import law_corpus
+    from money import stock_perf
+    import datetime
     tk = (ticker or "").strip().upper()
     loop = asyncio.get_event_loop()
 
@@ -2398,7 +2401,7 @@ async def stock_timeline(request: Request, ticker: str):
 async def stocks_traded():
     """The tickers Congress has disclosed trading, with a company label — powers
     the stock picker on the market chart. Excludes non-sector instruments."""
-    import bill_market
+    from money import bill_market
     loop = asyncio.get_event_loop()
 
     def build():
@@ -2453,7 +2456,7 @@ async def member_finance_endpoint(
     """FEC campaign finance for a sitting federal member: totals + the source
     composition (individuals/PACs/party/self). Empty object when there's no
     confident FEC match (e.g. state legislators, whom the FEC doesn't cover)."""
-    import fec_client
+    from sources import fec_client
     try:
         fin = await asyncio.to_thread(fec_client.member_finance, name, state, chamber)
         if not fin:
@@ -2474,7 +2477,7 @@ async def member_industries_endpoint(request: Request, cid: str, cycle: int):
     """Estimated industry breakdown of a member's individual donors — raw FEC
     employers classified by a cached LLM pass. Lazy: called after the finance
     section renders, keyed by the candidate_id it already resolved."""
-    import fec_client
+    from sources import fec_client
     try:
         return await asyncio.to_thread(fec_client.member_industries, cid, cycle)
     except Exception as e:
@@ -2487,7 +2490,7 @@ async def member_industries_endpoint(request: Request, cid: str, cycle: int):
 async def member_pac_interests_endpoint(request: Request, cid: str, cycle: int, name: str = ""):
     """A member's PAC money grouped by the interest each PAC represents —
     industries and single-issue causes — from factual PAC identity."""
-    import fec_client
+    from sources import fec_client
     try:
         return await asyncio.to_thread(fec_client.member_pac_interests, cid, cycle, name)
     except Exception as e:
@@ -2498,7 +2501,7 @@ async def member_pac_interests_endpoint(request: Request, cid: str, cycle: int, 
 def _load_house_stocks():
     """The pre-built House stock-trade dataset, parsed once per process and
     shared with bill_market (which used to parse the same 2 MB file again)."""
-    from bill_market import load_house_stocks
+    from money.bill_market import load_house_stocks
     return load_house_stocks()
 
 
@@ -2615,7 +2618,7 @@ async def stocks_all_endpoint(request: Request, q: str = "", page: int = 0, page
 async def stock_perf_endpoint(request: Request, ticker: str, date: str):
     """How a stock moved after a disclosed trade (Yahoo daily closes): the
     percent change 1 week / 1 month / 3 months out. Empty when no price data."""
-    import stock_perf
+    from money import stock_perf
     try:
         return await asyncio.to_thread(stock_perf.perf, ticker, date)
     except Exception as e:
@@ -2907,7 +2910,7 @@ async def watcher_run(request: Request):
     secret = request.headers.get("X-Watcher-Secret", "")
     if not WATCHER_SECRET or secret != WATCHER_SECRET:
         raise HTTPException(status_code=401, detail="Unauthorized")
-    from event_watcher import run_watcher
+    from scripts.event_watcher import run_watcher
     loop = asyncio.get_event_loop()
     result = await loop.run_in_executor(None, run_watcher)
     return result
@@ -2978,7 +2981,7 @@ async def monitor_stream(request: Request, after: int = 0):
     polls with the last offset it was given, so each poll carries only new
     lines instead of the whole (ever-growing) log."""
     _require_monitor_auth(request)
-    from documentor_agent import read_log
+    from agents.documentor_agent import read_log
     entries, offset = await asyncio.to_thread(read_log, after)
     return {"entries": entries, "offset": offset}
 
@@ -2986,7 +2989,7 @@ async def monitor_stream(request: Request, after: int = 0):
 @app.post("/monitor/clear-search-log")
 async def clear_search_log(request: Request):
     _require_monitor_auth(request)
-    import search_logger
+    from search import search_logger
     search_logger.clear_log()
     return {"status": "cleared"}
 

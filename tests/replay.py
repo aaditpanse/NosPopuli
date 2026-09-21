@@ -222,7 +222,7 @@ def _install(monkeypatch, caches):
         import correspondence.router as crouter
         monkeypatch.setattr(crouter, "_claude", lambda: fake)
     with contextlib.suppress(ImportError, AttributeError):
-        import elections_agent
+        from agents import elections_agent
         monkeypatch.setattr(elections_agent, "AsyncAnthropic", lambda **kw: fake)
 
     # 2. requests. `requests.get/post` route through Session.request, so the
@@ -299,8 +299,8 @@ def _install(monkeypatch, caches):
 
     # 6. Not a network seam, but the reason a test run currently dirties the
     #    tree: log_action is called from most agents and appends to the repo.
-    import documentor_agent
-    import search_logger
+    from agents import documentor_agent
+    from search import search_logger
     monkeypatch.setattr(documentor_agent, "LOG_FILE", str(pathlib.Path(tempfile.gettempdir()) / "nospopuli-replay-discard.jsonl"))
     monkeypatch.setattr(documentor_agent, "log_action", lambda *a, **k: None)
     monkeypatch.setattr(search_logger, "SEARCH_LOG_FILE", str(pathlib.Path(tempfile.gettempdir()) / "nospopuli-replay-discard.jsonl"))

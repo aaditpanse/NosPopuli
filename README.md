@@ -158,8 +158,8 @@ actually mine.
 In order. Each step is independently useful, so none of it is wasted if I stop partway.
 
 **1. Get everything into git.** 6,341 lines of load-bearing source have never been
-committed — `frontend/js/ledger.js`, `ledger_agent.py`, `foundry/health.py`,
-`search_rank.py`, `bill_text_format.py` and four of my seven test files. Not
+committed — `frontend/js/ledger.js`, `agents/ledger_agent.py`, `foundry/health.py`,
+`search/search_rank.py`, `render/bill_text_format.py` and four of my seven test files. Not
 gitignored; never added. The production home page exists on one laptop with no history.
 This is the only genuinely urgent item here.
 
@@ -361,7 +361,7 @@ Logging              every agent action → agent_log.json
 ```
 
 Two routers exist and disagree with each other — `_resolve_routing` in `api.py` for
-`/search`, and `classify_question` in `ledger_agent.py` for `/ledger`. Unifying them is
+`/search`, and `classify_question` in `agents/ledger_agent.py` for `/ledger`. Unifying them is
 the first thing the graph work should do.
 
 ---
@@ -445,8 +445,8 @@ Optional, per feature: `FEC_API_KEY` and `LDA_API_KEY` (money and lobbying),
 budgets and switches).
 
 ```bash
-python event_watcher.py         # daily bill-state watcher
-python clear_search_cache.py    # --all to include feed/elections
+python -m scripts.event_watcher        # daily bill-state watcher
+python -m scripts.clear_search_cache   # --all to include feed/elections
 ```
 
 ---
@@ -519,7 +519,7 @@ committing it — that diff is the whole point.
   at their refusal contract only; a fabricated 200 would be worse than nothing.
 - **`/api/stocks/traded`** — deliberately not pinned. It looks pure but classifies 1,249
   tickers through Haiku in batches built from a set comprehension
-  (`bill_market.py:150`), so the batches, and every cache key derived from them, differ
+  (`money/bill_market.py:150`), so the batches, and every cache key derived from them, differ
   per process. One cold request cost 44 Haiku calls while recording.
 - **Foundry's own LLM clients** — ~10 separate seams. No route under test calls them
   synchronously; the four that touch foundry spawn threads and correctly refuse a
@@ -591,7 +591,7 @@ Live problems I know about and haven't fixed. Listed so nobody has to rediscover
 Found while building the golden fixtures, all four now pinned as expected-failures:
 
 - **A state query with no LegiScan key is a silent zero.** `legiscan_client._call`
-  logs to stdout and returns `None` before any HTTP (`legiscan_client.py:62`), and
+  logs to stdout and returns `None` before any HTTP (`sources/legiscan_client.py:62`), and
   `search` turns that into `[]` — indistinguishable from "Virginia genuinely has no
   matching bills". Nothing in `api.py` consults `legiscan_client.has_key()`, which
   already exists. The shape to copy is the graph route's `empty_reason`
@@ -606,7 +606,7 @@ Found while building the golden fixtures, all four now pinned as expected-failur
   confident bucket is the least correct one. `/search "LA County"` returns
   `off_topic` at 0.95 while `classify_question` resolves it to `lacounty-bos`.
 - **`/api/member/{bioguide}` returns `chambers` in an unstable order.**
-  `member_search_agent.py:165` builds it as a `set` and returns `list(chambers)` at
+  `agents/member_search_agent.py:165` builds it as a `set` and returns `list(chambers)` at
   `:186`, so the order tracks `PYTHONHASHSEED` — stable within a process, different
   between them. Harmless today, but it means the field cannot be pinned; the fixture
   compares it unordered and says so.

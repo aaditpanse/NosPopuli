@@ -5,7 +5,7 @@ import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from ledger_agent import (
+from agents.ledger_agent import (
     build_funnel,
     classify_question,
     compact_title,
@@ -19,7 +19,7 @@ from ledger_agent import (
     stories_from_results,
     build_shelves,
 )
-from router_agent import intents_from_structured
+from agents.router_agent import intents_from_structured
 
 
 class ClassifyTests(unittest.TestCase):
@@ -132,7 +132,7 @@ class CompactTests(unittest.TestCase):
         self.assertEqual(out["number"], 388)
 
     def test_missing_foundry_store_is_quarantined(self):
-        from ledger_agent import foundry_place_coverage
+        from agents.ledger_agent import foundry_place_coverage
         cov = foundry_place_coverage("not-a-real-place")
         self.assertFalse(cov["found"])
         self.assertTrue(cov["quarantined"])
@@ -286,7 +286,7 @@ class ShelfTests(unittest.TestCase):
         self.assertEqual(funnel["law"], 1)
 
     def test_member_headline_names_the_person(self):
-        from ledger_agent import member_headline
+        from agents.ledger_agent import member_headline
         member = {"name": "Ted Cruz", "party": "R", "state": "Texas"}
         rows = [
             {"latest_action": "Referred to committee"},
@@ -299,7 +299,7 @@ class ShelfTests(unittest.TestCase):
         self.assertNotIn("Nothing", h)
 
     def test_member_headline_no_bills(self):
-        from ledger_agent import member_headline
+        from agents.ledger_agent import member_headline
         self.assertIn("No sponsored bills", member_headline({"name": "X"}, []))
 
     def test_fallback_keeps_member_with_no_bills(self):

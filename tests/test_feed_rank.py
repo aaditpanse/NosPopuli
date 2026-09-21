@@ -11,7 +11,7 @@ from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from feed_agent import (
+from agents.feed_agent import (
     _title_blocked,
     current_congress,
     dedupe_companions,
@@ -230,7 +230,7 @@ class StatusParsing(unittest.TestCase):
         self.assertGreater(ranked[0]["feed_score"], ranked[1]["feed_score"])
 
     def test_reconsider_is_not_passed(self):
-        from feed_agent import _is_passed_action, _stage_points
+        from agents.feed_agent import _is_passed_action, _stage_points
         action = "Motion to reconsider laid on the table Agreed to without objection."
         self.assertFalse(_is_passed_action(action))
         self.assertEqual(_stage_points(TITLE25, NOW, CONGRESS), 0)
@@ -403,7 +403,7 @@ class MiamiClimateHousing(unittest.TestCase, Invariants):
 
 class AllTwelveTopics(unittest.TestCase, Invariants):
     def test_lede_is_not_appropriations(self):
-        interests = list(__import__("feed_agent", fromlist=["INTEREST_TERMS"]).INTEREST_TERMS.keys())
+        interests = list(__import__("agents.feed_agent", fromlist=["INTEREST_TERMS"]).INTEREST_TERMS.keys())
         pool = [
             CR,
             HOSPITAL,

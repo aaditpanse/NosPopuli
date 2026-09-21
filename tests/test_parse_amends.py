@@ -11,7 +11,7 @@ import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from bill_fetcher import parse_amends_from_title
+from sources.bill_fetcher import parse_amends_from_title
 
 
 class AmendsExtraction(unittest.TestCase):

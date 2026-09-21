@@ -18,7 +18,7 @@ import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from state_vote_mapper import select_floor_roll_call, map_roll_call
+from render.state_vote_mapper import select_floor_roll_call, map_roll_call
 
 
 def _summary(*, chamber, desc, yea, nay, nv=0, absent=0, date="2026-01-01", rid=1):

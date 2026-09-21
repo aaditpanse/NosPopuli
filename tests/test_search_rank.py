@@ -5,7 +5,7 @@ import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from search_rank import query_stems, rank_by_relevance, relevance_score
+from search.search_rank import query_stems, rank_by_relevance, relevance_score
 
 
 class StemTests(unittest.TestCase):

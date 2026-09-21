@@ -631,7 +631,7 @@ class LedgerRoutingTest(unittest.TestCase):
     """The graph sits in front of the ledger's place and topic guesses."""
 
     def classify(self, q, **kw):
-        from ledger_agent import classify_question
+        from agents.ledger_agent import classify_question
         return classify_question(q, **kw)
 
     def test_graph_shapes_get_the_graph_plate(self):

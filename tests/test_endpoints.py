@@ -179,7 +179,7 @@ def test_state_search_says_why_it_is_empty():
     The shape to copy is the graph route's, api.py:3050, which returns an
     explicit `empty_reason` when its backing store is unavailable.
     """
-    import legiscan_client
+    from sources import legiscan_client
     import api as api_mod
     import inspect
 

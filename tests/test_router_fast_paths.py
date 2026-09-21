@@ -12,7 +12,7 @@ import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from router_agent import fast_route, fast_route_state
+from agents.router_agent import fast_route, fast_route_state
 
 
 class FederalFastRoute(unittest.TestCase):

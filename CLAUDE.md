@@ -15,6 +15,33 @@ no `docs/` directory — I deleted it, deliberately, because a pile of stale pre
 specs was giving agents a confident and wrong picture of the project.** Don't
 reconstruct one. If something needs writing down, it goes in one of the four.
 
+## Layout
+
+Seven packages, `api.py` and `graph.py` at the root. Namespace packages — there
+are no `__init__.py` files, because empty files that exist only to satisfy an
+import system are not worth the tree.
+
+```
+api.py          the server: every route, the streaming, the routing seams
+graph.py        the property graph: build, load, traverse
+
+agents/         the LLM agents — router, ledger, search, feed, translator,
+                the vote trio, documentor. If it prompts a model, it lives here
+sources/        external data in: congress.gov, LegiScan, FEC, Senate LDA,
+                House disclosures. One module per upstream, plus the shared session
+search/         the search plumbing that is not an agent: cache, logger, rank,
+                and the user-flag log that feeds the same loop
+resolvers/      location → jurisdiction: zip, address, point, district
+money/          the money layer: bill↔market, stock performance, industry
+                classification, the public-law corpus
+render/         turning records into markup: bill typescript, vote semicircles
+scripts/        run by hand or by cron, never imported by a route except
+                event_watcher, which /watcher/run triggers
+```
+
+Run a script with `-m`, not by path — `python -m scripts.clear_search_cache`.
+By path, `sys.path[0]` becomes `scripts/` and every local import fails.
+
 ## Things that will mislead you
 
 - **`frontend/test.html` is production.** It's served at `/`. The name is historical.
@@ -31,7 +58,7 @@ reconstruct one. If something needs writing down, it goes in one of the four.
 - **State legislation is LegiScan, not OpenStates.** Any comment or identifier
   suggesting otherwise is stale. `grep -rl openstates *.py` is empty.
 - **Two routers exist and disagree.** `_resolve_routing` in `api.py` serves `/search`;
-  `classify_question` in `ledger_agent.py` serves `/ledger`. Each has fast paths the
+  `classify_question` in `agents/ledger_agent.py` serves `/ledger`. Each has fast paths the
   other lacks. Unifying them is planned work, not an accident to paper over.
 - **Lots of capability is built but unreachable by typing.** Member finance, stock
   trades, lobbying, the geo resolvers — all live endpoints, all click-only. "It doesn't
