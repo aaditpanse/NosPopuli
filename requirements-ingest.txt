@@ -1,0 +1,7 @@
+# Offline embedding pipeline only (ingest_bills.py). Not installed on the API
+# host: numpy/pandas/voyageai add ~55 MB to the image and are never imported
+# by api.py.
+-r requirements.txt
+voyageai
+numpy
+pandas

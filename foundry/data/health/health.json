@@ -1,0 +1,560 @@
+{
+ "last_run": {
+  "argv": "stafford-bos",
+  "enrich": {
+   "meeting_digests.py": "done: 0 new, 257 total -> meeting-digests.json ($0.00)",
+   "summarize_items.py": "0 voted items need summaries (4384 already done)",
+   "upcoming.py": "done -> upcoming.json ($0.000)"
+  },
+  "host": "local",
+  "results": {
+   "deepen:chicago-bos": "repaired",
+   "deepen:fairfax-bos": "done",
+   "deepen:newyork-bos": "exhausted",
+   "deepen:princewilliam-bos": "done",
+   "deepen:seattle-bos": "done",
+   "deepen:stafford-bos": "done",
+   "recertify:loudoun-bos": "38/290",
+   "recertify:princewilliam-bos": "327/686",
+   "stafford-bos": "drift-or-skipped"
+  },
+  "ts": "2026-09-20T11:57:44"
+ },
+ "sources": {
+  "chicago-bos": {
+   "events": [
+    {
+     "detail": {
+      "artifact": "extractors/chicago-bos/v1_attempt4.py",
+      "attempts": 0,
+      "cost_usd": 0.0,
+      "oracle": "not wired \u2014 run run_oracle.py to certify",
+      "row_counts": {
+       "agenda_items": 172,
+       "meetings": 3,
+       "members": 50,
+       "vote_events": 172
+      }
+     },
+     "first_ts": "2026-09-20T11:55:38",
+     "repeats": 1,
+     "stage": "onboard",
+     "ts": "2026-09-20T11:55:38",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "oldest": "2026-05-20",
+      "repair_attempted": true,
+      "returned": 3,
+      "target": "2026-01-01",
+      "window": 13
+     },
+     "first_ts": "2026-09-20T11:55:39",
+     "repeats": 1,
+     "stage": "deepen",
+     "ts": "2026-09-20T11:55:39",
+     "verdict": "repaired"
+    },
+    {
+     "detail": {
+      "artifact": "v1_attempt1.py",
+      "attempt": 1,
+      "by_check": {
+       "low_agreement": 1,
+       "no_second_source": 1,
+       "vote_coverage": 7
+      },
+      "error": "None",
+      "findings": [
+       {
+        "check": "no_second_source",
+        "msg": "no second-source assertions for this meeting",
+        "ref": "chicago-bos-2026-07-15"
+       },
+       {
+        "check": "vote_coverage",
+        "msg": "second source records an outcome but primary has no vote on that item or its parent",
+        "ref": "chicago-bos-2026-06-17/item1"
+       },
+       {
+        "check": "vote_coverage",
+        "msg": "second source records an outcome but primary has no vote on that item or its parent",
+        "ref": "chicago-bos-2026-06-17/item2"
+       },
+       {
+        "check": "vote_coverage",
+        "msg": "second source records an outcome but primary has no vote on that item or its parent",
+        "ref": "chicago-bos-2026-06-17/item3"
+       },
+       {
+        "check": "vote_coverage",
+        "msg": "second source records an outcome but primary has no vote on that item or its parent",
+        "ref": "chicago-bos-2026-06-17/item4"
+       },
+       {
+        "check": "vote_coverage",
+        "msg": "second source records an outcome but primary has no vote on that item or its parent",
+        "ref": "chicago-bos-2026-06-17/item5"
+       }
+      ],
+      "findings_total": 9,
+      "rate": 0.0
+     },
+     "first_ts": "2026-09-20T12:06:52",
+     "repeats": 1,
+     "stage": "oracle",
+     "ts": "2026-09-20T12:06:52",
+     "verdict": "attempt-failed"
+    },
+    {
+     "detail": {
+      "artifact": "v1_attempt2.py",
+      "attempt": 2,
+      "by_check": {
+       "no_outcome_language": 12
+      },
+      "error": "None",
+      "findings": [
+       {
+        "check": "no_outcome_language",
+        "msg": "evidence quote contains no decision language (approved/denied/carried/moved/aye/unanimous...) \u2014 quote the passage that records the outcome, not the agenda listi",
+        "ref": "2026-06-17/9"
+       },
+       {
+        "check": "no_outcome_language",
+        "msg": "evidence quote contains no decision language (approved/denied/carried/moved/aye/unanimous...) \u2014 quote the passage that records the outcome, not the agenda listi",
+        "ref": "2026-06-17/18"
+       },
+       {
+        "check": "no_outcome_language",
+        "msg": "evidence quote contains no decision language (approved/denied/carried/moved/aye/unanimous...) \u2014 quote the passage that records the outcome, not the agenda listi",
+        "ref": "2026-06-17/10"
+       },
+       {
+        "check": "no_outcome_language",
+        "msg": "evidence quote contains no decision language (approved/denied/carried/moved/aye/unanimous...) \u2014 quote the passage that records the outcome, not the agenda listi",
+        "ref": "2026-06-17/17"
+       },
+       {
+        "check": "no_outcome_language",
+        "msg": "evidence quote contains no decision language (approved/denied/carried/moved/aye/unanimous...) \u2014 quote the passage that records the outcome, not the agenda listi",
+        "ref": "2026-06-17/16"
+       },
+       {
+        "check": "no_outcome_language",
+        "msg": "evidence quote contains no decision language (approved/denied/carried/moved/aye/unanimous...) \u2014 quote the passage that records the outcome, not the agenda listi",
+        "ref": "2026-06-17/16"
+       }
+      ],
+      "findings_total": 12,
+      "rate": null
+     },
+     "first_ts": "2026-09-20T12:10:39",
+     "repeats": 1,
+     "stage": "oracle",
+     "ts": "2026-09-20T12:10:39",
+     "verdict": "attempt-failed"
+    },
+    {
+     "detail": {
+      "artifact": "v1_attempt3.py",
+      "attempt": 3,
+      "by_check": {
+       "no_outcome_language": 12
+      },
+      "error": "None",
+      "findings": [
+       {
+        "check": "no_outcome_language",
+        "msg": "evidence quote contains no decision language (approved/denied/carried/moved/aye/unanimous...) \u2014 quote the passage that records the outcome, not the agenda listi",
+        "ref": "2026-06-17/9"
+       },
+       {
+        "check": "no_outcome_language",
+        "msg": "evidence quote contains no decision language (approved/denied/carried/moved/aye/unanimous...) \u2014 quote the passage that records the outcome, not the agenda listi",
+        "ref": "2026-06-17/18"
+       },
+       {
+        "check": "no_outcome_language",
+        "msg": "evidence quote contains no decision language (approved/denied/carried/moved/aye/unanimous...) \u2014 quote the passage that records the outcome, not the agenda listi",
+        "ref": "2026-06-17/10"
+       },
+       {
+        "check": "no_outcome_language",
+        "msg": "evidence quote contains no decision language (approved/denied/carried/moved/aye/unanimous...) \u2014 quote the passage that records the outcome, not the agenda listi",
+        "ref": "2026-06-17/17"
+       },
+       {
+        "check": "no_outcome_language",
+        "msg": "evidence quote contains no decision language (approved/denied/carried/moved/aye/unanimous...) \u2014 quote the passage that records the outcome, not the agenda listi",
+        "ref": "2026-06-17/16"
+       },
+       {
+        "check": "no_outcome_language",
+        "msg": "evidence quote contains no decision language (approved/denied/carried/moved/aye/unanimous...) \u2014 quote the passage that records the outcome, not the agenda listi",
+        "ref": "2026-06-17/16"
+       }
+      ],
+      "findings_total": 12,
+      "rate": null
+     },
+     "first_ts": "2026-09-20T12:12:28",
+     "repeats": 1,
+     "stage": "oracle",
+     "ts": "2026-09-20T12:12:28",
+     "verdict": "attempt-failed"
+    },
+    {
+     "detail": {
+      "attempts": 3,
+      "cost_usd": 1.33
+     },
+     "first_ts": "2026-09-20T12:12:28",
+     "repeats": 1,
+     "stage": "oracle",
+     "ts": "2026-09-20T12:12:28",
+     "verdict": "failed"
+    }
+   ]
+  },
+  "fairfax-bos": {
+   "events": [
+    {
+     "detail": {
+      "artifact": "v1_attempt1.py",
+      "attempt": 1,
+      "by_check": {
+       "oracle_coverage": 2
+      },
+      "error": "None",
+      "findings": [
+       {
+        "check": "oracle_coverage",
+        "msg": "unaccounted store meetings ['2025-10-28', '2025-11-18'] \u2014 cover each one or list it in run_meta.meetings_without_document (clerks publish with lag; a documented",
+        "ref": "run"
+       },
+       {
+        "check": "oracle_coverage",
+        "msg": "only 0 asserted outcomes vs 357 store votes in the meetings you covered \u2014 those documents record more than that",
+        "ref": "run"
+       }
+      ],
+      "rate": null
+     },
+     "first_ts": "2026-09-20T12:13:48",
+     "repeats": 1,
+     "stage": "oracle",
+     "ts": "2026-09-20T12:13:48",
+     "verdict": "attempt-failed"
+    },
+    {
+     "detail": {
+      "artifact": "v1_attempt2.py",
+      "attempt": 2,
+      "by_check": {
+       "oracle_coverage": 1
+      },
+      "error": "None",
+      "findings": [
+       {
+        "check": "oracle_coverage",
+        "msg": "only 14 asserted outcomes vs 408 store votes in the meetings you covered \u2014 those documents record more than that",
+        "ref": "run"
+       }
+      ],
+      "rate": null
+     },
+     "first_ts": "2026-09-20T12:17:14",
+     "repeats": 1,
+     "stage": "oracle",
+     "ts": "2026-09-20T12:17:14",
+     "verdict": "attempt-failed"
+    },
+    {
+     "detail": {
+      "artifact": "v1_attempt3.py",
+      "attempt": 3,
+      "by_check": {
+       "no_information": 1,
+       "oracle_coverage": 1
+      },
+      "error": "None",
+      "findings": [
+       {
+        "check": "no_information",
+        "msg": "all 28 assertions are bare 'pass' with no tally, positions, or unanimity anywhere \u2014 this contributes no independent information; extract the actual outcome deta",
+        "ref": "run"
+       },
+       {
+        "check": "oracle_coverage",
+        "msg": "only 28 asserted outcomes vs 408 store votes in the meetings you covered \u2014 those documents record more than that",
+        "ref": "run"
+       }
+      ],
+      "rate": null
+     },
+     "first_ts": "2026-09-20T12:21:08",
+     "repeats": 1,
+     "stage": "oracle",
+     "ts": "2026-09-20T12:21:08",
+     "verdict": "attempt-failed"
+    },
+    {
+     "detail": {
+      "artifact": "v1_attempt4.py",
+      "attempt": 4,
+      "by_check": {
+       "oracle_coverage": 1
+      },
+      "error": "None",
+      "findings": [
+       {
+        "check": "oracle_coverage",
+        "msg": "only 0 asserted outcomes vs 408 store votes in the meetings you covered \u2014 those documents record more than that",
+        "ref": "run"
+       }
+      ],
+      "rate": null
+     },
+     "first_ts": "2026-09-20T12:23:56",
+     "repeats": 1,
+     "stage": "oracle",
+     "ts": "2026-09-20T12:23:56",
+     "verdict": "attempt-failed"
+    },
+    {
+     "detail": {
+      "attempts": 4,
+      "cost_usd": 2.09
+     },
+     "first_ts": "2026-09-20T12:23:56",
+     "repeats": 1,
+     "stage": "oracle",
+     "ts": "2026-09-20T12:23:56",
+     "verdict": "failed"
+    },
+    {
+     "detail": {
+      "attempts_spent": 4,
+      "cost_usd": 2.09,
+      "evidence": "MinutesViewer clip_id 4174 / 4241 / 4227 \u2014 0 vote-language hits in each",
+      "next": "Find the Board's actual adopted minutes (the county CMS 'Board Meeting Minutes' PDFs), then re-point the profile's second_source and re-run. The discovery profile oversold this endpoint.",
+      "profile_second_source": "Granicus MinutesViewer (video.fairfaxcounty.gov)",
+      "public": "Fairfax publishes an annotated agenda for each meeting, with items marked \u201cDone\u201d, rather than minutes recording how each supervisor voted. We checked three meetings and found no tallies or named positions in any of them, so there is nothing yet to check the vote record against.",
+      "reason": "Four Opus attempts ($2.09) plus three earlier ones all failed, and the source is why. Granicus labels the MinutesViewer document 'Minutes', but it is an annotated AGENDA: numbered items marked 'Done'. Three separate meeting documents were checked and each contains zero occurrences of motion, carried, unanimous, nay, abstain or vote. It can affirm that an item was reached, never how anyone voted, which is exactly what the gate reported as '28 assertions, all bare pass, no tally or positions'."
+     },
+     "first_ts": "2026-09-20T12:25:09",
+     "repeats": 1,
+     "stage": "oracle",
+     "ts": "2026-09-20T12:25:09",
+     "verdict": "blocked"
+    }
+   ]
+  },
+  "loudoun-bos": {
+   "events": [
+    {
+     "detail": {
+      "artifact": "extractors/loudoun-bos-oracle/v1_attempt1.py",
+      "by_check": {
+       "no_second_source": 15,
+       "vote_coverage": 15
+      },
+      "certified": 38,
+      "covered_meetings": 2,
+      "disputes": 30,
+      "store_meetings": 17,
+      "total": 290
+     },
+     "first_ts": "2026-09-20T11:56:46",
+     "repeats": 1,
+     "stage": "recertify",
+     "ts": "2026-09-20T11:56:46",
+     "verdict": "ok"
+    }
+   ]
+  },
+  "newyork-bos": {
+   "events": [
+    {
+     "detail": {
+      "oldest": "2026-08-13",
+      "returned": 10,
+      "target": "2026-01-01",
+      "window": 45
+     },
+     "first_ts": "2026-09-20T11:56:09",
+     "repeats": 1,
+     "stage": "deepen",
+     "ts": "2026-09-20T11:56:09",
+     "verdict": "exhausted"
+    },
+    {
+     "detail": {
+      "next": "Needs a vote-bearing source: the Council's published minutes PDFs, or the separate Socrata roll-call dataset if one exists.",
+      "profile_second_source": "NYC Open Data Socrata m48u-yjt8",
+      "public": "New York publishes an open-data feed of Council meetings, but it carries only meeting details such as date, committee and location, and no votes. It can confirm a meeting happened, never how anyone voted, so nothing here has been cross-checked yet.",
+      "reason": "The profile's second source is the NYC Open Data Socrata dataset m48u-yjt8, which publishes meeting METADATA only (event_id, committee, date, location, agenda_status). It carries no votes, so it can affirm that a meeting happened but never how anyone voted."
+     },
+     "first_ts": "2026-09-20T12:13:46",
+     "repeats": 1,
+     "stage": "oracle",
+     "ts": "2026-09-20T12:13:46",
+     "verdict": "blocked"
+    }
+   ]
+  },
+  "princewilliam-bos": {
+   "events": [
+    {
+     "detail": {
+      "artifact": "extractors/princewilliam-bos-oracle/v1_attempt2.py",
+      "by_check": {
+       "attendance_mismatch": 1,
+       "no_second_source": 10,
+       "vote_coverage": 38,
+       "vote_mismatch": 6
+      },
+      "certified": 327,
+      "covered_meetings": 16,
+      "disputes": 55,
+      "store_meetings": 26,
+      "total": 686
+     },
+     "first_ts": "2026-09-20T11:57:38",
+     "repeats": 2,
+     "stage": "recertify",
+     "ts": "2026-09-20T12:01:01",
+     "verdict": "ok"
+    }
+   ]
+  },
+  "seattle-bos": {
+   "events": [
+    {
+     "detail": {
+      "next": "Find a document second source: the City Clerk's signed minutes or the Legistar-independent Council Bill history.",
+      "profile_second_source": "SeattleChannel.org video archive",
+      "public": "The second source we found for Seattle is the city\u2019s video archive, which lists which items were taken up but records no tallies or individual votes. Until we locate the Clerk\u2019s written record, nothing here has been independently confirmed.",
+      "reason": "The discovery profile's second source is SeattleChannel.org, a video archive. Its pages list which items were called and in what order; they record no motion outcomes, tallies or named positions, so nothing in them can affirm a vote."
+     },
+     "first_ts": "2026-09-20T12:13:46",
+     "repeats": 1,
+     "stage": "oracle",
+     "ts": "2026-09-20T12:13:46",
+     "verdict": "blocked"
+    }
+   ]
+  },
+  "stafford-bos": {
+   "events": [
+    {
+     "detail": {
+      "artifact": "extractors/stafford-bos/v1_attempt8.py",
+      "findings": [
+       {
+        "check": "duplicate_vote",
+        "msg": "two vote_events cite the identical evidence quote \u2014 either the same roll call was emitted twice (it appears in more than one document section; dedupe), or two d",
+        "ref": "stafford-bos-2026-07-07-vote-18, stafford-bos-2026-07-07-vote-19"
+       }
+      ]
+     },
+     "first_ts": "2026-09-20T11:53:02",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-09-20T11:53:02",
+     "verdict": "drift"
+    },
+    {
+     "detail": {
+      "artifact": "v1_attempt1.py",
+      "attempt": 1,
+      "by_check": {
+       "oracle_coverage": 1
+      },
+      "error": "None",
+      "findings": [
+       {
+        "check": "oracle_coverage",
+        "msg": "assertions cover [] but the store has meetings on ['2025-11-06', '2025-11-18', '2025-12-02', '2025-12-16', '2026-01-06', '2026-01-20', '2026-02-03', '2026-03-03",
+        "ref": "run"
+       }
+      ],
+      "rate": null
+     },
+     "first_ts": "2026-09-20T12:17:46",
+     "repeats": 1,
+     "stage": "oracle",
+     "ts": "2026-09-20T12:17:46",
+     "verdict": "attempt-failed"
+    },
+    {
+     "detail": {
+      "artifact": "v1_attempt2.py",
+      "attempt": 2,
+      "by_check": {},
+      "error": "Traceback (most recent call last):\n  File \"/Users/aaditpanse/NosPopuli/foundry/sandbox2.py\", line 123, in <module>\n    main()\n    ~~~~^^\n  File \"/Users/aaditpanse/NosPopuli/foundry/sandbox2.py\", line 111, in main\n    records, run_meta = module.extract(rt, args)\n                        ~~~~~~~~~~~~~~",
+      "findings": [],
+      "rate": null
+     },
+     "first_ts": "2026-09-20T12:21:09",
+     "repeats": 1,
+     "stage": "oracle",
+     "ts": "2026-09-20T12:21:09",
+     "verdict": "attempt-failed"
+    },
+    {
+     "detail": {
+      "artifact": "v1_attempt3.py",
+      "attempt": 3,
+      "by_check": {
+       "oracle_coverage": 1
+      },
+      "error": "None",
+      "findings": [
+       {
+        "check": "oracle_coverage",
+        "msg": "only 0 asserted outcomes vs 242 store votes in the meetings you covered \u2014 those documents record more than that",
+        "ref": "run"
+       }
+      ],
+      "rate": null
+     },
+     "first_ts": "2026-09-20T12:22:19",
+     "repeats": 1,
+     "stage": "oracle",
+     "ts": "2026-09-20T12:22:19",
+     "verdict": "attempt-failed"
+    },
+    {
+     "detail": {
+      "attempts": 3,
+      "cost_usd": 1.29
+     },
+     "first_ts": "2026-09-20T12:22:19",
+     "repeats": 1,
+     "stage": "oracle",
+     "ts": "2026-09-20T12:22:19",
+     "verdict": "failed"
+    },
+    {
+     "detail": {
+      "attempts_spent": 3,
+      "cost_usd": 1.29,
+      "next": "Either give the sandbox a POST/XHR capability, or find a GET-addressable copy of the adopted minutes (the county website's own minutes PDFs, or a records request).",
+      "profile_second_source": "Hyland OnBase Public Access portal",
+      "public": "Stafford\u2019s adopted minutes do exist, but they sit behind a search tool our collector cannot operate, so we have not been able to retrieve them to check the vote record against.",
+      "reason": "Three Opus attempts produced zero assertions ($1.29). The cause is not the extractor: the second source (Hyland OnBase Public Access) does hold the adopted Minutes, but its portal serves a JavaScript query app with no forms and no GET-reachable search endpoint, so the GET-only sandbox can fetch the page shell and nothing behind it. Same class as the NYC Telerik postback limit."
+     },
+     "first_ts": "2026-09-20T12:23:08",
+     "repeats": 1,
+     "stage": "oracle",
+     "ts": "2026-09-20T12:23:08",
+     "verdict": "blocked"
+    }
+   ]
+  }
+ },
+ "version": 1
+}
