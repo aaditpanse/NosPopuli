@@ -188,11 +188,15 @@ exist — "how did Herrity vote on zoning", "who voted no on the Affordable HOME
 "who held the Braddock seat on 2025-11-18" (a bare year means the end of it; no date
 means today). `parse_question` and `answer` are pure; `memory_backend` runs the same
 five lookups over the lists `build` returns that `pg_backend` runs as SQL, which is
-the harness `tests/test_graph.py` asks its questions through. Nothing calls it from
-`/ledger` yet — wiring that in is part of unifying the routers (item 3).
+the harness `tests/test_graph.py` asks its questions through.
 
-*Next for the graph, in order:* route `/ledger` into `graph.search` before its
-federal default. Then the first certified hop (Loudoun, or `holds` affirmed by the
+`/ledger` routes into it: `classify_question` tries `graph.parse_question` before the
+place and topic guesses, so "how did Herrity vote on zoning" streams a `graph` plate
+instead of going to Congress. The graph declines every other shape, and the caller
+falls back with `allow_graph=False` when it parses a shape but knows neither the
+person nor the seat — so nothing the ledger answered before is lost.
+
+*Next for the graph, in order:* the first certified hop (Loudoun, or `holds` affirmed by the
 clerks' roll calls). Then `sponsored` and a money predicate, because "who funded them"
 is the half of the mixed question the graph exists to keep. Only then more
 jurisdictions.
@@ -511,8 +515,6 @@ Live problems I know about and haven't fixed. Listed so nobody has to rediscover
   (a federal term starting mid-hold is a resignation) and the county's own record (the
   2025-11-18 item honouring "Congressman Walkinshaw"). Neither special election that
   caused this is on disk.
-- Nothing routes a typed question to the graph. `GET /api/graph/votes` works; `/ledger`
-  never calls it. See "Next for the graph" above.
 
 Found while building the golden fixtures, all four now pinned as expected-failures:
 
