@@ -155,6 +155,48 @@ def init_db():
             -- pre-existing deployments (no-op where the column is already there).
             ALTER TABLE lobbying_bill_mentions
                 ADD COLUMN IF NOT EXISTS bill_spend DOUBLE PRECISION NOT NULL DEFAULT 0;
+
+            -- The government graph (graph.py). Two tables, deliberately: the
+            -- skeleton of who governs where is small enough for Postgres and
+            -- a graph database would be a toolchain to defend. Events (votes,
+            -- contributions) are NOT rows here; edges point at them by
+            -- source_ref and the Foundry store is read at the leaf.
+            -- valid_from/valid_to exist from the first migration because
+            -- retrofitting time onto a snapshot graph is a rewrite.
+            CREATE TABLE IF NOT EXISTS graph_node (
+                id          TEXT PRIMARY KEY,
+                kind        TEXT NOT NULL,
+                name        TEXT NOT NULL,
+                props       JSONB NOT NULL DEFAULT '{}',
+                source_id   TEXT,
+                source_ref  TEXT,
+                updated_at  TIMESTAMPTZ DEFAULT NOW()
+            );
+            CREATE INDEX IF NOT EXISTS idx_graph_node_kind ON graph_node (kind);
+            CREATE INDEX IF NOT EXISTS idx_graph_node_source ON graph_node (source_id);
+
+            -- certification is per ASSERTION (source_ref), never per edge:
+            -- every edge a reconciled vote event asserts shares its status,
+            -- and a reload rewrites it, because Foundry re-earns certification
+            -- each cycle. The UNIQUE includes source_ref because one item can
+            -- carry several roll calls (Fairfax 2026-05-05 item 7 had three).
+            CREATE TABLE IF NOT EXISTS graph_edge (
+                id            BIGSERIAL PRIMARY KEY,
+                src           TEXT NOT NULL REFERENCES graph_node(id),
+                predicate     TEXT NOT NULL,
+                dst           TEXT NOT NULL REFERENCES graph_node(id),
+                valid_from    DATE,
+                valid_to      DATE,
+                certification TEXT NOT NULL
+                    CHECK (certification IN ('certified', 'ingested', 'advisory')),
+                source_id     TEXT NOT NULL,
+                source_ref    TEXT NOT NULL,
+                props         JSONB NOT NULL DEFAULT '{}',
+                UNIQUE (src, predicate, dst, source_ref)
+            );
+            CREATE INDEX IF NOT EXISTS idx_graph_edge_src ON graph_edge (src, predicate);
+            CREATE INDEX IF NOT EXISTS idx_graph_edge_dst ON graph_edge (dst, predicate);
+            CREATE INDEX IF NOT EXISTS idx_graph_edge_source ON graph_edge (source_id);
         """)
     _bootstrap_known_elections_from_file()
 

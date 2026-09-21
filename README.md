@@ -152,6 +152,51 @@ and the four counties already on disk. Person resolution via the normalizer that
 supervisor↔contest matching from 3/12 to 9/12. Uncertified edges stay traversable and
 badged.
 
+*Slice one exists:* `graph.py` builds Fairfax BOS top to bottom — state → county →
+districts → board → seats → people → agenda items, plus the 2023 contests that seated
+them — and answers `person → voted_on → agenda_item` filtered by topic, at
+`GET /api/graph/votes?person=&topic=`. `python graph.py build fairfax-bos` runs the
+whole thing in memory with no database and prints the gaps; `load` writes it. What it
+proved against real data: every Fairfax edge is `ingested` (single-source), so the
+weak-hop badge is on every answer; edge identity has to include the asserting record
+because one item carried three roll calls; and Braddock changed hands inside the window
+with no contest on disk, which is where the time bounds earned their keep — the
+displaced holder's `valid_to` is inferred from the successor's first appearance and
+says so. Meetings are not nodes (they're events); topic is Haiku's reading of the title
+and is labelled as such.
+
+*Slice two is Congress, same two tables, same predicates.* `build_congress` reads
+`data/legislators-current.json` (every current member, every term, exact dates, bioguide
+ids) and a roll-call snapshot that `python graph.py snapshot 119 2 2026` writes to
+`data/congress-votes-119-2.json` from the House clerk's and the Senate's XML — the
+loader never touches the network. `load us-congress --state VA` loads one delegation;
+without `--state` it loads all 535. What it proved: the ontology really is
+self-similar — a chamber is an organization, a district or Senate class is a post, a
+bill is an instrument, and a county agenda item is the same kind — so a federal and a
+county vote answer with the same words. Federal people are keyed by bioguide id; local
+people by seat + surname; `IDENTITIES` in `graph.py` is the hand-asserted bridge, and
+Walkinshaw (Braddock supervisor, then VA-11) is one node with a `holds` edge into each
+layer. Every federal edge is `ingested` too: the clerks are single sources here, though
+a member voting on a date is the natural oracle for their term and could certify
+`holds` later.
+
+*The graph answers typed questions* at `GET /api/graph/search?q=` and
+`python graph.py ask "…"` (`--memory` builds both slices in memory, no database). Same
+contract as `fast_route`: a regex answers three shapes for $0 and returns "not mine"
+otherwise, so a caller can fall through. The shapes are the three traversals that
+exist — "how did Herrity vote on zoning", "who voted no on the Affordable HOMES Act",
+"who held the Braddock seat on 2025-11-18" (a bare year means the end of it; no date
+means today). `parse_question` and `answer` are pure; `memory_backend` runs the same
+five lookups over the lists `build` returns that `pg_backend` runs as SQL, which is
+the harness `tests/test_graph.py` asks its questions through. Nothing calls it from
+`/ledger` yet — wiring that in is part of unifying the routers (item 3).
+
+*Next for the graph, in order:* route `/ledger` into `graph.search` before its
+federal default. Then the first certified hop (Loudoun, or `holds` affirmed by the
+clerks' roll calls). Then `sponsored` and a money predicate, because "who funded them"
+is the half of the mixed question the graph exists to keep. Only then more
+jurisdictions.
+
 **7. Rebuild what `/newspaper` did.** See the next section — I deleted the old tabbed
 app rather than porting it, so these are rebuilds in `ledger.js`, not migrations. The
 backends all still work; only the views are gone.
@@ -329,15 +374,47 @@ python clear_search_cache.py    # --all to include feed/elections
 
 ## Tests
 
-Unit tests for the pure-logic parts: no HTTP, no LLM mocking, no database — just
-deterministic functions that can regress silently if a future change breaks them.
-Stdlib `unittest` only, no `pytest` install.
+Two tiers, kept apart on purpose.
+
+**Tier 1 — regression.** Free, deterministic, and the only thing CI gates on
+(`.github/workflows/tests.yml`). 268 tests in ~3s with no network, no LLM and no
+database: the pure-logic tests, plus golden fixtures over 56 of the 85 routes —
+request → exact response JSON, captured once and committed under `tests/golden/`.
+
+**Tier 2 — quality eval.** Measures whether search is any *good*, not whether it
+changed. Costs money, opt-in, never in CI. Not built yet; `search_smoketest.py` is
+the seed.
 
 ```bash
-python -m unittest discover tests -v
+pytest tests/                        # Tier 1, the whole thing
+python -m unittest discover tests    # same pure-logic tests, no pytest needed
 python -m unittest tests.test_state_vote_mapper -v
-python -m unittest tests.test_router_fast_paths.StateFastRoute.test_year_anchor_from -v
 ```
+
+`pytest` is in `requirements.txt` for the golden suite, which needs strict xfail and
+parametrize. The eight pure-logic files are still stdlib `unittest` and run under
+either runner.
+
+### Replay, and why a green run is trustworthy
+
+`tests/replay.py` makes `api` importable without a network, an LLM bill or a Postgres
+connection, so whole responses can be diffed against fixtures. The shape is lifted from
+`foundry/sandbox2.py`, including the property that matters most: **a boundary with no
+fixture raises, it never falls through to a live call.** A socket guard backs that up, so
+a missed seam is a named failure rather than a surprise invoice.
+
+Note it blanks `SUPABASE_DB_URL` before importing `api` — `correspondence/router.py`
+calls `init_db()` at import time, so without that, merely importing the app runs
+`CREATE TABLE IF NOT EXISTS` against production.
+
+```bash
+NOSPOPULI_REPLAY=record python -m tests.replay record          # re-capture, live
+NOSPOPULI_REPLAY=record python -m tests.replay record ledger   # only matching cases
+python -m tests.replay list                                    # what's pinned
+```
+
+Re-capture only for an *intended* behaviour change, and read the fixture diff before
+committing it — that diff is the whole point.
 
 ### What's covered
 
@@ -347,17 +424,28 @@ python -m unittest tests.test_router_fast_paths.StateFastRoute.test_year_anchor_
 | `test_state_vote_mapper.py` | Committee-vs-floor vote disambiguation, participation threshold | Two real bugs caught in production this month (VA HB 191 committee tally, CA SB 1407 fake Assembly vote) |
 | `test_parse_amends.py` | "To amend the X Act of YYYY" extraction in the Connections panel | Pure regex; if it silently degrades, every bill detail page loses its primary law reference |
 | `test_foundry_health.py` | `foundry/health.py` — the scraper-health status vocabulary (`summarize`) and the ledger's bounds | The console at `/admin/foundry` reads nothing else; if `summarize` mislabels a source, the operator is told a scraper is healthy when it is not. Also pins the rule that a quarantine caused by publication lag is never reported as a failure |
+| `test_endpoints.py` | 56 routes, request → exact response, via `tests/replay.py` | The oracle the suite didn't have. Turns "read api.py and reason about equivalence" into "make this JSON match", which is what makes the planned `search_dispatcher.py` extraction verifiable instead of hopeful |
+| `test_ledger.py` | `classify_question`, the funnel, compact titles, shelves — and `KnownDefects` | The defects below are pinned here as strict expected-failures, so they're recorded without leaving the suite red. Includes the control that `classify_question` gets "LA County" *right*, which is what makes `/search` answering `off_topic` a bug rather than an opinion |
+| `test_feed_rank.py` | Feed scoring and the interest/blocklist gates | 40 cases; the scoring is pure and the rendering is currently offline, so this is all that holds it |
+| `test_search_rank.py` | `rank_by_relevance` determinism and order stability | Ranking is re-sorted by the validator downstream, so a silent change here is invisible in the UI |
 | `test_graph.py` | `graph.py` — identity resolution, node/edge building, the as-of seat resolver, and the answer shape | Fixtures replay the real Fairfax defects (duplicate spelling, sentence fragment as a member, three roll calls on one item, a seat that changed hands with no contest on disk, a person who won two bodies' seats in one district). Pins that certification follows the asserting record, that `elected_in` is scoped to the seat and never to the surname, and that an empty answer always says why |
 
 ### What's NOT covered (and why)
 
-- **LLM-dependent code** (router LLM path, validator scoring, translator) — needs
-  mocking that's its own design decision. The `search_smoketest.py` script in
-  the repo root covers end-to-end LLM behavior against a running server.
-- **HTTP-touching code** — same. `search_smoketest.py` is the end-to-end harness.
+- **Search *quality*** — nothing measures it. Tier 1 proves the answer didn't change,
+  not that it was ever right; the fixtures happily pin a wrong answer, and two of them
+  do exactly that on purpose. That's Tier 2's job.
+- **The 29 routes not pinned** — mostly the ones needing a seeded database, a real
+  secret, or a per-route request body worth hand-writing. Auth-gated routes are pinned
+  at their refusal contract only; a fabricated 200 would be worse than nothing.
+- **`/api/stocks/traded`** — deliberately not pinned. It looks pure but classifies 1,249
+  tickers through Haiku in batches built from a set comprehension
+  (`bill_market.py:150`), so the batches, and every cache key derived from them, differ
+  per process. One cold request cost 44 Haiku calls while recording.
+- **Foundry's own LLM clients** — ~10 separate seams. No route under test calls them
+  synchronously; the four that touch foundry spawn threads and correctly refuse a
+  TestClient host.
 - **Frontend JS** — would need a separate JS test runner; out of scope for now.
-- **Database / cache code** — would need fixtures + cleanup. Skipping until
-  state-pollution bugs show up to motivate it.
 
 ### Adding a new test
 
@@ -366,6 +454,11 @@ python -m unittest tests.test_router_fast_paths.StateFastRoute.test_year_anchor_
 3. Subclass `unittest.TestCase` and write `test_*` methods.
 4. Run `python -m unittest tests.test_<thing>` until it passes.
 5. Update the table above.
+6. If it's a *known defect* rather than a guarantee, mark it `@unittest.expectedFailure`
+   (or `@pytest.mark.xfail(strict=True)`) and say which defect in the docstring. Both
+   runners exit 1 on an unexpected success, so the day it gets fixed the test breaks and
+   asks to be promoted to a plain assertion. A permanently red suite just teaches
+   everyone to ignore red.
 
 If your test caught a real bug in the production code, **leave a comment in the
 test method explaining what the bug was** — that's the test's strongest
@@ -410,6 +503,39 @@ Live problems I know about and haven't fixed. Listed so nobody has to rediscover
 - Local search discards the topic (above).
 - `/ledger` forces every query to federal (`api.py:1618`), so state legislation search
   is unreachable from the home page despite being fully built for all 50 states.
+- The graph says Walkinshaw held the Braddock District seat and VA-11 at the same time
+  from 2025-09-10 to 2026-01-12. He resigned the county seat when he went to Congress;
+  the loader closes a hold only when it sees the successor's first meeting, so the
+  county bound is inferred four months late. The edge is tagged `inferred`, so no
+  answer hides it, but the inference should also consult the person's other `holds`
+  (a federal term starting mid-hold is a resignation) and the county's own record (the
+  2025-11-18 item honouring "Congressman Walkinshaw"). Neither special election that
+  caused this is on disk.
+- Nothing routes a typed question to the graph. `GET /api/graph/votes` works; `/ledger`
+  never calls it. See "Next for the graph" above.
+
+Found while building the golden fixtures, all four now pinned as expected-failures:
+
+- **A state query with no LegiScan key is a silent zero.** `legiscan_client._call`
+  logs to stdout and returns `None` before any HTTP (`legiscan_client.py:62`), and
+  `search` turns that into `[]` — indistinguishable from "Virginia genuinely has no
+  matching bills". Nothing in `api.py` consults `legiscan_client.has_key()`, which
+  already exists. The shape to copy is the graph route's `empty_reason`
+  (`api.py:3050`).
+- **"Nothing in Virginia matched that ask."** is what `/ledger` answers for
+  *Healthcare bills in Virginia* — after `api.py:1617-1621` rewrote the query to
+  federal and searched Congress. It blames the jurisdiction for my own gap, which is
+  the inverse of the rule I care most about. Captured in
+  `tests/golden/post_ledger__healthcare_bills_in.json`.
+- **Confidence is inverted, not merely useless.** Across the 73 logged searches,
+  `conf=0.95` is 9-of-11 zero-result while `conf=0.6` and `0.75` are 0-for-3. The most
+  confident bucket is the least correct one. `/search "LA County"` returns
+  `off_topic` at 0.95 while `classify_question` resolves it to `lacounty-bos`.
+- **`/api/member/{bioguide}` returns `chambers` in an unstable order.**
+  `member_search_agent.py:165` builds it as a `set` and returns `list(chambers)` at
+  `:186`, so the order tracks `PYTHONHASHSEED` — stable within a process, different
+  between them. Harmless today, but it means the field cannot be pinned; the fixture
+  compares it unordered and says so.
 
 ---
 

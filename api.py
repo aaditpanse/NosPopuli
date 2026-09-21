@@ -3038,6 +3038,47 @@ def _invalidate_foundry_payload():
         _FOUNDRY_PAYLOAD["body"] = None
 
 
+@app.get("/api/graph/votes")
+async def graph_votes(person: str, topic: Optional[str] = None):
+    """The graph's first traversal: person → voted_on → agenda_item, topic
+    optional. Fail-open to an honest empty state: no database, or a graph
+    nobody has loaded yet, is reported as such, never as a 500 and never as
+    'no votes'."""
+    import graph
+    if not os.getenv("SUPABASE_DB_URL"):
+        return graph.shape_answer([], [], person, topic) | {
+            "empty_reason": "graph unavailable: no database configured"}
+    try:
+        return await asyncio.to_thread(graph.votes, person, topic)
+    except Exception as e:
+        print(f"[API] graph votes error: {e}")
+        return graph.shape_answer([], [], person, topic) | {
+            "empty_reason": f"graph unavailable: {type(e).__name__} — has `python graph.py load fairfax-bos` been run?"}
+
+
+@app.get("/api/graph/search")
+async def graph_search(q: str):
+    """A typed question → the graph, or an honest 'not mine'. Same $0
+    regex contract as fast_route; nothing here calls a model. Fail-open
+    like /api/graph/votes: no database is reported, never a 500."""
+    import graph
+    parsed = graph.parse_question(q)
+    if parsed is None:
+        return {"ask": None, "query": q, "rows": [], "hops": [], "weak_hops": [],
+                "empty_reason": "not a question the graph answers: try 'how did <person> vote "
+                                "on <topic>', 'who voted no on <instrument>', or 'who held "
+                                "<seat> on <date>'"}
+    if not os.getenv("SUPABASE_DB_URL"):
+        return {"ask": parsed["ask"], "query": q, "rows": [], "hops": [], "weak_hops": [],
+                "empty_reason": "graph unavailable: no database configured"}
+    try:
+        return await asyncio.to_thread(graph.answer, parsed, graph.pg_backend())
+    except Exception as e:
+        print(f"[API] graph search error: {e}")
+        return {"ask": parsed["ask"], "query": q, "rows": [], "hops": [], "weak_hops": [],
+                "empty_reason": f"graph unavailable: {type(e).__name__} — has `python graph.py load fairfax-bos` been run?"}
+
+
 @app.get("/api/foundry/data")
 async def foundry_data():
     body = await asyncio.to_thread(_foundry_payload_bytes)
