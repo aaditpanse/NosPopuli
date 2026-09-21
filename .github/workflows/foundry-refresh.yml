@@ -41,6 +41,7 @@ jobs:
     timeout-minutes: 45
     env:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
       FOUNDRY_AUTO_REPAIR: "off"
     steps:
       - uses: actions/checkout@v4
@@ -60,9 +61,21 @@ jobs:
         working-directory: foundry
         run: python refresh.py ${{ github.event.inputs.scope == 'all' && '--all' || '--due' }}
 
+      # The graph is rebuilt from the stores after every refresh. Snapshot
+      # first (the clerks' XML, GET only, $0) so the current session's roll
+      # calls are on disk and committed with the rest of the data; then load
+      # every source into the graph tables. Both are skipped when the
+      # database secret is not set, so a fork without one still refreshes.
+      - name: Snapshot the current session's roll calls
+        run: python graph.py snapshot
+
+      - name: Rebuild the graph
+        if: env.SUPABASE_DB_URL != ''
+        run: python graph.py load all
+
       - name: Commit and push if the store changed
         run: |
-          git add foundry/data
+          git add foundry/data data/congress-votes-*.json
           if git diff --cached --quiet; then
             echo "No data changes — nothing to deploy."
             exit 0

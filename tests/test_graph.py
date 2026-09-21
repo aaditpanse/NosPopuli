@@ -106,18 +106,29 @@ def person_named(nodes, name):
 class ResolveMembersTest(unittest.TestCase):
     def test_duplicates_merge_and_fragment_is_rejected(self):
         persons, rejects = graph.resolve_members(store(), CFG)
-        names = sorted(p["name"] for ps in persons.values() for p in ps)
+        names = sorted(p["name"] for p in persons)
         self.assertEqual(names, ["Jeffrey C. McKay", "Patrick S. Herrity",
                                  "Rachna Sizemore Heizer"])
         self.assertEqual([r[0] for r in rejects], [FRAGMENT])
-        herrity = persons["springfield"][0]
+        herrity = next(p for p in persons if p["name"] == "Patrick S. Herrity")
+        self.assertEqual(herrity["key"], "herrity/p")     # county + surname + initial, no seat
+        self.assertEqual(herrity["seat"], "springfield")
         self.assertEqual(herrity["aliases"], ["Pat Herrity"])
         self.assertEqual(sorted(herrity["raw_names"]), ["Pat Herrity", "Patrick S. Herrity"])
         self.assertEqual(herrity["first_seen"], "2025-11-18")
 
     def test_first_seen_is_earliest_appearance_under_any_spelling(self):
         persons, _ = graph.resolve_members(store(), CFG)
-        self.assertEqual(persons["braddock"][0]["first_seen"], "2026-01-13")
+        heizer = next(p for p in persons if p["seat"] == "braddock")
+        self.assertEqual(heizer["first_seen"], "2026-01-13")
+
+    def test_same_surname_and_initial_but_different_person_is_not_merged(self):
+        st = store()
+        st["members"]["Paul Herrity"] = member("Paul Herrity", district="Sully District")
+        persons, rejects = graph.resolve_members(st, CFG)
+        self.assertEqual(sorted(p["name"] for p in persons if "Herrity" in p["name"]),
+                         ["Patrick S. Herrity", "Paul Herrity"])
+        self.assertTrue(any("collides" in r[1] for r in rejects))
 
     def test_name_floor(self):
         self.assertTrue(graph._looks_like_name("James N. Bierman, Jr."))
@@ -222,6 +233,64 @@ class BuildTest(unittest.TestCase):
     def test_edge_keys_are_unique(self):
         keys = [(e["src"], e["predicate"], e["dst"], e["source_ref"]) for e in self.edges]
         self.assertEqual(len(keys), len(set(keys)))
+
+
+class MotionStoreTest(unittest.TestCase):
+    """Loudoun records motions, not agenda items: the motion is the instrument."""
+
+    def test_motion_becomes_the_instrument_and_roster_seats_come_from_contests(self):
+        st = {"members": {"Phyllis J. Randall": member("Phyllis J. Randall"),
+                          "Juli Briskman": member("Juli Briskman")},
+              "meetings": {"l1": {"meeting_id": "l1", "body": "BOS", "date": "2026-01-06",
+                                  "attendance": {"Phyllis J. Randall": "present"}, **cert("certified")}},
+              "agenda_items": {},
+              "vote_events": {"l1-m1": {"vote_id": "l1-m1", "meeting_id": "l1",
+                                        "motion": "Chair Randall moved to approve the consent agenda.",
+                                        "positions": [{"member": "Phyllis J. Randall", "position": "aye"},
+                                                      {"member": "Juli Briskman", "position": "no"}],
+                                        "counts": {}, "result": "pass", **cert("certified")}}}
+        contests = [contest("lc-chair", "Board of Supervisors", "Loudoun County", "Phyllis J. Randall",
+                            jurisdiction="Loudoun County", status="quarantined"),
+                    contest("lc-alg", "Board of Supervisors", "Algonkian District", "Juli E. Briskman",
+                            jurisdiction="Loudoun County")]
+        nodes, edges, gaps = graph.build("loudoun-bos", st, contests, {})
+        inst = [n for n in nodes if n["kind"] == "instrument"]
+        self.assertEqual([(n["id"], n["props"]["instrument_type"]) for n in inst],
+                         [("instrument/l1-m1", "motion")])
+        voted = by_pred(edges, "voted_on")
+        self.assertEqual({e["certification"] for e in voted}, {"certified"})   # the first certified hop
+        randall = person_named(nodes, "Phyllis J. Randall")
+        holds = [e for e in by_pred(edges, "holds") if e["src"] == randall["id"]]
+        self.assertEqual(len(holds), 1)
+        self.assertTrue(holds[0]["dst"] == next(n["id"] for n in nodes if n["kind"] == "post"
+                                                 and n["props"]["natural_key"].endswith("/chair")))
+        briskman = person_named(nodes, "Juli Briskman")
+        self.assertIn("Juli E. Briskman", briskman["props"]["aliases"] + [briskman["name"]])
+        self.assertFalse(any("vote but hold no seat" in g for g in gaps))
+
+
+class CloseHoldsAcrossTest(unittest.TestCase):
+    def test_a_federal_term_closes_the_county_hold_it_started_inside(self):
+        ln, le, _ = graph.build("fairfax-bos", store(), CONTESTS, SUMMARIES)
+        fn, fe, _ = graph.build_congress(LEGISLATORS, [SNAPSHOT], states=["VA"], today=TODAY)
+        edges = le + fe
+        changed = graph.close_holds_across(edges)
+        walk = person_named(ln, "James R. Walkinshaw")
+        county = next(e for e in changed if e["src"] == walk["id"])
+        self.assertEqual(county["valid_to"], "2025-09-09")
+        self.assertEqual(county["props"]["inferred_from"], "took another seat on 2025-09-10")
+        # Exact-ended terms and the still-open federal one are untouched.
+        self.assertEqual(len(changed), 1)
+        self.assertEqual(graph.close_holds_across(edges), [])     # idempotent
+
+
+class StripPlaceTest(unittest.TestCase):
+    def test_place_words_leave_the_topic(self):
+        self.assertEqual(graph.strip_place("Fairfax zoning"), ("zoning", "Fairfax"))
+        self.assertEqual(graph.strip_place("zoning in Fairfax County"), ("zoning in", "Fairfax County"))
+        self.assertEqual(graph.strip_place("Virginia housing"), ("housing", "Virginia"))
+        self.assertEqual(graph.strip_place("zoning"), ("zoning", None))
+        self.assertEqual(graph.strip_place("Fairfax"), ("Fairfax", "Fairfax"))   # never empty
 
 
 class HoldersAsOfTest(unittest.TestCase):
@@ -351,6 +420,10 @@ class BuildCongressTest(unittest.TestCase):
                          [("2023-01-03", "2025-01-03"), ("2025-01-03", None)])
         self.assertEqual(mine[0]["props"]["bound_to"], "exact")
         self.assertEqual(mine[1]["props"]["term_expires"], "2027-01-03")
+        # A roll call inside the term affirms it from an independent source:
+        # the current term is certified, the past one (no votes on disk) is not.
+        self.assertEqual([e["certification"] for e in mine], ["ingested", "certified"])
+        self.assertIn("roll call", mine[1]["props"]["certified_by"])
         # Consecutive terms on one seat are not a double hold: the earlier
         # one already had an exact end, so nothing is inferred.
         self.assertFalse(any("inference" in g for g in self.gaps))
@@ -497,6 +570,10 @@ class SearchTest(unittest.TestCase):
         self.assertEqual([(r["title"], r["position"]) for r in a["rows"]], [("REZONE 12 ACRES", "no")])
         self.assertEqual(a["weak_hops"][0]["weakest"], "ingested")
         self.assertEqual(a["advisory_fields"], ["topic"])
+        # A place inside the topic is scope, not subject.
+        p = self.ask("how did Herrity vote on Fairfax rezone")
+        self.assertEqual(p["count"], 1)
+        self.assertEqual(p["place_ignored"], "Fairfax")
         # Alias resolves; topic miss says how many votes there were.
         miss = self.ask("how did Pat Herrity vote on glue traps")
         self.assertEqual(miss["count"], 0)

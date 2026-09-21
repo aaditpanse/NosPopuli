@@ -47,34 +47,16 @@ PREDICATES = ("contains", "has_body", "has_seat", "holds", "represents",
 # Ordered weakest → strongest. An answer reports the weakest hop it crossed.
 CERTIFICATION_RANK = {"advisory": 0, "ingested": 1, "certified": 2}
 
-# Per-source facts the stores don't carry: which jurisdiction a store is,
-# which elections store seats its members, and the statutory term. Virginia
-# county supervisors take office January 1 after the November general
-# (Va. Code § 24.2-217 / § 15.2-1400), four-year terms.
-SOURCES = {
-    "fairfax-bos": {
-        "state": "va",
-        "county": "fairfax",
-        "county_name": "Fairfax County",
-        "body_name": "Fairfax County Board of Supervisors",
-        "elections_source": "va-elections",
-        "election_jurisdiction": "Fairfax County",
-        "election_office": "Board of Supervisors",
-        "chair_district": "Fairfax County",   # the at-large contest's "district"
-        "term_start": "2024-01-01",
-        "term_expires": "2027-12-31",
-    },
-}
-
-# Cross-layer identity, asserted by a human. A local person has no external
-# id, so the loader keys them by seat + surname; when that person also holds
-# a federal seat, this maps the local natural key to the bioguide key so both
-# loaders write ONE node. This is the residue identity matching leaves for a
-# person to decide, and it is recorded on the node as a manual assertion.
-IDENTITIES = {
-    # Braddock District supervisor 2024–2025, VA-11 from 2025-09-10.
-    "va/fairfax/bos/braddock/walkinshaw": "bioguide/W000831",
-}
+# Per-source facts the stores don't carry live in a sidecar next to the
+# stores (foundry/data/store/_graph-sources.json): which jurisdiction a store
+# is, which elections store seats its members, the statutory term, and the
+# human-asserted identities. A county enters the graph by getting an entry
+# there, not by editing this file.
+_SOURCES_PATH = _HERE / "foundry" / "data" / "store" / "_graph-sources.json"
+_CONFIG = json.loads(_SOURCES_PATH.read_text())
+SOURCES = _CONFIG["sources"]
+STATE_NAMES = _CONFIG["states"]
+IDENTITIES = _CONFIG["identities"]
 
 US = "ocd-division/country:us"
 HOUSE_KEY, SENATE_KEY = "us/house", "us/senate"
@@ -209,16 +191,34 @@ def _close_double_holds(g, holds_by_post, post_label):
 
 # ---------------------------------------------------------------- identity
 
+def _first_initial(name):
+    tokens = name.replace(",", " ").split()
+    return tokens[0][0].upper() if tokens and len(tokens) > 1 else ""
+
+
+def _same_given_name(a, b):
+    """'Pat' and 'Patrick S.' are one person; 'Pat' and 'Paul' are not.
+    Given names agree when one is a prefix of the other (nicknames are
+    usually truncations) — a full-name collision on surname + initial that
+    fails this stays two people, and is reported."""
+    ga, gb = a.replace(",", " ").split()[0].rstrip(".").lower(), b.replace(",", " ").split()[0].rstrip(".").lower()
+    return ga.startswith(gb) or gb.startswith(ga)
+
+
 def resolve_members(store, cfg):
     """Roster → people. Returns (persons, rejects).
 
-    persons: {seat_slug: [person]} where a person is a dict with name,
-    aliases, key (surname canon), seat, raw_names (every spelling the store
-    uses), first_seen (earliest meeting date any spelling appears).
+    persons: [person], each a dict with name, aliases, key (the natural key
+    inside the county: surname canon + first initial), seat (from the
+    roster's district or role, or None when the roster carries neither —
+    Loudoun's does not, and the contest that seated them supplies it later),
+    raw_names (every spelling the store uses), first_seen (earliest meeting
+    date any spelling appears).
     rejects: [(raw name, reason)] — never loaded, always reported.
 
-    Identity is seat + surname, never surname alone: member_key is a
-    last-name canon and 'Smith' is not unique across a state.
+    Identity is county + surname + first initial, never surname alone
+    ('Smith' is not unique across a state) and never seat + surname (a
+    person who changes seats is still one person).
     """
     first_seen = {}
     for m in store.get("meetings", {}).values():
@@ -238,19 +238,21 @@ def resolve_members(store, cfg):
             rejects.append((raw, "not a person's name (failed the name floor)"))
             continue
         role = (m.get("role") or "").lower()
-        if role.startswith("chair"):
-            seat = "chair"
-        elif m.get("district"):
-            seat = _district_slug(m["district"], cfg)
-        else:
-            rejects.append((raw, "no seat: neither chair nor a district"))
-            continue
+        seat = "chair" if role.startswith("chair") else \
+            _district_slug(m["district"], cfg) if m.get("district") else None
         name, alias = _display_name(raw)
-        key = (seat, _person_key(name))
-        person = by_key.setdefault(key, {
-            "name": name, "aliases": [], "key": key[1], "seat": seat,
+        key = f"{_person_key(name).lower()}/{_first_initial(name).lower()}"
+        person = by_key.get(key)
+        if person and not _same_given_name(person["name"], name):
+            rejects.append((raw, f"collides with {person['name']!r} on surname and initial "
+                                 f"but is a different given name; not merged"))
+            key = f"{key}/{name.split()[0].lower()}"
+            person = by_key.get(key)
+        person = person or by_key.setdefault(key, {
+            "name": name, "aliases": [], "key": key, "seat": seat,
             "raw_names": [], "first_seen": None})
         person["raw_names"].append(raw)
+        person["seat"] = person["seat"] or seat
         if alias:
             person["aliases"].append(alias)
         if len(name) > len(person["name"]):        # 'Patrick S.' over 'Pat'
@@ -260,19 +262,10 @@ def resolve_members(store, cfg):
             person["aliases"].append(name)
         seen = [first_seen[r] for r in person["raw_names"] if r in first_seen]
         person["first_seen"] = min(seen) if seen else None
-
-    persons = {}
-    for (seat, _), p in by_key.items():
+    persons = list(by_key.values())
+    for p in persons:
         p["aliases"] = sorted(set(p["aliases"]) - {p["name"]})
-        persons.setdefault(seat, []).append(p)
     return persons, rejects
-
-
-def _local_person_id(natural_key):
-    """A local person's node id — or the federal node's id when IDENTITIES
-    says they are the same person, so the two layers meet at one node."""
-    identity = IDENTITIES.get(natural_key)
-    return node_id("person", identity or natural_key), identity
 
 
 # ------------------------------------------------------------ build: county
@@ -294,7 +287,8 @@ def build(source_id, store, contests, summaries):
         return _edge(g, src, predicate, dst, valid_from, valid_to, certification,
                      src_id, source_ref, county_id, props)
 
-    _node(g, state_id, "jurisdiction", "Virginia", {"level": "state"}, source_id)
+    _node(g, state_id, "jurisdiction", STATE_NAMES.get(cfg["state"], cfg["state"].upper()),
+          {"level": "state"}, source_id)
     _node(g, county_id, "jurisdiction", cfg["county_name"],
           {"level": "county", "jurisdiction": county_id}, source_id)
     _node(g, body_id, "organization", cfg["body_name"],
@@ -306,7 +300,6 @@ def build(source_id, store, contests, summaries):
     persons, rejects = resolve_members(store, cfg)
     for raw, why in rejects:
         g["gaps"].append(f"roster entry {raw!r} not loaded: {why}")
-
     my_contests = [c for c in contests
                    if c.get("jurisdiction") == cfg["election_jurisdiction"]
                    and c.get("office") == cfg["election_office"]]
@@ -314,14 +307,14 @@ def build(source_id, store, contests, summaries):
     # Seats: the union of what the roster and the contests name. A district
     # only one side knows about is still a seat; the other side is the gap.
     seats = {}
-    for seat, ps in persons.items():
-        seats[seat] = next((m.get("district") for m in store["members"].values()
-                            if _district_slug(m.get("district"), cfg) == seat
-                            and m.get("district")), None) or "Chair"
+    for m in store.get("members", {}).values():
+        if m.get("district"):
+            seats[_district_slug(m["district"], cfg)] = m["district"]
+    if any(p["seat"] == "chair" for p in persons):
+        seats["chair"] = "Chair"
     for c in my_contests:
-        seats.setdefault(_district_slug(c.get("district"), cfg),
-                         "Chair" if _district_slug(c.get("district"), cfg) == "chair"
-                         else c["district"])
+        slug = _district_slug(c.get("district"), cfg)
+        seats.setdefault(slug, "Chair" if slug == "chair" else c["district"])
 
     post_ids = {}
     for seat, district in sorted(seats.items()):
@@ -341,28 +334,34 @@ def build(source_id, store, contests, summaries):
         edge(body_id, "has_seat", pid, None, None, "ingested", source_id, "seed", seed)
         edge(pid, "represents", division, None, None, "ingested", source_id, "seed", seed)
 
-    def person_node(seat, key, name, aliases, source_ref):
-        nk = f"{cfg['state']}/{cfg['county']}/bos/{seat}/{key.lower()}"
-        pid, identity = _local_person_id(nk)
-        props = {"natural_key": nk, "aliases": aliases, "seat": seat,
-                 "jurisdiction": county_id}
+    def person_node(key, name, aliases, source_ref):
+        nk = f"{cfg['state']}/{cfg['county']}/{key}"
+        identity = IDENTITIES.get(nk)
+        pid = node_id("person", identity or nk)
+        props = {"natural_key": nk, "aliases": aliases, "jurisdiction": county_id}
         if identity:
             props["identity"] = identity
-            props["identity_asserted_by"] = "manual (graph.py IDENTITIES)"
-        _node(g, pid, "person", name, props, source_id, source_ref)
+            props["identity_asserted_by"] = "manual (_graph-sources.json identities)"
+        if pid in g["nodes"]:
+            g["nodes"][pid]["props"]["aliases"] = sorted(
+                set(g["nodes"][pid]["props"]["aliases"]) | set(aliases))
+        else:
+            _node(g, pid, "person", name, props, source_id, source_ref)
         return pid
 
-    person_ids, raw_to_person = {}, {}
-    for seat, ps in persons.items():
-        for p in ps:
-            pid = person_node(seat, p["key"], p["name"], p["aliases"], p["raw_names"][0])
-            person_ids[(seat, p["key"])] = pid
-            for raw in p["raw_names"]:
-                raw_to_person[raw] = pid
+    person_ids, raw_to_person, seat_of = {}, {}, {}
+    for p in persons:
+        pid = person_node(p["key"], p["name"], p["aliases"], p["raw_names"][0])
+        person_ids[p["key"]] = pid
+        seat_of[pid] = p["seat"]
+        for raw in p["raw_names"]:
+            raw_to_person[raw] = pid
 
-    # Instruments and the votes on them. Topic is Haiku's reading of the
-    # title (item-summaries.json); it travels as a property and is labelled
-    # derived so no answer can present it as the clerk's classification.
+    # Instruments and the votes on them. A store with agenda items votes on
+    # the item; a store without (Loudoun records motions, not items) votes
+    # on the motion itself, which is then the instrument. Topic is Haiku's
+    # reading of the title (item-summaries.json); it travels as a property
+    # and is labelled derived so no answer can present it as the clerk's.
     meetings = store.get("meetings", {})
     for item in store.get("agenda_items", {}).values():
         meeting = meetings.get(item["meeting_id"])
@@ -384,9 +383,24 @@ def build(source_id, store, contests, summaries):
     unresolved = {}
     for ve in store.get("vote_events", {}).values():
         meeting = meetings.get(ve["meeting_id"])
-        iid = f"instrument/{ve.get('item_id')}"
-        if meeting is None or iid not in g["nodes"]:
-            g["gaps"].append(f"vote {ve['vote_id']} has no meeting or agenda item in the store")
+        if meeting is None:
+            g["gaps"].append(f"vote {ve['vote_id']} names a meeting not in the store")
+            continue
+        if ve.get("item_id"):
+            iid = f"instrument/{ve['item_id']}"
+            if iid not in g["nodes"]:
+                g["gaps"].append(f"vote {ve['vote_id']} names agenda item {ve['item_id']} not in the store")
+                continue
+        elif ve.get("motion"):
+            iid = f"instrument/{ve['vote_id']}"
+            _node(g, iid, "instrument", ve["motion"].strip(),
+                  {"instrument_type": "motion", "result": ve.get("result"),
+                   "meeting_id": ve["meeting_id"], "date": meeting["date"],
+                   "jurisdiction": county_id}, source_id, ve["vote_id"])
+            edge(body_id, "considered", iid, meeting["date"], meeting["date"],
+                 _cert(ve), source_id, ve["vote_id"], {})
+        else:
+            g["gaps"].append(f"vote {ve['vote_id']} has neither an agenda item nor a motion")
             continue
         for pos in ve.get("positions", []):
             pid = raw_to_person.get(pos["member"])
@@ -400,10 +414,10 @@ def build(source_id, store, contests, summaries):
     for raw, n in unresolved.items():
         g["gaps"].append(f"{n} vote position(s) by {raw!r} dropped: not a loaded person")
 
-    # Elections. A contest seats a person only when it is for this exact
-    # seat AND the surname matches — never by surname across the county,
-    # because the same person can win a school-board seat in the same
-    # district (Sizemore Heizer, Braddock, 2023).
+    # Elections. A contest is for this body (the caller filtered by office,
+    # so a school-board win in the same district never seats anyone here)
+    # and names a winner; the winner is matched on surname + initial within
+    # the county. A winner the roster has never seen becomes a person too.
     holds, seated = {}, set()
     for c in my_contests:
         seat = _district_slug(c.get("district"), cfg)
@@ -418,14 +432,22 @@ def build(source_id, store, contests, summaries):
              cfg["elections_source"], c["contest_id"], {"bound_from": bound})
         for winner in c.get("winner_names", []):
             name, alias = _display_name(winner)
-            key = (seat, _person_key(name))
+            key = f"{_person_key(name).lower()}/{_first_initial(name).lower()}"
             pid = person_ids.get(key)
             if pid is None:
-                pid = person_ids[key] = person_node(seat, key[1], name,
-                                                    [alias] if alias else [], c["contest_id"])
+                pid = person_ids[key] = person_node(key, name, [alias] if alias else [], c["contest_id"])
                 g["nodes"][pid]["source_id"] = cfg["elections_source"]
-            elif alias and alias not in g["nodes"][pid]["props"]["aliases"]:
-                g["nodes"][pid]["props"]["aliases"].append(alias)
+            else:
+                # The contest's spelling ('Juli E. Briskman') joins the
+                # roster's ('Juli Briskman') as an alias, so either finds her.
+                known = g["nodes"][pid]["props"]["aliases"]
+                for spelling in (alias, name):
+                    if spelling and spelling != g["nodes"][pid]["name"] and spelling not in known:
+                        known.append(spelling)
+            if seat_of.get(pid) and seat_of[pid] != seat:
+                g["gaps"].append(f"{name} won {c.get('district')} but the roster seats them "
+                                 f"at {seats.get(seat_of[pid])}; both holds recorded")
+            seat_of.setdefault(pid, seat)
             edge(pid, "elected_in", cid, date, date, _cert(c),
                  cfg["elections_source"], c["contest_id"], {"bound_from": bound})
             row = edge(pid, "holds", post_ids[seat], cfg["term_start"], None, _cert(c),
@@ -434,21 +456,27 @@ def build(source_id, store, contests, summaries):
             holds.setdefault(seat, []).append(row)
             seated.add(pid)
 
-    # Roster members no contest seated: they hold the seat from the first
-    # meeting we saw them at. Observed, not asserted — and the gap is named.
-    for seat, ps in persons.items():
-        for p in ps:
-            pid = person_ids[(seat, p["key"])]
-            if pid in seated:
-                continue
-            g["gaps"].append(f"{p['name']} holds {seats[seat]} on the roster but "
-                             f"{cfg['elections_source']} has no contest seating them "
-                             f"(a special election not on disk?)")
-            if p["first_seen"] is None:
-                continue
-            row = edge(pid, "holds", post_ids[seat], p["first_seen"], None, "ingested",
-                       source_id, p["raw_names"][0], {"bound_from": "observed"})
-            holds.setdefault(seat, []).append(row)
+    # Roster members no contest seated: they hold their roster seat from
+    # the first meeting we saw them at. Observed, not asserted — and the gap
+    # is named. A roster member with no seat at all can vote but holds
+    # nothing, and that too is a gap.
+    for p in persons:
+        pid = person_ids[p["key"]]
+        if pid in seated:
+            continue
+        seat = seat_of.get(pid)
+        if seat is None:
+            g["gaps"].append(f"{p['name']} is on the roster with no district, and no contest "
+                             f"in {cfg['elections_source']} names them; they vote but hold no seat")
+            continue
+        g["gaps"].append(f"{p['name']} holds {seats[seat]} on the roster but "
+                         f"{cfg['elections_source']} has no contest seating them "
+                         f"(a special election not on disk?)")
+        if p["first_seen"] is None:
+            continue
+        row = edge(pid, "holds", post_ids[seat], p["first_seen"], None, "ingested",
+                   source_id, p["raw_names"][0], {"bound_from": "observed"})
+        holds.setdefault(seat, []).append(row)
 
     _close_double_holds(g, holds, seats)
     return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
@@ -520,7 +548,7 @@ def build_congress(legislators, snapshots, states=None, today=None):
         pid = node_id("post", key)
         if pid not in g["nodes"]:
             if state_div(st) not in g["nodes"]:
-                _node(g, state_div(st), "jurisdiction", st,
+                _node(g, state_div(st), "jurisdiction", STATE_NAMES.get(st.lower(), st),
                       {"level": "state", "jurisdiction": state_div(st)}, LEGISLATORS_SOURCE)
                 _edge(g, US, "contains", state_div(st), None, None, "ingested",
                       LEGISLATORS_SOURCE, "seed", state_div(st), {"derived": "seed"})
@@ -618,6 +646,30 @@ def build_congress(legislators, snapshots, states=None, today=None):
                           {"position": position, "vote_id": v["vote_id"], "chamber": chamber,
                            "roll": v["roll"], "question": v.get("question"),
                            "result": v.get("result"), "amendment": v.get("amendment")})
+    # A member recorded voting on a date held the seat that day, and the
+    # clerk who recorded it is independent of the legislators file that
+    # asserted the term. That affirms the assertion (the term record), so
+    # the whole holds edge is certified, per assertion — not a per-day
+    # patchwork. The bounds keep their own precision; certification says the
+    # term is real, not that its dates are.
+    voted_days = {}
+    for e in g["edges"].values():
+        if e["predicate"] == "voted_on":
+            voted_days.setdefault(e["src"], []).append((e["valid_from"], e["source_ref"], e["source_id"]))
+    certified_holds = 0
+    for rows in holds.values():
+        for h in rows:
+            end = h["valid_to"] or "9999"
+            hits = sorted(d for d in voted_days.get(h["src"], []) if h["valid_from"] <= d[0] <= end)
+            if hits:
+                h["certification"] = "certified"
+                h["props"]["certified_by"] = (f"cross-source: {len(hits)} roll call(s) by this member "
+                                              f"inside the term, first {hits[0][1]} on {hits[0][0]} "
+                                              f"({hits[0][2]}), affirm the term")
+                certified_holds += 1
+    if certified_holds:
+        g["gaps"].append(f"{certified_holds} federal term(s) certified by the clerks' roll calls; "
+                         f"the rest have no vote inside them on disk")
     for chamber, n in skipped.items():
         g["gaps"].append(f"{n} {chamber} roll call(s) had no legislative instrument "
                          f"(quorum calls, Speaker elections, motions) and were not loaded")
@@ -733,6 +785,42 @@ def snapshot_congress(congress, session, year, out_path, max_misses=3, pause=0.1
 
 
 # ---------------------------------------------------------------- temporal
+
+def close_holds_across(edges):
+    """A person cannot hold two of these seats at once. When an open or
+    inferred hold has another hold by the same person on a different post
+    beginning inside it with an exact start, the earlier one closes the day
+    before — that start is better evidence than a successor's first
+    appearance (Walkinshaw left Braddock for VA-11 on 2025-09-10; the county
+    loader alone could only see his successor in January). Mutates the
+    `holds` rows in place; returns the rows it changed. Pure; runs over the
+    union of every loaded source, so `load` applies it after each load."""
+    holds = [e for e in edges if e["predicate"] == "holds"]
+    by_person = {}
+    for h in holds:
+        by_person.setdefault(h["src"], []).append(h)
+    changed = []
+    for rows in by_person.values():
+        for h in rows:
+            if h["valid_to"] is not None and h["props"].get("bound_to") != "inferred":
+                continue
+            starts = sorted(o["valid_from"] for o in rows
+                            if o is not h and o["dst"] != h["dst"] and o["valid_from"]
+                            and o["props"].get("bound_from") == "exact"
+                            and o["valid_from"] > h["valid_from"]
+                            and (h["valid_to"] is None or o["valid_from"] <= h["valid_to"]))
+            if not starts:
+                continue
+            day_before = (datetime.date.fromisoformat(starts[0]) - datetime.timedelta(days=1)).isoformat()
+            if h["valid_to"] == day_before:
+                continue
+            h["valid_to"] = day_before
+            h["props"]["bound_to"] = "inferred"
+            h["props"]["inferred_from"] = f"took another seat on {starts[0]}"
+            changed.append(h)
+    return changed
+
+
 
 def holders_as_of(hold_edges, as_of):
     """The `holds` edges in force on a date. NULL valid_to is open. Pure;
@@ -859,7 +947,56 @@ def load(source, states=None):
             """, [(e["src"], e["predicate"], e["dst"], e["valid_from"], e["valid_to"],
                    e["certification"], e["source_id"], e["source_ref"], Jsonb(e["props"]))
                   for e in edges])
+    closed = _close_holds_in_db(sorted({n["id"] for n in nodes if n["kind"] == "person"}))
+    for c in closed:
+        gaps.append(f"{c['name']}'s hold on {c['post']} closed at {c['valid_to']}: {c['why']}")
     return _summary(nodes, edges), gaps
+
+
+def _close_holds_in_db(person_ids):
+    """Apply close_holds_across to every hold of these people, across every
+    source already loaded — the county loader cannot see a federal term
+    and vice versa, so this runs where both are visible."""
+    from psycopg.rows import dict_row
+    from psycopg.types.json import Jsonb
+    from correspondence.db import _get_pool
+    with _get_pool().connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute("""
+                SELECT e.id, e.src, e.dst, e.valid_from, e.valid_to, e.props,
+                       p.name, o.name AS post
+                FROM graph_edge e JOIN graph_node p ON p.id = e.src
+                                  JOIN graph_node o ON o.id = e.dst
+                WHERE e.predicate = 'holds' AND e.src = ANY(%s)""", (person_ids,))
+            rows = cur.fetchall()
+            for r in rows:
+                r["predicate"] = "holds"
+                r["valid_from"] = r["valid_from"].isoformat() if r["valid_from"] else None
+                r["valid_to"] = r["valid_to"].isoformat() if r["valid_to"] else None
+            changed = close_holds_across(rows)
+            for r in changed:
+                cur.execute("UPDATE graph_edge SET valid_to = %s::date, props = %s WHERE id = %s",
+                            (r["valid_to"], Jsonb(r["props"]), r["id"]))
+    return [{"name": r["name"], "post": r["post"], "valid_to": r["valid_to"],
+             "why": r["props"]["inferred_from"]} for r in changed]
+
+
+def load_all():
+    """Every county in the sidecar, then every state the sidecar names for
+    Congress. Returns {source: (summary, gaps)}."""
+    out = {}
+    for source in sorted(SOURCES):
+        out[source] = load(source)
+    out["us-congress"] = load("us-congress", sorted(STATE_NAMES))
+    return out
+
+
+def current_session(today=None):
+    """(congress, session, year) for a date: the 1st Congress met in 1789
+    and each lasts two years; odd years are session 1."""
+    today = today or datetime.date.today()
+    congress = (today.year - 1789) // 2 + 1
+    return congress, 1 if today.year % 2 else 2, today.year
 
 
 def _pg_persons(cur, query):
@@ -1191,6 +1328,28 @@ def pg_backend():
             "holds": holds_of, "voters": voters, "loaded": loaded}
 
 
+_PLACE_WORDS = None
+
+
+def strip_place(topic):
+    """'Fairfax zoning' → ('zoning', 'Fairfax'): a county or state name
+    inside a topic is a scope, not a subject, and no title contains it."""
+    global _PLACE_WORDS
+    if _PLACE_WORDS is None:
+        words = set()
+        for cfg in SOURCES.values():
+            words.add(cfg["county"])
+            words.update(w.lower() for w in cfg["county_name"].split())
+        words.update(n.lower() for n in STATE_NAMES.values())
+        words.update(STATE_NAMES)
+        words -= {"county"}
+        _PLACE_WORDS = words
+    kept, dropped = [], []
+    for w in topic.split():
+        (dropped if w.lower().strip(",'s") in _PLACE_WORDS or w.lower() == "county" else kept).append(w)
+    return " ".join(kept) or topic, " ".join(dropped) or None
+
+
 def answer(parsed, backend, limit=200):
     """Run one parsed question against a backend. Every branch returns a
     dict with `ask`, `hops` / `weak_hops`, and an `empty_reason` when there
@@ -1199,20 +1358,22 @@ def answer(parsed, backend, limit=200):
     if not backend["loaded"]():
         return {"ask": ask, "rows": [], "hops": [], "weak_hops": [],
                 "empty_reason": "graph not loaded: run `python graph.py load fairfax-bos`"}
+    topic, place = strip_place(parsed["topic"]) if parsed.get("topic") else (None, None)
     if ask == "votes":
         persons = backend["persons"](parsed["person"])
         if not persons:
-            return shape_answer([], [], parsed["person"], parsed["topic"]) | {"ask": ask}
-        rows, total, truncated = backend["votes"]([p["id"] for p in persons], parsed["topic"], limit)
-        return shape_answer(rows, persons, parsed["person"], parsed["topic"], total, truncated) | {"ask": ask}
+            return shape_answer([], [], parsed["person"], topic) | {"ask": ask}
+        rows, total, truncated = backend["votes"]([p["id"] for p in persons], topic, limit)
+        return shape_answer(rows, persons, parsed["person"], topic, total, truncated) | {
+            "ask": ask, "place_ignored": place}
     if ask == "voters":
-        rows, truncated = backend["voters"](parsed["topic"], parsed["position"], limit)
-        out = shape_answer(rows, [{"name": "anyone"}], parsed["topic"], parsed["topic"], None, truncated)
+        rows, truncated = backend["voters"](topic, parsed["position"], limit)
+        out = shape_answer(rows, [{"name": "anyone"}], topic, topic, None, truncated)
         out.update({"ask": ask, "persons": sorted({r["person"] for r in rows}),
-                    "position": parsed["position"]})
+                    "position": parsed["position"], "place_ignored": place})
         if not rows:
             out["empty_reason"] = (f"no recorded vote{' ' + parsed['position'] if parsed['position'] else ''} "
-                                   f"on anything matching {parsed['topic']!r}")
+                                   f"on anything matching {topic!r}")
         return out
     posts = backend["posts"](parsed["seat"])
     if not posts:
@@ -1260,7 +1421,7 @@ if __name__ == "__main__":
     import argparse
     from dotenv import load_dotenv
     load_dotenv(_HERE / ".env")
-    sources = sorted(SOURCES) + ["us-congress"]
+    sources = sorted(SOURCES) + ["us-congress", "all"]
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     for name, help_ in (("build", "build in memory and print the summary; no database"),
@@ -1269,22 +1430,27 @@ if __name__ == "__main__":
         s.add_argument("source", choices=sources)
         s.add_argument("--state", action="append",
                        help="us-congress only: delegation(s) to load, e.g. --state VA")
-    s = sub.add_parser("snapshot", help="fetch one session's roll calls to data/")
-    s.add_argument("congress", type=int)
-    s.add_argument("session", type=int)
-    s.add_argument("year", type=int)
+    s = sub.add_parser("snapshot", help="fetch one session's roll calls to data/ (no args: the current session)")
+    s.add_argument("congress", type=int, nargs="?")
+    s.add_argument("session", type=int, nargs="?")
+    s.add_argument("year", type=int, nargs="?")
     s = sub.add_parser("votes", help="person → voted_on → instrument")
     s.add_argument("person")
     s.add_argument("--topic")
     s = sub.add_parser("ask", help="a typed question → the graph")
     s.add_argument("question")
     s.add_argument("--memory", action="store_true",
-                   help="build fairfax-bos + us-congress(VA) in memory; no database")
+                   help="build every source in memory; no database")
     s = sub.add_parser("holder", help="who held a post on a date")
     s.add_argument("post_id")
     s.add_argument("as_of")
     a = ap.parse_args()
-    if a.cmd in ("build", "load"):
+    if a.cmd == "load" and a.source == "all":
+        for source, (summary, gaps) in load_all().items():
+            print(source, json.dumps(summary["by_predicate"]))
+            for g in gaps:
+                print("  -", g)
+    elif a.cmd in ("build", "load"):
         if a.cmd == "build":
             nodes, edges, gaps, _ = build_source(a.source, a.state)
             summary = _summary(nodes, edges)
@@ -1295,8 +1461,9 @@ if __name__ == "__main__":
         for g in gaps:
             print("  -", g)
     elif a.cmd == "snapshot":
-        out = DATA_DIR / f"congress-votes-{a.congress}-{a.session}.json"
-        print(json.dumps(snapshot_congress(a.congress, a.session, a.year, out), indent=1))
+        congress, session, year = (a.congress, a.session, a.year) if a.congress else current_session()
+        out = DATA_DIR / f"congress-votes-{congress}-{session}.json"
+        print(json.dumps(snapshot_congress(congress, session, year, out), indent=1))
         print("wrote", out)
     elif a.cmd == "votes":
         print(json.dumps(votes(a.person, a.topic), indent=1, default=str))
@@ -1304,10 +1471,14 @@ if __name__ == "__main__":
         backend = None
         if a.memory:
             nodes, edges = [], []
-            for src, st in (("fairfax-bos", None), ("us-congress", ["VA"])):
-                n, e, _, _ = build_source(src, st)
+            for src in sorted(SOURCES):
+                n, e, _, _ = build_source(src)
                 nodes += n
                 edges += e
+            n, e, _, _ = build_source("us-congress", sorted(STATE_NAMES))
+            nodes += n
+            edges += e
+            close_holds_across(edges)
             backend = memory_backend(nodes, edges)
         out = search(a.question, backend)
         print(json.dumps(out if out is not None else

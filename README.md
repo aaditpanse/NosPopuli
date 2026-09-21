@@ -174,19 +174,42 @@ without `--state` it loads all 535. What it proved: the ontology really is
 self-similar — a chamber is an organization, a district or Senate class is a post, a
 bill is an instrument, and a county agenda item is the same kind — so a federal and a
 county vote answer with the same words. Federal people are keyed by bioguide id; local
-people by seat + surname; `IDENTITIES` in `graph.py` is the hand-asserted bridge, and
-Walkinshaw (Braddock supervisor, then VA-11) is one node with a `holds` edge into each
-layer. Every federal edge is `ingested` too: the clerks are single sources here, though
-a member voting on a date is the natural oracle for their term and could certify
-`holds` later.
+people by county + surname + first initial (never by seat, so a person who changes
+seats stays one node; a surname-and-initial collision with a different given name
+stays two and is reported). The hand-asserted bridge between the two is `identities`
+in `foundry/data/store/_graph-sources.json`, and Walkinshaw (Braddock supervisor, then
+VA-11) is one node with a `holds` edge into each layer.
+
+*Certification is real now.* Loudoun is the third source: its meetings are certified
+against the clerk's minutes, so a Loudoun answer crosses certified and ingested hops in
+one list and names the weakest. Loudoun records motions rather than agenda items, so
+the motion is the instrument. Federal `holds` are certified by the clerks' roll calls
+— a member recorded voting inside the term affirms the term from a source independent
+of the legislators file; all 13 Virginia terms with a 2026 vote are certified, the
+earlier ones are not. The bounds keep their own precision either way: certification
+says the term is real, not that its dates are.
+
+*Time, across sources.* A person cannot hold two of these seats at once. After every
+load, `close_holds_across` looks at each person's holds from every source loaded and
+closes an open or inferred hold the day before an exact-started hold on another post
+begins. That is how the county loader, which can only see a successor's first
+meeting, learns that Walkinshaw left Braddock on 2025-09-09 rather than in January.
+Both bounds stay tagged `inferred`.
+
+*A county enters the graph by an entry in `_graph-sources.json`* — its OCD slugs, the
+elections store that seats its members, the statutory term — not by editing code.
+`python graph.py load all` loads every entry and every state the sidecar names for
+Congress; the refresh workflow runs a snapshot of the current session's roll calls and
+`load all` daily when the database secret is set.
 
 *The graph answers typed questions* at `GET /api/graph/search?q=` and
-`python graph.py ask "…"` (`--memory` builds both slices in memory, no database). Same
+`python graph.py ask "…"` (`--memory` builds every source in memory, no database). Same
 contract as `fast_route`: a regex answers three shapes for $0 and returns "not mine"
 otherwise, so a caller can fall through. The shapes are the three traversals that
 exist — "how did Herrity vote on zoning", "who voted no on the Affordable HOMES Act",
 "who held the Braddock seat on 2025-11-18" (a bare year means the end of it; no date
-means today). `parse_question` and `answer` are pure; `memory_backend` runs the same
+means today). A county or state name inside a topic is treated as scope and dropped —
+"Fairfax zoning" searches "zoning" and the answer says what it ignored. `parse_question` and `answer` are pure; `memory_backend` runs the same
 five lookups over the lists `build` returns that `pg_backend` runs as SQL, which is
 the harness `tests/test_graph.py` asks its questions through.
 
@@ -196,10 +219,10 @@ instead of going to Congress. The graph declines every other shape, and the call
 falls back with `allow_graph=False` when it parses a shape but knows neither the
 person nor the seat — so nothing the ledger answered before is lost.
 
-*Next for the graph, in order:* the first certified hop (Loudoun, or `holds` affirmed by the
-clerks' roll calls). Then `sponsored` and a money predicate, because "who funded them"
-is the half of the mixed question the graph exists to keep. Only then more
-jurisdictions.
+*Next for the graph, in order:* `sponsored` and a money predicate, because "who funded
+them" is the half of the mixed question the graph exists to keep. Then Prince William
+and Stafford (an entry each in the sidecar), the General Assembly, and the other 49
+delegations (`load us-congress` with no `--state`).
 
 **7. Rebuild what `/newspaper` did.** See the next section — I deleted the old tabbed
 app rather than porting it, so these are rebuilds in `ledger.js`, not migrations. The
@@ -507,14 +530,11 @@ Live problems I know about and haven't fixed. Listed so nobody has to rediscover
 - Local search discards the topic (above).
 - `/ledger` forces every query to federal (`api.py:1618`), so state legislation search
   is unreachable from the home page despite being fully built for all 50 states.
-- The graph says Walkinshaw held the Braddock District seat and VA-11 at the same time
-  from 2025-09-10 to 2026-01-12. He resigned the county seat when he went to Congress;
-  the loader closes a hold only when it sees the successor's first meeting, so the
-  county bound is inferred four months late. The edge is tagged `inferred`, so no
-  answer hides it, but the inference should also consult the person's other `holds`
-  (a federal term starting mid-hold is a resignation) and the county's own record (the
-  2025-11-18 item honouring "Congressman Walkinshaw"). Neither special election that
-  caused this is on disk.
+- Braddock District resolves to nobody from 2025-09-10 to 2026-01-12. Walkinshaw's hold
+  now closes the day before his federal term (right), but Sizemore Heizer's begins at
+  her first observed meeting because the special election that seated her is not on
+  disk. The gap is real and the answer says "vacant or not on disk"; the fix is the
+  2025 special-election results in `va-elections.json`.
 
 Found while building the golden fixtures, all four now pinned as expected-failures:
 
