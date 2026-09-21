@@ -67,6 +67,17 @@
       -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 34px), transparent 100%);
       mask-image: linear-gradient(to bottom, #000 calc(100% - 34px), transparent 100%);
     }
+    /* the fade alone doesn't read as "scrollable" until you're already
+       scrolling; this text hint says so up front, and goes once you're
+       at the bottom (same .more toggle the fade uses). */
+    .scroll-hint {
+      text-align: center; font-family: var(--fm); font-size: 10px; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--muted); padding-top: 6px;
+      opacity: 0; transition: opacity .2s ease; pointer-events: none;
+    }
+    .focus-scroll.more + .scroll-hint { opacity: 1; }
+    /* the coverage-note disclosure: no default triangle, label alone until clicked */
+    summary::-webkit-details-marker { display: none; }
     .mtg-focus {
       display: grid; grid-template-columns: 1fr auto; gap: 18px;
       padding: 14px 0; border-bottom: 1px solid var(--rule); align-items: start;

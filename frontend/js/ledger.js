@@ -1785,10 +1785,10 @@
       : `Every vote below comes from the board's own record, and ${pct}% of it is checked against a second, independently written source. Where the two disagree we say so rather than pick one.`;
 
     const warn = cov.public_note ? `
-      <div style="border:1px solid var(--accent);padding:13px 15px;margin-bottom:24px;max-width:46em">
-        <div class="lbl" style="color:var(--accent);margin-bottom:5px">${pct === 0 ? "Not confirmed" : "Partly confirmed"}</div>
-        <div style="font-family:var(--fb);font-size:14.5px;line-height:1.6">${esc(cov.public_note)}</div>
-      </div>` : "";
+      <details style="border:1px solid var(--accent);padding:9px 13px;margin-bottom:24px;width:fit-content;max-width:46em">
+        <summary class="lbl" style="color:var(--accent);cursor:pointer;list-style:none;white-space:nowrap">${pct === 0 ? "Not confirmed" : "Partly confirmed"}</summary>
+        <div style="font-family:var(--fb);font-size:14.5px;line-height:1.6;margin-top:9px;white-space:normal">${esc(cov.public_note)}</div>
+      </details>` : "";
 
     return `<div class="view wrap">
       ${chromeBar({ search: true })}
