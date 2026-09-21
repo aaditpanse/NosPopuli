@@ -1,0 +1,28 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:29",
+  "notes": "reads data/",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "params": {
+   "bioguide": "C001075"
+  },
+  "path": "/member/stocks"
+ },
+ "response": {
+  "json": {
+   "cycles": [
+    2024,
+    2025,
+    2026
+   ],
+   "filed": false,
+   "generated": "2026-07-21",
+   "trades": []
+  },
+  "status": 200
+ }
+}

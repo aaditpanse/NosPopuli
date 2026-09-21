@@ -1,0 +1,16 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:29",
+  "notes": "static text",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "path": "/robots.txt"
+ },
+ "response": {
+  "status": 200,
+  "text": "User-agent: *\nAllow: /\nDisallow: /monitor\nDisallow: /admin/\nSitemap: https://nospopuli.org/sitemap.xml\n"
+ }
+}

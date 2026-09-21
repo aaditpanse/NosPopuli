@@ -1,0 +1,67 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:33",
+  "notes": "forced federal at api.py:1618",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "question": "Healthcare bills in Virginia"
+  },
+  "method": "POST",
+  "path": "/ledger"
+ },
+ "response": {
+  "ndjson": [
+   {
+    "cached": false,
+    "committee": null,
+    "deck": "Most bills never leave committee. Click a bar to read only that stage.",
+    "funnel": [
+     {
+      "id": "all",
+      "label": "Introduced",
+      "n": 0,
+      "width": "100%"
+     },
+     {
+      "id": "committee",
+      "label": "Waiting in committee",
+      "n": 0,
+      "width": "0%"
+     },
+     {
+      "id": "passed",
+      "label": "Passed one chamber",
+      "n": 0,
+      "width": "0%"
+     },
+     {
+      "id": "law",
+      "label": "Became law",
+      "n": 0,
+      "width": "0%"
+     }
+    ],
+    "headline": "Nothing in Virginia matched that ask.",
+    "person_only": false,
+    "place_name": "Virginia",
+    "plate": "ledger",
+    "query_type": "legislation",
+    "question": "Healthcare bills in Virginia",
+    "section": "plate",
+    "state_code": "VA",
+    "stories": []
+   },
+   {
+    "section": "shelves",
+    "shelves": []
+   },
+   {
+    "section": "done"
+   }
+  ],
+  "status": 200
+ }
+}

@@ -1,0 +1,229 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:33",
+  "notes": "member route \u2014 20 of the 73 logged searches were this",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "max_results": 5,
+   "question": "Ted Cruz"
+  },
+  "method": "POST",
+  "path": "/search"
+ },
+ "response": {
+  "json": {
+   "ambiguity_reason": null,
+   "confidence": 1.0,
+   "found": true,
+   "legislation": {
+    "cosponsored_count": 2107,
+    "policy_areas": {
+     "Agriculture and Food": 1,
+     "Armed Forces and National Security": 18,
+     "Civil Rights and Liberties, Minority Issues": 2,
+     "Commerce": 3,
+     "Congress": 1,
+     "Crime and Law Enforcement": 6,
+     "Education": 4,
+     "Energy": 3,
+     "Environmental Protection": 1,
+     "Families": 1,
+     "Finance and Financial Sector": 4,
+     "Foreign Trade and International Finance": 2,
+     "Government Operations and Politics": 7,
+     "Health": 4,
+     "Immigration": 4,
+     "International Affairs": 12,
+     "Law": 4,
+     "Other": 140,
+     "Public Lands and Natural Resources": 2,
+     "Science, Technology, Communications": 10,
+     "Sports and Recreation": 2,
+     "Taxation": 10,
+     "Transportation and Public Works": 9
+    },
+    "sponsored": [
+     {
+      "congress": 119,
+      "date": "2026-09-17",
+      "latest_action": "Amendment SA 6776 proposed by Senator Thune for Senator Cruz. In the nature of a substitute.",
+      "number": null,
+      "policy_area": "Other",
+      "title": "",
+      "type": ""
+     },
+     {
+      "congress": 119,
+      "date": "",
+      "latest_action": "",
+      "number": null,
+      "policy_area": "Other",
+      "title": "",
+      "type": ""
+     },
+     {
+      "congress": 119,
+      "date": "2026-07-27",
+      "latest_action": "Placed on Senate Legislative Calendar under General Orders. Calendar No. 506.",
+      "number": "4009",
+      "policy_area": "International Affairs",
+      "title": "Falun Gong and Victims of Forced Organ Harvesting Protection Act",
+      "type": "s"
+     },
+     {
+      "congress": 119,
+      "date": "2026-08-07",
+      "latest_action": "Read twice and referred to the Committee on Foreign Relations.",
+      "number": "5369",
+      "policy_area": "International Affairs",
+      "title": "Restoring Electoral Fairness and Opposition Rights through Mandates for Accountability Act of 2026",
+      "type": "s"
+     },
+     {
+      "congress": 119,
+      "date": "2026-09-14",
+      "latest_action": "Placed on Senate Legislative Calendar under General Orders. Calendar No. 573.",
+      "number": "58",
+      "policy_area": "Government Operations and Politics",
+      "title": "A bill to designate the facility of the United States Postal Service located at 107 North Hoyne Avenue in Fritch, Texas, as the \"Chief Zeb Smith Post Office\".",
+      "type": "s"
+     },
+     {
+      "congress": 119,
+      "date": "2026-09-14",
+      "latest_action": "Placed on Senate Legislative Calendar under General Orders. Calendar No. 576.",
+      "number": "2394",
+      "policy_area": "Government Operations and Politics",
+      "title": "A bill to designate the facility of the United States Postal Service located at 505 East 9th Avenue in Amarillo, Texas, as the \"Mayor Jerry H. Hodge Post Office Building\".",
+      "type": "s"
+     },
+     {
+      "congress": 119,
+      "date": "2026-08-06",
+      "latest_action": "Read twice and referred to the Committee on the Judiciary.",
+      "number": "5289",
+      "policy_area": "Civil Rights and Liberties, Minority Issues",
+      "title": "Right to Worship Act",
+      "type": "s"
+     },
+     {
+      "congress": 119,
+      "date": "2026-08-04",
+      "latest_action": "Referred to the Committee on Foreign Relations. (text: CR S4436)",
+      "number": "829",
+      "policy_area": "International Affairs",
+      "title": "A resolution reaffirming the policy of the United States to support a peaceful democratic transition in Venezuela through free and fair elections.",
+      "type": "sres"
+     },
+     {
+      "congress": 119,
+      "date": "",
+      "latest_action": "",
+      "number": null,
+      "policy_area": "Other",
+      "title": "",
+      "type": ""
+     },
+     {
+      "congress": 119,
+      "date": "2026-09-16",
+      "latest_action": "Committee on Commerce, Science, and Transportation. Ordered to be reported with an amendment in the nature of a substitute favorably.",
+      "number": "5188",
+      "policy_area": "Sports and Recreation",
+      "title": "Muhammad Ali American Boxing Revival Act of 2026",
+      "type": "s"
+     }
+    ],
+    "sponsored_count": 1145
+   },
+   "member": {
+    "bioguide_id": "C001098",
+    "birth_year": "1970",
+    "chamber": "Senate",
+    "chambers": [
+     "Senate"
+    ],
+    "congress_url": "",
+    "current": true,
+    "end_year": null,
+    "name": "Ted Cruz",
+    "official_url": "https://www.cruz.senate.gov",
+    "party": "Republican",
+    "photo_url": "https://www.congress.gov/img/member/c001098_200.jpg",
+    "start_year": 2013,
+    "state": "Texas",
+    "terms": [
+     {
+      "chamber": "Senate",
+      "congress": 113,
+      "endYear": 2015,
+      "memberType": "Senator",
+      "startYear": 2013,
+      "stateCode": "TX",
+      "stateName": "Texas"
+     },
+     {
+      "chamber": "Senate",
+      "congress": 114,
+      "endYear": 2017,
+      "memberType": "Senator",
+      "startYear": 2015,
+      "stateCode": "TX",
+      "stateName": "Texas"
+     },
+     {
+      "chamber": "Senate",
+      "congress": 115,
+      "endYear": 2019,
+      "memberType": "Senator",
+      "startYear": 2017,
+      "stateCode": "TX",
+      "stateName": "Texas"
+     },
+     {
+      "chamber": "Senate",
+      "congress": 116,
+      "endYear": 2021,
+      "memberType": "Senator",
+      "startYear": 2019,
+      "stateCode": "TX",
+      "stateName": "Texas"
+     },
+     {
+      "chamber": "Senate",
+      "congress": 117,
+      "endYear": 2023,
+      "memberType": "Senator",
+      "startYear": 2021,
+      "stateCode": "TX",
+      "stateName": "Texas"
+     },
+     {
+      "chamber": "Senate",
+      "congress": 118,
+      "endYear": 2025,
+      "memberType": "Senator",
+      "startYear": 2023,
+      "stateCode": "TX",
+      "stateName": "Texas"
+     },
+     {
+      "chamber": "Senate",
+      "congress": 119,
+      "memberType": "Senator",
+      "startYear": 2025,
+      "stateCode": "TX",
+      "stateName": "Texas"
+     }
+    ],
+    "url": "https://api.congress.gov/v3/member/C001098?format=json",
+    "years_served": 13
+   },
+   "query_type": "member"
+  },
+  "status": 200
+ }
+}

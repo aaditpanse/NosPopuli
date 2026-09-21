@@ -1,0 +1,16 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:33",
+  "notes": "static asset",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "path": "/favicon.ico"
+ },
+ "response": {
+  "status": 204,
+  "text": ""
+ }
+}

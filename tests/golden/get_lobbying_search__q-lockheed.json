@@ -1,0 +1,85 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:33",
+  "notes": "LDA \u2014 no key configured here, so this records the degraded path",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "params": {
+   "q": "Lockheed"
+  },
+  "path": "/lobbying/search"
+ },
+ "response": {
+  "json": {
+   "results": [
+    {
+     "id": 100012,
+     "kind": "client",
+     "name": "LOCKHEED MARTIN",
+     "state": "Virginia",
+     "subtitle": "Lobbying client"
+    },
+    {
+     "id": 102700,
+     "kind": "client",
+     "name": "LOCKHEED MARTIN CORP",
+     "state": null,
+     "subtitle": "Lobbying client"
+    },
+    {
+     "id": 111704,
+     "kind": "client",
+     "name": "LOCKHEED MARTIN CORP.",
+     "state": "Virginia",
+     "subtitle": "Defense Contractor"
+    },
+    {
+     "id": 23031,
+     "kind": "registrant",
+     "name": "LOCKHEED MARTIN CORPORATION",
+     "state": "Maryland",
+     "subtitle": "Lobbying firm"
+    },
+    {
+     "id": 57071,
+     "kind": "client",
+     "name": "LOCKHEED MARTIN CORPORATION",
+     "state": "Maryland",
+     "subtitle": "Defense and aerospace technology company"
+    },
+    {
+     "id": 109480,
+     "kind": "client",
+     "name": "LOCKHEED MARTIN AERONAUTIC SECTOR",
+     "state": "Texas",
+     "subtitle": "Lobbying client"
+    },
+    {
+     "id": 106449,
+     "kind": "client",
+     "name": "LOCKHEED MARTIN OVERSEAS CORPORATION",
+     "state": "Maryland",
+     "subtitle": "Lobbying client"
+    },
+    {
+     "id": 100200,
+     "kind": "client",
+     "name": "LOCKHEED MARTIN AERONAUTICAL SYSTEMS CO",
+     "state": null,
+     "subtitle": "Lobbying client"
+    },
+    {
+     "id": 101958,
+     "kind": "client",
+     "name": "LOCKHEED MARTIN GLOBAL TELECOMMUNICATIONS",
+     "state": "Virginia",
+     "subtitle": "Lobbying client"
+    }
+   ]
+  },
+  "status": 200
+ }
+}

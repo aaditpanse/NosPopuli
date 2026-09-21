@@ -1,0 +1,18 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:34",
+  "notes": "contract: JWT required",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "path": "/auth/me"
+ },
+ "response": {
+  "json": {
+   "detail": "Not authenticated"
+  },
+  "status": 401
+ }
+}

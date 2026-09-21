@@ -1,0 +1,52 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:32",
+  "notes": "the off_topic defect, frozen",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "max_results": 5,
+   "question": "LA County"
+  },
+  "method": "POST",
+  "path": "/search"
+ },
+ "response": {
+  "json": {
+   "ambiguity_reason": "This doesn't look like a question about legislation, members of Congress, or civic policy. Try a topic, bill ID (e.g. \"HR 4838\"), or a name.",
+   "cached": false,
+   "confidence": 0.95,
+   "query": {
+    "_bypass_search_cache": false,
+    "ambiguity_reason": null,
+    "bill_type": "all",
+    "confidence": 0.95,
+    "congress_numbers": [
+     119,
+     118
+    ],
+    "entity_name": null,
+    "full_history": false,
+    "intents": [],
+    "jurisdiction": "federal",
+    "keywords": [],
+    "max_results_override": null,
+    "named_entity": null,
+    "query_subtype": null,
+    "query_type": "off_topic",
+    "result_count": 5,
+    "specific_bill": null,
+    "state_code": null,
+    "status": "any",
+    "time_filter": false,
+    "time_range": "last 5 years",
+    "topic": "geographic location"
+   },
+   "query_type": "off_topic",
+   "results": []
+  },
+  "status": 200
+ }
+}

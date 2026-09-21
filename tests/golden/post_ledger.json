@@ -1,0 +1,27 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:33",
+  "notes": "empty is the home plate",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "question": ""
+  },
+  "method": "POST",
+  "path": "/ledger"
+ },
+ "response": {
+  "ndjson": [
+   {
+    "plate": "home",
+    "section": "plate"
+   },
+   {
+    "section": "done"
+   }
+  ],
+  "status": 200
+ }
+}

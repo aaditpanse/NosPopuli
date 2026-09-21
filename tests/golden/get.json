@@ -1,0 +1,16 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:33",
+  "notes": "frontend/test.html \u2014 production, despite the name",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "path": "/"
+ },
+ "response": {
+  "status": 200,
+  "text": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>\n<!-- meta:start (server-rewritten per route \u2014 edit _route_meta in api.py, not here) -->\n  <title>NosPopuli \u2014 Ask</title>\n  <meta name=\"description\" content=\"Ask about a law, a place, or a person. Bills in plain English.\">\n  <link rel=\"canonical\" href=\"https://nospopuli.org/\">\n  <meta property=\"og:site_name\" content=\"NosPopuli\">\n  <meta property=\"og:type\" content=\"website\">\n  <meta property=\"og:title\" content=\"NosPopuli \u2014 Ask\">\n  <meta property=\"og:description\" content=\"Ask about a law, a place, or a person. Bills in plain English.\">\n  <meta property=\"og:url\" content=\"https://nospopuli.org/\">\n  <meta property=\"og:image\" content=\"https://nospopuli.org/static/og-card.png\">\n  <meta name=\"twitter:card\" content=\"summary_large_image\">\n<!-- meta:end -->\n  <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n  <!-- the woff2 files come from gstatic; without this the browser only\n       discovers that origin after the stylesheet parses -->\n  <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>\n  <link href=\"https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap\" rel=\"stylesheet\">\n  <style>\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    :root {\n      --ink: #0e0e0e; --paper: #f5f0e8; --card: #faf7f2; --aged: #e8e0cc;\n      --accent: #8b1a1a; --muted: #6b6355; --rule: #c8bfaa;\n      --fd: \"Playfair Display\", Georgia, serif;\n      --fb: \"Source Serif 4\", Georgia, serif;\n      --fm: \"IBM Plex Mono\", monospace;\n    }\n    html, body { height: 100%; }\n    /* Reserve the scrollbar so a short page and a tall one do not shift the\n       layout sideways between renders. */\n    html { scrollbar-gutter: stable; }\n    @supports not (scrollbar-gutter: st"
+ }
+}

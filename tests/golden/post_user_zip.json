@@ -1,0 +1,33 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:34",
+  "notes": "contract: JWT required",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "zip_code": "22030"
+  },
+  "method": "POST",
+  "path": "/user/zip"
+ },
+ "response": {
+  "json": {
+   "detail": [
+    {
+     "input": {
+      "zip_code": "22030"
+     },
+     "loc": [
+      "body",
+      "state"
+     ],
+     "msg": "Field required",
+     "type": "missing"
+    }
+   ]
+  },
+  "status": 422
+ }
+}

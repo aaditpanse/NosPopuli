@@ -1,0 +1,29 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:33",
+  "notes": "the anchored _WATCH_RE defect, end to end",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "question": "show me what I'm watching"
+  },
+  "method": "POST",
+  "path": "/ledger"
+ },
+ "response": {
+  "ndjson": [
+   {
+    "plate": "off_topic",
+    "question": "show me what I'm watching",
+    "reason": "This doesn't look like a question about legislation, members of Congress, or civic policy. Try a topic, bill ID (e.g. \"HR 4838\"), or a name.",
+    "section": "plate"
+   },
+   {
+    "section": "done"
+   }
+  ],
+  "status": 200
+ }
+}

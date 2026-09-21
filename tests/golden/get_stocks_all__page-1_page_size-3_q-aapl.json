@@ -1,0 +1,127 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:33",
+  "notes": "the search branch of the same pure pagination",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "params": {
+   "page": 1,
+   "page_size": 3,
+   "q": "AAPL"
+  },
+  "path": "/stocks/all"
+ },
+ "response": {
+  "json": {
+   "page": 1,
+   "page_size": 10,
+   "total": 137,
+   "trades": [
+    {
+     "amount": "$1K\u2013$15K",
+     "asset": "Apple Inc. - Common Stock",
+     "bioguide": "T000490",
+     "date": "02/26/2026",
+     "member": "David J. Taylor",
+     "owner": "",
+     "ticker": "AAPL",
+     "type": "sell"
+    },
+    {
+     "amount": "$15K\u2013$50K",
+     "asset": "Apple Inc. - Common Stock",
+     "bioguide": "S001201",
+     "date": "02/18/2026",
+     "member": "Thomas R. Suozzi",
+     "owner": "",
+     "ticker": "AAPL",
+     "type": "sell"
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "asset": "Apple Inc. - Common Stock",
+     "bioguide": "C001055",
+     "date": "02/12/2026",
+     "member": "Ed Case",
+     "owner": "spouse",
+     "ticker": "AAPL",
+     "type": "buy"
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "asset": "Apple Inc. - Common Stock",
+     "bioguide": "F000110",
+     "date": "02/12/2026",
+     "member": "Cleo Fields",
+     "owner": "",
+     "ticker": "AAPL",
+     "type": "buy"
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "asset": "Apple Inc. - Common Stock",
+     "bioguide": "L000595",
+     "date": "02/02/2026",
+     "member": "Julia Letlow",
+     "owner": "",
+     "ticker": "AAPL",
+     "type": "buy"
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "asset": "Apple Inc. - Common Stock",
+     "bioguide": "T000490",
+     "date": "01/16/2026",
+     "member": "David J. Taylor",
+     "owner": "",
+     "ticker": "AAPL",
+     "type": "buy"
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "asset": "Apple Inc. - Common Stock",
+     "bioguide": "T000490",
+     "date": "01/16/2026",
+     "member": "David J. Taylor",
+     "owner": "",
+     "ticker": "AAPL",
+     "type": "buy"
+    },
+    {
+     "amount": "$250K\u2013$500K",
+     "asset": "Apple Inc. - Common Stock",
+     "bioguide": "P000197",
+     "date": "12/30/2025",
+     "member": "Nancy Pelosi",
+     "owner": "spouse",
+     "ticker": "AAPL",
+     "type": "buy"
+    },
+    {
+     "amount": "$5M\u2013$25M",
+     "asset": "Apple Inc. - Common Stock",
+     "bioguide": "P000197",
+     "date": "12/30/2025",
+     "member": "Nancy Pelosi",
+     "owner": "spouse",
+     "ticker": "AAPL",
+     "type": "sell (partial)"
+    },
+    {
+     "amount": "$5M\u2013$25M",
+     "asset": "Apple Inc. - Common Stock",
+     "bioguide": "P000197",
+     "date": "12/24/2025",
+     "member": "Nancy Pelosi",
+     "owner": "spouse",
+     "ticker": "AAPL",
+     "type": "sell (partial)"
+    }
+   ]
+  },
+  "status": 200
+ }
+}

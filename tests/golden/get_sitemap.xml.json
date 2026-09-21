@@ -1,0 +1,16 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:29",
+  "notes": "static text",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "path": "/sitemap.xml"
+ },
+ "response": {
+  "status": 200,
+  "text": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n  <url><loc>https://nospopuli.org/</loc></url>\n  <url><loc>https://nospopuli.org/elections</loc></url>\n  <url><loc>https://nospopuli.org/trades</loc></url>\n  <url><loc>https://nospopuli.org/lobbying</loc></url>\n  <url><loc>https://nospopuli.org/foundry</loc></url>\n</urlset>\n"
+ }
+}

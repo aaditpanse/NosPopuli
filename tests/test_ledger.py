@@ -309,5 +309,67 @@ class ShelfTests(unittest.TestCase):
         self.assertEqual(shelves[0]["kind"], "member")
 
 
+class KnownDefects(unittest.TestCase):
+    """The README's live defects, pinned so they can't be forgotten or
+    "fixed" by accident without someone noticing.
+
+    `expectedFailure` rather than a plain failing test, for the same reason
+    pytest's xfail(strict=True) is used in test_endpoints.py: a permanently red
+    suite trains everyone to ignore red. unittest fails the run on an
+    *unexpected success*, so the day one of these starts working, this test
+    breaks and asks to be promoted to a plain assertion.
+    """
+
+    def test_la_county_is_local_here(self):
+        """Not a defect — the control. `match_foundry_place` resolves LA County
+        correctly, including the LA City/LA County sibling split
+        (ledger_agent.py:55-60).
+
+        This is what makes the /search router's `off_topic` answer a bug rather
+        than a matter of opinion: the right answer already exists in this file,
+        and the other router reaches a different one. Captured live in
+        tests/golden/post_search__la_county.json — query_type off_topic,
+        confidence 0.95.
+        """
+        for q in ("LA County", "La county", "la COUNTY"):
+            got = classify_question(q)
+            self.assertEqual(got["plate"], "uncharted", q)
+            self.assertEqual(got["place"]["slug"], "lacounty-bos", q)
+
+    @unittest.expectedFailure
+    def test_radnor_county_gets_a_named_place(self):
+        """`_looks_local` routes "Radnor County" to `uncharted` with an EMPTY
+        slug — local, but to a nameless place. Rule 12: an empty state has to
+        say why it is empty, and a blank slug cannot say anything."""
+        got = classify_question("Radnor County")
+        self.assertEqual(got["plate"], "uncharted")
+        self.assertTrue(got["place"]["slug"], "routed local but to a nameless place")
+
+    @unittest.expectedFailure
+    def test_watchlist_matches_a_sentence(self):
+        """ledger_agent.py:68 — `_WATCH_RE` is anchored ^...$, so bare
+        "watching" hits and any sentence form falls through to federal bill
+        search. Listed under README known defects."""
+        self.assertEqual(classify_question("watching")["plate"], "watching")
+        for q in ("show me what I'm watching", "what am I watching?",
+                  "show me my watch list"):
+            self.assertEqual(classify_question(q)["plate"], "watching", q)
+
+    @unittest.expectedFailure
+    def test_virginia_question_carries_state_jurisdiction(self):
+        """`extract_state` finds VA, but nothing in the classification carries a
+        state jurisdiction forward, so /ledger has nothing to route on and
+        api.py:1617-1621 overwrites the query to federal.
+
+        Observed 10 times in search_log.jsonl: 4 zero-result, and 6 answered
+        with hr10293/hr10287/hr10280 — federal House bills for a Virginia
+        question."""
+        q = "Healthcare bills in Virginia"
+        self.assertEqual(extract_state(q), "VA")
+        got = classify_question(q)
+        self.assertEqual(got.get("state_code"), "VA")
+        self.assertEqual(got.get("jurisdiction"), "state")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,18 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:34",
+  "notes": "contract: refuses without WATCHER_SECRET",
+  "volatile": []
+ },
+ "request": {
+  "method": "POST",
+  "path": "/watcher/run"
+ },
+ "response": {
+  "json": {
+   "detail": "Unauthorized"
+  },
+  "status": 401
+ }
+}

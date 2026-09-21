@@ -1,0 +1,30 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:32",
+  "notes": "fails open to an honest empty state with no DB",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "params": {
+   "person": "Jeff McKay"
+  },
+  "path": "/api/graph/votes"
+ },
+ "response": {
+  "json": {
+   "advisory_fields": [],
+   "count": 0,
+   "empty_reason": "graph unavailable: no database configured",
+   "hops": [],
+   "persons": [],
+   "query": "Jeff McKay",
+   "rows": [],
+   "topic": null,
+   "truncated": false,
+   "weak_hops": []
+  },
+  "status": 200
+ }
+}

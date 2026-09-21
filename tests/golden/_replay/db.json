@@ -1,0 +1,47 @@
+{
+ "sql SELECT * FROM subscriptions WHERE email=%s AND active=TRUE ORDER BY bill_title ('nobody@example.invalid',)": {
+  "_no_db": true,
+  "rowcount": 0,
+  "rows": []
+ },
+ "sql SELECT value, cached_at FROM disk_cache WHERE key=%s ('fec:cand:v2:tammy baldwin:WI:S:latest',)": {
+  "_no_db": true,
+  "rowcount": 0,
+  "rows": []
+ },
+ "sql SELECT value, cached_at FROM disk_cache WHERE key=%s ('fec:pac:v4:S2WI00219:2026',)": {
+  "_no_db": true,
+  "rowcount": 0,
+  "rows": []
+ },
+ "sql SELECT value, cached_at FROM disk_cache WHERE key=%s ('lda:search:v2:lockheed',)": {
+  "_no_db": true,
+  "rowcount": 0,
+  "rows": []
+ },
+ "sql SELECT value, cached_at FROM disk_cache WHERE key=%s ('ledger:v2:78c5a2c3bf8aef232cf73d99071f9909edb5dd9b',)": {
+  "_no_db": true,
+  "rowcount": 0,
+  "rows": []
+ },
+ "sql SELECT value, cached_at FROM disk_cache WHERE key=%s ('ledger:v2:bf02148e592ed86e9924033ac830874368d6163a',)": {
+  "_no_db": true,
+  "rowcount": 0,
+  "rows": []
+ },
+ "sql SELECT value, cached_at FROM disk_cache WHERE key=%s ('search:v6:1670afaae3e22d7275c0e1546534fe2c4e956941',)": {
+  "_no_db": true,
+  "rowcount": 0,
+  "rows": []
+ },
+ "sql SELECT value, cached_at FROM disk_cache WHERE key=%s ('search:v6:59898edfdaa94e06c60a86928906f80531a4945f',)": {
+  "_no_db": true,
+  "rowcount": 0,
+  "rows": []
+ },
+ "sql SELECT value, cached_at FROM disk_cache WHERE key=%s ('search:v6:cd95c3115ae1e6d123aadeb2d270cf98afa9dd0b',)": {
+  "_no_db": true,
+  "rowcount": 0,
+  "rows": []
+ }
+}

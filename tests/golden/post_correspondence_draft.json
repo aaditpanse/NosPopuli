@@ -1,0 +1,83 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:34",
+  "notes": "contract: JWT required",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "bill_id": "hr1234",
+   "stance": "support"
+  },
+  "method": "POST",
+  "path": "/correspondence/draft"
+ },
+ "response": {
+  "json": {
+   "detail": [
+    {
+     "input": {
+      "bill_id": "hr1234",
+      "stance": "support"
+     },
+     "loc": [
+      "body",
+      "bill_title"
+     ],
+     "msg": "Field required",
+     "type": "missing"
+    },
+    {
+     "input": {
+      "bill_id": "hr1234",
+      "stance": "support"
+     },
+     "loc": [
+      "body",
+      "bill_summary"
+     ],
+     "msg": "Field required",
+     "type": "missing"
+    },
+    {
+     "input": {
+      "bill_id": "hr1234",
+      "stance": "support"
+     },
+     "loc": [
+      "body",
+      "legislator_name"
+     ],
+     "msg": "Field required",
+     "type": "missing"
+    },
+    {
+     "input": {
+      "bill_id": "hr1234",
+      "stance": "support"
+     },
+     "loc": [
+      "body",
+      "legislator_office"
+     ],
+     "msg": "Field required",
+     "type": "missing"
+    },
+    {
+     "input": {
+      "bill_id": "hr1234",
+      "stance": "support"
+     },
+     "loc": [
+      "body",
+      "user_statement"
+     ],
+     "msg": "Field required",
+     "type": "missing"
+    }
+   ]
+  },
+  "status": 422
+ }
+}

@@ -1,0 +1,16 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:33",
+  "notes": "static HTML shell",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "path": "/elections"
+ },
+ "response": {
+  "status": 200,
+  "text": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>\n  <title>Elections \u2014 NosPopuli</title>\n<meta name=\"description\" content=\"Upcoming federal, state, and local elections \u2014 dates, registration deadlines, and what's on your ballot.\">\n<meta property=\"og:site_name\" content=\"NosPopuli\">\n<meta property=\"og:type\" content=\"website\">\n<meta property=\"og:title\" content=\"Upcoming Elections \u2014 NosPopuli\">\n<meta property=\"og:description\" content=\"Upcoming federal, state, and local elections \u2014 dates, registration deadlines, and what's on your ballot.\">\n<meta property=\"og:url\" content=\"https://nospopuli.org/elections\">\n<meta property=\"og:image\" content=\"https://nospopuli.org/static/og-card.png\">\n<meta name=\"twitter:card\" content=\"summary_large_image\">\n  <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n  <link href=\"https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap\" rel=\"stylesheet\">\n  <link rel=\"stylesheet\" href=\"/static/css/index.css\">\n</head>\n<body>\n\n<header class=\"e-head\" onclick=\"window.location='/'\">\n  <div class=\"masthead\">Nos<span>Populi</span></div>\n  <div class=\"tagline\">Law for the People &nbsp;\u00b7&nbsp; Federal Legislation in Plain English</div>\n</header>\n\n<nav class=\"top-nav\">\n  <a class=\"top-nav-btn active\" href=\"/elections\">Elections</a>\n  <a class=\"top-nav-btn\" href=\"/?tab=letters\">My Letters</a>\n  <a class=\"top-nav-btn\" href=\"/?tab=notifications\">My Notifications</a>\n</nav>\n\n<div class=\"elections-page\">\n  <button class=\"detail-back\" onclick=\"window.history.back()\">\u2190 Back</button>\n  <div class=\"elections-header\">\n    <h1 class=\"elections-title\">Upcoming Elections</h1>\n    <div class=\"elections-subtitle\" id=\"elections-subtitle\"></div>\n  </div>\n\n  <div id=\"elections-no-zip-banner\" class=\"elections-no-zip\" style=\"display:none\">\n    <p>Set your "
+ }
+}

@@ -1,0 +1,290 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:33",
+  "notes": "member detail",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "path": "/api/member/B001230"
+ },
+ "response": {
+  "json": {
+   "found": true,
+   "legislation": {
+    "cosponsored_count": 6894,
+    "policy_areas": {
+     "Agriculture and Food": 15,
+     "Animals": 2,
+     "Armed Forces and National Security": 8,
+     "Civil Rights and Liberties, Minority Issues": 2,
+     "Commerce": 8,
+     "Congress": 1,
+     "Crime and Law Enforcement": 1,
+     "Economics and Public Finance": 2,
+     "Education": 2,
+     "Environmental Protection": 4,
+     "Finance and Financial Sector": 3,
+     "Government Operations and Politics": 2,
+     "Health": 32,
+     "Housing and Community Development": 2,
+     "International Affairs": 7,
+     "Labor and Employment": 10,
+     "Native Americans": 1,
+     "Other": 124,
+     "Public Lands and Natural Resources": 5,
+     "Science, Technology, Communications": 5,
+     "Sports and Recreation": 1,
+     "Taxation": 5,
+     "Transportation and Public Works": 6,
+     "Water Resources Development": 2
+    },
+    "sponsored": [
+     {
+      "congress": 119,
+      "date": "",
+      "latest_action": "",
+      "number": null,
+      "policy_area": "Other",
+      "title": "",
+      "type": ""
+     },
+     {
+      "congress": 119,
+      "date": "",
+      "latest_action": "",
+      "number": null,
+      "policy_area": "Other",
+      "title": "",
+      "type": ""
+     },
+     {
+      "congress": 119,
+      "date": "",
+      "latest_action": "",
+      "number": null,
+      "policy_area": "Other",
+      "title": "",
+      "type": ""
+     },
+     {
+      "congress": 119,
+      "date": "2026-07-28",
+      "latest_action": "Read twice and referred to the Committee on Environment and Public Works.",
+      "number": "5151",
+      "policy_area": "Water Resources Development",
+      "title": "MRRRI Act",
+      "type": "s"
+     },
+     {
+      "congress": 119,
+      "date": "2026-07-23",
+      "latest_action": "Read twice and referred to the Committee on Agriculture, Nutrition, and Forestry.",
+      "number": "5126",
+      "policy_area": "Agriculture and Food",
+      "title": "Seeds and Breeds for the Future Act",
+      "type": "s"
+     },
+     {
+      "congress": 119,
+      "date": "2026-07-15",
+      "latest_action": "Read twice and referred to the Committee on Banking, Housing, and Urban Affairs.",
+      "number": "5003",
+      "policy_area": "Finance and Financial Sector",
+      "title": "ACCESS Rural America Act",
+      "type": "s"
+     },
+     {
+      "congress": 119,
+      "date": "",
+      "latest_action": "",
+      "number": null,
+      "policy_area": "Other",
+      "title": "",
+      "type": ""
+     },
+     {
+      "congress": 119,
+      "date": "",
+      "latest_action": "",
+      "number": null,
+      "policy_area": "Other",
+      "title": "",
+      "type": ""
+     },
+     {
+      "congress": 119,
+      "date": "",
+      "latest_action": "",
+      "number": null,
+      "policy_area": "Other",
+      "title": "",
+      "type": ""
+     },
+     {
+      "congress": 119,
+      "date": "",
+      "latest_action": "",
+      "number": null,
+      "policy_area": "Other",
+      "title": "",
+      "type": ""
+     }
+    ],
+    "sponsored_count": 759
+   },
+   "member": {
+    "bioguide_id": "B001230",
+    "birth_year": "1962",
+    "chambers": [
+     "Senate",
+     "House of Representatives"
+    ],
+    "congress_url": "",
+    "current": true,
+    "name": "Tammy Baldwin",
+    "official_url": "https://www.baldwin.senate.gov/",
+    "party": "Democratic",
+    "photo_url": "https://www.congress.gov/img/member/b001230_200.jpg",
+    "state": "Wisconsin",
+    "terms": [
+     {
+      "chamber": "House of Representatives",
+      "congress": 106,
+      "district": 2,
+      "endYear": 2001,
+      "memberType": "Representative",
+      "startYear": 1999,
+      "stateCode": "WI",
+      "stateName": "Wisconsin"
+     },
+     {
+      "chamber": "House of Representatives",
+      "congress": 107,
+      "district": 2,
+      "endYear": 2003,
+      "memberType": "Representative",
+      "startYear": 2001,
+      "stateCode": "WI",
+      "stateName": "Wisconsin"
+     },
+     {
+      "chamber": "House of Representatives",
+      "congress": 108,
+      "district": 2,
+      "endYear": 2005,
+      "memberType": "Representative",
+      "startYear": 2003,
+      "stateCode": "WI",
+      "stateName": "Wisconsin"
+     },
+     {
+      "chamber": "House of Representatives",
+      "congress": 109,
+      "district": 2,
+      "endYear": 2007,
+      "memberType": "Representative",
+      "startYear": 2005,
+      "stateCode": "WI",
+      "stateName": "Wisconsin"
+     },
+     {
+      "chamber": "House of Representatives",
+      "congress": 110,
+      "district": 2,
+      "endYear": 2009,
+      "memberType": "Representative",
+      "startYear": 2007,
+      "stateCode": "WI",
+      "stateName": "Wisconsin"
+     },
+     {
+      "chamber": "House of Representatives",
+      "congress": 111,
+      "district": 2,
+      "endYear": 2011,
+      "memberType": "Representative",
+      "startYear": 2009,
+      "stateCode": "WI",
+      "stateName": "Wisconsin"
+     },
+     {
+      "chamber": "House of Representatives",
+      "congress": 112,
+      "district": 2,
+      "endYear": 2013,
+      "memberType": "Representative",
+      "startYear": 2011,
+      "stateCode": "WI",
+      "stateName": "Wisconsin"
+     },
+     {
+      "chamber": "Senate",
+      "congress": 113,
+      "endYear": 2015,
+      "memberType": "Senator",
+      "startYear": 2013,
+      "stateCode": "WI",
+      "stateName": "Wisconsin"
+     },
+     {
+      "chamber": "Senate",
+      "congress": 114,
+      "endYear": 2017,
+      "memberType": "Senator",
+      "startYear": 2015,
+      "stateCode": "WI",
+      "stateName": "Wisconsin"
+     },
+     {
+      "chamber": "Senate",
+      "congress": 115,
+      "endYear": 2019,
+      "memberType": "Senator",
+      "startYear": 2017,
+      "stateCode": "WI",
+      "stateName": "Wisconsin"
+     },
+     {
+      "chamber": "Senate",
+      "congress": 116,
+      "endYear": 2021,
+      "memberType": "Senator",
+      "startYear": 2019,
+      "stateCode": "WI",
+      "stateName": "Wisconsin"
+     },
+     {
+      "chamber": "Senate",
+      "congress": 117,
+      "endYear": 2023,
+      "memberType": "Senator",
+      "startYear": 2021,
+      "stateCode": "WI",
+      "stateName": "Wisconsin"
+     },
+     {
+      "chamber": "Senate",
+      "congress": 118,
+      "endYear": 2025,
+      "memberType": "Senator",
+      "startYear": 2023,
+      "stateCode": "WI",
+      "stateName": "Wisconsin"
+     },
+     {
+      "chamber": "Senate",
+      "congress": 119,
+      "memberType": "Senator",
+      "startYear": 2025,
+      "stateCode": "WI",
+      "stateName": "Wisconsin"
+     }
+    ],
+    "years_served": 27
+   }
+  },
+  "status": 200
+ }
+}

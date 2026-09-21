@@ -1,0 +1,43 @@
+# Tier 1 — the regression suite. Free, deterministic, and the only gate.
+#
+# Everything here replays from committed fixtures under tests/golden/: no
+# network, no LLM, no Postgres. A boundary with no fixture raises ReplayMiss
+# rather than reaching the real service, so this job cannot spend money or go
+# red because an upstream API had a bad afternoon.
+#
+# Deliberate constraints:
+#   - No secrets are passed in. If a test starts needing one, the seam it
+#     should have been replaying through is missing, and that's the bug.
+#   - NOSPOPULI_REPLAY defaults to strict; set explicitly so a future change
+#     to the default can't quietly turn CI into a live-calling job.
+#   - Fixtures are re-captured by hand (`NOSPOPULI_REPLAY=record python -m
+#     tests.replay record`), never in CI — a recorder in CI would just launder
+#     whatever the app does today into the expectation.
+
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: pytest
+        env:
+          NOSPOPULI_REPLAY: strict
+        run: python -m pytest tests/ -q
+
+      # The suite must not mutate the repo. agent_log.jsonl and search_log.jsonl
+      # are gitignored, so a dirty tree here means a fixture or a log landed
+      # somewhere it shouldn't.
+      - name: working tree is unchanged
+        run: git diff --exit-code && git status --porcelain --untracked-files=all

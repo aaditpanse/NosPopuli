@@ -39,3 +39,4 @@ google-api-python-client
 python-jose[cryptography]
 psycopg[binary]
 psycopg_pool
+pytest==9.1.1  # tests only; the golden-fixture suite needs xfail(strict) + parametrize

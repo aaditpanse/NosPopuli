@@ -1,0 +1,126 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:29",
+  "notes": "pure pagination",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "params": {
+   "page": 1,
+   "page_size": 5
+  },
+  "path": "/stocks/all"
+ },
+ "response": {
+  "json": {
+   "page": 1,
+   "page_size": 10,
+   "total": 11657,
+   "trades": [
+    {
+     "amount": "$1K\u2013$15K",
+     "asset": "Costco Wholesale Corporation - Common Stock",
+     "bioguide": "N000189",
+     "date": "07/10/2026",
+     "member": "Dan Newhouse",
+     "owner": "spouse",
+     "ticker": "COST",
+     "type": "buy"
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "asset": "CSX Corporation",
+     "bioguide": "N000189",
+     "date": "07/10/2026",
+     "member": "Dan Newhouse",
+     "owner": "spouse",
+     "ticker": "CSX",
+     "type": "sell (partial)"
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "asset": "Deere & Company Common Stock",
+     "bioguide": "N000189",
+     "date": "07/10/2026",
+     "member": "Dan Newhouse",
+     "owner": "spouse",
+     "ticker": "DE",
+     "type": "sell (partial)"
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "asset": "Duke Energy Corporation",
+     "bioguide": "N000189",
+     "date": "07/10/2026",
+     "member": "Dan Newhouse",
+     "owner": "spouse",
+     "ticker": "DUK",
+     "type": "buy"
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "asset": "Eli Lilly and Company Common Stock",
+     "bioguide": "N000189",
+     "date": "07/10/2026",
+     "member": "Dan Newhouse",
+     "owner": "spouse",
+     "ticker": "LLY",
+     "type": "sell (partial)"
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "asset": "Fidelity National Information Services, Inc. Common Stock",
+     "bioguide": "N000189",
+     "date": "07/10/2026",
+     "member": "Dan Newhouse",
+     "owner": "spouse",
+     "ticker": "FIS",
+     "type": "buy"
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "asset": "FirstEnergy Corp. Common Stock",
+     "bioguide": "N000189",
+     "date": "07/10/2026",
+     "member": "Dan Newhouse",
+     "owner": "spouse",
+     "ticker": "FE",
+     "type": "buy"
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "asset": "FMC Corporation Common Stock",
+     "bioguide": "N000189",
+     "date": "07/10/2026",
+     "member": "Dan Newhouse",
+     "owner": "spouse",
+     "ticker": "FMC",
+     "type": "sell"
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "asset": "Fortinet, Inc. - Common Stock",
+     "bioguide": "N000189",
+     "date": "07/10/2026",
+     "member": "Dan Newhouse",
+     "owner": "spouse",
+     "ticker": "FTNT",
+     "type": "sell (partial)"
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "asset": "Honeywell Aerospace Inc. - Common Stock",
+     "bioguide": "N000189",
+     "date": "07/10/2026",
+     "member": "Dan Newhouse",
+     "owner": "spouse",
+     "ticker": "HONAV",
+     "type": "sell (partial)"
+    }
+   ]
+  },
+  "status": 200
+ }
+}

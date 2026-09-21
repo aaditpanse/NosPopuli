@@ -1,0 +1,21 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:33",
+  "notes": "contract: must refuse a TestClient host or it spawns a synthesis thread",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "name": "probe"
+  },
+  "method": "POST",
+  "path": "/api/foundry/onboard"
+ },
+ "response": {
+  "json": {
+   "detail": "foundry onboarding is disabled on this deployment \u2014 the ledger is read-only here (set FOUNDRY_ONBOARD=on to allow search-triggered pipeline runs)"
+  },
+  "status": 403
+ }
+}

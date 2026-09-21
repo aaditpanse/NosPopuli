@@ -1,0 +1,69 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:33",
+  "notes": "Census geocoder via urllib",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "address": "3701 Pender Dr, Fairfax VA"
+  },
+  "method": "POST",
+  "path": "/resolve-address"
+ },
+ "response": {
+  "json": {
+   "district": 11,
+   "district_label": "VA-11",
+   "geoid": "5111",
+   "lat": 38.862800305826,
+   "lon": -77.330708718678,
+   "matched_address": "3701 PENDER DR, FAIRFAX, VA, 22030",
+   "method": "address",
+   "representative": {
+    "bioguide_id": "W000831",
+    "chamber": "House",
+    "contact_form": "",
+    "district": 11,
+    "name": "James Walkinshaw",
+    "party": "Democrat",
+    "state": "VA",
+    "term_end": "2027",
+    "term_start": "2025",
+    "url": "https://walkinshaw.house.gov"
+   },
+   "senators": [
+    {
+     "bioguide_id": "W000805",
+     "chamber": "Senate",
+     "contact_form": "https://www.warner.senate.gov/public/index.cfm?p=Contact",
+     "name": "Mark Warner",
+     "party": "Democrat",
+     "state": "VA",
+     "term_end": "2027",
+     "term_start": "2021",
+     "url": "https://www.warner.senate.gov"
+    },
+    {
+     "bioguide_id": "K000384",
+     "chamber": "Senate",
+     "contact_form": "https://www.kaine.senate.gov/contact",
+     "name": "Timothy Kaine",
+     "party": "Democrat",
+     "state": "VA",
+     "term_end": "2031",
+     "term_start": "2025",
+     "url": "https://www.kaine.senate.gov"
+    }
+   ],
+   "state": "VA",
+   "state_fips": "51",
+   "state_legislative": {
+    "lower": "51011",
+    "upper": "51036"
+   }
+  },
+  "status": 200
+ }
+}

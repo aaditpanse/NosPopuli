@@ -1,0 +1,1646 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:29",
+  "notes": "reads data/notable_trades.json",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "path": "/stocks/notable"
+ },
+ "response": {
+  "json": {
+   "count": 2384,
+   "cycles": [
+    2024,
+    2025,
+    2026
+   ],
+   "generated": "2026-07-21",
+   "trades": [
+    {
+     "amount": "$15K\u2013$50K",
+     "base_date": "2025-07-10",
+     "base_price": 17.03,
+     "bioguide": "F000110",
+     "date": "07/10/2025",
+     "dir": "buy",
+     "favorable": 252.8,
+     "member": "Cleo Fields",
+     "owner": "",
+     "ticker": "IREN",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 6.0
+      },
+      {
+       "label": "1 month",
+       "pct": 5.5
+      },
+      {
+       "label": "3 months",
+       "pct": 252.8
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2026-03-13",
+     "base_price": 661.62,
+     "bioguide": "C001123",
+     "date": "03/13/2026",
+     "dir": "buy",
+     "favorable": 184.4,
+     "member": "Gilbert Ray Cisneros, Jr.",
+     "owner": "",
+     "ticker": "SNDK",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 7.3
+      },
+      {
+       "label": "1 month",
+       "pct": 44.0
+      },
+      {
+       "label": "3 months",
+       "pct": 184.4
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2026-03-25",
+     "base_price": 382.09,
+     "bioguide": "C001123",
+     "date": "03/25/2026",
+     "dir": "buy",
+     "favorable": 175.3,
+     "member": "Gilbert Ray Cisneros, Jr.",
+     "owner": "",
+     "ticker": "MU",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": -3.7
+      },
+      {
+       "label": "1 month",
+       "pct": 30.0
+      },
+      {
+       "label": "3 months",
+       "pct": 175.3
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-10-30",
+     "base_price": 195.82,
+     "bioguide": "M001136",
+     "date": "10/30/2025",
+     "dir": "buy",
+     "favorable": 169.4,
+     "member": "Lisa C. McClain",
+     "owner": "spouse",
+     "ticker": "SNDK",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 6.1
+      },
+      {
+       "label": "1 month",
+       "pct": 7.3
+      },
+      {
+       "label": "3 months",
+       "pct": 169.4
+      }
+     ]
+    },
+    {
+     "amount": "$50K\u2013$100K",
+     "base_date": "2025-01-14",
+     "base_price": 31.83,
+     "bioguide": "P000197",
+     "date": "01/14/2025",
+     "dir": "buy",
+     "favorable": 163.1,
+     "member": "Nancy Pelosi",
+     "owner": "spouse",
+     "ticker": "TEM",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 49.7
+      },
+      {
+       "label": "1 month",
+       "pct": 163.1
+      },
+      {
+       "label": "3 months",
+       "pct": 35.5
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2026-04-02",
+     "base_price": 107.11,
+     "bioguide": "D000032",
+     "date": "04/02/2026",
+     "dir": "buy",
+     "favorable": 154.0,
+     "member": "Byron Donalds",
+     "owner": "spouse",
+     "ticker": "MRVL",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 12.0
+      },
+      {
+       "label": "1 month",
+       "pct": 52.8
+      },
+      {
+       "label": "3 months",
+       "pct": 154.0
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2026-04-02",
+     "base_price": 107.11,
+     "bioguide": "D000032",
+     "date": "04/02/2026",
+     "dir": "buy",
+     "favorable": 154.0,
+     "member": "Byron Donalds",
+     "owner": "",
+     "ticker": "MRVL",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 12.0
+      },
+      {
+       "label": "1 month",
+       "pct": 52.8
+      },
+      {
+       "label": "3 months",
+       "pct": 154.0
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-07-21",
+     "base_price": 3.21,
+     "bioguide": "F000110",
+     "date": "07/21/2025",
+     "dir": "buy",
+     "favorable": 129.6,
+     "member": "Cleo Fields",
+     "owner": "",
+     "ticker": "OPEN",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": -27.1
+      },
+      {
+       "label": "1 month",
+       "pct": 0.3
+      },
+      {
+       "label": "3 months",
+       "pct": 129.6
+      }
+     ]
+    },
+    {
+     "amount": "$15K\u2013$50K",
+     "base_date": "2026-04-06",
+     "base_price": 109.51,
+     "bioguide": "S000168",
+     "date": "04/06/2026",
+     "dir": "buy",
+     "favorable": 127.6,
+     "member": "Maria Elvira Salazar",
+     "owner": "",
+     "ticker": "MRVL",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 19.9
+      },
+      {
+       "label": "1 month",
+       "pct": 57.2
+      },
+      {
+       "label": "3 months",
+       "pct": 127.6
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2026-01-09",
+     "base_price": 377.41,
+     "bioguide": "C001123",
+     "date": "01/09/2026",
+     "dir": "buy",
+     "favorable": 125.6,
+     "member": "Gilbert Ray Cisneros, Jr.",
+     "owner": "",
+     "ticker": "SNDK",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 9.6
+      },
+      {
+       "label": "1 month",
+       "pct": 54.6
+      },
+      {
+       "label": "3 months",
+       "pct": 125.6
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2026-02-10",
+     "base_price": 213.57,
+     "bioguide": "C001123",
+     "date": "02/10/2026",
+     "dir": "buy",
+     "favorable": 114.8,
+     "member": "Gilbert Ray Cisneros, Jr.",
+     "owner": "",
+     "ticker": "AMD",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": -4.9
+      },
+      {
+       "label": "1 month",
+       "pct": -7.4
+      },
+      {
+       "label": "3 months",
+       "pct": 114.8
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2026-02-24",
+     "base_price": 418.01,
+     "bioguide": "C001123",
+     "date": "02/24/2026",
+     "dir": "buy",
+     "favorable": 114.3,
+     "member": "Gilbert Ray Cisneros, Jr.",
+     "owner": "",
+     "ticker": "MU",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": -9.2
+      },
+      {
+       "label": "1 month",
+       "pct": -15.0
+      },
+      {
+       "label": "3 months",
+       "pct": 114.3
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-07-01",
+     "base_price": 336.69,
+     "bioguide": "C001123",
+     "date": "07/01/2025",
+     "dir": "buy",
+     "favorable": 111.6,
+     "member": "Gilbert Ray Cisneros, Jr.",
+     "owner": "",
+     "ticker": "APP",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 2.4
+      },
+      {
+       "label": "1 month",
+       "pct": 16.0
+      },
+      {
+       "label": "3 months",
+       "pct": 111.6
+      }
+     ]
+    },
+    {
+     "amount": "$15K\u2013$50K",
+     "base_date": "2026-04-14",
+     "base_price": 255.07,
+     "bioguide": "C001123",
+     "date": "04/14/2026",
+     "dir": "buy",
+     "favorable": 109.5,
+     "member": "Gilbert Ray Cisneros, Jr.",
+     "owner": "",
+     "ticker": "AMD",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 11.5
+      },
+      {
+       "label": "1 month",
+       "pct": 76.3
+      },
+      {
+       "label": "3 months",
+       "pct": 109.5
+      }
+     ]
+    },
+    {
+     "amount": "$15K\u2013$50K",
+     "base_date": "2025-08-01",
+     "base_price": 19.31,
+     "bioguide": "M001236",
+     "date": "08/01/2025",
+     "dir": "buy",
+     "favorable": 108.0,
+     "member": "Tim Moore",
+     "owner": "",
+     "ticker": "INTC",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 3.3
+      },
+      {
+       "label": "1 month",
+       "pct": 25.4
+      },
+      {
+       "label": "3 months",
+       "pct": 108.0
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2026-03-31",
+     "base_price": 160.32,
+     "bioguide": "M001217",
+     "date": "03/31/2026",
+     "dir": "buy",
+     "favorable": 107.1,
+     "member": "Jared Moskowitz",
+     "owner": "",
+     "ticker": "PANW",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 6.0
+      },
+      {
+       "label": "1 month",
+       "pct": 11.9
+      },
+      {
+       "label": "3 months",
+       "pct": 107.1
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2026-04-14",
+     "base_price": 161.59,
+     "bioguide": "C001123",
+     "date": "04/14/2026",
+     "dir": "buy",
+     "favorable": 104.4,
+     "member": "Gilbert Ray Cisneros, Jr.",
+     "owner": "",
+     "ticker": "PANW",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 8.3
+      },
+      {
+       "label": "1 month",
+       "pct": 47.4
+      },
+      {
+       "label": "3 months",
+       "pct": 104.4
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-05-09",
+     "base_price": 54.65,
+     "bioguide": "B001327",
+     "date": "05/09/2025",
+     "dir": "buy",
+     "favorable": 103.5,
+     "member": "Robert P. Bresnahan, Jr.",
+     "owner": "",
+     "ticker": "HOOD",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 13.0
+      },
+      {
+       "label": "1 month",
+       "pct": 34.3
+      },
+      {
+       "label": "3 months",
+       "pct": 103.5
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-04-08",
+     "base_price": 35.34,
+     "bioguide": "B001327",
+     "date": "04/08/2025",
+     "dir": "buy",
+     "favorable": 102.3,
+     "member": "Robert P. Bresnahan, Jr.",
+     "owner": "",
+     "ticker": "MCHP",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 9.6
+      },
+      {
+       "label": "1 month",
+       "pct": 39.0
+      },
+      {
+       "label": "3 months",
+       "pct": 102.3
+      }
+     ]
+    },
+    {
+     "amount": "$15K\u2013$50K",
+     "base_date": "2025-04-22",
+     "base_price": 22.53,
+     "bioguide": "M001236",
+     "date": "04/22/2025",
+     "dir": "buy",
+     "favorable": 95.5,
+     "member": "Tim Moore",
+     "owner": "",
+     "ticker": "TQQQ",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 21.8
+      },
+      {
+       "label": "1 month",
+       "pct": 51.6
+      },
+      {
+       "label": "3 months",
+       "pct": 95.5
+      }
+     ]
+    },
+    {
+     "amount": "$15K\u2013$50K",
+     "base_date": "2025-07-29",
+     "base_price": 20.41,
+     "bioguide": "M001236",
+     "date": "07/29/2025",
+     "dir": "buy",
+     "favorable": 93.7,
+     "member": "Tim Moore",
+     "owner": "",
+     "ticker": "INTC",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": -1.1
+      },
+      {
+       "label": "1 month",
+       "pct": 22.1
+      },
+      {
+       "label": "3 months",
+       "pct": 93.7
+      }
+     ]
+    },
+    {
+     "amount": "$15K\u2013$50K",
+     "base_date": "2024-08-14",
+     "base_price": 31.0,
+     "bioguide": "M001136",
+     "date": "08/14/2024",
+     "dir": "buy",
+     "favorable": 93.1,
+     "member": "Lisa C. McClain",
+     "owner": "spouse",
+     "ticker": "PLTR",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 5.0
+      },
+      {
+       "label": "1 month",
+       "pct": 14.8
+      },
+      {
+       "label": "3 months",
+       "pct": 93.1
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-07-22",
+     "base_price": 109.22,
+     "bioguide": "M001136",
+     "date": "07/22/2025",
+     "dir": "buy",
+     "favorable": 89.3,
+     "member": "Lisa C. McClain",
+     "owner": "spouse",
+     "ticker": "MU",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 2.5
+      },
+      {
+       "label": "1 month",
+       "pct": 6.0
+      },
+      {
+       "label": "3 months",
+       "pct": 89.3
+      }
+     ]
+    },
+    {
+     "amount": "$15K\u2013$50K",
+     "base_date": "2025-04-17",
+     "base_price": 22.58,
+     "bioguide": "M001236",
+     "date": "04/17/2025",
+     "dir": "buy",
+     "favorable": 88.4,
+     "member": "Tim Moore",
+     "owner": "",
+     "ticker": "TQQQ",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 15.5
+      },
+      {
+       "label": "1 month",
+       "pct": 58.6
+      },
+      {
+       "label": "3 months",
+       "pct": 88.4
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2026-03-13",
+     "base_price": 124.52,
+     "bioguide": "C001123",
+     "date": "03/13/2026",
+     "dir": "buy",
+     "favorable": 88.1,
+     "member": "Gilbert Ray Cisneros, Jr.",
+     "owner": "",
+     "ticker": "DDOG",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 0.4
+      },
+      {
+       "label": "1 month",
+       "pct": -11.6
+      },
+      {
+       "label": "3 months",
+       "pct": 88.1
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2026-01-30",
+     "base_price": 151.37,
+     "bioguide": "C001123",
+     "date": "01/30/2026",
+     "dir": "buy",
+     "favorable": 87.2,
+     "member": "Gilbert Ray Cisneros, Jr.",
+     "owner": "",
+     "ticker": "BE",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": -5.5
+      },
+      {
+       "label": "1 month",
+       "pct": 9.7
+      },
+      {
+       "label": "3 months",
+       "pct": 87.2
+      }
+     ]
+    },
+    {
+     "amount": "$15K\u2013$50K",
+     "base_date": "2025-08-08",
+     "base_price": 19.95,
+     "bioguide": "M001236",
+     "date": "08/08/2025",
+     "dir": "buy",
+     "favorable": 86.7,
+     "member": "Tim Moore",
+     "owner": "",
+     "ticker": "INTC",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 23.1
+      },
+      {
+       "label": "1 month",
+       "pct": 22.7
+      },
+      {
+       "label": "3 months",
+       "pct": 86.7
+      }
+     ]
+    },
+    {
+     "amount": "$15K\u2013$50K",
+     "base_date": "2025-08-11",
+     "base_price": 20.65,
+     "bioguide": "M001236",
+     "date": "08/11/2025",
+     "dir": "buy",
+     "favorable": 86.2,
+     "member": "Tim Moore",
+     "owner": "",
+     "ticker": "INTC",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 14.6
+      },
+      {
+       "label": "1 month",
+       "pct": 20.0
+      },
+      {
+       "label": "3 months",
+       "pct": 86.2
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-06-17",
+     "base_price": 73.45,
+     "bioguide": "M001136",
+     "date": "06/17/2025",
+     "dir": "buy",
+     "favorable": 85.0,
+     "member": "Lisa C. McClain",
+     "owner": "spouse",
+     "ticker": "CIEN",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 8.0
+      },
+      {
+       "label": "1 month",
+       "pct": 15.5
+      },
+      {
+       "label": "3 months",
+       "pct": 85.0
+      }
+     ]
+    },
+    {
+     "amount": "$15K\u2013$50K",
+     "base_date": "2025-04-08",
+     "base_price": 19.12,
+     "bioguide": "M001236",
+     "date": "04/08/2025",
+     "dir": "buy",
+     "favorable": 84.6,
+     "member": "Tim Moore",
+     "owner": "",
+     "ticker": "TNA",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 18.5
+      },
+      {
+       "label": "1 month",
+       "pct": 45.9
+      },
+      {
+       "label": "3 months",
+       "pct": 84.6
+      }
+     ]
+    },
+    {
+     "amount": "$15K\u2013$50K",
+     "base_date": "2025-04-30",
+     "base_price": 31.86,
+     "bioguide": "M001236",
+     "date": "04/30/2025",
+     "dir": "buy",
+     "favorable": 84.0,
+     "member": "Tim Moore",
+     "owner": "",
+     "ticker": "SMCI",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 1.9
+      },
+      {
+       "label": "1 month",
+       "pct": 25.6
+      },
+      {
+       "label": "3 months",
+       "pct": 84.0
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-04-07",
+     "base_price": 127.16,
+     "bioguide": "M001217",
+     "date": "04/07/2025",
+     "dir": "buy",
+     "favorable": 82.7,
+     "member": "Jared Moskowitz",
+     "owner": "",
+     "ticker": "ORCL",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 5.9
+      },
+      {
+       "label": "1 month",
+       "pct": 17.5
+      },
+      {
+       "label": "3 months",
+       "pct": 82.7
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-04-08",
+     "base_price": 180.19,
+     "bioguide": "B001327",
+     "date": "04/08/2025",
+     "dir": "buy",
+     "favorable": 82.5,
+     "member": "Robert P. Bresnahan, Jr.",
+     "owner": "",
+     "ticker": "RCL",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 7.3
+      },
+      {
+       "label": "1 month",
+       "pct": 29.2
+      },
+      {
+       "label": "3 months",
+       "pct": 82.5
+      }
+     ]
+    },
+    {
+     "amount": "$15K\u2013$50K",
+     "base_date": "2025-04-17",
+     "base_price": 36.51,
+     "bioguide": "S001229",
+     "date": "04/17/2025",
+     "dir": "buy",
+     "favorable": 82.2,
+     "member": "Jefferson Shreve",
+     "owner": "",
+     "ticker": "WDC",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 10.0
+      },
+      {
+       "label": "1 month",
+       "pct": 38.9
+      },
+      {
+       "label": "3 months",
+       "pct": 82.2
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-05-13",
+     "base_price": 62.57,
+     "bioguide": "B001327",
+     "date": "05/13/2025",
+     "dir": "buy",
+     "favorable": 81.6,
+     "member": "Robert P. Bresnahan, Jr.",
+     "owner": "",
+     "ticker": "HOOD",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 3.7
+      },
+      {
+       "label": "1 month",
+       "pct": 18.0
+      },
+      {
+       "label": "3 months",
+       "pct": 81.6
+      }
+     ]
+    },
+    {
+     "amount": "$100K\u2013$250K",
+     "base_date": "2024-11-07",
+     "base_price": 55.88,
+     "bioguide": "M001136",
+     "date": "11/07/2024",
+     "dir": "buy",
+     "favorable": 81.4,
+     "member": "Lisa C. McClain",
+     "owner": "spouse",
+     "ticker": "PLTR",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 5.9
+      },
+      {
+       "label": "1 month",
+       "pct": 29.7
+      },
+      {
+       "label": "3 months",
+       "pct": 81.4
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-04-08",
+     "base_price": 77.32,
+     "bioguide": "B001327",
+     "date": "04/08/2025",
+     "dir": "buy",
+     "favorable": 79.9,
+     "member": "Robert P. Bresnahan, Jr.",
+     "owner": "",
+     "ticker": "PLTR",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 27.3
+      },
+      {
+       "label": "1 month",
+       "pct": 54.1
+      },
+      {
+       "label": "3 months",
+       "pct": 79.9
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-09-22",
+     "base_price": 13.06,
+     "bioguide": "G000583",
+     "date": "09/22/2025",
+     "dir": "buy",
+     "favorable": 78.1,
+     "member": "Josh Gottheimer",
+     "owner": "joint",
+     "ticker": "TNDM",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": -9.7
+      },
+      {
+       "label": "1 month",
+       "pct": 14.5
+      },
+      {
+       "label": "3 months",
+       "pct": 78.1
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-07-16",
+     "base_price": 11.78,
+     "bioguide": "F000110",
+     "date": "07/16/2025",
+     "dir": "buy",
+     "favorable": 77.1,
+     "member": "Cleo Fields",
+     "owner": "",
+     "ticker": "SOUN",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 3.6
+      },
+      {
+       "label": "1 month",
+       "pct": 32.3
+      },
+      {
+       "label": "3 months",
+       "pct": 77.1
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2026-01-30",
+     "base_price": 186.18,
+     "bioguide": "C001123",
+     "date": "01/30/2026",
+     "dir": "buy",
+     "favorable": 76.4,
+     "member": "Gilbert Ray Cisneros, Jr.",
+     "owner": "",
+     "ticker": "VRT",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 5.0
+      },
+      {
+       "label": "1 month",
+       "pct": 38.4
+      },
+      {
+       "label": "3 months",
+       "pct": 76.4
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-01-15",
+     "base_price": 68.14,
+     "bioguide": "J000310",
+     "date": "01/15/2025",
+     "dir": "buy",
+     "favorable": 74.9,
+     "member": "Julie Johnson",
+     "owner": "joint",
+     "ticker": "PLTR",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 12.8
+      },
+      {
+       "label": "1 month",
+       "pct": 74.9
+      },
+      {
+       "label": "3 months",
+       "pct": 44.4
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2026-03-23",
+     "base_price": 164.05,
+     "bioguide": "M001217",
+     "date": "03/23/2026",
+     "dir": "buy",
+     "favorable": 74.6,
+     "member": "Jared Moskowitz",
+     "owner": "dependent",
+     "ticker": "PANW",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": -5.9
+      },
+      {
+       "label": "1 month",
+       "pct": 10.5
+      },
+      {
+       "label": "3 months",
+       "pct": 74.6
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2026-03-23",
+     "base_price": 164.05,
+     "bioguide": "M001217",
+     "date": "03/23/2026",
+     "dir": "buy",
+     "favorable": 74.6,
+     "member": "Jared Moskowitz",
+     "owner": "",
+     "ticker": "PANW",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": -5.9
+      },
+      {
+       "label": "1 month",
+       "pct": 10.5
+      },
+      {
+       "label": "3 months",
+       "pct": 74.6
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2026-03-13",
+     "base_price": 83.44,
+     "bioguide": "C001123",
+     "date": "03/13/2026",
+     "dir": "buy",
+     "favorable": 73.8,
+     "member": "Gilbert Ray Cisneros, Jr.",
+     "owner": "",
+     "ticker": "FTNT",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": -2.4
+      },
+      {
+       "label": "1 month",
+       "pct": -5.6
+      },
+      {
+       "label": "3 months",
+       "pct": 73.8
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2026-03-18",
+     "base_price": 32.38,
+     "bioguide": "S001214",
+     "date": "03/18/2026",
+     "dir": "buy",
+     "favorable": 73.1,
+     "member": "W. Gregory Steube",
+     "owner": "spouse",
+     "ticker": "IONQ",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": -1.3
+      },
+      {
+       "label": "1 month",
+       "pct": 42.3
+      },
+      {
+       "label": "3 months",
+       "pct": 73.1
+      }
+     ]
+    },
+    {
+     "amount": "$50K\u2013$100K",
+     "base_date": "2025-04-04",
+     "base_price": 21.32,
+     "bioguide": "M001236",
+     "date": "04/04/2025",
+     "dir": "buy",
+     "favorable": 73.1,
+     "member": "Tim Moore",
+     "owner": "",
+     "ticker": "TNA",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 2.3
+      },
+      {
+       "label": "1 month",
+       "pct": 26.9
+      },
+      {
+       "label": "3 months",
+       "pct": 73.1
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-06-03",
+     "base_price": 71.92,
+     "bioguide": "B001327",
+     "date": "06/03/2025",
+     "dir": "buy",
+     "favorable": 72.8,
+     "member": "Robert P. Bresnahan, Jr.",
+     "owner": "",
+     "ticker": "CRDO",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": -4.7
+      },
+      {
+       "label": "1 month",
+       "pct": 30.2
+      },
+      {
+       "label": "3 months",
+       "pct": 72.8
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2026-02-27",
+     "base_price": 54.02,
+     "bioguide": "G000583",
+     "date": "02/27/2026",
+     "dir": "buy",
+     "favorable": 72.7,
+     "member": "Josh Gottheimer",
+     "owner": "joint",
+     "ticker": "IFNNY",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": -15.6
+      },
+      {
+       "label": "1 month",
+       "pct": -21.8
+      },
+      {
+       "label": "3 months",
+       "pct": 72.7
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-04-08",
+     "base_price": 72.59,
+     "bioguide": "B001327",
+     "date": "04/08/2025",
+     "dir": "buy",
+     "favorable": 71.9,
+     "member": "Robert P. Bresnahan, Jr.",
+     "owner": "",
+     "ticker": "DELL",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 17.8
+      },
+      {
+       "label": "1 month",
+       "pct": 32.6
+      },
+      {
+       "label": "3 months",
+       "pct": 71.9
+      }
+     ]
+    },
+    {
+     "amount": "$15K\u2013$50K",
+     "base_date": "2026-03-23",
+     "base_price": 26.94,
+     "bioguide": "M001236",
+     "date": "03/23/2026",
+     "dir": "buy",
+     "favorable": 71.2,
+     "member": "Tim Moore",
+     "owner": "",
+     "ticker": "CBRL",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 3.0
+      },
+      {
+       "label": "1 month",
+       "pct": 13.5
+      },
+      {
+       "label": "3 months",
+       "pct": 71.2
+      }
+     ]
+    },
+    {
+     "amount": "$15K\u2013$50K",
+     "base_date": "2025-05-08",
+     "base_price": 150.3,
+     "bioguide": "S001229",
+     "date": "05/08/2025",
+     "dir": "buy",
+     "favorable": 70.6,
+     "member": "Jefferson Shreve",
+     "owner": "",
+     "ticker": "ORCL",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 6.1
+      },
+      {
+       "label": "1 month",
+       "pct": 17.9
+      },
+      {
+       "label": "3 months",
+       "pct": 70.6
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2024-10-23",
+     "base_price": 43.54,
+     "bioguide": "L000595",
+     "date": "10/23/2024",
+     "dir": "buy",
+     "favorable": 70.1,
+     "member": "Julia Letlow",
+     "owner": "",
+     "ticker": "TPR",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 11.2
+      },
+      {
+       "label": "1 month",
+       "pct": 35.3
+      },
+      {
+       "label": "3 months",
+       "pct": 70.1
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-10-30",
+     "base_price": 139.31,
+     "bioguide": "M001136",
+     "date": "10/30/2025",
+     "dir": "buy",
+     "favorable": 69.4,
+     "member": "Lisa C. McClain",
+     "owner": "spouse",
+     "ticker": "MKSI",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 11.4
+      },
+      {
+       "label": "1 month",
+       "pct": 11.9
+      },
+      {
+       "label": "3 months",
+       "pct": 69.4
+      }
+     ]
+    },
+    {
+     "amount": "$50K\u2013$100K",
+     "base_date": "2025-04-08",
+     "base_price": 4.25,
+     "bioguide": "C001123",
+     "date": "04/08/2025",
+     "dir": "buy",
+     "favorable": 68.5,
+     "member": "Gilbert Ray Cisneros, Jr.",
+     "owner": "",
+     "ticker": "ARIS",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 27.3
+      },
+      {
+       "label": "1 month",
+       "pct": 37.6
+      },
+      {
+       "label": "3 months",
+       "pct": 68.5
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-05-15",
+     "base_price": 162.53,
+     "bioguide": "T000490",
+     "date": "05/15/2025",
+     "dir": "buy",
+     "favorable": 67.7,
+     "member": "David J. Taylor",
+     "owner": "",
+     "ticker": "IBP",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": -4.4
+      },
+      {
+       "label": "1 month",
+       "pct": 2.7
+      },
+      {
+       "label": "3 months",
+       "pct": 67.7
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2026-03-13",
+     "base_price": 167.02,
+     "bioguide": "C001123",
+     "date": "03/13/2026",
+     "dir": "buy",
+     "favorable": 67.4,
+     "member": "Gilbert Ray Cisneros, Jr.",
+     "owner": "",
+     "ticker": "PANW",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": -2.4
+      },
+      {
+       "label": "1 month",
+       "pct": -2.7
+      },
+      {
+       "label": "3 months",
+       "pct": 67.4
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-04-14",
+     "base_price": 71.02,
+     "bioguide": "L000595",
+     "date": "04/14/2025",
+     "dir": "buy",
+     "favorable": 67.0,
+     "member": "Julia Letlow",
+     "owner": "",
+     "ticker": "MU",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": -6.0
+      },
+      {
+       "label": "1 month",
+       "pct": 34.2
+      },
+      {
+       "label": "3 months",
+       "pct": 67.0
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-10-30",
+     "base_price": 132.71,
+     "bioguide": "M001136",
+     "date": "10/30/2025",
+     "dir": "buy",
+     "favorable": 66.6,
+     "member": "Lisa C. McClain",
+     "owner": "spouse",
+     "ticker": "COHR",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 20.0
+      },
+      {
+       "label": "1 month",
+       "pct": 23.2
+      },
+      {
+       "label": "3 months",
+       "pct": 66.6
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-08-07",
+     "base_price": 99.15,
+     "bioguide": "D000032",
+     "date": "08/07/2025",
+     "dir": "buy",
+     "favorable": 66.5,
+     "member": "Byron Donalds",
+     "owner": "spouse",
+     "ticker": "LRCX",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 8.3
+      },
+      {
+       "label": "1 month",
+       "pct": 6.0
+      },
+      {
+       "label": "3 months",
+       "pct": 66.5
+      }
+     ]
+    },
+    {
+     "amount": "$1K\u2013$15K",
+     "base_date": "2025-08-07",
+     "base_price": 99.15,
+     "bioguide": "D000032",
+     "date": "08/07/2025",
+     "dir": "buy",
+     "favorable": 66.5,
+     "member": "Byron Donalds",
+     "owner": "",
+     "ticker": "LRCX",
+     "type": "buy",
+     "windows": [
+      {
+       "label": "1 week",
+       "pct": 8.3
+      },
+      {
+       "label": "1 month",
+       "pct": 6.0
+      },
+      {
+       "label": "3 months",
+       "pct": 66.5
+      }
+     ]
+    }
+   ]
+  },
+  "status": 200
+ }
+}

@@ -1,0 +1,18 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:34",
+  "notes": "contract: refuses \u2014 would spawn a refresh thread",
+  "volatile": []
+ },
+ "request": {
+  "method": "POST",
+  "path": "/admin/foundry/refresh/fairfax-bos"
+ },
+ "response": {
+  "json": {
+   "detail": "Forbidden"
+  },
+  "status": 403
+ }
+}

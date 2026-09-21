@@ -1,0 +1,18 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:34",
+  "notes": "contract: refuses without the secret",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "path": "/monitor/flags"
+ },
+ "response": {
+  "json": {
+   "detail": "Forbidden"
+  },
+  "status": 403
+ }
+}

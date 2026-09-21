@@ -1,0 +1,30 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:33",
+  "notes": "bill-id plate",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "question": "HR 1234"
+  },
+  "method": "POST",
+  "path": "/ledger"
+ },
+ "response": {
+  "ndjson": [
+   {
+    "bill_type": "hr",
+    "congress": 119,
+    "number": 1234,
+    "plate": "bill",
+    "section": "plate"
+   },
+   {
+    "section": "done"
+   }
+  ],
+  "status": 200
+ }
+}

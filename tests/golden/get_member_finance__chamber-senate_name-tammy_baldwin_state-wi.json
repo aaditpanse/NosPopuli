@@ -1,0 +1,72 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:33",
+  "notes": "FEC",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "params": {
+   "chamber": "senate",
+   "name": "Tammy Baldwin",
+   "state": "WI"
+  },
+  "path": "/member/finance"
+ },
+ "response": {
+  "json": {
+   "candidate_id": "S2WI00219",
+   "cash_on_hand": 647880.22,
+   "cycle": 2026,
+   "disbursements": 2200827.44,
+   "fec_url": "https://www.fec.gov/data/candidate/S2WI00219/",
+   "from_individuals": 1214684.09,
+   "from_pacs": 127264.0,
+   "from_party": 0.0,
+   "incumbent": "Incumbent",
+   "indiv_itemized": 1214684.09,
+   "indiv_unitemized": 1324316.89,
+   "name": "BALDWIN, TAMMY",
+   "office": "Senate",
+   "party": "DEMOCRATIC PARTY",
+   "receipts": 2823440.81,
+   "self_funding": 0.0,
+   "top_pacs": [
+    {
+     "amount": 12500.0,
+     "name": "Nike INC. Federal Political Action Committee"
+    },
+    {
+     "amount": 12500.0,
+     "name": "Ibew Intl Brotherhood Of Electrical Workers"
+    },
+    {
+     "amount": 10000.0,
+     "name": "Women's Political Committee"
+    },
+    {
+     "amount": 10000.0,
+     "name": "Washington Women For Choice"
+    },
+    {
+     "amount": 10000.0,
+     "name": "National Rural Water Association"
+    },
+    {
+     "amount": 10000.0,
+     "name": "Microsoft Corporation Stakeholders Voluntary PAC - Msvpac"
+    },
+    {
+     "amount": 10000.0,
+     "name": "Fight Like Hell PAC"
+    },
+    {
+     "amount": 10000.0,
+     "name": "Charter Communications INC. Political Action Committee"
+    }
+   ]
+  },
+  "status": 200
+ }
+}

@@ -1,0 +1,60 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:32",
+  "notes": "state query via /search",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "max_results": 5,
+   "question": "Healthcare bills in Virginia"
+  },
+  "method": "POST",
+  "path": "/search"
+ },
+ "response": {
+  "json": {
+   "ambiguity_reason": null,
+   "cached": false,
+   "confidence": 0.9,
+   "query": {
+    "_bypass_search_cache": false,
+    "ambiguity_reason": null,
+    "bill_type": "all",
+    "confidence": 0.9,
+    "congress_numbers": [
+     119,
+     118
+    ],
+    "entity_name": null,
+    "full_history": false,
+    "intents": [
+     {
+      "kind": "topic",
+      "label": "healthcare"
+     }
+    ],
+    "jurisdiction": "state",
+    "keywords": [
+     "healthcare"
+    ],
+    "max_results_override": null,
+    "named_entity": null,
+    "query_subtype": "concept",
+    "query_type": "legislation",
+    "result_count": 5,
+    "specific_bill": null,
+    "state_code": "VA",
+    "status": "any",
+    "time_filter": false,
+    "time_range": "last 5 years",
+    "topic": "healthcare legislation Virginia"
+   },
+   "query_type": "state_legislation",
+   "results": [],
+   "state_code": "VA"
+  },
+  "status": 200
+ }
+}

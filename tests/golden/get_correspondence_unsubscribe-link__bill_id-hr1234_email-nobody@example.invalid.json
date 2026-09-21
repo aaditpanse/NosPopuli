@@ -1,0 +1,20 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:34",
+  "notes": "unsubscribe link",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "params": {
+   "bill_id": "hr1234",
+   "email": "nobody@example.invalid"
+  },
+  "path": "/correspondence/unsubscribe-link"
+ },
+ "response": {
+  "status": 200,
+  "text": "<html><body style='font-family:Georgia,serif;max-width:480px;margin:4rem auto;color:#0e0e0e;padding:2rem'><p style='color:#6b6355;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em'>NosPopuli</p><h2>Unsubscribed</h2><p>You'll no longer receive updates on <strong>hr1234</strong>.</p><p><a href='/' style='color:#8b1a1a'>Return to NosPopuli</a></p></body></html>"
+ }
+}

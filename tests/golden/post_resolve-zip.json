@@ -1,0 +1,57 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:32",
+  "notes": "local JSON only",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "zip_code": "22030"
+  },
+  "method": "POST",
+  "path": "/resolve-zip"
+ },
+ "response": {
+  "json": {
+   "representative": {
+    "bioguide_id": "G000568",
+    "chamber": "House",
+    "contact_form": "",
+    "name": "H. Griffith",
+    "party": "Republican",
+    "state": "VA",
+    "term_end": "2027",
+    "term_start": "2025",
+    "url": "https://morgangriffith.house.gov"
+   },
+   "senators": [
+    {
+     "bioguide_id": "W000805",
+     "chamber": "Senate",
+     "contact_form": "https://www.warner.senate.gov/public/index.cfm?p=Contact",
+     "name": "Mark Warner",
+     "party": "Democrat",
+     "state": "VA",
+     "term_end": "2027",
+     "term_start": "2021",
+     "url": "https://www.warner.senate.gov"
+    },
+    {
+     "bioguide_id": "K000384",
+     "chamber": "Senate",
+     "contact_form": "https://www.kaine.senate.gov/contact",
+     "name": "Timothy Kaine",
+     "party": "Democrat",
+     "state": "VA",
+     "term_end": "2031",
+     "term_start": "2025",
+     "url": "https://www.kaine.senate.gov"
+    }
+   ],
+   "state": "VA",
+   "zip_code": "22030"
+  },
+  "status": 200
+ }
+}

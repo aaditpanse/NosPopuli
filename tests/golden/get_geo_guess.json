@@ -1,0 +1,20 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:33",
+  "notes": "ip-api.com via httpx",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "path": "/geo/guess"
+ },
+ "response": {
+  "json": {
+   "source": "unknown",
+   "state": null,
+   "state_code": null
+  },
+  "status": 200
+ }
+}

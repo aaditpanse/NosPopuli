@@ -1,0 +1,50 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:33",
+  "notes": "uncharted plate",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "question": "LA County"
+  },
+  "method": "POST",
+  "path": "/ledger"
+ },
+ "response": {
+  "ndjson": [
+   {
+    "coverage": {
+     "certified": false,
+     "found": false,
+     "meetings": 0,
+     "quarantined": true,
+     "slug": "lacounty-bos"
+    },
+    "place": {
+     "body": "Board of Supervisors",
+     "keys": [
+      "los angeles county",
+      "la county"
+     ],
+     "name": "Los Angeles County, California",
+     "sibling": {
+      "body": "City Council",
+      "name": "Los Angeles",
+      "slug": "la-primegov"
+     },
+     "slug": "lacounty-bos",
+     "state": "CA"
+    },
+    "plate": "uncharted",
+    "section": "plate",
+    "state_code": "CA"
+   },
+   {
+    "section": "done"
+   }
+  ],
+  "status": 200
+ }
+}

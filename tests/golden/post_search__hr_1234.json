@@ -1,0 +1,69 @@
+{
+ "meta": {
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:32",
+  "notes": "federal bill-id fast path \u2014 the $0 regex route",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "max_results": 5,
+   "question": "HR 1234"
+  },
+  "method": "POST",
+  "path": "/search"
+ },
+ "response": {
+  "json": {
+   "ambiguity_reason": null,
+   "confidence": 1.0,
+   "query": {
+    "_bypass_search_cache": false,
+    "_fast_path": "bill_id",
+    "ambiguity_reason": null,
+    "confidence": 1.0,
+    "congress_numbers": [
+     119
+    ],
+    "entity_name": null,
+    "expanded_terms": [],
+    "full_history": false,
+    "intents": [
+     {
+      "kind": "topic",
+      "label": "legislation"
+     }
+    ],
+    "jurisdiction": "federal",
+    "keywords": [],
+    "max_results_override": null,
+    "named_entity": null,
+    "query_subtype": "specific_bill",
+    "query_type": "legislation",
+    "result_count": 1,
+    "specific_bill": {
+     "congress": 119,
+     "number": 1234,
+     "type": "hr"
+    },
+    "state_code": null,
+    "status": "any",
+    "time_filter": false,
+    "time_range": null,
+    "topic": ""
+   },
+   "query_type": "legislation",
+   "results": [
+    {
+     "congress": 119,
+     "date_issued": "",
+     "number": 1234,
+     "package_id": "BILLS-119hr1234",
+     "title": "HR 1234",
+     "type": "hr"
+    }
+   ]
+  },
+  "status": 200
+ }
+}
