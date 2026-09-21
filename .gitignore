@@ -10,6 +10,9 @@ __pycache__/
 .DS_Store
 search_log.json
 search_log.jsonl
+# Regenerated at runtime by title_search_agent; the committed copy was a
+# pinned scrape-failure sentinel, which is worse than no file at all.
+popular_names_cache.json
 search_log.json.migrated
 flags.json
 /test_*.py

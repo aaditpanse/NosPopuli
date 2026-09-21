@@ -292,7 +292,6 @@ Local         Foundry — my own synthesized extractors, 9 sources
 Civic         Google Civic (elections) · Census geocoder (districts) · FEC · Senate LDA
 Storage       Postgres on Supabase (psycopg3 pool) — subscriptions, mail, disk_cache
               Foundry stores are JSON on disk under foundry/data/store/
-Embeddings    VoyageAI voyage-law-2 → pgvector  (ingest built, query layer not wired)
 Email         Gmail OAuth for user letters · SMTP for system notifications
 Frontend      Vanilla HTML/CSS/JS. Playfair Display · Source Serif 4 · IBM Plex Mono
 Deploy        Railway, auto-deploy from GitHub
@@ -305,7 +304,7 @@ Deploy        Railway, auto-deploy from GitHub
 ```bash
 pip install -r requirements.txt
 uvicorn api:app --reload        # → http://localhost:8000
-pytest tests/                   # pure-logic tests, no network
+python -m unittest discover tests   # pure-logic tests, no network, no pytest
 ```
 
 Required in `.env`:
@@ -318,14 +317,81 @@ LEGISCAN_API_KEY        GOOGLE_CIVIC_API_KEY    SUPABASE_DB_URL
 Optional, per feature: `FEC_API_KEY` and `LDA_API_KEY` (money and lobbying),
 `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` (letter writing), `SMTP_*` and
 `NOTIFY_FROM_EMAIL` and `WATCHER_SECRET` (notification emails), `JWT_SECRET` (auth),
-`MONITOR_SECRET` (the `/monitor` console), `VOYAGE_API_KEY` and `SUPABASE_URL`
-(the embedding pipeline), and the `FOUNDRY_*` set (pipeline budgets and switches).
+`MONITOR_SECRET` (the `/monitor` console), and the `FOUNDRY_*` set (pipeline
+budgets and switches).
 
 ```bash
 python event_watcher.py         # daily bill-state watcher
 python clear_search_cache.py    # --all to include feed/elections
-python ingest_bills.py          # offline: populate pgvector
 ```
+
+---
+
+## Tests
+
+Unit tests for the pure-logic parts: no HTTP, no LLM mocking, no database — just
+deterministic functions that can regress silently if a future change breaks them.
+Stdlib `unittest` only, no `pytest` install.
+
+```bash
+python -m unittest discover tests -v
+python -m unittest tests.test_state_vote_mapper -v
+python -m unittest tests.test_router_fast_paths.StateFastRoute.test_year_anchor_from -v
+```
+
+### What's covered
+
+| File | What it guards | Why |
+|---|---|---|
+| `test_router_fast_paths.py` | `fast_route` (federal) + `fast_route_state` (state) regex paths | Highest-traffic query type; breaks silently turn every "HB 1234" into a slow LLM round-trip |
+| `test_state_vote_mapper.py` | Committee-vs-floor vote disambiguation, participation threshold | Two real bugs caught in production this month (VA HB 191 committee tally, CA SB 1407 fake Assembly vote) |
+| `test_parse_amends.py` | "To amend the X Act of YYYY" extraction in the Connections panel | Pure regex; if it silently degrades, every bill detail page loses its primary law reference |
+| `test_foundry_health.py` | `foundry/health.py` — the scraper-health status vocabulary (`summarize`) and the ledger's bounds | The console at `/admin/foundry` reads nothing else; if `summarize` mislabels a source, the operator is told a scraper is healthy when it is not. Also pins the rule that a quarantine caused by publication lag is never reported as a failure |
+| `test_graph.py` | `graph.py` — identity resolution, node/edge building, the as-of seat resolver, and the answer shape | Fixtures replay the real Fairfax defects (duplicate spelling, sentence fragment as a member, three roll calls on one item, a seat that changed hands with no contest on disk, a person who won two bodies' seats in one district). Pins that certification follows the asserting record, that `elected_in` is scoped to the seat and never to the surname, and that an empty answer always says why |
+
+### What's NOT covered (and why)
+
+- **LLM-dependent code** (router LLM path, validator scoring, translator) — needs
+  mocking that's its own design decision. The `search_smoketest.py` script in
+  the repo root covers end-to-end LLM behavior against a running server.
+- **HTTP-touching code** — same. `search_smoketest.py` is the end-to-end harness.
+- **Frontend JS** — would need a separate JS test runner; out of scope for now.
+- **Database / cache code** — would need fixtures + cleanup. Skipping until
+  state-pollution bugs show up to motivate it.
+
+### Adding a new test
+
+1. Create `tests/test_<thing>.py`.
+2. Add the `sys.path.insert` boilerplate at the top so imports resolve.
+3. Subclass `unittest.TestCase` and write `test_*` methods.
+4. Run `python -m unittest tests.test_<thing>` until it passes.
+5. Update the table above.
+
+If your test caught a real bug in the production code, **leave a comment in the
+test method explaining what the bug was** — that's the test's strongest
+justification, and it makes regressions easier to diagnose.
+
+### Philosophy
+
+Tests are scaffolding for *change*, not proof of correctness. Write tests when:
+
+- The logic is non-trivial enough that a future edit could silently break it.
+- The logic has caught a real production bug — encode the bug as a test so it
+  can't come back.
+- The logic crosses 30+ lines or has multiple branches.
+
+Don't write tests when:
+
+- The code is a thin wrapper over a library call that's already tested upstream.
+- The "test" would just restate the implementation in pseudo-natural language.
+- The function takes no arguments and has no return value (you have nothing to
+  assert against — re-shape the code instead).
+
+A failing test is a gift. When this happens (it happened twice while writing
+this initial batch, finding a year-validation bug in the state regex and a
+weak-signal participation gap in the vote mapper), don't reflexively change the
+test to match. Read the code, decide whether the test or the code is wrong, and
+fix the right one. Often the test is correct and the code needs the fix.
 
 ---
 
@@ -344,11 +410,6 @@ Live problems I know about and haven't fixed. Listed so nobody has to rediscover
 - Local search discards the topic (above).
 - `/ledger` forces every query to federal (`api.py:1618`), so state legislation search
   is unreachable from the home page despite being fully built for all 50 states.
-- `/newspaper` is orphaned — nothing links to it — but is the only route to state
-  search, the lobbying directory, the stock explorer, and `/law/*` and `/state/*` deep
-  links. Don't delete it before those are ported.
-- `watch_agents.py` references an undefined `log` in its loop, swallowed by a bare
-  `except`.
 
 ---
 

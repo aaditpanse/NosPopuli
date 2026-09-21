@@ -165,7 +165,8 @@ deterministic paths (refresh, deepen, geocoding, elections ingest) cost $0.
 | `summarize_items.py` · `meeting_digests.py` · `upcoming.py` | Haiku enrichment: summaries · digests · schedules |
 | `backfill.py` | curated/deep-window historical merges (Pittsburgh/LA/Loudoun) |
 | `legistar_*`, `minutes_extractor.py`, `loudoun_extractor.py`, `la_oracle.py` | hand-built reference extractors/oracles |
-| `run_m0..m4.py`, `inject.py`, `sandbox.py`, `repair_la.py` | the origin M0–M4 milestone harness |
+| `run_m3.py` · `run_m4.py` · `sandbox.py` | **live, despite the M-names**: `refresh.py` → `backfill.py` imports both runners for Pittsburgh/LA/Loudoun; `run_m4` imports `sandbox`, which replays `golden/pittsburgh/http_cache.json`. Do not delete as archaeology |
+| `run_m0..m2.py`, `inject.py`, `repair_la.py` | the origin M0–M2 milestone harness — no importers, kept as the record of how the gate was built |
 | `data/store/` | the served stores (one per source) + enrichment sidecars |
 | `extractors/<source>/` | synthesized candidate artifacts, one file per attempt |
 
@@ -207,8 +208,8 @@ deterministic paths (refresh, deepen, geocoding, elections ingest) cost $0.
   source is GET-reachable *before* spending synthesis attempts on it.
 - **Refresh does not run on the API host.** The store is committed static
   files served read-only; `.github/workflows/foundry-refresh.yml` runs the
-  cycle daily and pushes, which is what deploys it. `foundry/systemd/` is the
-  superseded local timer. So the console's action buttons write real data
+  cycle daily and pushes, which is what deploys it. (A local systemd timer
+  used to do this; it was deleted once CI took over.) So the console's buttons write data
   only on localhost — on the deployed host the write lasts until the next
   deploy, and the page says so.
 - **Some jurisdictions serve a certificate chain Python does not trust.**
