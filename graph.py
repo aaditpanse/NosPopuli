@@ -977,8 +977,18 @@ _ASK_VOTES = (
                r"(?:on\s+(?P<topic>.+?))?\s*\??\s*$", re.I),
     re.compile(r"^\s*(?:what\s+did|what\s+has)\s+(?P<person>.+?)\s+voted?\s+(?:on|for)\s*"
                r"(?P<topic>.*?)\s*\??\s*$", re.I),
-    re.compile(r"^\s*(?P<person>[A-Za-z.'\- ]+?)(?:'s)?\s+votes?\s*(?:on\s+(?P<topic>.+?))?\s*\??\s*$", re.I),
+    # "Warner votes", "Pat Herrity's votes on zoning": a Name, capitalised,
+    # so "register to vote" is not read as a person called "register to".
+    re.compile(r"^\s*(?P<person>[A-Z][A-Za-z.\-]*(?:'(?!s\b)[A-Za-z]+)?"
+               r"(?:\s+[A-Z][A-Za-z.\-]*(?:'(?!s\b)[A-Za-z]+)?){0,3})(?:'s)?"
+               r"\s+votes?\s*(?:on\s+(?P<topic>.+?))?\s*\??\s*$"),
 )
+# A "who is/was …" question is a seat question only when it names a seat:
+# a seat word, a district code (VA-11), or an ordinal district. "Who is Ted
+# Cruz" is a member lookup and stays with the ledger.
+_SEAT_SIGNAL = re.compile(
+    r"\b(seat|district|supervisor|representative|senator|chair(?:man|woman)?|delegate)s?\b"
+    r"|\b[a-z]{2}-?\d{1,2}\b|\b\d{1,2}(?:st|nd|rd|th)\b", re.I)
 _POSITION_WORDS = {"aye": "aye", "yes": "aye", "yea": "aye", "for": "aye",
                    "no": "no", "nay": "no", "against": "no",
                    "present": "present", "abstain": "abstain", "abstained": "abstain",
@@ -1015,7 +1025,7 @@ def parse_question(question, today=None):
         return {"ask": "voters", "topic": m.group("topic").strip(),
                 "position": _POSITION_WORDS.get(pos)}
     m = _ASK_HOLDER.match(q)
-    if m:
+    if m and _SEAT_SIGNAL.search(q):
         return {"ask": "holder", "seat": m.group("seat").strip(),
                 "as_of": _complete_date(m.group("date"), today)}
     for rx in _ASK_VOTES:

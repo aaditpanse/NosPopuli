@@ -164,12 +164,24 @@ def _looks_local(question):
     return bool(m and m.group(1) not in _COUNTY_STOPWORDS)
 
 
-def classify_question(question, state_code=None):
+def classify_question(question, state_code=None, allow_graph=True):
     q = (question or "").strip()
     if not q:
         return {"plate": "home"}
     if _WATCH_RE.match(q):
         return {"plate": "watching"}
+    # The graph answers three question shapes ("how did X vote on Y", "who
+    # voted no on Y", "who held SEAT on DATE") and says "not mine" to the
+    # rest, so it goes before the place and topic guesses: "how did Herrity
+    # vote on Fairfax zoning" is a traversal, not an uncharted county. The
+    # caller falls back here with allow_graph=False when the graph turns
+    # out not to know the person or seat, so nothing the ledger answered
+    # before is lost.
+    if allow_graph:
+        import graph
+        ask = graph.parse_question(q)
+        if ask:
+            return {"plate": "graph", "question": q, "ask": ask}
     if _ELECTION_RE.search(q) and not parse_bill_id(q):
         st = (extract_state(q) or state_code or "").upper() or None
         return {

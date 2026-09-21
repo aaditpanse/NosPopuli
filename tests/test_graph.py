@@ -545,3 +545,32 @@ class SearchTest(unittest.TestCase):
         empty = graph.memory_backend([], [])
         out = graph.search("how did Herrity vote on zoning", empty, today=TODAY)
         self.assertIn("graph not loaded", out["empty_reason"])
+
+
+class LedgerRoutingTest(unittest.TestCase):
+    """The graph sits in front of the ledger's place and topic guesses."""
+
+    def classify(self, q, **kw):
+        from ledger_agent import classify_question
+        return classify_question(q, **kw)
+
+    def test_graph_shapes_get_the_graph_plate(self):
+        for q in ("how did Herrity vote on Fairfax zoning", "who voted no on the Affordable HOMES Act",
+                  "who held the Braddock seat on 2025-11-18", "who represents VA-11"):
+            out = self.classify(q)
+            self.assertEqual(out["plate"], "graph", q)
+            self.assertIn("ask", out)
+
+    def test_everything_else_is_untouched(self):
+        self.assertEqual(self.classify("Stafford County")["plate"], "uncharted")
+        self.assertEqual(self.classify("HR 1")["plate"], "bill")
+        self.assertEqual(self.classify("healthcare bills")["plate"], "ledger")
+        self.assertEqual(self.classify("")["plate"], "home")
+        # "Who is <person>" is a member lookup, not a seat question.
+        self.assertEqual(self.classify("Who is Ted Cruz")["plate"], "ledger")
+        self.assertEqual(self.classify("who represents Braddock District")["plate"], "graph")
+        self.assertEqual(self.classify("who was the senator for Virginia in 2010")["plate"], "graph")
+
+    def test_fallback_when_the_graph_declines(self):
+        out = self.classify("how did Herrity vote on Fairfax zoning", allow_graph=False)
+        self.assertNotEqual(out["plate"], "graph")

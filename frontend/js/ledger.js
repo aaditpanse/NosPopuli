@@ -230,6 +230,7 @@
             return;
           }
           if (plate === "off_topic") { state.offTopic = msg; pendingBill = { _view: "offtopic" }; return; }
+          if (plate === "graph") { state.graph = msg; pendingBill = { _view: "graph" }; return; }
           if (plate === "elections") { state.electionsPage = msg; pendingBill = { _view: "elections" }; return; }
           state.ledger = Object.assign({}, state.ledger, msg);
           state.stage = "all";
@@ -1030,6 +1031,56 @@
         <div style="display:flex;flex-wrap:wrap;gap:10px">${tries.map(t => `<button class="ex" type="button" onclick="ask(${JSON.stringify(t)})">${esc(t)}</button>`).join("")}</div>
       </div>
       <div class="folio"><b>Sheet seven</b> · an honest no</div>
+    </div>`;
+  }
+
+  // The graph plate: one traversal, answered. Three asks — a person's votes,
+  // who voted on an instrument, who held a seat on a date. Every answer
+  // names the weakest hop it crossed, because nothing in the graph is
+  // certified yet and the reader must not mistake it for the clerk's word.
+  function graphView() {
+    const G = state.graph || {};
+    const stamp = (c) => `<span style="font-family:var(--fm);font-size:10px;letter-spacing:.16em;text-transform:uppercase;padding:1px 5px;border:1px solid currentColor;color:${c === "certified" ? "#2f5d2a" : "var(--accent)"}">${esc(c || "ingested")}</span>`;
+    const pos = (p) => `<span style="font-family:var(--fm);font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:${p === "aye" ? "#2f5d2a" : p === "no" ? "var(--accent)" : "var(--muted)"}">${esc(p || "")}</span>`;
+    const layer = (j) => (j || "").endsWith("country:us") ? "Congress" : "Fairfax County";
+    const weak = (G.weak_hops || []).map(h => `${h.predicate} is ${h.weakest}`).join(", ");
+    const askBtn = (t) => `<button class="ex" type="button" onclick="ask(${JSON.stringify(t)})">${esc(t)}</button>`;
+    let head = "", deck = "", body = "";
+    if (G.ask === "holder") {
+      const hs = G.holders || [];
+      head = hs.length ? hs.map(h => h.name).join(", ") : "Nobody on record.";
+      deck = `${(G.seats || []).join("; ") || esc(G.seat)} · as of ${esc(G.as_of)}`;
+      body = hs.map(h => `<div style="display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--rule)">
+          <span class="read" style="margin:0">${esc(h.name)}</span>${stamp(h.certification)}
+          <span class="meta" style="margin:0">${esc(h.valid_from || "before our records")} → ${esc(h.valid_to || "open")}${h.bound_from && h.bound_from !== "exact" ? " · start " + esc(h.bound_from) : ""}${h.bound_to && h.bound_to !== "exact" ? " · end " + esc(h.bound_to) : ""}${h.inferred_from ? " (" + esc(h.inferred_from) + ")" : ""}</span>
+        </div>`).join("");
+    } else {
+      const rows = G.rows || [];
+      const who = G.ask === "voters" ? (G.persons || []).join(", ") : (G.persons || []).map(p => p.name).join(", ");
+      head = rows.length ? `${rows.length}${G.truncated ? "+" : ""} recorded vote${rows.length === 1 ? "" : "s"}.` : "No recorded votes.";
+      deck = G.ask === "voters"
+        ? `${G.position ? esc(G.position) + " on " : "On "}${esc(G.topic)} · ${who || "nobody"}`
+        : `${who || esc(G.query)}${G.topic ? " · on " + esc(G.topic) : ""}`;
+      body = rows.map(r => `<div style="display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--rule)">
+          <span class="read" style="margin:0">${G.ask === "voters" ? esc(r.person) + " · " : ""}${esc(r.title)}</span>${pos(r.position)}
+          <span class="meta" style="grid-column:1/-1;margin:0">${esc(r.date)} · ${layer(r.jurisdiction)}${r.question ? " · " + esc(r.question) : ""}${r.topic ? " · topic: " + esc(r.topic) : ""} ${stamp(r.certification)}</span>
+        </div>`).join("");
+    }
+    const tries = ["how did Herrity vote on zoning", "who voted no on the Affordable HOMES Act", "who held the Braddock seat on 2025-11-18", "who represents VA-11"];
+    return `<div class="view wrap">
+      ${chromeBar({ search: true })}
+      <div style="padding-top:28px;max-width:44em">
+        <div class="kick" style="margin-bottom:10px">You asked ${esc(G.question || state.query)}</div>
+        <div class="h1" style="margin-bottom:6px">${esc(head)}</div>
+        <p class="read" style="margin:0 0 6px">${deck}</p>
+        ${G.empty_reason ? `<p class="read" style="color:var(--muted)">${esc(G.empty_reason)}</p>` : ""}
+        ${weak ? `<div class="meta" style="color:var(--accent);margin:0 0 4px">Weakest hop: ${esc(weak)}. Nothing in the graph is affirmed by a second source yet.</div>` : ""}
+        ${(G.advisory_fields || []).length ? `<div class="meta" style="margin:0 0 4px">The topic filter is a model's reading of each title, not the clerk's classification.</div>` : ""}
+        <div style="margin-top:14px">${body}</div>
+        <div class="lbl" style="margin:26px 0 10px">Ask the graph something else</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">${tries.map(askBtn).join("")}</div>
+      </div>
+      <div class="folio"><b>The graph</b> · walked, not classified</div>
     </div>`;
   }
 
@@ -2357,6 +2408,7 @@
     if (v === "uncharted") return `uncharted:${((state.uncharted || {}).place || {}).name || ""}`;
     if (v === "elections") return `elections:${(state.electionsPage || {}).state_code || ""}`;
     if (v === "offtopic") return `offtopic:${state.query || ""}`;
+    if (v === "graph") return `graph:${(state.graph || {}).question || state.query || ""}`;
     return v;
   }
 
@@ -2373,7 +2425,7 @@
   }
 
   function render() {
-    const views = { home: homeView, ledger: ledgerView, bill: billView, uncharted: unchartedView, watching: watchingView, member: memberView, offtopic: offTopicView, elections: electionsView };
+    const views = { home: homeView, ledger: ledgerView, bill: billView, uncharted: unchartedView, watching: watchingView, member: memberView, offtopic: offTopicView, elections: electionsView, graph: graphView };
     const key = renderKey();
     const fresh = key !== lastKey;
     lastKey = key;

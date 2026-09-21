@@ -1573,12 +1573,40 @@ async def _ledger_member_and_search(structured, search_body, question, loop):
     return None, search_out
 
 
+def _graph_plate(ask):
+    """Run a parsed graph question. None means 'fall through': the graph
+    is unavailable, empty, or does not know the person or seat named, and
+    the ledger's older paths may. A topic miss or a vacant seat is a real
+    answer and is returned as one. Fail-open; never raises into /ledger."""
+    import graph
+    if not os.getenv("SUPABASE_DB_URL"):
+        return None
+    try:
+        out = graph.answer(ask, graph.pg_backend())
+    except Exception as e:
+        print(f"[LEDGER] graph error: {e}")
+        return None
+    reason = out.get("empty_reason") or ""
+    if reason.startswith(("no person in the graph", "no seat in the graph", "graph not loaded")):
+        return None
+    return out
+
+
 @app.post("/ledger")
 @limiter.limit("20/minute")
 async def ledger_ask(request: Request, body: LedgerAsk):
     """Classify an ask, then stream plate → member → shelves so first paint is not blocked."""
     classified = classify_question(body.question, body.state_code)
     plate = classified.get("plate")
+    if plate == "graph":
+        answer = await asyncio.to_thread(_graph_plate, classified["ask"])
+        if answer is not None:
+            return _ndjson_lines({"section": "plate", "plate": "graph",
+                                  "question": body.question, **answer}, {"section": "done"})
+        # The graph parsed the shape but knows neither the person nor the
+        # seat (or is not there at all): answer the way we did before.
+        classified = classify_question(body.question, body.state_code, allow_graph=False)
+        plate = classified.get("plate")
     if plate in ("home", "watching"):
         return _ndjson_lines({"section": "plate", **classified}, {"section": "done"})
     if plate == "uncharted":
