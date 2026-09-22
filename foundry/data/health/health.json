@@ -1,24 +1,27 @@
 {
  "last_run": {
-  "argv": "stafford-bos",
+  "argv": "--due",
   "enrich": {
    "meeting_digests.py": "done: 0 new, 257 total -> meeting-digests.json ($0.00)",
    "summarize_items.py": "0 voted items need summaries (4384 already done)",
-   "upcoming.py": "done -> upcoming.json ($0.000)"
+   "upcoming.py": "done -> upcoming.json ($0.124)"
   },
-  "host": "local",
+  "host": "ci",
   "results": {
-   "deepen:chicago-bos": "repaired",
+   "chicago-bos": "ok",
+   "deepen:chicago-bos": "exhausted",
    "deepen:fairfax-bos": "done",
    "deepen:newyork-bos": "exhausted",
    "deepen:princewilliam-bos": "done",
    "deepen:seattle-bos": "done",
    "deepen:stafford-bos": "done",
+   "fairfax-bos": "ok",
    "recertify:loudoun-bos": "38/290",
    "recertify:princewilliam-bos": "327/686",
+   "seattle-bos": "ok",
    "stafford-bos": "drift-or-skipped"
   },
-  "ts": "2026-09-20T11:57:44"
+  "ts": "2026-09-22T15:43:24"
  },
  "sources": {
   "chicago-bos": {
@@ -215,6 +218,38 @@
      "stage": "oracle",
      "ts": "2026-09-20T12:12:28",
      "verdict": "failed"
+    },
+    {
+     "detail": {
+      "added": 0,
+      "artifact": "extractors/chicago-bos/v1_attempt4.py",
+      "replaced": 0,
+      "row_counts": {
+       "agenda_items": 172,
+       "meetings": 3,
+       "members": 50,
+       "vote_events": 172
+      },
+      "unchanged": 397
+     },
+     "first_ts": "2026-09-22T15:38:12",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-09-22T15:38:12",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "oldest": "2026-05-20",
+      "returned": 3,
+      "target": "2026-01-01",
+      "window": 13
+     },
+     "first_ts": "2026-09-22T15:40:44",
+     "repeats": 1,
+     "stage": "deepen",
+     "ts": "2026-09-22T15:40:44",
+     "verdict": "exhausted"
     }
    ]
   },
@@ -349,6 +384,25 @@
      "stage": "oracle",
      "ts": "2026-09-20T12:25:09",
      "verdict": "blocked"
+    },
+    {
+     "detail": {
+      "added": 0,
+      "artifact": "extractors/fairfax-bos/v1_attempt4.py",
+      "replaced": 8,
+      "row_counts": {
+       "agenda_items": 164,
+       "meetings": 5,
+       "members": 10,
+       "vote_events": 178
+      },
+      "unchanged": 349
+     },
+     "first_ts": "2026-09-22T15:38:45",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-09-22T15:38:45",
+     "verdict": "ok"
     }
    ]
   },
@@ -368,9 +422,9 @@
       "total": 290
      },
      "first_ts": "2026-09-20T11:56:46",
-     "repeats": 1,
+     "repeats": 2,
      "stage": "recertify",
-     "ts": "2026-09-20T11:56:46",
+     "ts": "2026-09-22T15:41:37",
      "verdict": "ok"
     }
    ]
@@ -402,6 +456,19 @@
      "stage": "oracle",
      "ts": "2026-09-20T12:13:46",
      "verdict": "blocked"
+    },
+    {
+     "detail": {
+      "oldest": "2026-09-09",
+      "returned": 9,
+      "target": "2026-01-01",
+      "window": 45
+     },
+     "first_ts": "2026-09-22T15:41:10",
+     "repeats": 1,
+     "stage": "deepen",
+     "ts": "2026-09-22T15:41:10",
+     "verdict": "exhausted"
     }
    ]
   },
@@ -423,9 +490,9 @@
       "total": 686
      },
      "first_ts": "2026-09-20T11:57:38",
-     "repeats": 2,
+     "repeats": 3,
      "stage": "recertify",
-     "ts": "2026-09-20T12:01:01",
+     "ts": "2026-09-22T15:42:18",
      "verdict": "ok"
     }
    ]
@@ -444,6 +511,25 @@
      "stage": "oracle",
      "ts": "2026-09-20T12:13:46",
      "verdict": "blocked"
+    },
+    {
+     "detail": {
+      "added": 0,
+      "artifact": "extractors/seattle-bos/v1_attempt2.py",
+      "replaced": 0,
+      "row_counts": {
+       "agenda_items": 59,
+       "meetings": 3,
+       "members": 9,
+       "vote_events": 59
+      },
+      "unchanged": 130
+     },
+     "first_ts": "2026-09-22T15:39:22",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-09-22T15:39:22",
+     "verdict": "ok"
     }
    ]
   },
@@ -552,6 +638,23 @@
      "stage": "oracle",
      "ts": "2026-09-20T12:23:08",
      "verdict": "blocked"
+    },
+    {
+     "detail": {
+      "artifact": "extractors/stafford-bos/v1_attempt8.py",
+      "findings": [
+       {
+        "check": "duplicate_vote",
+        "msg": "two vote_events cite the identical evidence quote \u2014 either the same roll call was emitted twice (it appears in more than one document section; dedupe), or two d",
+        "ref": "stafford-bos-2026-07-07-vote-18, stafford-bos-2026-07-07-vote-19"
+       }
+      ]
+     },
+     "first_ts": "2026-09-22T15:39:32",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-09-22T15:39:32",
+     "verdict": "drift"
     }
    ]
   }
