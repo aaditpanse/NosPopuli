@@ -2,9 +2,9 @@
  "last_run": {
   "argv": "--due",
   "enrich": {
-   "meeting_digests.py": "done: 0 new, 257 total -> meeting-digests.json ($0.00)",
-   "summarize_items.py": "0 voted items need summaries (4384 already done)",
-   "upcoming.py": "done -> upcoming.json ($0.124)"
+   "meeting_digests.py": "done: 3 new, 260 total -> meeting-digests.json ($0.01)",
+   "summarize_items.py": "done: 4441 summaries -> item-summaries.json ($0.02, claude-haiku-4-5)",
+   "upcoming.py": "done -> upcoming.json ($0.123)"
   },
   "host": "ci",
   "results": {
@@ -16,12 +16,14 @@
    "deepen:seattle-bos": "done",
    "deepen:stafford-bos": "done",
    "fairfax-bos": "ok",
-   "recertify:loudoun-bos": "38/290",
-   "recertify:princewilliam-bos": "327/686",
+   "loudoun-bos": "ok",
+   "princewilliam-bos": "ok",
+   "recertify:loudoun-bos": "38/323",
+   "recertify:princewilliam-bos": "342/738",
    "seattle-bos": "ok",
    "stafford-bos": "drift-or-skipped"
   },
-  "ts": "2026-09-22T15:43:24"
+  "ts": "2026-09-23T15:41:50"
  },
  "sources": {
   "chicago-bos": {
@@ -250,6 +252,38 @@
      "stage": "deepen",
      "ts": "2026-09-22T15:40:44",
      "verdict": "exhausted"
+    },
+    {
+     "detail": {
+      "added": 0,
+      "artifact": "extractors/chicago-bos/v1_attempt4.py",
+      "replaced": 0,
+      "row_counts": {
+       "agenda_items": 172,
+       "meetings": 3,
+       "members": 50,
+       "vote_events": 172
+      },
+      "unchanged": 397
+     },
+     "first_ts": "2026-09-23T15:35:57",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-09-23T15:35:57",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "oldest": "2026-05-20",
+      "returned": 3,
+      "target": "2026-01-01",
+      "window": 13
+     },
+     "first_ts": "2026-09-23T15:38:51",
+     "repeats": 1,
+     "stage": "deepen",
+     "ts": "2026-09-23T15:38:51",
+     "verdict": "exhausted"
     }
    ]
   },
@@ -399,9 +433,9 @@
       "unchanged": 349
      },
      "first_ts": "2026-09-22T15:38:45",
-     "repeats": 1,
+     "repeats": 2,
      "stage": "refresh",
-     "ts": "2026-09-22T15:38:45",
+     "ts": "2026-09-23T15:36:21",
      "verdict": "ok"
     }
    ]
@@ -425,6 +459,36 @@
      "repeats": 2,
      "stage": "recertify",
      "ts": "2026-09-22T15:41:37",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "path": "curated",
+      "why": "newest stored meeting 2026-09-01 is stale"
+     },
+     "first_ts": "2026-09-23T15:36:49",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-09-23T15:36:49",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "artifact": "extractors/loudoun-bos-oracle/v1_attempt1.py",
+      "by_check": {
+       "no_second_source": 16,
+       "vote_coverage": 15
+      },
+      "certified": 38,
+      "covered_meetings": 2,
+      "disputes": 31,
+      "store_meetings": 18,
+      "total": 323
+     },
+     "first_ts": "2026-09-23T15:39:23",
+     "repeats": 1,
+     "stage": "recertify",
+     "ts": "2026-09-23T15:39:23",
      "verdict": "ok"
     }
    ]
@@ -469,6 +533,19 @@
      "stage": "deepen",
      "ts": "2026-09-22T15:41:10",
      "verdict": "exhausted"
+    },
+    {
+     "detail": {
+      "oldest": "2026-09-09",
+      "returned": 8,
+      "target": "2026-01-01",
+      "window": 45
+     },
+     "first_ts": "2026-09-23T15:39:14",
+     "repeats": 1,
+     "stage": "deepen",
+     "ts": "2026-09-23T15:39:14",
+     "verdict": "exhausted"
     }
    ]
   },
@@ -493,6 +570,46 @@
      "repeats": 3,
      "stage": "recertify",
      "ts": "2026-09-22T15:42:18",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "added": 52,
+      "artifact": "extractors/princewilliam-bos/v1_attempt2.py",
+      "replaced": 33,
+      "row_counts": {
+       "agenda_items": 41,
+       "meetings": 3,
+       "members": 8,
+       "vote_events": 41
+      },
+      "unchanged": 8
+     },
+     "first_ts": "2026-09-23T15:36:58",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-09-23T15:36:58",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "artifact": "extractors/princewilliam-bos-oracle/v1_attempt2.py",
+      "by_check": {
+       "attendance_mismatch": 1,
+       "no_second_source": 11,
+       "vote_coverage": 42,
+       "vote_mismatch": 6
+      },
+      "certified": 342,
+      "covered_meetings": 17,
+      "disputes": 60,
+      "store_meetings": 28,
+      "total": 738
+     },
+     "first_ts": "2026-09-23T15:40:07",
+     "repeats": 1,
+     "stage": "recertify",
+     "ts": "2026-09-23T15:40:07",
      "verdict": "ok"
     }
    ]
@@ -526,9 +643,9 @@
       "unchanged": 130
      },
      "first_ts": "2026-09-22T15:39:22",
-     "repeats": 1,
+     "repeats": 2,
      "stage": "refresh",
-     "ts": "2026-09-22T15:39:22",
+     "ts": "2026-09-23T15:37:32",
      "verdict": "ok"
     }
    ]
@@ -651,9 +768,9 @@
       ]
      },
      "first_ts": "2026-09-22T15:39:32",
-     "repeats": 1,
+     "repeats": 2,
      "stage": "refresh",
-     "ts": "2026-09-22T15:39:32",
+     "ts": "2026-09-23T15:37:43",
      "verdict": "drift"
     }
    ]

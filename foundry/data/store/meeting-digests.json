@@ -3374,5 +3374,47 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "loudoun-bos-2026-09-15": {
+  "digest": "The Board of Supervisors approved dozens of routine items including several proclamations recognizing awareness weeks and heritage months, renewed multiple service contracts with companies like Motorola Solutions, and awarded contracts totaling millions in public safety equipment and design services. The board also approved a $4.07 million affordable housing loan for Silver District West Apartments and increased the maximum grant in the Home Accessibility and Repair Program from $35,000 to $50,000. Two motions drew dissent: a measure allowing consideration of paused applications related to grid reliability substations (Juli Briskman opposed) and an endorsement of a letter to the Sheriff (Caleb Kershner, Kristen Umstattd, and Matthew Letourneau opposed), with Koran Saines absent from most votes and abstaining on one.",
+  "notable": [
+   "Board approved $4.07M loan from Affordable Housing Fund for Silver District West Apartments and raised home repair grant cap to $50,000.",
+   "Motion to allow resuming paused applications for grid reliability substations passed 7\u20131 with Juli Briskman opposed; letter to Sheriff passed 5\u20133 with three supervisors dissenting.",
+   "Supervisor Koran Saines was absent for the full meeting; one motion drew an abstention from Saines and three 'no' votes on the Sheriff letter."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "princewilliam-bos-2026-09-22": {
+  "digest": "The Board of County Supervisors unanimously approved amendments to zoning rules for the Data Center Opportunity Zone Overlay District to modify allowable uses and requirements. A substitute motion to change a timeline from 90 days to 0 days failed 3\u20135, with Supervisors Jefferson, Angry, Bailey, LaCroix, and Vega voting against it. The Board also approved updates to county procurement rules to align with changes to Virginia's Public Procurement Act, and approved a special use permit for the Vint Hill Substation in the Brentsville Magisterial District.",
+  "notable": [
+   "Data Center Overlay District zoning amendments approved unanimously (8\u20130).",
+   "Substitute motion to eliminate 90-day timeline failed 3\u20135; Supervisors Jefferson, Angry, Bailey, LaCroix, and Vega opposed.",
+   "Procurement rules updated to comply with Virginia's Public Procurement Act changes."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "princewilliam-bos-2026-09-15": {
+  "digest": "The Board of County Supervisors approved reaffirming protection of the Occoquan Reservoir against water diversions and directed staff to create Industrial Development Authority grants for affordable housing, though two supervisors opposed the housing initiative. The board also adjusted its 2026 meeting calendar by canceling an October 6 evening session and relocating the October 13 work session to Old Hickory Golf Club.",
+  "notable": [
+   "Industrial Development Authority affordable housing grants passed 5\u20132 with Gordy and Vega opposed, Jefferson abstaining",
+   "Board reaffirmed commitment to protect Occoquan Reservoir from water diversions (unanimous)",
+   "October 6 evening meeting canceled; October 13 work session moved to Old Hickory Golf Club"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }
