@@ -3416,5 +3416,29 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "newyork-bos-2026-09-23": {
+  "digest": "The Committee on General Welfare passed a bill requiring the Social Services Commissioner to create a simpler enrollment process for the fair fares transit assistance program, which helps eligible residents access discounted transit passes. The vote was 6\u20130 with one member absent (Darlene Mealy).",
+  "notable": [
+   "Unanimous passage of fair fares enrollment streamlining measure"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-09-23-Committee-on-Criminal-Justice": {
+  "digest": "The Committee on Criminal Justice passed a measure requiring the Department of Correction to inform incarcerated individuals of their commissary account balances and return unused commissary funds in cash upon release. The vote was 6-0 with one absent member (Feliz).",
+  "notable": [
+   "Passed requirement for DOC to return unused commissary funds in cash to incarcerated individuals upon release"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }

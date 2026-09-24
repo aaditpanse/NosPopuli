@@ -22203,5 +22203,15 @@
   "plain_english": "Endorses a letter to the Loudoun County Sheriff.",
   "topic": "county correspondence",
   "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-23-item-1": {
+  "plain_english": "Requires the Commissioner of Social Services to create a streamlined enrollment process for eligible individuals to enroll in fair fares transit assistance, with consent options for data sharing.",
+  "topic": "social services",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-23-Committee-on-Criminal-Justice-item-1": {
+  "plain_english": "Requires the Department of Correction to inform incarcerated individuals of their commissary account balance and return all unused commissary funds in cash when they are released from custody.",
+  "topic": "criminal justice",
+  "derived_by": "claude-haiku-4-5"
  }
 }
