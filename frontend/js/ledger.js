@@ -1057,7 +1057,8 @@
     } else {
       const rows = G.rows || [];
       const who = G.ask === "voters" ? (G.persons || []).join(", ") : (G.persons || []).map(p => p.name).join(", ");
-      const noun = ["sponsors", "sponsored", "law", "signed_by"].includes(G.ask) ? "bill" : "recorded vote";
+      const noun = ["sponsors", "sponsored", "law", "signed_by", "referrals", "related", "reported"].includes(G.ask) ? "bill"
+        : G.ask === "funds" ? "PAC" : G.ask === "committee" ? "member" : "recorded vote";
       head = rows.length ? `${rows.length}${G.truncated ? "+" : ""} ${noun}${rows.length === 1 ? "" : "s"}.` : `No ${noun}s.`;
       deck = G.ask === "voters" || G.ask === "sponsors"
         ? `${G.ask === "sponsors" ? "Sponsored: " : G.position ? esc(G.position) + " on " : "On "}${esc(G.topic)} · ${who || "nobody"}`

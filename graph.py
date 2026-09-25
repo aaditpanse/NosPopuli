@@ -44,7 +44,7 @@ DATA_DIR = _HERE / "data"
 PREDICATES = ("contains", "has_body", "has_seat", "holds", "represents",
               "sponsored", "voted_on", "considered", "elected_in", "for_seat",
               "signed", "vetoed", "enacted_as", "member_of", "referred_to", "reported",
-              "related_to")
+              "related_to", "campaign_committee")
 
 # Ordered weakest → strongest. An answer reports the weakest hop it crossed.
 CERTIFICATION_RANK = {"advisory": 0, "ingested": 1, "certified": 2}
@@ -863,12 +863,14 @@ def build_enactment(snapshots, hold_edges, instrument_ids):
                 no_actions += 1
                 continue
             ref = f"us/{congress}/{itype}/{number}/actions"
+            seen = set()
             for a in rec["actions"]:
                 text = a.get("text") or ""
                 pred = "signed" if text.startswith("Signed by President") else \
                     "vetoed" if "Vetoed by President" in text else None
-                if pred is None or a.get("type") != "President":
-                    continue    # BecameLaw repeats the same event in the Library's code
+                if pred is None or a.get("type") != "President" or (pred, a["date"]) in seen:
+                    continue    # the House and the Library each record the one event
+                seen.add((pred, a["date"]))
                 who = holders_as_of(president, a["date"])
                 if len(who) != 1:
                     g["gaps"].append(f"{label}: {pred} on {a['date']} but {len(who)} President(s) "
@@ -1296,6 +1298,162 @@ def enrich_snapshot(path, pause=0.1):
     return snap["meta"]
 
 
+# ------------------------------------------------------------------ money
+
+FEC_BASE = "https://api.open.fec.gov/v1/"
+FEC_TOP_PACS = 25
+# Conduits pass individual money through; they are not a PAC's choice.
+_FEC_CONDUITS = ("ACTBLUE", "WINRED")
+
+
+def fec_candidate_ids(leg):
+    """The FEC candidate ids for the chamber the member sits in now: a
+    senator who once ran for the House has both, and only the S id raises
+    Senate money. Never a name search."""
+    prefix = "S" if leg["terms"][-1]["type"] == "sen" else "H"
+    return [c for c in leg["id"].get("fec", []) if c.startswith(prefix)]
+
+
+def top_pacs(receipts, candidate_name, limit=FEC_TOP_PACS):
+    """Schedule A line 11C rows → the PACs that gave the most, summed over
+    every receipt. Conduits and the candidate's own committees drop out.
+    Pure. Returns (top rows, total dollars, receipt count)."""
+    own = {t.upper() for t in re.split(r"\W+", candidate_name or "") if len(t) > 2}
+    agg = {}
+    for r in receipts:
+        name = (r.get("contributor_name") or "").strip()
+        up, amt = name.upper(), r.get("contribution_receipt_amount") or 0
+        if not name or r.get("entity_type") == "CAN" or any(c in up for c in _FEC_CONDUITS) \
+                or any(t in up.split() for t in own):
+            continue
+        key = r.get("contributor_committee_id") or up
+        a = agg.setdefault(key, {"name": name, "committee_id": r.get("contributor_committee_id"),
+                                 "amount": 0.0, "receipts": 0})
+        a["amount"] = round(a["amount"] + amt, 2)
+        a["receipts"] += 1
+    rows = sorted(agg.values(), key=lambda a: -a["amount"])
+    return rows[:limit], round(sum(a["amount"] for a in rows), 2), sum(a["receipts"] for a in rows)
+
+
+def snapshot_fec(cycle, out_path, pause=1.05, pacs=True):
+    """For each current member: the principal campaign committee, its
+    totals, and (pacs) its top PAC donors, summed over every line-11C
+    receipt. Resumable: members already complete in the file are skipped,
+    and the file is written after each member, because the key allows 60
+    calls a minute and a full run takes hours. Refuses to run without
+    FEC_API_KEY: the DEMO_KEY fallback allows about 50 calls a day."""
+    import os
+    import requests
+    key = os.getenv("FEC_API_KEY")
+    if not key:
+        raise RuntimeError("FEC_API_KEY not set; the FEC snapshot does not run on DEMO_KEY")
+    path = pathlib.Path(out_path)
+    snap = json.loads(path.read_text()) if path.exists() else \
+        {"meta": {"cycle": cycle, "started": datetime.date.today().isoformat()}, "members": {}}
+    snap["meta"]["errors"] = []
+    s = requests.Session()
+    s.headers["User-Agent"] = "NosPopuli graph snapshot (nospopuli.org)"
+
+    def get(p, **q):
+        for attempt in range(5):
+            r = s.get(FEC_BASE + p, params={"api_key": key, **q}, timeout=60)
+            time.sleep(pause)
+            if r.status_code == 429:
+                time.sleep(60 * (attempt + 1))
+                continue
+            r.raise_for_status()
+            return r.json()
+        raise RuntimeError(f"{p}: rate-limited five times")
+
+    legs = json.loads((DATA_DIR / "legislators-current.json").read_text())
+    for leg in legs:
+        bio = leg["id"]["bioguide"]
+        if snap["members"].get(bio, {}).get("complete"):
+            continue
+        name = leg["name"].get("official_full") or leg["name"].get("last")
+        rec = {"name": name, "candidate_ids": fec_candidate_ids(leg), "complete": False}
+        try:
+            if not rec["candidate_ids"]:
+                rec.update(complete=True, gap="no FEC candidate id for this chamber in the legislators file")
+            for cid in rec["candidate_ids"]:
+                cms = get(f"candidate/{cid}/committees/", designation="P", cycle=cycle).get("results", [])
+                if not cms:
+                    continue
+                cm = cms[0]
+                rec.update(candidate_id=cid, committee_id=cm["committee_id"], committee_name=cm.get("name"))
+                t = (get(f"committee/{cm['committee_id']}/totals/", cycle=cycle).get("results") or [{}])[0]
+                rec["totals"] = {k: t.get(k) for k in (
+                    "receipts", "disbursements", "last_cash_on_hand_end_period", "individual_contributions",
+                    "other_political_committee_contributions", "coverage_end_date")}
+                if pacs:
+                    receipts, q = [], {"committee_id": cm["committee_id"], "two_year_transaction_period": cycle,
+                                       "line_number": "F3-11C", "sort": "-contribution_receipt_amount",
+                                       "per_page": 100}
+                    while True:
+                        page = get("schedules/schedule_a/", **q)
+                        receipts += page.get("results", [])
+                        last = (page.get("pagination") or {}).get("last_indexes")
+                        if not page.get("results") or not last:
+                            break
+                        q.update(last)
+                    rec["top_pacs"], rec["pac_total"], rec["pac_receipts"] = top_pacs(receipts, name)
+                break
+            else:
+                if rec["candidate_ids"]:
+                    rec["gap"] = f"no principal campaign committee for {cycle}"
+            rec["complete"] = True
+        except Exception as e:
+            snap["meta"]["errors"].append(f"{bio}: {type(e).__name__}: {e}")
+        snap["members"][bio] = rec
+        snap["meta"]["updated"] = datetime.datetime.now().isoformat(timespec="seconds")
+        path.write_text(json.dumps(snap, separators=(",", ":")))
+    snap["meta"]["counts"] = {"members": len(snap["members"]),
+                              "complete": sum(1 for m in snap["members"].values() if m["complete"]),
+                              "with_committee": sum(1 for m in snap["members"].values() if m.get("committee_id"))}
+    path.write_text(json.dumps(snap, separators=(",", ":")))
+    return snap["meta"]
+
+
+def _fec_snapshots():
+    return [json.loads(p.read_text()) for p in sorted(DATA_DIR.glob("fec-*.json"))]
+
+
+def build_money(fec_snapshots, person_ids):
+    """Each member → their principal campaign committee, one edge per
+    cycle, bounded by the cycle, with the committee's totals on the edge
+    (an edge carries its source and its cycle; a node would not). PAC
+    detail stays in the snapshot and is read at answer time. Pure."""
+    g = _graph()
+    missing = 0
+    for snap in fec_snapshots:
+        cycle = snap["meta"]["cycle"]
+        for bio, rec in snap["members"].items():
+            pid = person_ids.get(bio)
+            if pid is None or not rec.get("committee_id"):
+                missing += pid is not None
+                continue
+            cid = node_id("organization", f"fec/committee/{rec['committee_id']}")
+            _node(g, cid, "organization", rec.get("committee_name") or rec["committee_id"],
+                  {"natural_key": f"fec/committee/{rec['committee_id']}", "fec_id": rec["committee_id"],
+                   "jurisdiction": US}, "fec", rec["committee_id"])
+            _edge(g, pid, "campaign_committee", cid, f"{cycle - 1}-01-01", f"{cycle}-12-31", "ingested",
+                  "fec", f"fec/{cycle}/{rec['committee_id']}", US,
+                  {"cycle": cycle, "candidate_id": rec.get("candidate_id"), **(rec.get("totals") or {}),
+                   "pac_total": rec.get("pac_total"), "pac_receipts": rec.get("pac_receipts")})
+    if missing:
+        g["gaps"].append(f"{missing} member-cycle(s) have no FEC principal committee on disk")
+    return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
+
+
+def fec_detail(bioguide, cycle):
+    """The top PACs for one member and cycle, read from the snapshot at
+    answer time: contributions are events, and events stay at the leaf."""
+    p = DATA_DIR / f"fec-{cycle}.json"
+    if not p.exists():
+        return None
+    return json.loads(p.read_text())["members"].get(bioguide)
+
+
 # ---------------------------------------------------------------- temporal
 
 def close_holds_across(edges):
@@ -1476,6 +1634,16 @@ def build_source(source, states=None):
         nodes += rn
         edges += re_
         gaps += rg
+        fecs = _fec_snapshots()
+        if fecs:
+            person_ids = {n["props"]["bioguide"]: n["id"] for n in nodes
+                          if n["kind"] == "person" and n["props"].get("bioguide")}
+            mn, me, mg = build_money(fecs, person_ids)
+            nodes += mn
+            edges += me
+            gaps += mg
+        else:
+            gaps.append("no data/fec-*.json: campaign money is not loaded (run `python graph.py snapshot-fec 2026`)")
         if not historical:
             gaps.append("no data/legislators-historical.json: former members are not loaded "
                         "(run `python graph.py fetch`)")
@@ -1779,6 +1947,10 @@ _ASK_REPORTED = re.compile(
 _ASK_RELATED = re.compile(
     r"^\s*(?:what|which)?\s*(?:other\s+)?(?:bills?|legislation)\s+(?:are\s+|is\s+)?(?:related|similar|linked)\s+to\s+"
     r"(?:the\s+)?(?P<topic>.+?)\s*\??\s*$", re.I)
+_ASK_FUNDS = re.compile(
+    r"^\s*(?:who\s+(?:funds|funded|finances|financed|gives?\s+(?:money\s+)?to|donates?\s+to|donated\s+to)|"
+    r"(?:which|what)\s+pacs?\s+(?:fund|funded|give\s+to|gave\s+to|support|supported))\s+"
+    r"(?P<person>.+?)(?:\s+in\s+(?P<cycle>\d{4}))?\s*\??\s*$", re.I)
 _ASK_VOTERS = re.compile(
     r"^\s*who\s+voted\s+(?:(?P<position>aye|yes|yea|no|nay|present|abstain(?:ed)?)\s+)?"
     r"(?P<connector>on|for|against)\s+(?:the\s+)?(?P<topic>.+?)\s*\??\s*$", re.I)
@@ -1852,6 +2024,11 @@ def parse_question(question, today=None):
                 break   # "who is the chair of the Board of Supervisors" is a seat
             return {"ask": "committee", "committee": m.group("committee").strip(),
                     "role": "ranking" if "ranking" in role else "chair" if role else None}
+    m = _ASK_FUNDS.match(q)
+    if m:
+        cycle = int(m.group("cycle")) if m.group("cycle") else None
+        return {"ask": "funds", "person": m.group("person").strip(),
+                "cycle": cycle + cycle % 2 if cycle else None}
     m = _ASK_RELATED.match(q)
     if m:
         return {"ask": "related", "topic": m.group("topic").strip()}
@@ -2360,6 +2537,41 @@ def answer(parsed, backend, limit=200):
                 "persons": sorted({r["person"] for r in rows}), "hops": hops,
                 "weak_hops": [h for h in hops if h["weakest"] != "certified"],
                 "empty_reason": None if rows else empty}
+    if ask == "funds":
+        persons = backend["persons"](parsed["person"])
+        if not persons:
+            return shape_answer([], [], parsed["person"], None) | {"ask": ask}
+        which, persons = _one_person(persons, parsed["person"], None, ask, backend)
+        if which:
+            return which
+        es = sorted(backend["edges"]([p["id"] for p in persons], "campaign_committee", "out"),
+                    key=lambda e: -e["props"]["cycle"])
+        if parsed.get("cycle"):
+            es = [e for e in es if e["props"]["cycle"] == parsed["cycle"]]
+        who = ", ".join(p["name"] for p in persons)
+        if not es:
+            return shape_answer([], persons, parsed["person"], None) | {
+                "ask": ask, "empty_reason": f"no FEC record on disk for {who}"
+                + (f" in the {parsed['cycle']} cycle" if parsed.get("cycle") else "")}
+        e = es[0]
+        bio = next((p.get("bioguide") for p in persons if p["id"] == e["src"]), None)
+        detail = fec_detail(bio, e["props"]["cycle"]) or {}
+        pacs = detail.get("top_pacs")
+        rows = [{"person": who, "title": pac["name"], "position": f"${pac['amount']:,.0f}",
+                 "date": f"{e['props']['cycle']} cycle", "certification": "ingested", "jurisdiction": US,
+                 "question": f"{pac['receipts']} receipt(s) · FEC Schedule A line 11C"} for pac in pacs or []]
+        return {"ask": ask, "query": parsed["person"], "persons": persons, "rows": rows[:limit],
+                "count": len(rows[:limit]), "truncated": len(rows) > limit,
+                "committee": e["dst_name"], "cycle": e["props"]["cycle"],
+                "totals": {k: e["props"].get(k) for k in ("receipts", "disbursements", "last_cash_on_hand_end_period",
+                                                           "individual_contributions",
+                                                           "other_political_committee_contributions",
+                                                           "coverage_end_date", "pac_total")},
+                "hops": [{"predicate": "campaign_committee", "weakest": "ingested", "counts": {"ingested": 1}}],
+                "weak_hops": [{"predicate": "campaign_committee", "weakest": "ingested", "counts": {"ingested": 1}}],
+                "empty_reason": None if rows else
+                ("PAC detail not in the snapshot for this member" if pacs is None
+                 else f"no PAC receipts on record for {e['dst_name']} in {e['props']['cycle']}")}
     if ask == "related":
         its = backend["items"](topic, limit)
         if not its:
@@ -2488,6 +2700,9 @@ if __name__ == "__main__":
                        help="us-congress only: delegation(s) to load, e.g. --state VA")
     s = sub.add_parser("enrich", help="re-fetch the Congress.gov bill records of a snapshot file (not its roll calls)")
     s.add_argument("path")
+    s = sub.add_parser("snapshot-fec", help="campaign committee, totals and top PACs per member (resumable)")
+    s.add_argument("cycle", type=int)
+    s.add_argument("--no-pacs", action="store_true", help="totals only")
     sub.add_parser("fetch", help="download the public legislators, executive and committee files to data/")
     s = sub.add_parser("snapshot", help="fetch one session's roll calls to data/ (no args: the current session)")
     s.add_argument("congress", type=int, nargs="?")
@@ -2525,6 +2740,8 @@ if __name__ == "__main__":
         print(f"{len(meta['instrument_errors'])} error(s)")
         for e in meta["instrument_errors"][:20]:
             print("  -", e)
+    elif a.cmd == "snapshot-fec":
+        print(json.dumps(snapshot_fec(a.cycle, DATA_DIR / f"fec-{a.cycle}.json", pacs=not a.no_pacs), indent=1))
     elif a.cmd == "fetch":
         for name, n in fetch_public().items():
             print(f"{name}: {n:,} bytes")

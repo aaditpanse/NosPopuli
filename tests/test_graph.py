@@ -6,9 +6,11 @@ with three roll calls, a seat that changed hands with no contest on disk, and
 a person who won two different bodies' seats in the same district.
 """
 
+import os
 import pathlib
 import sys
 import unittest
+from unittest import mock
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 
@@ -739,6 +741,61 @@ class RelatedTest(unittest.TestCase):
                           ("instrument/us/119/hr/77", "Procedurally related, Related bill", "identified by CRS, House")])
         back = graph.search("bills related to S 3627", self.b, today=TODAY)
         self.assertEqual([r["item_id"] for r in back["rows"]], ["instrument/us/119/hr/5184"])
+
+
+FEC = {"meta": {"cycle": 2026}, "members": {
+    "W000805": {"name": "Mark R. Warner", "candidate_id": "S6VA00093", "committee_id": "C00438713",
+                "committee_name": "FRIENDS OF MARK WARNER", "complete": True,
+                "totals": {"receipts": 100.0, "other_political_committee_contributions": 30.0},
+                "top_pacs": [{"name": "A PAC", "committee_id": None, "amount": 20.0, "receipts": 2}],
+                "pac_total": 30.0, "pac_receipts": 3},
+    "G000568": {"name": "H. Morgan Griffith", "candidate_ids": [], "complete": True,
+                "gap": "no FEC candidate id for this chamber in the legislators file"},
+}}
+
+
+class MoneyTest(unittest.TestCase):
+    def setUp(self):
+        self.nodes, self.edges, _ = graph.build_congress(LEGISLATORS, [SNAPSHOT], today=TODAY)
+        people = {n["props"]["bioguide"]: n["id"] for n in self.nodes if n["props"].get("bioguide")}
+        mn, me, self.gaps = graph.build_money([FEC], people)
+        self.nodes += mn
+        self.edges += me
+        self.b = graph.memory_backend(self.nodes, self.edges)
+
+    def test_the_chamber_picks_the_candidate_id(self):
+        cantwell = {"id": {"fec": ["H2WA01054", "S8WA00194"]}, "terms": [{"type": "sen"}]}
+        self.assertEqual(graph.fec_candidate_ids(cantwell), ["S8WA00194"])
+        self.assertEqual(graph.fec_candidate_ids({**cantwell, "terms": [{"type": "rep"}]}), ["H2WA01054"])
+
+    def test_top_pacs_sum_every_receipt_and_drop_conduits_and_self(self):
+        rows, total, n = graph.top_pacs([
+            {"contributor_name": "B PAC", "contribution_receipt_amount": 5, "entity_type": "PAC"},
+            {"contributor_name": "A PAC", "contribution_receipt_amount": 3, "entity_type": "PAC"},
+            {"contributor_name": "A PAC", "contribution_receipt_amount": 4, "entity_type": "PAC"},
+            {"contributor_name": "ACTBLUE", "contribution_receipt_amount": 90, "entity_type": "PAC"},
+            {"contributor_name": "WARNER VICTORY FUND", "contribution_receipt_amount": 90, "entity_type": "PAC"},
+        ], "Mark R. Warner")
+        self.assertEqual([(r["name"], r["amount"], r["receipts"]) for r in rows], [("A PAC", 7, 2), ("B PAC", 5, 1)])
+        self.assertEqual((total, n), (12, 3))
+
+    def test_committee_edge_is_bounded_by_the_cycle_with_totals_on_it(self):
+        (e,) = by_pred(self.edges, "campaign_committee")
+        self.assertEqual((e["valid_from"], e["valid_to"], e["props"]["receipts"]), ("2025-01-01", "2026-12-31", 100.0))
+        self.assertNotIn("top_pacs", e["props"])     # detail stays at the leaf
+
+    def test_funds_question_and_its_empty_state(self):
+        with mock.patch.object(graph, "fec_detail", return_value=FEC["members"]["W000805"]):
+            out = graph.search("who funds Mark Warner", self.b, today=TODAY)
+        self.assertEqual([(r["title"], r["position"]) for r in out["rows"]], [("A PAC", "$20")])
+        self.assertEqual(out["committee"], "FRIENDS OF MARK WARNER")
+        none = graph.search("who funds Griffith", self.b, today=TODAY)
+        self.assertEqual(none["empty_reason"], "no FEC record on disk for H. Morgan Griffith")
+
+    def test_snapshot_refuses_without_a_key(self):
+        with mock.patch.dict(os.environ, {"FEC_API_KEY": ""}):
+            with self.assertRaisesRegex(RuntimeError, "DEMO_KEY"):
+                graph.snapshot_fec(2026, "/nonexistent/fec.json")
 
 
 class ParseInstrumentTest(unittest.TestCase):
