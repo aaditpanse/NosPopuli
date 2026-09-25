@@ -43,7 +43,8 @@ DATA_DIR = _HERE / "data"
 # graph cannot grow a new relation type by accident.
 PREDICATES = ("contains", "has_body", "has_seat", "holds", "represents",
               "sponsored", "voted_on", "considered", "elected_in", "for_seat",
-              "signed", "vetoed", "enacted_as", "member_of", "referred_to", "reported")
+              "signed", "vetoed", "enacted_as", "member_of", "referred_to", "reported",
+              "related_to")
 
 # Ordered weakest → strongest. An answer reports the weakest hop it crossed.
 CERTIFICATION_RANK = {"advisory": 0, "ingested": 1, "certified": 2}
@@ -716,6 +717,8 @@ def build_congress(legislators, snapshots, states=None, today=None):
                     props["topic_derived_by"] = "congress.gov policyArea"
                 if rec.get("introduced"):
                     props["introduced"] = rec["introduced"]
+                if "related" in rec:
+                    props["related_fetched"] = (snap.get("meta") or {}).get("instruments_fetched")
                 if "committees" in rec:
                     props["committees_fetched"] = (snap.get("meta") or {}).get("instruments_fetched")
                 if "actions" in rec:
@@ -887,6 +890,40 @@ def build_enactment(snapshots, hold_edges, instrument_ids):
     if no_actions:
         g["gaps"].append(f"{no_actions} bill(s) have no action record on disk; whether they became "
                          f"law is unknown here, not 'no'")
+    return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
+
+
+def build_related(snapshots, instrument_ids):
+    """Bill-to-bill links from Congress.gov's related-bills record: the
+    relationship ('Identical bill', 'Procedurally related') and who said so
+    (House, Senate, CRS) ride on the edge. A related bill the session never
+    voted on becomes a title-only node, one hop from a voted bill and never
+    further: its own related bills are not fetched. Pure."""
+    g = _graph()
+    title_only = 0
+    for snap in snapshots:
+        congress = (snap.get("meta") or {}).get("congress")
+        for label, rec in (snap.get("instruments") or {}).items():
+            itype, number = label.split("/")
+            iid = f"instrument/us/{congress}/{itype}/{number}"
+            if iid not in instrument_ids or "related" not in rec:
+                continue
+            for b in rec["related"]:
+                did = f"instrument/us/{b['congress']}/{b['type']}/{b['number']}"
+                if did == iid:
+                    continue
+                if did not in instrument_ids and did not in g["nodes"]:
+                    _node(g, did, "instrument", f"{b['type'].upper()} {b['number']}: {b.get('title') or ''}".strip(": "),
+                          {"instrument_type": b["type"], "congress": b["congress"], "number": b["number"],
+                           "title_only": True, "jurisdiction": US}, "congress.gov", f"us/{congress}/{label}/related")
+                    title_only += 1
+                _edge(g, iid, "related_to", did, None, None, "ingested", "congress.gov",
+                      f"us/{congress}/{label}/related", US,
+                      {"relationships": b.get("relationships") or [],
+                       "types": sorted({r.get("type") for r in b.get("relationships") or [] if r.get("type")})})
+    if title_only:
+        g["gaps"].append(f"{title_only} related bill(s) had no recorded vote this session: title-only nodes, "
+                         f"their own links not followed")
     return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
 
 
@@ -1435,6 +1472,10 @@ def build_source(source, states=None):
             gaps += cg
         else:
             gaps.append("no committee files in data/: committees are not loaded (run `python graph.py fetch`)")
+        rn, re_, rg = build_related(snaps, {n["id"] for n in nodes if n["kind"] == "instrument"})
+        nodes += rn
+        edges += re_
+        gaps += rg
         if not historical:
             gaps.append("no data/legislators-historical.json: former members are not loaded "
                         "(run `python graph.py fetch`)")
@@ -1735,6 +1776,9 @@ _ASK_REFERRALS = re.compile(
     r"(?:\s+(?:been\s+)?(?:referred\s+to|go\s+to|in|sent\s+to))?\s*\??\s*$", re.I)
 _ASK_REPORTED = re.compile(
     r"^\s*what\s+(?:bills?\s+)?(?:did|has)\s+(?:the\s+)?(?P<committee>.+?)\s+report(?:ed)?\s*\??\s*$", re.I)
+_ASK_RELATED = re.compile(
+    r"^\s*(?:what|which)?\s*(?:other\s+)?(?:bills?|legislation)\s+(?:are\s+|is\s+)?(?:related|similar|linked)\s+to\s+"
+    r"(?:the\s+)?(?P<topic>.+?)\s*\??\s*$", re.I)
 _ASK_VOTERS = re.compile(
     r"^\s*who\s+voted\s+(?:(?P<position>aye|yes|yea|no|nay|present|abstain(?:ed)?)\s+)?"
     r"(?P<connector>on|for|against)\s+(?:the\s+)?(?P<topic>.+?)\s*\??\s*$", re.I)
@@ -1808,6 +1852,9 @@ def parse_question(question, today=None):
                 break   # "who is the chair of the Board of Supervisors" is a seat
             return {"ask": "committee", "committee": m.group("committee").strip(),
                     "role": "ranking" if "ranking" in role else "chair" if role else None}
+    m = _ASK_RELATED.match(q)
+    if m:
+        return {"ask": "related", "topic": m.group("topic").strip()}
     m = _ASK_REFERRALS.match(q)
     if m:
         return {"ask": "referrals", "topic": m.group("topic").strip()}
@@ -2313,6 +2360,32 @@ def answer(parsed, backend, limit=200):
                 "persons": sorted({r["person"] for r in rows}), "hops": hops,
                 "weak_hops": [h for h in hops if h["weakest"] != "certified"],
                 "empty_reason": None if rows else empty}
+    if ask == "related":
+        its = backend["items"](topic, limit)
+        if not its:
+            return {"ask": ask, "query": topic, "rows": [], "hops": [], "weak_hops": [],
+                    "empty_reason": f"no instrument in the graph matches {topic!r}"}
+        titles = {i["id"]: i["name"] for i in its}
+        es = backend["edges"](list(titles), "related_to", "out") + \
+            [e | {"src": e["dst"], "dst": e["src"], "dst_name": e["src_name"]}
+             for e in backend["edges"](list(titles), "related_to", "in")]
+        seen, rows = set(), []
+        for e in es:
+            if (e["src"], e["dst"]) in seen:
+                continue
+            seen.add((e["src"], e["dst"]))
+            who = sorted({r.get("identified_by") for r in e["props"].get("relationships") or [] if r.get("identified_by")})
+            rows.append({"person": titles[e["src"]], "title": e["dst_name"], "item_id": e["dst"],
+                         "position": ", ".join(e["props"].get("types") or []) or "related",
+                         "date": None, "certification": e["certification"], "jurisdiction": US,
+                         "question": f"identified by {', '.join(who)}" if who else "identifier not recorded"})
+        no_record = [i["name"] for i in its if "related_fetched" not in i["props"]]
+        hops = [{"predicate": "related_to", "weakest": "ingested", "counts": {"ingested": len(rows)}}] if rows else []
+        return {"ask": ask, "query": topic, "topic": topic, "rows": rows[:limit], "count": len(rows[:limit]),
+                "truncated": len(rows) > limit, "persons": sorted(titles.values()), "hops": hops, "weak_hops": hops,
+                "empty_reason": None if rows else
+                (f"no related-bills record on disk for {', '.join(no_record)}" if no_record
+                 else f"no bill on record is related to {', '.join(titles.values())}")}
     if ask == "referrals":
         its = backend["items"](topic, limit)
         if not its:

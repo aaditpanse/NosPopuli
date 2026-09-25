@@ -704,6 +704,43 @@ class CommitteesTest(unittest.TestCase):
         self.assertIn("no committee (none on record)", self.ask("which committee is S 3627 in")["empty_reason"])
 
 
+RELATED = {**SNAPSHOT, "meta": {"congress": 119, "instruments_fetched": "2026-09-25"}, "instruments": {
+    "hr/5184": {**bill_rec([]), "related": [
+        {"congress": 119, "type": "s", "number": "3627", "title": "Voted on too",
+         "relationships": [{"type": "Identical bill", "identified_by": "CRS"}]},
+        {"congress": 119, "type": "hr", "number": "77", "title": "Never voted on",
+         "relationships": [{"type": "Procedurally related", "identified_by": "House"},
+                           {"type": "Related bill", "identified_by": "CRS"}]}]},
+    # hr/77's own links would be two hops from a vote: never fetched, never built.
+}}
+
+
+class RelatedTest(unittest.TestCase):
+    def setUp(self):
+        self.nodes, self.edges, _ = graph.build_congress(LEGISLATORS, [RELATED], today=TODAY)
+        ids = {n["id"] for n in self.nodes if n["kind"] == "instrument"}
+        rn, re_, self.gaps = graph.build_related([RELATED], ids)
+        self.nodes += rn
+        self.edges += re_
+        self.b = graph.memory_backend(self.nodes, self.edges)
+
+    def test_type_and_identifier_are_kept_and_the_unvoted_bill_is_title_only(self):
+        rel = {e["dst"]: e for e in by_pred(self.edges, "related_to")}
+        self.assertEqual(set(rel), {"instrument/us/119/s/3627", "instrument/us/119/hr/77"})
+        self.assertEqual(rel["instrument/us/119/hr/77"]["props"]["types"], ["Procedurally related", "Related bill"])
+        (stub,) = [n for n in self.nodes if n["id"] == "instrument/us/119/hr/77"]
+        self.assertTrue(stub["props"]["title_only"])
+        self.assertFalse(any(e["src"] == stub["id"] for e in self.edges))
+
+    def test_related_question_reads_both_directions(self):
+        out = graph.search("bills related to HR 5184", self.b, today=TODAY)
+        self.assertEqual([(r["item_id"], r["position"], r["question"]) for r in out["rows"]],
+                         [("instrument/us/119/s/3627", "Identical bill", "identified by CRS"),
+                          ("instrument/us/119/hr/77", "Procedurally related, Related bill", "identified by CRS, House")])
+        back = graph.search("bills related to S 3627", self.b, today=TODAY)
+        self.assertEqual([r["item_id"] for r in back["rows"]], ["instrument/us/119/hr/5184"])
+
+
 class ParseInstrumentTest(unittest.TestCase):
     def test_house_forms(self):
         for legis, want in (("H R 5184", ("hr", "5184")), ("H J RES 3", ("hjres", "3")),
