@@ -73,7 +73,10 @@ By path, `sys.path[0]` becomes `scripts/` and every local import fails.
 Away from classifying a question into one bucket, and toward a **temporal property graph
 with provenance** that gets traversed. Classification is a projection and it discards
 the half of a mixed question that made it interesting. v1 of the graph is Virginia top
-to bottom. The skeleton is small enough for two Postgres tables — no graph database.
+to bottom plus the whole federal layer: every member since 1789, the presidency,
+committees, the current Congress's votes, bills, laws and campaign committees. The
+skeleton is small enough for two Postgres tables — no graph database. The plan for
+every bill, the Hetzner move and the bulk sync is in README "What's next".
 
 **What the map is for:** questions whose answers require crossing layers of government
 — how the person I elected actually voted — become a walk across the map, with every

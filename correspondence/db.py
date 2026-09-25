@@ -160,7 +160,11 @@ def init_db():
             -- skeleton of who governs where is small enough for Postgres and
             -- a graph database would be a toolchain to defend. Events (votes,
             -- contributions) are NOT rows here; edges point at them by
-            -- source_ref and the Foundry store is read at the leaf.
+            -- source_ref and the Foundry store is read at the leaf. One
+            -- exception, decided 2026-09-25: the current Congress's roll-call
+            -- positions are voted_on rows, so its record can be walked. Older
+            -- sessions stay in their snapshot files; PAC detail stays in the
+            -- FEC snapshot.
             -- valid_from/valid_to exist from the first migration because
             -- retrofitting time onto a snapshot graph is a rewrite.
             CREATE TABLE IF NOT EXISTS graph_node (

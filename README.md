@@ -264,10 +264,37 @@ instead of going to Congress. The graph declines every other shape, and the call
 falls back with `allow_graph=False` when it parses a shape but knows neither the
 person nor the seat — so nothing the ledger answered before is lost.
 
-*Next for the graph, in order:* a money predicate, because "who funded them" is the
-other half of the mixed question and the legislators file already carries FEC ids.
-Then the General Assembly, and the other 49 delegations (`load us-congress` with no
-`--state`; ~300k `voted_on` rows a session, which is a Supabase size decision).
+*The federal layer is in* (2026-09-25). `load us-congress` now loads every member
+of Congress since 1789 (the current and historical legislators files, joined by
+bioguide id), the presidency (`executive.json`), 49 committees and 181 subcommittees
+with their members, and for each bill the 119th Congress voted on: its sponsors,
+referrals, committee reports, related bills, the President who signed or vetoed it
+(resolved by date), and the public law it became. Campaign committees come from the
+FEC with totals on the edge; the top PACs stay in `data/fec-<cycle>.json` and are
+read at answer time. `python graph.py fetch` downloads the public files, `enrich`
+re-fetches a snapshot's bill records, `snapshot-fec <cycle>` walks the FEC. There
+are eighteen predicates now, pinned by a test.
+
+What it proved:
+- **Only the current Congress's votes are rows.** The 118th's roll calls stay in
+  their snapshot files. They certify the terms they fall inside (1,400 terms are
+  certified) and answer "how did X vote … in 2023" from the file. That is the events
+  rule, with one exception that I took on purpose.
+- **A name that matches several people is a question, not an answer.** "Warner"
+  returns the 13 Warners who served, with their seats and years. It does not merge
+  their votes. A full name settles it.
+- **On handover day the incoming holder has the seat.** The legislators and
+  executive files end a term on the day the next one starts, so 3 January had two
+  holders of every seat that changed hands, and 20 January had two Presidents.
+- **A whole state counts, not a substring.** "The senator for Virginia" no longer
+  returns West Virginia's.
+
+In production (measured 2026-09-25, after one full load): 454,740 edges in 364 MB including indexes, about 800 bytes an edge; 17,906 nodes in 10 MB; the whole database 392 MB. `voted_on` is 379,014 of the edges, and the load takes about two minutes.
+
+*Next for the graph:* every bill, not only the voted ones. The 119th Congress has
+19,067 bills and resolutions; the graph holds 1,468. That, the move to one Hetzner
+server, and local copies of the federal bulk data (BILLSTATUS, Voteview, FEC bulk)
+are one plan, decided 2026-09-25. Then the General Assembly.
 
 **5. Rebuild what `/newspaper` did.** See the next section — I deleted the old tabbed
 app rather than porting it, so these are rebuilds in `ledger.js`, not migrations. The
@@ -622,6 +649,14 @@ Live problems I know about and haven't fixed. Listed so nobody has to rediscover
   her first observed meeting because the special election that seated her is not on
   disk. The gap is real and the answer says "vacant or not on disk"; the fix is the
   2025 special-election results in `va-elections.json`.
+- **A district number is one node for all time.** VA-1 in 1800 and VA-1 today are the
+  same `…/state:va/cd:1` jurisdiction, although redistricting moved it many times. The
+  seats are right as seats; which land a district covered is not dated. The fix is a
+  district node per Congress from the dated district shapes.
+- **`GET /api/graph/votes` still merges people who share a name.** It reads
+  `graph.votes`, which does not go through `answer`'s ambiguity check, so
+  `?person=Warner` returns every Warner's votes together. `/api/graph/search` and
+  `/ledger` ask which one.
 
 Found while building the golden fixtures, all four now pinned as expected-failures:
 
