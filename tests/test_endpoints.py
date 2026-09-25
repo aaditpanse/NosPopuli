@@ -128,6 +128,15 @@ def test_replay_miss_is_loud(app):
         caches["llm"].fetch("llm nonexistent-key", lambda: None)
 
 
+def test_no_api_key_is_committed():
+    """efce83a committed three live API keys inside replay cache keys, in a
+    public repo. `replay._redact` strips them before a key is written; this
+    fails if any fixture carries one again."""
+    leaks = [p.relative_to(replay.GOLDEN).as_posix()
+             for p in replay.GOLDEN.rglob("*.json") if "api_key" in p.read_text()]
+    assert not leaks, f"api_key present in: {leaks}"
+
+
 # ------------------------------- defects that need a fixture or the app itself
 # The pure-logic defects (Radnor, the watchlist anchor) and the LA County control
 # live in test_ledger.py::KnownDefects, with the other pure ledger_agent tests.

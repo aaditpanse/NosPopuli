@@ -13,7 +13,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/bill/118/hres/122 {\"api_key\": \"NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU\", \"format\": \"json\"}": {
+ "http GET https://api.congress.gov/v3/bill/118/hres/122 {\"format\": \"json\"}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "0",
@@ -112,7 +112,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/bill/118/s/4697 {\"api_key\": \"NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU\", \"format\": \"json\"}": {
+ "http GET https://api.congress.gov/v3/bill/118/s/4697 {\"format\": \"json\"}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "1",
@@ -219,7 +219,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/bill/119/hjres/123 {\"api_key\": \"NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU\", \"format\": \"json\"}": {
+ "http GET https://api.congress.gov/v3/bill/119/hjres/123 {\"format\": \"json\"}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "1",
@@ -324,7 +324,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/bill/119/hr/1234/text {\"api_key\": \"NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU\", \"format\": \"json\"}": {
+ "http GET https://api.congress.gov/v3/bill/119/hr/1234/text {\"format\": \"json\"}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "0",
@@ -422,7 +422,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/bill/119/hr/3841 {\"api_key\": \"NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU\", \"format\": \"json\"}": {
+ "http GET https://api.congress.gov/v3/bill/119/hr/3841 {\"format\": \"json\"}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "1854",
@@ -521,7 +521,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/bill/119/s/1851 {\"api_key\": \"NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU\", \"format\": \"json\"}": {
+ "http GET https://api.congress.gov/v3/bill/119/s/1851 {\"format\": \"json\"}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "1929",
@@ -619,7 +619,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/member {\"api_key\": \"NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU\", \"format\": \"json\", \"limit\": 250}": {
+ "http GET https://api.congress.gov/v3/member {\"format\": \"json\", \"limit\": 250}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "2947",
@@ -5950,7 +5950,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/member/B001230 {\"api_key\": \"NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU\", \"format\": \"json\"}": {
+ "http GET https://api.congress.gov/v3/member/B001230 {\"format\": \"json\"}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "2086",
@@ -6178,7 +6178,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/member/B001230/cosponsored-legislation {\"api_key\": \"NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU\", \"format\": \"json\", \"limit\": 1}": {
+ "http GET https://api.congress.gov/v3/member/B001230/cosponsored-legislation {\"format\": \"json\", \"limit\": 1}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "2",
@@ -6234,7 +6234,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/member/B001230/sponsored-legislation {\"api_key\": \"NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU\", \"format\": \"json\", \"limit\": 1}": {
+ "http GET https://api.congress.gov/v3/member/B001230/sponsored-legislation {\"format\": \"json\", \"limit\": 1}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "0",
@@ -6283,7 +6283,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/member/B001230/sponsored-legislation {\"api_key\": \"NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU\", \"format\": \"json\", \"limit\": 250}": {
+ "http GET https://api.congress.gov/v3/member/B001230/sponsored-legislation {\"format\": \"json\", \"limit\": 250}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "1953",
@@ -9257,7 +9257,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/member/C001098 {\"api_key\": \"NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU\", \"format\": \"json\"}": {
+ "http GET https://api.congress.gov/v3/member/C001098 {\"format\": \"json\"}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "636",
@@ -9415,7 +9415,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/member/C001098/cosponsored-legislation {\"api_key\": \"NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU\", \"format\": \"json\", \"limit\": 1}": {
+ "http GET https://api.congress.gov/v3/member/C001098/cosponsored-legislation {\"format\": \"json\", \"limit\": 1}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "0",
@@ -9472,7 +9472,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/member/C001098/sponsored-legislation {\"api_key\": \"NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU\", \"format\": \"json\", \"limit\": 1}": {
+ "http GET https://api.congress.gov/v3/member/C001098/sponsored-legislation {\"format\": \"json\", \"limit\": 1}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "3269",
@@ -9524,7 +9524,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/member/C001098/sponsored-legislation {\"api_key\": \"NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU\", \"format\": \"json\", \"limit\": 250}": {
+ "http GET https://api.congress.gov/v3/member/C001098/sponsored-legislation {\"format\": \"json\", \"limit\": 250}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "4",
@@ -12380,7 +12380,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/member?offset=250&limit=250&format=json&api_key=NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU {}": {
+ "http GET https://api.congress.gov/v3/member?offset=250&limit=250&format=json {}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "1083",
@@ -17799,7 +17799,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/member?offset=500&limit=250&format=json&api_key=NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU {}": {
+ "http GET https://api.congress.gov/v3/member?offset=500&limit=250&format=json {}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "1072",
@@ -23396,7 +23396,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/summaries/118 {\"api_key\": \"NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU\", \"format\": \"json\", \"limit\": 20}": {
+ "http GET https://api.congress.gov/v3/summaries/118 {\"format\": \"json\", \"limit\": 20}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "0",
@@ -23435,7 +23435,7 @@
   },
   "status": 200
  },
- "http GET https://api.congress.gov/v3/summaries/119 {\"api_key\": \"NfmLSCgQh1T2pW72mBAf70ddXK9bPQ50nvUuz0NU\", \"format\": \"json\", \"limit\": 20}": {
+ "http GET https://api.congress.gov/v3/summaries/119 {\"format\": \"json\", \"limit\": 20}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "0",
@@ -23475,7 +23475,7 @@
   },
   "status": 200
  },
- "http GET https://api.open.fec.gov/v1/candidate/S2WI00219/committees/ {\"api_key\": \"VOiK2yk83PDL3LE6APbl3v9fK5PkNsXR0KBT0du8\", \"designation\": \"P\", \"per_page\": 5}": {
+ "http GET https://api.open.fec.gov/v1/candidate/S2WI00219/committees/ {\"designation\": \"P\", \"per_page\": 5}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "0",
@@ -23606,7 +23606,7 @@
   },
   "status": 200
  },
- "http GET https://api.open.fec.gov/v1/candidate/S2WI00219/totals/ {\"api_key\": \"VOiK2yk83PDL3LE6APbl3v9fK5PkNsXR0KBT0du8\", \"per_page\": 20, \"sort\": \"-cycle\"}": {
+ "http GET https://api.open.fec.gov/v1/candidate/S2WI00219/totals/ {\"per_page\": 20, \"sort\": \"-cycle\"}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "0",
@@ -24244,7 +24244,7 @@
   },
   "status": 200
  },
- "http GET https://api.open.fec.gov/v1/candidates/search/ {\"api_key\": \"VOiK2yk83PDL3LE6APbl3v9fK5PkNsXR0KBT0du8\", \"office\": \"S\", \"per_page\": 8, \"q\": \"Tammy Baldwin\", \"sort\": \"-election_years\", \"state\": \"WI\"}": {
+ "http GET https://api.open.fec.gov/v1/candidates/search/ {\"office\": \"S\", \"per_page\": 8, \"q\": \"Tammy Baldwin\", \"sort\": \"-election_years\", \"state\": \"WI\"}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "0",
@@ -24383,7 +24383,7 @@
   },
   "status": 200
  },
- "http GET https://api.open.fec.gov/v1/schedules/schedule_a/ {\"api_key\": \"VOiK2yk83PDL3LE6APbl3v9fK5PkNsXR0KBT0du8\", \"committee_id\": \"C00326801\", \"line_number\": \"F3-11C\", \"per_page\": 100, \"sort\": \"-contribution_receipt_amount\", \"two_year_transaction_period\": 2024}": {
+ "http GET https://api.open.fec.gov/v1/schedules/schedule_a/ {\"committee_id\": \"C00326801\", \"line_number\": \"F3-11C\", \"per_page\": 100, \"sort\": \"-contribution_receipt_amount\", \"two_year_transaction_period\": 2024}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "1",
@@ -51947,7 +51947,7 @@
   },
   "status": 200
  },
- "http GET https://api.open.fec.gov/v1/schedules/schedule_a/ {\"api_key\": \"VOiK2yk83PDL3LE6APbl3v9fK5PkNsXR0KBT0du8\", \"committee_id\": \"C00326801\", \"line_number\": \"F3-11C\", \"per_page\": 100, \"sort\": \"-contribution_receipt_amount\", \"two_year_transaction_period\": 2026}": {
+ "http GET https://api.open.fec.gov/v1/schedules/schedule_a/ {\"committee_id\": \"C00326801\", \"line_number\": \"F3-11C\", \"per_page\": 100, \"sort\": \"-contribution_receipt_amount\", \"two_year_transaction_period\": 2026}": {
   "headers": {
    "Access-Control-Allow-Origin": "*",
    "Age": "1",
@@ -75571,7 +75571,7 @@
   "status": 200,
   "text": "<html><body><pre>\n[Congressional Bills 119th Congress]\n[From the U.S. Government Publishing Office]\n[H.R. 1234 Engrossed in House (EH)]\n\n&lt;DOC&gt;\n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n119th CONGRESS\n  1st Session\n                                H. R. 1234\n\n_______________________________________________________________________\n\n                                 AN ACT\n\n\n \nTo direct the Librarian of Congress to promote the more cost-effective, \nefficient, and expanded availability of the Annotated Constitution and \n   pocket-part supplements by replacing the hardbound versions with \n                           digital versions.\n\n    Be it enacted by the Senate and House of Representatives of the \nUnited States of America in Congress assembled,\n\nSECTION 1. REPEAL REQUIREMENT FOR CONGRESSIONAL RESEARCH SERVICE TO \n              PREPARE ANNOTATED CONSTITUTION AND SUPPLEMENTS IN \n              HARDBOUND VERSION.\n\n    (a) Repeal.--The first section of Public Law 91-589 (2 U.S.C. 168) \nis amended--\n            (1) by striking ``the Librarian of Congress'' and inserting \n        ``(a) subject to subsection (b), the Librarian of Congress''; \n        and\n            (2) by adding at the end the following new subsection:\n    ``(b)(1) Upon the completion of the October 2031 term of the \nSupreme Court and upon the completion of each tenth October term of the \nSupreme Court thereafter, the Librarian of Congress shall have prepared \na digital decennial revised edition of the Constitution Annotated, \nwhich shall contain annotations of all decisions theretofore rendered \nby the Supreme Court construing provisions of the Constitution, in \nplace of the hardbound decennial revised edition of the Constitution \nAnnotated described in subsection (a)(3).\n    ``(2) Upon the completion of the October 2025 term of the Supreme \nCourt and upon the completion of each subsequent October term of the \nSupreme Court beginning in an odd-numbered year (the final digit of \nwhich is not a 1), the Librarian shall have prepared a digital \ncumulative pocket-part supplement to the most recent decennial revised \nedition of the Constitution Annotated, which shall contain cumulative \nannotations of all such decisions rendered by the Supreme Court which \nwere not included in the most recent revised edition of the \nConstitution Annotated, in place of the hardbound editions of the \ncumulative pocket-part supplement described in subsection (a)(4).''.\n    (b) Ensuring Availability of Digital Versions.--Section 2 of Public \nLaw 91-589 (2 U.S.C. 168a) is amended--\n            (1) by striking ``All hardbound'' and inserting ``(a) All \n        hardbound''; and\n            (2) by adding at the end the following new subsection:\n    ``(b)(1) The digital decennial revised editions of the Constitution \nAnnotated prepared under subsection (b)(1) of the first section of this \nJoint Resolution and the digital cumulative pocket-part supplements \nprepared under subsection (b)(2) of the first section of this Joint \nResolution shall be available at a public website of the Library of \nCongress.\n    ``(2) The Librarian of Congress shall ensure the continuing \navailability of the documents referred to in paragraph (1) to Congress \nand the public.''.\n    (c) Repeal of Additional Printing Requirements.--\n            (1) Mandatory printing of additional copies.--Section 3 of \n        Public Law 91-589 (2 U.S.C. 168b) is amended--\n                    (A) by striking ``There shall be printed'' and \n                inserting ``(a) There shall be printed''; and\n                    (B) by adding at the end the following new \n                subsection:\n    ``(b) Subsection (a) does not apply after completion of the October \n2025 term of the Supreme Court, and the Librarian of Congress shall \nprovide the decennial revised editions of the Constitution Annotated \nand the cumulative pocket part supplements prepared under this Joint \nResolution exclusively in a digital format available at a public \nwebsite of the Library of Congress.''.\n            (2) Printing of additional copies pursuant to concurrent \n        resolution.--Section 4 of Public Law 91-589 (2 U.S.C. 168c) is \n        repealed.\n\n            Passed the House of Representatives March 31, 2025.\n\n            Attest:\n\n                                                                 Clerk.\n119th CONGRESS\n\n  1st Session\n\n                               H. R. 1234\n\n_______________________________________________________________________\n\n                                 AN ACT\n\nTo direct the Librarian of Congress to promote the more cost-effective, \nefficient, and expanded availability of the Annotated Constitution and \n   pocket-part supplements by replacing the hardbound versions with \n                           digital versions.\n</pre></body></html>\n"
  },
- "http POST https://api.govinfo.gov/search {\"api_key\": \"oxPhowHTAIn6azOcJanSiGQmb5VvfN6sJWCzucZP\"}": {
+ "http POST https://api.govinfo.gov/search {}": {
   "headers": {
    "Age": "0",
    "Connection": "keep-alive",

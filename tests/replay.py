@@ -35,6 +35,7 @@ import contextlib
 import json
 import os
 import pathlib
+import re
 import socket
 import sys
 import tempfile
@@ -95,7 +96,22 @@ def _key(*parts):
             out.append(json.dumps(p, sort_keys=True, default=str))
         else:
             out.append(str(p))
-    return " ".join(out)
+    return _redact(" ".join(out))
+
+
+# Keys are committed and the repo is public. An api_key used to ride in them
+# verbatim (efce83a leaked three), and it also split keys by machine: a local
+# run keyed on the real key, CI keyed on null, so CI missed every one.
+_API_KEY_JSON = re.compile(r'"api_key": (?:null|"[^"]*")(?:, )?')
+_API_KEY_URL = re.compile(r'([?&])api_key=[^&\s"]*&?')
+
+
+_DANGLING = re.compile(r'[?&](?=[\s"]|$)')
+
+
+def _redact(key):
+    key = _API_KEY_JSON.sub("", key).replace(", }", "}")
+    return _DANGLING.sub("", _API_KEY_URL.sub(r"\1", key))
 
 
 # ------------------------------------------------------- the fake LLM client
