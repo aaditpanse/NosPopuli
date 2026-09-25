@@ -436,6 +436,11 @@ def prepare_env():
     # flag_logger reads os.environ[...] directly: absence is a KeyError.
     os.environ.setdefault("SUPABASE_URL", "http://replay.invalid")
     os.environ.setdefault("SUPABASE_API_KEY", "replay")
+    # api.py reads MONITOR_SECRET at import: set, an unauthenticated request is
+    # 403; unset, 503. A developer's .env set it and CI did not, so every admin
+    # fixture was 403 locally and 503 in CI. A fixed placeholder, in both modes,
+    # pins the refusal contract on every machine and never a real secret.
+    os.environ["MONITOR_SECRET"] = "replay-not-a-secret"
     # Keep the real key reachable for record mode, then sentinel the live one so
     # a missed seam fails to authenticate instead of billing.
     real = os.environ.get("ANTHROPIC_API_KEY", "")
