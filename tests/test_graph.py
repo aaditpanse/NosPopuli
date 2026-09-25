@@ -814,6 +814,15 @@ class MoneyTest(unittest.TestCase):
         none = graph.search("who funds Griffith", self.b, today=TODAY)
         self.assertEqual(none["empty_reason"], "no FEC record on disk for H. Morgan Griffith")
 
+    def test_an_error_written_to_a_snapshot_never_carries_the_key(self):
+        # requests puts the full URL in its messages; snapshots are committed.
+        e = ConnectionError("Max retries exceeded with url: /v1/candidate/H0/committees/"
+                            "?api_key=SECRET123&designation=P (Caused by NameResolutionError)")
+        out = graph._redact(e)
+        self.assertNotIn("SECRET123", out)
+        self.assertIn("api_key=REDACTED&designation=P", out)
+        self.assertTrue(out.startswith("ConnectionError: "))
+
     def test_snapshot_refuses_without_a_key(self):
         with mock.patch.dict(os.environ, {"FEC_API_KEY": ""}):
             with self.assertRaisesRegex(RuntimeError, "DEMO_KEY"):

@@ -1132,7 +1132,7 @@ def snapshot_congress(congress, session, year, out_path, max_misses=3, pause=0.1
             try:
                 r = s.get(url, timeout=20, allow_redirects=False)
             except requests.RequestException as e:
-                errors.append(f"{url}: {e}")
+                errors.append(f"{url}: {_redact(e)}")
                 misses += 1
                 roll += 1
                 continue
@@ -1145,7 +1145,7 @@ def snapshot_congress(congress, session, year, out_path, max_misses=3, pause=0.1
                 parse = parse_house_roll if chamber == "house" else parse_senate_roll
                 votes.append(parse(r.content, congress, session, url))
             except Exception as e:  # one malformed record must not sink the run
-                errors.append(f"{url}: {type(e).__name__}: {e}")
+                errors.append(f"{url}: {_redact(e)}")
             roll += 1
             time.sleep(pause)
     instruments, sponsor_errors = fetch_instruments(votes, s, congress)
@@ -1163,6 +1163,16 @@ def snapshot_congress(congress, session, year, out_path, max_misses=3, pause=0.1
 
 
 _BILL_TYPES = {"hr", "s", "hres", "sres", "hjres", "sjres", "hconres", "sconres"}
+
+
+_API_KEY_RE = re.compile(r"api_key=[^&\s'\"]+")
+
+
+def _redact(e):
+    """An exception's text, safe to write into a snapshot that gets
+    committed: requests puts the full URL, api_key included, in its
+    messages."""
+    return f"{type(e).__name__}: {_API_KEY_RE.sub('api_key=REDACTED', str(e))}"
 
 
 def _paged(session_, url, key, list_key, errors):
@@ -1275,7 +1285,7 @@ def fetch_instruments(votes, session_, congress, pause=0.1):
                 rec["passes"].append("related")
             out[label] = rec
         except Exception as e:
-            errors.append(f"{base}: {type(e).__name__}: {e}")
+            errors.append(f"{base}: {_redact(e)}")
         time.sleep(pause)
     return out, errors
 
@@ -1423,7 +1433,7 @@ def snapshot_fec(cycle, out_path, pause=1.05, pacs=True, max_age_days=None, budg
                     rec["gap"] = f"no principal campaign committee for {cycle}"
             rec["complete"] = True
         except Exception as e:
-            snap["meta"]["errors"].append(f"{bio}: {type(e).__name__}: {e}")
+            snap["meta"]["errors"].append(f"{bio}: {_redact(e)}")
         snap["members"][bio] = rec
         snap["meta"]["updated"] = datetime.datetime.now().isoformat(timespec="seconds")
         path.write_text(json.dumps(snap, separators=(",", ":")))
