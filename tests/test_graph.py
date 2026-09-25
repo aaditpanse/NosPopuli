@@ -490,6 +490,61 @@ class AllMembersTest(unittest.TestCase):
         self.assertEqual(sorted(n["name"] for n in states), ["North Carolina", "Virginia"])
 
 
+HISTORICAL = [
+    legislator("W000154", "John", "Warner",
+               [{"type": "sen", "state": "VA", "class": 2, "start": "1979-01-02",
+                 "end": "2009-01-03", "party": "Republican"}]),
+    legislator("R000001", "Early", "Member",
+               [rep("OL", -1, "1807-10-26", "1809-03-03", "Democratic-Republican")]),
+    # Also in the current file: the current record must win.
+    legislator("A000370", "Alma", "Adams-Stale", [rep("NC", 12, "2014-11-04", "2015-01-03")]),
+]
+
+
+class HistoricalMembersTest(unittest.TestCase):
+    def setUp(self):
+        legs, self.merge_gaps = graph.merge_legislators(LEGISLATORS, HISTORICAL)
+        self.nodes, self.edges, _ = graph.build_congress(legs, [SNAPSHOT], today=TODAY)
+        self.by_id = {n["id"]: n for n in self.nodes}
+
+    def test_former_member_holds_have_exact_ends_and_their_source(self):
+        john = person_named(self.nodes, "John Warner")
+        self.assertEqual(john["source_id"], "legislators-historical")
+        (h,) = [e for e in by_pred(self.edges, "holds") if e["src"] == john["id"]]
+        self.assertEqual((h["valid_from"], h["valid_to"], h["props"]["bound_to"]),
+                         ("1979-01-02", "2009-01-03", "exact"))
+        self.assertEqual(h["source_id"], "legislators-historical")
+
+    def test_current_record_wins_a_collision_and_says_so(self):
+        adams = [n for n in self.nodes if n["props"].get("bioguide") == "A000370"]
+        self.assertEqual([n["name"] for n in adams], ["Alma Adams"])
+        self.assertEqual(adams[0]["source_id"], "legislators-current")
+        self.assertTrue(any("A000370" in g and "kept the current" in g for g in self.merge_gaps))
+
+    def test_unrecorded_district_and_former_territory(self):
+        post = next(n for n in self.nodes if n["kind"] == "post"
+                    and n["props"]["natural_key"] == "us/house/ol/cd:unrecorded")
+        self.assertIn("district not recorded", post["name"])
+        self.assertEqual(self.by_id[f"{graph.US}/state:ol"]["name"], "Territory of Orleans")
+        self.assertNotIn(f"{graph.US}/state:ol/cd:-1", self.by_id)
+
+    def test_same_surname_asks_which_person(self):
+        b = graph.memory_backend(self.nodes, self.edges)
+        out = graph.answer({"ask": "votes", "person": "Warner", "topic": None}, b)
+        self.assertTrue(out["ambiguous"])
+        self.assertEqual(out["rows"], [])
+        self.assertIn("2 people", out["empty_reason"])
+        # Serving now first; each candidate says where and when.
+        self.assertEqual([(c["name"], c["from"], c["to"]) for c in out["candidates"]],
+                         [("Mark R. Warner", "2021", None), ("John Warner", "1979", "2009")])
+        self.assertIn("U.S. Senator, VA (class 2), U.S. Senate", out["candidates"][1]["seats"])
+        # Given and family name settle it; the middle initial does not hide him.
+        one = graph.answer({"ask": "votes", "person": "Mark Warner", "topic": None}, b)
+        self.assertNotIn("ambiguous", one)
+        self.assertEqual([p["name"] for p in one["persons"]], ["Mark R. Warner"])
+        self.assertEqual(one["count"], 1)
+
+
 class ParseInstrumentTest(unittest.TestCase):
     def test_house_forms(self):
         for legis, want in (("H R 5184", ("hr", "5184")), ("H J RES 3", ("hjres", "3")),
@@ -581,7 +636,9 @@ class ParseQuestionTest(unittest.TestCase):
 
     def test_seat_terms(self):
         self.assertEqual(graph._seat_terms("VA-11"), ["us/house/va/cd:11"])
-        self.assertEqual(graph._seat_terms("Virginia's 11th district"), ["cd:11"])
+        # The state narrows the district: every state has an 11th.
+        self.assertEqual(graph._seat_terms("Virginia's 11th district"), ["/va/", "cd:11"])
+        self.assertEqual(graph._seat_terms("senator for West Virginia"), ["/wv/", "senator"])
         self.assertEqual(graph._seat_terms("the Braddock District seat"), ["braddock"])
 
 

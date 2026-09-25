@@ -74,12 +74,21 @@ DIVISION_NAMES = {
     "wv": "West Virginia", "wi": "Wisconsin", "wy": "Wyoming",
     "dc": "District of Columbia", "as": "American Samoa", "gu": "Guam",
     "mp": "Northern Mariana Islands", "pr": "Puerto Rico", "vi": "U.S. Virgin Islands",
+    # Former territories that sent delegates (legislators-historical).
+    "ol": "Territory of Orleans", "dk": "Dakota Territory", "pi": "Philippine Islands",
 }
 
 US = "ocd-division/country:us"
 HOUSE_KEY, SENATE_KEY = "us/house", "us/senate"
 CHAMBER_NAME = {"house": "U.S. House of Representatives", "senate": "U.S. Senate"}
 LEGISLATORS_SOURCE = "legislators-current"
+HISTORICAL_SOURCE = "legislators-historical"
+# The public files `python graph.py fetch` downloads into data/. Congress
+# itself does not publish these as data; the unitedstates project assembles
+# them from the Biographical Directory and the clerks.
+PUBLIC_DATA_URL = "https://raw.githubusercontent.com/unitedstates/congress-legislators/gh-pages/{}.json"
+PUBLIC_FILES = ("legislators-current", "legislators-historical", "executive",
+                "committees-current", "committee-membership-current")
 
 _NS = uuid.uuid5(uuid.NAMESPACE_DNS, "nospopuli.org")
 _OCD_PREFIX = {"organization": "ocd-organization", "post": "ocd-post",
@@ -586,6 +595,13 @@ def build_congress(legislators, snapshots, states=None, today=None):
             key = f"us/senate/{st.lower()}/class:{term.get('class')}"
             label = f"U.S. Senator, {st} (class {term.get('class')})"
             division, chamber = state_div(st), "senate"
+        elif term.get("district") == -1:
+            # The historical file writes -1 when the district is not
+            # recorded (general-ticket states, early Congresses). One post
+            # per state holds them all; a district number would be a guess.
+            key = f"us/house/{st.lower()}/cd:unrecorded"
+            label = f"U.S. Representative, {st} (district not recorded)"
+            division, chamber = state_div(st), "house"
         else:
             cd = term.get("district") or 1
             key = f"us/house/{st.lower()}/cd:{cd}"
@@ -598,7 +614,7 @@ def build_congress(legislators, snapshots, states=None, today=None):
                       {"level": "state", "jurisdiction": state_div(st)}, LEGISLATORS_SOURCE)
                 _edge(g, US, "contains", state_div(st), None, None, "ingested",
                       LEGISLATORS_SOURCE, "seed", state_div(st), {"derived": "seed"})
-            if division not in g["nodes"]:
+            if division not in g["nodes"] and division != state_div(st):
                 _node(g, division, "jurisdiction", f"{st}-{term.get('district') or 1}",
                       {"level": "district", "jurisdiction": state_div(st)}, LEGISLATORS_SOURCE)
                 _edge(g, state_div(st), "contains", division, None, None, "ingested",
@@ -624,6 +640,7 @@ def build_congress(legislators, snapshots, states=None, today=None):
             continue
         current = leg["terms"][-1]
         home = state_div(current["state"])
+        source = leg.get("_source", LEGISLATORS_SOURCE)
         nk = f"bioguide/{bioguide}"
         pid = node_id("person", nk)
         name = leg["name"].get("official_full") or \
@@ -636,7 +653,7 @@ def build_congress(legislators, snapshots, states=None, today=None):
                "lis": ids.get("lis"), "party": current.get("party"),
                "external_ids": {k: ids[k] for k in ("govtrack", "opensecrets", "fec",
                                                     "wikidata") if k in ids},
-               "jurisdiction": home}, LEGISLATORS_SOURCE, bioguide)
+               "jurisdiction": home}, source, bioguide)
         by_bioguide[bioguide] = pid
         if ids.get("lis"):
             by_lis[ids["lis"]] = pid
@@ -650,7 +667,7 @@ def build_congress(legislators, snapshots, states=None, today=None):
             else:
                 props["term_expires"] = t.get("end")
             row = _edge(g, pid, "holds", post, t["start"], t["end"] if expired else None,
-                        "ingested", LEGISLATORS_SOURCE, f"{bioguide}/{t['start']}",
+                        "ingested", source, f"{bioguide}/{t['start']}",
                         state_div(t["state"]), props)
             holds.setdefault(post, []).append(row)
     _close_double_holds(g, holds, post_label)
@@ -757,7 +774,7 @@ def build_congress(legislators, snapshots, states=None, today=None):
                          f"(quorum calls, Speaker elections, motions) and were not loaded")
     if unknown:
         g["gaps"].append(f"{sum(unknown.values())} vote position(s) by {len(unknown)} member "
-                         f"id(s) not in {LEGISLATORS_SOURCE} (left office mid-session?) dropped")
+                         f"id(s) not in the legislators files dropped")
     return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
 
 
@@ -1017,15 +1034,54 @@ def _congress_snapshots():
     return [json.loads(p.read_text()) for p in sorted(DATA_DIR.glob("congress-votes-*.json"))]
 
 
+def merge_legislators(current, historical):
+    """One list, one record per bioguide id, each tagged with the file it
+    came from. The current file wins a collision: it is maintained, and
+    the historical one only receives a member after they leave. Pure.
+    Returns (legislators, gaps)."""
+    seen = {leg["id"].get("bioguide") for leg in current}
+    out = [{**leg, "_source": LEGISLATORS_SOURCE} for leg in current]
+    dupes = []
+    for leg in historical:
+        if leg["id"].get("bioguide") in seen:
+            dupes.append(leg["id"]["bioguide"])
+            continue
+        out.append({**leg, "_source": HISTORICAL_SOURCE})
+    gaps = [f"{len(dupes)} member(s) in both legislators files ({', '.join(dupes[:5])}); "
+            f"kept the current record"] if dupes else []
+    return out, gaps
+
+
+def fetch_public(names=PUBLIC_FILES):
+    """Download the public data files into data/. The only network step for
+    them; the loader reads the files. Returns {name: bytes written}."""
+    import requests
+    out = {}
+    for name in names:
+        r = requests.get(PUBLIC_DATA_URL.format(name), timeout=60)
+        r.raise_for_status()
+        json.loads(r.content)   # fail-closed: never overwrite a good file with a bad one
+        (DATA_DIR / f"{name}.json").write_bytes(r.content)
+        out[name] = len(r.content)
+    return out
+
+
 def build_source(source, states=None):
     """Read the inputs for one source off disk and build. Returns
     (nodes, edges, gaps, delete scopes)."""
     if source == "us-congress":
-        legislators = json.loads((DATA_DIR / "legislators-current.json").read_text())
+        current = json.loads((DATA_DIR / "legislators-current.json").read_text())
+        hist_path = DATA_DIR / "legislators-historical.json"
+        historical = json.loads(hist_path.read_text()) if hist_path.exists() else []
+        legislators, merge_gaps = merge_legislators(current, historical)
         snaps = _congress_snapshots()
         if not snaps:
             raise RuntimeError("no data/congress-votes-*.json — run `python graph.py snapshot 119 2 2026`")
         nodes, edges, gaps = build_congress(legislators, snaps, states)
+        gaps = merge_gaps + gaps
+        if not historical:
+            gaps.append("no data/legislators-historical.json: former members are not loaded "
+                        "(run `python graph.py fetch`)")
         scopes = [f"{US}/state:{s.lower()}" for s in states] if states else \
             sorted({e["props"]["jurisdiction"] for e in edges})
         return nodes, edges, gaps, scopes
@@ -1139,19 +1195,55 @@ def current_session(today=None):
     return congress, 1 if today.year % 2 else 2, today.year
 
 
+def _name_tokens(query):
+    """'Mark Warner' → ['mark', 'warner']. A name matches when it contains
+    every token, so a middle initial ('Mark R. Warner') does not hide it."""
+    return [t for t in re.split(r"[\s,.]+", query.lower()) if t]
+
+
 def _pg_persons(cur, query):
-    like = f"%{query}%"
-    cur.execute("""
+    likes = [f"%{t}%" for t in _name_tokens(query)] or [f"%{query}%"]
+    all_in = lambda col: " AND ".join(f"{col} ILIKE %s" for _ in likes)  # noqa: E731
+    cur.execute(f"""
         SELECT id, name, props->'aliases' AS aliases, props->>'seat' AS seat,
                props->>'bioguide' AS bioguide
         FROM graph_node
         WHERE kind = 'person'
-          AND (name ILIKE %s OR EXISTS (
+          AND (({all_in("name")}) OR EXISTS (
                 SELECT 1 FROM jsonb_array_elements_text(props->'aliases') a
-                WHERE a ILIKE %s))
+                WHERE {all_in("a")}))
         ORDER BY name
-    """, (like, like))
+    """, likes + likes)
     return cur.fetchall()
+
+
+_CAREERS_SQL = """
+    SELECT e.src, o.name AS seat, e.valid_from, e.valid_to
+    FROM graph_edge e JOIN graph_node o ON o.id = e.dst
+    WHERE e.predicate = 'holds' AND e.src = ANY(%s)
+"""
+
+
+def careers_from_holds(rows):
+    """holds rows (src, seat, valid_from, valid_to) → {person id: {seats,
+    from, to}}, `to` None while a term is open. Pure; both backends feed it
+    so a candidate list reads the same from memory and from Postgres."""
+    out = {}
+    for r in rows:
+        c = out.setdefault(r["src"], {"seats": [], "from": None, "to": "", "_open": False})
+        if r["seat"] not in c["seats"]:
+            c["seats"].append(r["seat"])
+        start, end = str(r["valid_from"] or ""), r["valid_to"]
+        if start and (c["from"] is None or start < c["from"]):
+            c["from"] = start
+        if end is None:
+            c["_open"] = True
+        elif str(end) > c["to"]:
+            c["to"] = str(end)
+    for c in out.values():
+        c["from"] = c["from"][:4] if c["from"] else None
+        c["to"] = None if c.pop("_open") else (c["to"][:4] or None)
+    return out
 
 
 _VOTE_ROW_SQL = """
@@ -1339,11 +1431,20 @@ def _seat_terms(seat_query):
     m = re.search(r"\b([a-z]{2})[- ]?(\d{1,2})\b", q)
     if m:
         return [f"us/house/{m.group(1)}/cd:{m.group(2)}"]
+    # A state named in full becomes its code in the natural key, longest
+    # name first: "Virginia" must not match "West Virginia"'s seats.
+    state = []
+    for code, name in sorted(DIVISION_NAMES.items(), key=lambda kv: -len(kv[1])):
+        rx = rf"\b{re.escape(name.lower())}\b(?:'s)?"
+        if re.search(rx, q):
+            state = [f"/{code}/"]
+            q = re.sub(rx, " ", q)
+            break
     m = re.search(r"\b(\d{1,2})(?:st|nd|rd|th)\b", q)
     if m:
-        return [f"cd:{m.group(1)}"]
+        return state + [f"cd:{m.group(1)}"]
     q = re.sub(r"\b(the|of|for|district|seat|county|board|supervisor|supervisors|from)\b", " ", q)
-    return [t for t in re.split(r"[^a-z0-9]+", q) if t]
+    return state + [t for t in re.split(r"[^a-z0-9]+", q) if t]
 
 
 def _post_matches(post, terms):
@@ -1390,13 +1491,19 @@ def memory_backend(nodes, edges):
         return (i["props"].get("topic") or "").lower().startswith(t) or t in i["name"].lower()
 
     def persons(query):
-        q = query.lower()
+        toks = _name_tokens(query) or [query.lower()]
+        has_all = lambda text: all(t in text.lower() for t in toks)  # noqa: E731
         return sorted(({"id": n["id"], "name": n["name"], "aliases": n["props"].get("aliases", []),
                         "seat": n["props"].get("seat"), "bioguide": n["props"].get("bioguide")}
                        for n in nodes if n["kind"] == "person"
-                       and (q in n["name"].lower()
-                            or any(q in a.lower() for a in n["props"].get("aliases", [])))),
+                       and (has_all(n["name"]) or any(has_all(a) for a in n["props"].get("aliases", [])))),
                       key=lambda p: p["name"])
+
+    def careers(person_ids):
+        return careers_from_holds([{"src": e["src"], "seat": by_id[e["dst"]]["name"],
+                                    "valid_from": e["valid_from"], "valid_to": e["valid_to"]}
+                                   for pid in person_ids for e in out.get(pid, [])
+                                   if e["predicate"] == "holds"])
 
     def votes_of(person_ids, topic, limit, predicate="voted_on"):
         mine = [e for pid in person_ids for e in out.get(pid, []) if e["predicate"] == predicate]
@@ -1422,7 +1529,7 @@ def memory_backend(nodes, edges):
         rows.sort(key=lambda r: (r["date"], r["item_id"], r["person"]), reverse=True)
         return rows[:limit], len(rows) > limit
 
-    return {"persons": persons, "votes": votes_of, "posts": posts,
+    return {"persons": persons, "votes": votes_of, "posts": posts, "careers": careers,
             "holds": holds_of, "voters": voters, "loaded": lambda: bool(nodes)}
 
 
@@ -1441,6 +1548,10 @@ def pg_backend():
 
     def votes_of(person_ids, topic, limit, predicate="voted_on"):
         return run(lambda cur: _pg_votes(cur, person_ids, topic, limit, predicate))
+
+    def careers(person_ids):
+        return run(lambda cur: (cur.execute(_CAREERS_SQL, (person_ids,)),
+                                careers_from_holds(cur.fetchall()))[1])
 
     def posts(seat_query):
         terms = _seat_terms(seat_query)
@@ -1486,7 +1597,7 @@ def pg_backend():
         return run(lambda cur: (cur.execute("SELECT EXISTS (SELECT 1 FROM graph_node) AS any"),
                                 cur.fetchone()["any"])[1])
 
-    return {"persons": persons, "votes": votes_of, "posts": posts,
+    return {"persons": persons, "votes": votes_of, "posts": posts, "careers": careers,
             "holds": holds_of, "voters": voters, "loaded": loaded}
 
 
@@ -1512,6 +1623,30 @@ def strip_place(topic):
     return " ".join(kept) or topic, " ".join(dropped) or None
 
 
+_MAX_CANDIDATES = 25
+
+
+def _one_person(persons, query, topic, ask, backend):
+    """None when the query names one person; otherwise the answer that asks
+    which one. Merging the votes of every Warner since 1789 would answer a
+    question nobody asked. An exact name or alias match settles it."""
+    q = query.lower().strip()
+    exact = [p for p in persons if p["name"].lower() == q
+             or any(a.lower() == q for a in p.get("aliases") or [])]
+    if len(exact) == 1 or len(persons) == 1:
+        return None, exact or persons
+    careers = backend["careers"]([p["id"] for p in persons])
+    cands = [{"id": p["id"], "name": p["name"], **careers.get(p["id"], {"seats": [], "from": None, "to": None})}
+             for p in persons]
+    # Serving now first, then the most recent.
+    cands.sort(key=lambda c: (c["to"] is not None, -int(c["to"] or 0), c["name"]))
+    out = shape_answer([], persons, query, topic) | {
+        "ask": ask, "ambiguous": True, "candidates": cands[:_MAX_CANDIDATES],
+        "candidate_count": len(cands),
+        "empty_reason": f"{len(cands)} people in the graph match {query!r}; name one of them"}
+    return out, persons
+
+
 def answer(parsed, backend, limit=200):
     """Run one parsed question against a backend. Every branch returns a
     dict with `ask`, `hops` / `weak_hops`, and an `empty_reason` when there
@@ -1525,6 +1660,9 @@ def answer(parsed, backend, limit=200):
         persons = backend["persons"](parsed["person"])
         if not persons:
             return shape_answer([], [], parsed["person"], None) | {"ask": ask}
+        which, persons = _one_person(persons, parsed["person"], None, ask, backend)
+        if which:
+            return which
         rows, total, truncated = backend["votes"]([p["id"] for p in persons], None, limit, "sponsored")
         out = shape_answer(rows, persons, parsed["person"], None, total, truncated, predicate="sponsored")
         if not rows:
@@ -1543,6 +1681,9 @@ def answer(parsed, backend, limit=200):
         persons = backend["persons"](parsed["person"])
         if not persons:
             return shape_answer([], [], parsed["person"], topic) | {"ask": ask}
+        which, persons = _one_person(persons, parsed["person"], topic, ask, backend)
+        if which:
+            return which | {"place_ignored": place}
         rows, total, truncated = backend["votes"]([p["id"] for p in persons], topic, limit)
         return shape_answer(rows, persons, parsed["person"], topic, total, truncated) | {
             "ask": ask, "place_ignored": place}
@@ -1610,6 +1751,7 @@ if __name__ == "__main__":
         s.add_argument("source", choices=sources)
         s.add_argument("--state", action="append",
                        help="us-congress only: delegation(s) to load, e.g. --state VA")
+    sub.add_parser("fetch", help="download the public legislators, executive and committee files to data/")
     s = sub.add_parser("snapshot", help="fetch one session's roll calls to data/ (no args: the current session)")
     s.add_argument("congress", type=int, nargs="?")
     s.add_argument("session", type=int, nargs="?")
@@ -1640,6 +1782,9 @@ if __name__ == "__main__":
         print(f"{len(gaps)} gap(s):")
         for g in gaps:
             print("  -", g)
+    elif a.cmd == "fetch":
+        for name, n in fetch_public().items():
+            print(f"{name}: {n:,} bytes")
     elif a.cmd == "snapshot":
         congress, session, year = (a.congress, a.session, a.year) if a.congress else current_session()
         out = DATA_DIR / f"congress-votes-{congress}-{session}.json"
