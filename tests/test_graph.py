@@ -6,9 +6,11 @@ with three roll calls, a seat that changed hands with no contest on disk, and
 a person who won two different bodies' seats in the same district.
 """
 
+import json
 import os
 import pathlib
 import sys
+import tempfile
 import unittest
 from unittest import mock
 
@@ -796,6 +798,43 @@ class MoneyTest(unittest.TestCase):
         with mock.patch.dict(os.environ, {"FEC_API_KEY": ""}):
             with self.assertRaisesRegex(RuntimeError, "DEMO_KEY"):
                 graph.snapshot_fec(2026, "/nonexistent/fec.json")
+
+
+OLDER = {"meta": {"congress": 118, "session": 2, "year": 2024},
+         "instruments": {"hr/99": {"title": "The Older Act", "policy_area": "Taxation"}},
+         "votes": [house_vote(7, "H R 99", {"no": ["G000568"], "aye": ["A000370"]}, date="2024-03-01")
+                   | {"vote_id": "us/118/2/house/7", "congress": 118, "session": 2}]}
+
+
+class OlderSessionsTest(unittest.TestCase):
+    def test_older_roll_calls_certify_terms_without_edges(self):
+        nodes, edges, _ = graph.build_congress(LEGISLATORS, [SNAPSHOT], today=TODAY, cert_snapshots=[OLDER])
+        self.assertFalse(any(e["source_ref"].startswith("us/118/") for e in edges))
+        self.assertNotIn("instrument/us/118/hr/99", {n["id"] for n in nodes})
+        griffith = person_named(nodes, "H. Morgan Griffith")
+        old_term = next(e for e in by_pred(edges, "holds")
+                        if e["src"] == griffith["id"] and e["valid_from"] == "2023-01-03")
+        # Uncertified without the file (see BuildCongressTest); certified by it.
+        self.assertEqual(old_term["certification"], "certified")
+        self.assertIn("us/118/2/house/7", old_term["props"]["certified_by"])
+
+    def test_a_vote_question_in_an_older_year_reads_the_file(self):
+        with tempfile.TemporaryDirectory() as d:
+            pathlib.Path(d, "congress-votes-118-2.json").write_text(json.dumps(OLDER))
+            with mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)), \
+                    mock.patch.object(graph, "current_session", return_value=(119, 2, 2026)):
+                nodes, edges, _ = graph.build_congress(LEGISLATORS, [SNAPSHOT], today=TODAY)
+                b = graph.memory_backend(nodes, edges)
+                out = graph.search("how did Griffith vote on taxation in 2024", b, today=TODAY)
+                self.assertEqual([(r["item_id"], r["position"], r["title"]) for r in out["rows"]],
+                                 [("instrument/us/118/hr/99", "no", "H R 99: The Older Act")])
+                self.assertEqual(out["from_snapshot"], ["congress-votes-118-2.json"])
+                gone = graph.search("how did Griffith vote in 2020", b, today=TODAY)
+                self.assertEqual(gone["empty_reason"], "no roll-call snapshot on disk for 2020")
+                # A year inside the loaded Congress stays on the graph.
+                now = graph.search("how did Griffith vote in 2026", b, today=TODAY)
+                self.assertNotIn("from_snapshot", now)
+                self.assertEqual({r["date"][:4] for r in now["rows"]}, {"2026"})
 
 
 class ParseInstrumentTest(unittest.TestCase):

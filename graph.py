@@ -574,11 +574,14 @@ def _parse_instrument(chamber, vote):
     return doc_type, number
 
 
-def build_congress(legislators, snapshots, states=None, today=None):
+def build_congress(legislators, snapshots, states=None, today=None, cert_snapshots=()):
     """legislators-current.json + roll-call snapshots → (nodes, edges, gaps).
 
     states: iterable of two-letter codes to load (a delegation), or None
-    for every member. Pure; no I/O.
+    for every member. snapshots become `voted_on` edges; cert_snapshots
+    (older sessions) only certify the terms their roll calls fall inside
+    and emit no edges: their positions stay in the file and are read at
+    the leaf. Pure; no I/O.
     """
     today = today or datetime.date.today().isoformat()
     states = {s.upper() for s in states} if states else None
@@ -773,6 +776,14 @@ def build_congress(legislators, snapshots, states=None, today=None):
     for e in g["edges"].values():
         if e["predicate"] == "voted_on":
             voted_days.setdefault(e["src"], []).append((e["valid_from"], e["source_ref"], e["source_id"]))
+    for snap in cert_snapshots:
+        for v in snap.get("votes", []):
+            lookup = by_lis if v.get("id_kind") == "lis" else by_bioguide
+            for ids in v.get("positions", {}).values():
+                for mid in ids:
+                    pid = lookup.get(mid)
+                    if pid is not None:
+                        voted_days.setdefault(pid, []).append((v["date"], v["vote_id"], v["source_id"]))
     certified_holds = 0
     for rows in holds.values():
         for h in rows:
@@ -1445,6 +1456,51 @@ def build_money(fec_snapshots, person_ids):
     return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
 
 
+def _instrument_matches(iid, title, topic, policy):
+    """The memory backend's topic test, for a vote read from a file."""
+    ref = _bill_ref(topic)
+    if ref:
+        return bool(iid) and iid.endswith(f"/{ref[0]}/{ref[1]}")
+    t = topic.lower()
+    return (policy or "").lower().startswith(t) or t in title.lower()
+
+
+def snapshot_votes(persons, year, topic, limit, loaded_congress):
+    """A person's votes in one year, read from the roll-call snapshots of
+    sessions that are not loaded as edges. Same row shape as the graph's.
+    Returns (rows, total, truncated, files read)."""
+    rows, files = [], []
+    for p in sorted(DATA_DIR.glob("congress-votes-*.json")):
+        snap = json.loads(p.read_text())
+        meta = snap.get("meta") or {}
+        if meta.get("year") != year or meta.get("congress") == loaded_congress:
+            continue
+        files.append(p.name)
+        recs = snap.get("instruments") or {}
+        for v in snap.get("votes", []):
+            for person in persons:
+                mid = person.get("lis") if v.get("id_kind") == "lis" else person.get("bioguide")
+                pos = next((k for k, ids in v.get("positions", {}).items() if mid and mid in ids), None)
+                if pos is None:
+                    continue
+                inst = _parse_instrument(v["chamber"], v)
+                iid = f"instrument/us/{v['congress']}/{inst[0]}/{inst[1]}" if inst else None
+                rec = recs.get(f"{inst[0]}/{inst[1]}") or {} if inst else {}
+                label = v.get("legis_num") or v.get("document_name") or ""
+                title = f"{label}: {rec.get('title') or v.get('description') or ''}".strip(": ")
+                if topic and not _instrument_matches(iid, title, topic, rec.get("policy_area")):
+                    continue
+                rows.append({"person_id": person["id"], "person": person["name"], "position": pos,
+                             "date": v["date"], "certification": "ingested", "vote_id": v["vote_id"],
+                             "question": v.get("question"), "item_id": iid, "title": title,
+                             "instrument_type": inst[0] if inst else None, "jurisdiction": US,
+                             "topic": rec.get("policy_area"),
+                             "topic_derived_by": "congress.gov policyArea" if rec.get("policy_area") else None,
+                             "result": v.get("result"), "meeting_id": None})
+    rows.sort(key=lambda r: (r["date"], r["item_id"] or ""), reverse=True)
+    return rows[:limit], len(rows), len(rows) > limit, files
+
+
 def fec_detail(bioguide, cycle):
     """The top PACs for one member and cycle, read from the snapshot at
     answer time: contributions are events, and events stay at the leaf."""
@@ -1596,10 +1652,19 @@ def build_source(source, states=None):
         hist_path = DATA_DIR / "legislators-historical.json"
         historical = json.loads(hist_path.read_text()) if hist_path.exists() else []
         legislators, merge_gaps = merge_legislators(current, historical)
-        snaps = _congress_snapshots()
-        if not snaps:
+        every = _congress_snapshots()
+        if not every:
             raise RuntimeError("no data/congress-votes-*.json — run `python graph.py snapshot 119 2 2026`")
-        nodes, edges, gaps = build_congress(legislators, snaps, states)
+        # The current Congress's roll calls are edges; older sessions stay in
+        # their files (the events rule) and only certify terms.
+        congress = current_session()[0]
+        snaps = [x for x in every if x["meta"]["congress"] == congress]
+        older = [x for x in every if x["meta"]["congress"] != congress]
+        nodes, edges, gaps = build_congress(legislators, snaps, states, cert_snapshots=older)
+        if older:
+            names = ", ".join(f"{x['meta']['congress']}-{x['meta']['session']}" for x in older)
+            gaps.append(f"{len(older)} older session snapshot(s) ({names}) certify terms and answer "
+                        f"votes from the file; not loaded as edges")
         gaps = merge_gaps + gaps
         exec_path = DATA_DIR / "executive.json"
         if exec_path.exists():
@@ -1771,7 +1836,7 @@ def _pg_persons(cur, query):
     all_in = lambda col: " AND ".join(f"{col} ILIKE %s" for _ in likes)  # noqa: E731
     cur.execute(f"""
         SELECT id, name, props->'aliases' AS aliases, props->>'seat' AS seat,
-               props->>'bioguide' AS bioguide
+               props->>'bioguide' AS bioguide, props->>'lis' AS lis
         FROM graph_node
         WHERE kind = 'person'
           AND (({all_in("name")}) OR EXISTS (
@@ -2057,11 +2122,14 @@ def parse_question(question, today=None):
     if m and _SEAT_SIGNAL.search(q):
         return {"ask": "holder", "seat": m.group("seat").strip(),
                 "as_of": _complete_date(m.group("date"), today)}
+    # "… in 2023": a year scopes a vote question, and may send it to a file.
+    ym = re.search(r"\s+in\s+(\d{4})\s*\??\s*$", q)
     for rx in _ASK_VOTES:
-        m = rx.match(q)
+        m = rx.match(q[:ym.start()] if ym else q)
         if m:
             topic = (m.group("topic") or "").strip() or None
-            return {"ask": "votes", "person": m.group("person").strip(), "topic": topic}
+            out = {"ask": "votes", "person": m.group("person").strip(), "topic": topic}
+            return out | {"year": int(ym.group(1))} if ym else out
     return None
 
 
@@ -2173,7 +2241,8 @@ def memory_backend(nodes, edges):
         toks = _name_tokens(query) or [query.lower()]
         has_all = lambda text: all(t in text.lower() for t in toks)  # noqa: E731
         return sorted(({"id": n["id"], "name": n["name"], "aliases": n["props"].get("aliases", []),
-                        "seat": n["props"].get("seat"), "bioguide": n["props"].get("bioguide")}
+                        "seat": n["props"].get("seat"), "bioguide": n["props"].get("bioguide"),
+                        "lis": n["props"].get("lis")}
                        for n in nodes if n["kind"] == "person"
                        and (has_all(n["name"]) or any(has_all(a) for a in n["props"].get("aliases", [])))),
                       key=lambda p: p["name"])
@@ -2631,7 +2700,23 @@ def answer(parsed, backend, limit=200):
         which, persons = _one_person(persons, parsed["person"], topic, ask, backend)
         if which:
             return which | {"place_ignored": place}
-        rows, total, truncated = backend["votes"]([p["id"] for p in persons], topic, limit)
+        year = parsed.get("year")
+        loaded = current_session()[0]
+        if year and (year - 1789) // 2 + 1 != loaded:
+            rows, total, truncated, files = snapshot_votes(persons, year, topic, limit, loaded)
+            out = shape_answer(rows, persons, parsed["person"], topic, total, truncated) | {
+                "ask": ask, "place_ignored": place, "year": year, "from_snapshot": files}
+            if not files:
+                out["empty_reason"] = f"no roll-call snapshot on disk for {year}"
+            return out
+        if year:
+            # One Congress's votes by one person are a few thousand at most;
+            # filter the whole set, not the first page of it.
+            rows, total, _ = backend["votes"]([p["id"] for p in persons], topic, 10000)
+            rows = [r for r in rows if str(r["date"]).startswith(str(year))]
+            rows, truncated = rows[:limit], len(rows) > limit
+        else:
+            rows, total, truncated = backend["votes"]([p["id"] for p in persons], topic, limit)
         return shape_answer(rows, persons, parsed["person"], topic, total, truncated) | {
             "ask": ask, "place_ignored": place}
     if ask == "voters":
