@@ -105,7 +105,7 @@ Two tiers. Keep them apart: one is free and gates every change, the other costs 
 and answers a different question. Conflating them is how a suite becomes something
 people skip.
 
-**Tier 1 — regression. Did behaviour change?** `pytest tests/ -q` — ~285 tests, ~3s,
+**Tier 1 — regression. Did behaviour change?** `pytest tests/ -q` — ~300 tests, ~3s,
 no network, no LLM, no Postgres. Pure-logic tests plus golden fixtures over the route
 surface: request → exact response JSON, committed under `tests/golden/`. This is the
 only gate (`.github/workflows/tests.yml`). It cannot tell you an answer is *right*,

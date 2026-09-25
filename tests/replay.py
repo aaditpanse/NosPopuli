@@ -42,6 +42,8 @@ import tempfile
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 GOLDEN = ROOT / "tests" / "golden"
 REPLAY = GOLDEN / "_replay"
+STORE = GOLDEN / "_store"          # frozen foundry/data/store subset — see _install
+TODAY = "2026-09-24"               # the day _store was copied
 
 MODE = os.getenv("NOSPOPULI_REPLAY", "strict").lower()
 RECORDING = MODE == "record"
@@ -304,6 +306,36 @@ def _install(monkeypatch, caches):
     monkeypatch.setattr(documentor_agent, "LOG_FILE", str(pathlib.Path(tempfile.gettempdir()) / "nospopuli-replay-discard.jsonl"))
     monkeypatch.setattr(documentor_agent, "log_action", lambda *a, **k: None)
     monkeypatch.setattr(search_logger, "SEARCH_LOG_FILE", str(pathlib.Path(tempfile.gettempdir()) / "nospopuli-replay-discard.jsonl"))
+
+    # 7. The repo's own data and the clock are inputs too. The daily refresh
+    #    commits a new foundry/data/store to main, so a route that reads it
+    #    live drifts with no code change — /api/foundry/data went red that way
+    #    on 2026-09-21. Routes read a frozen copy under golden/_store instead:
+    #    whole files, never hand-edited, a subset chosen to stay reviewable.
+    #    `today` is frozen to the day that copy was taken. The subset has no
+    #    elections store and no item-facts, item-summaries or meeting-digests
+    #    sidecars (~2.5 MB together), so those four payload keys are pinned
+    #    empty — a gap, not a guarantee.
+    import datetime as real_dt
+    import types
+    from agents import ledger_agent
+
+    class _FrozenDate(real_dt.date):
+        @classmethod
+        def today(cls):
+            return cls.fromisoformat(TODAY)
+
+    frozen_dt = types.ModuleType("datetime")
+    frozen_dt.__dict__.update(real_dt.__dict__)
+    frozen_dt.date = _FrozenDate
+    monkeypatch.setattr(api, "_dt", frozen_dt)
+    monkeypatch.setattr(api, "_FOUNDRY_STORE", STORE)
+    monkeypatch.setattr(ledger_agent, "_FOUNDRY_STORE", STORE)
+    monkeypatch.setattr(api, "_FOUNDRY_HEALTH_PATH", STORE / "_health.json")
+    real_health_load = api._health.load
+    monkeypatch.setattr(api._health, "load",
+                        lambda path=None: real_health_load(STORE / "_health.json"))
+    api._FOUNDRY_PAYLOAD.update(sig=None, body=None)
 
     # 38 routes carry @limiter.limit over in-process storage on a module global
     # that never resets, and get_remote_address collapses every TestClient call

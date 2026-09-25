@@ -1,7 +1,7 @@
 {
  "meta": {
-  "app_sha": "33e5b54",
-  "captured": "2026-09-20T22:37:32",
+  "app_sha": "b5978e3",
+  "captured": "2026-09-24T19:59:01",
   "notes": "fails open to an honest empty state with no DB",
   "volatile": []
  },
@@ -22,6 +22,7 @@
    "query": "Jeff McKay",
    "rows": [],
    "topic": null,
+   "topic_sources": [],
    "truncated": false,
    "weak_hops": []
   },

@@ -157,29 +157,19 @@ actually mine.
 
 In order. Each step is independently useful, so none of it is wasted if I stop partway.
 
-**1. Get everything into git.** 6,341 lines of load-bearing source have never been
-committed — `frontend/js/ledger.js`, `agents/ledger_agent.py`, `foundry/health.py`,
-`search/search_rank.py`, `render/bill_text_format.py` and four of my seven test files. Not
-gitignored; never added. The production home page exists on one laptop with no history.
-This is the only genuinely urgent item here.
-
-**2. Golden fixtures.** Capture request → response JSON for all 70 endpoints from the
-live app and commit them. Cheap to make, and they're what lets me refactor anything
-afterward without guessing whether I changed behaviour.
-
-**3. Unify the two routers.** `_resolve_routing` and `classify_question` disagree and
+**1. Unify the two routers.** `_resolve_routing` and `classify_question` disagree and
 each has fast paths the other lacks. Extract `search_dispatcher.py` out of the
-3,707-line `api.py` while I'm in there.
+3,763-line `api.py` while I'm in there.
 
-**4. Give the ask SPA a state plate.** Stop `/ledger` forcing federal, and add a state
+**2. Give the ask SPA a state plate.** Stop `/ledger` forcing federal, and add a state
 bill view to `ledger.js`. This is the biggest live capability gap: the state layer is
 built and paid for and most users can't reach it.
 
-**5. Index the local corpus.** Postgres FTS over instrument titles and the 4,384 item
+**3. Index the local corpus.** Postgres FTS over instrument titles and the 4,384 item
 summaries, scoped by jurisdiction. This is what makes "zoning in Fairfax" stop
 discarding the topic.
 
-**6. The graph, Virginia first.** Two tables — `graph_node` and `graph_edge`, the latter
+**4. The graph, Virginia first.** Two tables — `graph_node` and `graph_edge`, the latter
 with `valid_from`/`valid_to` and a certification column. Federal, the General Assembly,
 and the four counties already on disk. Person resolution via the normalizer that takes
 supervisor↔contest matching from 3/12 to 9/12. Uncertified edges stay traversable and
@@ -276,7 +266,7 @@ other half of the mixed question and the legislators file already carries FEC id
 Then the General Assembly, and the other 49 delegations (`load us-congress` with no
 `--state`; ~300k `voted_on` rows a session, which is a Supabase size decision).
 
-**7. Rebuild what `/newspaper` did.** See the next section — I deleted the old tabbed
+**5. Rebuild what `/newspaper` did.** See the next section — I deleted the old tabbed
 app rather than porting it, so these are rebuilds in `ledger.js`, not migrations. The
 backends all still work; only the views are gone.
 
@@ -456,8 +446,8 @@ python -m scripts.clear_search_cache   # --all to include feed/elections
 Two tiers, kept apart on purpose.
 
 **Tier 1 — regression.** Free, deterministic, and the only thing CI gates on
-(`.github/workflows/tests.yml`). 268 tests in ~3s with no network, no LLM and no
-database: the pure-logic tests, plus golden fixtures over 56 of the 85 routes —
+(`.github/workflows/tests.yml`). 299 tests in ~3s with no network, no LLM and no
+database: the pure-logic tests, plus 56 golden fixtures over the route surface —
 request → exact response JSON, captured once and committed under `tests/golden/`.
 
 **Tier 2 — quality eval.** Measures whether search is any *good*, not whether it
@@ -465,14 +455,45 @@ changed. Costs money, opt-in, never in CI. Not built yet; `search_smoketest.py` 
 the seed.
 
 ```bash
-pytest tests/                        # Tier 1, the whole thing
-python -m unittest discover tests    # same pure-logic tests, no pytest needed
-python -m unittest tests.test_state_vote_mapper -v
+pytest tests/ -q                     # Tier 1, the whole thing
+pytest tests/ -q -k ledger           # while iterating
+python -m unittest discover tests    # the pure-logic tests, no pytest needed
 ```
 
 `pytest` is in `requirements.txt` for the golden suite, which needs strict xfail and
-parametrize. The eight pure-logic files are still stdlib `unittest` and run under
-either runner.
+parametrize. The eight pure-logic files are stdlib `unittest` and run under either
+runner. That split is deliberate, not drift.
+
+### Philosophy
+
+This is **characterization testing**. A test here proves behaviour did not change; it
+does not prove the behaviour is right. Tests are scaffolding for change — they are
+what let me refactor `api.py` without guessing. Six principles follow from that:
+
+1. **Routes are pinned by golden fixtures.** Request → whole response, diffed. A fixture
+   pins today's answer, wrong or not; two of them pin a wrong answer on purpose.
+2. **Replay is hermetic, and a miss raises.** Every boundary replays from a recording.
+   A call with no recording is a named failure, never a live call, so a green run
+   cannot be green by accident or cost money.
+3. **A test controls every input it reads.** Not only the network, the LLM and the
+   database — also the clock and the data files in the repo. The daily Foundry refresh
+   commits a new `foundry/data/store` to `main`; a route that read it live went red on
+   2026-09-21 with no code change. An input the test does not control is a test that
+   fails for someone else's reason.
+4. **Unit tests go where the risk is.** Logic that is non-trivial, that branches, or
+   that has already broken in production. Not thin wrappers over a library, and not a
+   restatement of the implementation.
+5. **Known defects are pinned, not hidden.** A strict expected-failure records the bug
+   and keeps the suite green; the day it is fixed, the test fails and asks to be
+   promoted to a plain assertion. A permanently red suite teaches everyone to ignore red.
+6. **Correctness is Tier 2's job.** Tier 1 answers "did it change?" Asking it "is it
+   right?" is how a regression suite turns into something people skip.
+
+A failing test is a finding. Read the code, decide whether the test or the code is
+wrong, and fix that one — never change application code just to turn a test green, and
+never loosen a test to get there. It happened twice while writing the first batch (a
+year-validation bug in the state regex, a participation gap in the vote mapper), and
+both times the test was right.
 
 ### Replay, and why a green run is trustworthy
 
@@ -481,6 +502,13 @@ connection, so whole responses can be diffed against fixtures. The shape is lift
 `foundry/sandbox2.py`, including the property that matters most: **a boundary with no
 fixture raises, it never falls through to a live call.** A socket guard backs that up, so
 a missed seam is a named failure rather than a surprise invoice.
+
+What it controls: the Anthropic clients, `requests`, async `httpx`, `urllib`, Postgres
+(through `correspondence.db._cursor`), the logs that would otherwise dirty the tree, the
+clock where a pinned route reads it (`api._dt.date.today()` is frozen to
+`replay.TODAY`), and the Foundry store — routes read a
+frozen subset under `tests/golden/_store/` instead of the live `foundry/data/store/`.
+The subset is whole files copied unchanged, never hand-edited.
 
 Note it blanks `SUPABASE_DB_URL` before importing `api` — `correspondence/router.py`
 calls `init_db()` at import time, so without that, merely importing the app runs
@@ -493,7 +521,34 @@ python -m tests.replay list                                    # what's pinned
 ```
 
 Re-capture only for an *intended* behaviour change, and read the fixture diff before
-committing it — that diff is the whole point.
+committing it — that diff is the whole point. Record mode makes live calls and spends
+money; never use it to debug.
+
+### Adding a test
+
+No new test files — each kind already has a home.
+
+**Pure logic.**
+1. Add `test_*` methods to the matching `tests/test_<area>.py` (a `unittest.TestCase`).
+2. Keep it free of HTTP, LLM and database; those files declare none.
+3. Run `pytest tests/ -q -k <area>` until it passes.
+4. If it caught a real bug, say what the bug was in a comment — that is the test's
+   strongest justification.
+
+**A route.**
+1. Add a case to `CASES` in `tests/replay.py`, with a note that says what it pins.
+2. Record it: `NOSPOPULI_REPLAY=record python -m tests.replay record <substring>`.
+3. Read the new fixture before you commit it. If it reads the repo's data or the clock,
+   make sure the harness controls that input first (principle 3).
+4. A new route without a fixture is unverifiable, so add it in the same change.
+
+**A known defect.**
+1. Write the test that should pass, and mark it `@pytest.mark.xfail(strict=True)` or
+   `@unittest.expectedFailure`.
+2. Name the defect and its file:line in the docstring.
+3. Add it to "Known defects" below in the same change.
+
+Then update the table below if the test guards something new.
 
 ### What's covered
 
@@ -503,7 +558,7 @@ committing it — that diff is the whole point.
 | `test_state_vote_mapper.py` | Committee-vs-floor vote disambiguation, participation threshold | Two real bugs caught in production this month (VA HB 191 committee tally, CA SB 1407 fake Assembly vote) |
 | `test_parse_amends.py` | "To amend the X Act of YYYY" extraction in the Connections panel | Pure regex; if it silently degrades, every bill detail page loses its primary law reference |
 | `test_foundry_health.py` | `foundry/health.py` — the scraper-health status vocabulary (`summarize`) and the ledger's bounds | The console at `/admin/foundry` reads nothing else; if `summarize` mislabels a source, the operator is told a scraper is healthy when it is not. Also pins the rule that a quarantine caused by publication lag is never reported as a failure |
-| `test_endpoints.py` | 56 routes, request → exact response, via `tests/replay.py` | The oracle the suite didn't have. Turns "read api.py and reason about equivalence" into "make this JSON match", which is what makes the planned `search_dispatcher.py` extraction verifiable instead of hopeful |
+| `test_endpoints.py` | 56 fixtures over the 88 routes, request → exact response, via `tests/replay.py` | The oracle the suite didn't have. Turns "read api.py and reason about equivalence" into "make this JSON match", which is what makes the planned `search_dispatcher.py` extraction verifiable instead of hopeful |
 | `test_ledger.py` | `classify_question`, the funnel, compact titles, shelves — and `KnownDefects` | The defects below are pinned here as strict expected-failures, so they're recorded without leaving the suite red. Includes the control that `classify_question` gets "LA County" *right*, which is what makes `/search` answering `off_topic` a bug rather than an opinion |
 | `test_feed_rank.py` | Feed scoring and the interest/blocklist gates | 40 cases; the scoring is pure and the rendering is currently offline, so this is all that holds it |
 | `test_search_rank.py` | `rank_by_relevance` determinism and order stability | Ranking is re-sorted by the validator downstream, so a silent change here is invisible in the UI |
@@ -512,11 +567,25 @@ committing it — that diff is the whole point.
 ### What's NOT covered (and why)
 
 - **Search *quality*** — nothing measures it. Tier 1 proves the answer didn't change,
-  not that it was ever right; the fixtures happily pin a wrong answer, and two of them
-  do exactly that on purpose. That's Tier 2's job.
-- **The 29 routes not pinned** — mostly the ones needing a seeded database, a real
+  not that it was ever right. That's Tier 2's job.
+- **Routes without a fixture** — mostly the ones needing a seeded database, a real
   secret, or a per-route request body worth hand-writing. Auth-gated routes are pinned
   at their refusal contract only; a fabricated 200 would be worse than nothing.
+- **The graph's SQL.** `test_graph.py` asks its questions through `memory_backend`;
+  nothing runs `pg_backend`, so a wrong query passes. The graph routes are pinned only at
+  their no-database empty state.
+- **Part of `/api/foundry/data`.** The frozen store holds one source (`loudoun-bos`),
+  one capital-projects store and `upcoming.json`. No elections store and no item-facts,
+  item-summaries or meeting-digests sidecars (~2.5 MB together), so those four keys are
+  pinned empty.
+- **The data files outside the Foundry store.** `/stocks/notable` and `/member/stocks`
+  still read their files in `data/` live. The daily refresh does not rewrite those two
+  files (it writes only `data/congress-votes-*.json`), so they have not drifted yet; they
+  are the next input to freeze if they do.
+- **The rest of the clock.** Only `api._dt.date.today()` is frozen. `datetime.now()` in
+  `api.py` and the "no date means today" rule in `graph.parse_question` still read the
+  real clock. No pinned route reaches them today; a fixture that does needs that seam
+  first.
 - **`/api/stocks/traded`** — deliberately not pinned. It looks pure but classifies 1,249
   tickers through Haiku in batches built from a set comprehension
   (`money/bill_market.py:150`), so the batches, and every cache key derived from them, differ
@@ -525,45 +594,6 @@ committing it — that diff is the whole point.
   synchronously; the four that touch foundry spawn threads and correctly refuse a
   TestClient host.
 - **Frontend JS** — would need a separate JS test runner; out of scope for now.
-
-### Adding a new test
-
-1. Create `tests/test_<thing>.py`.
-2. Add the `sys.path.insert` boilerplate at the top so imports resolve.
-3. Subclass `unittest.TestCase` and write `test_*` methods.
-4. Run `python -m unittest tests.test_<thing>` until it passes.
-5. Update the table above.
-6. If it's a *known defect* rather than a guarantee, mark it `@unittest.expectedFailure`
-   (or `@pytest.mark.xfail(strict=True)`) and say which defect in the docstring. Both
-   runners exit 1 on an unexpected success, so the day it gets fixed the test breaks and
-   asks to be promoted to a plain assertion. A permanently red suite just teaches
-   everyone to ignore red.
-
-If your test caught a real bug in the production code, **leave a comment in the
-test method explaining what the bug was** — that's the test's strongest
-justification, and it makes regressions easier to diagnose.
-
-### Philosophy
-
-Tests are scaffolding for *change*, not proof of correctness. Write tests when:
-
-- The logic is non-trivial enough that a future edit could silently break it.
-- The logic has caught a real production bug — encode the bug as a test so it
-  can't come back.
-- The logic crosses 30+ lines or has multiple branches.
-
-Don't write tests when:
-
-- The code is a thin wrapper over a library call that's already tested upstream.
-- The "test" would just restate the implementation in pseudo-natural language.
-- The function takes no arguments and has no return value (you have nothing to
-  assert against — re-shape the code instead).
-
-A failing test is a gift. When this happens (it happened twice while writing
-this initial batch, finding a year-validation bug in the state regex and a
-weak-signal participation gap in the vote mapper), don't reflexively change the
-test to match. Read the code, decide whether the test or the code is wrong, and
-fix the right one. Often the test is correct and the code needs the fix.
 
 ---
 
