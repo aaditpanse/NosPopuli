@@ -129,12 +129,12 @@ def test_replay_miss_is_loud(app):
 
 
 # ------------------------------- defects that need a fixture or the app itself
-# The four pure-logic defects (LA County, Radnor, the watchlist anchor, the
-# Virginia classification) live in test_ledger.py::KnownDefects, with the other
-# pure ledger_agent tests. Only the two that need a captured response or the
+# The pure-logic defects (Radnor, the watchlist anchor) and the LA County control
+# live in test_ledger.py::KnownDefects, with the other pure ledger_agent tests.
+# The Virginia classification defect is fixed; its test is in ClassifyTests. Only the two that need a captured response or the
 # api.py source belong here.
 
-@pytest.mark.xfail(strict=True, reason="api.py:1617-1621 rewrites the query to "
+@pytest.mark.xfail(strict=True, reason="ledger_ask's federal override rewrites the query to "
                                        "federal, so a Virginia ask is answered "
                                        "out of Congress and the empty state "
                                        "blames Virginia for my missing data")
@@ -144,7 +144,7 @@ def test_virginia_answer_does_not_blame_virginia():
 
     The fixture (post_ledger__healthcare_bills_in.json) records
     `query_type: "legislation"` — rewritten from `state_legislation` at
-    api.py:1617-1621 — alongside `state_code: "VA"`, and the headline
+    the federal override in `ledger_ask` (api.py:1633) — alongside `state_code: "VA"`, and the headline
     "Nothing in Virginia matched that ask."
 
     So: it searched Congress, found nothing there, and reported that as

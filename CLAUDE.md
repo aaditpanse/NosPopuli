@@ -52,14 +52,18 @@ By path, `sys.path[0]` becomes `scripts/` and every local import fails.
   feed, flags. **Their endpoints still work.** Before concluding an endpoint is dead or
   a feature was never built, read "Rebuilding the newspaper capabilities" in
   `README.md`; it lists each one with its endpoints.
-- **`/ledger` forces every query to federal** (`api.py:1618`) unless it hits the
-  state-bill-ID fast path. The state layer works for all 50 states and the home page
-  cannot reach it. "Virginia housing bills" sets the place, then searches Congress.
+- **`/ledger` forces every query to federal** (the override in `ledger_ask`,
+  `api.py:1633`). There is no exception: `/ledger` never passes a `state_code` to
+  routing, so the state bill-ID fast path cannot run there. The state layer works for all
+  50 states and the home page cannot reach it. "Virginia housing bills" is classified
+  `jurisdiction: "state"`, then searched in Congress.
 - **State legislation is LegiScan, not OpenStates.** Any comment or identifier
   suggesting otherwise is stale. `grep -rl openstates *.py` is empty.
-- **Two routers exist and disagree.** `_resolve_routing` in `api.py` serves `/search`;
-  `classify_question` in `agents/ledger_agent.py` serves `/ledger`. Each has fast paths the
-  other lacks. Unifying them is planned work, not an accident to paper over.
+- **Routing is two layers, and both routes run both.** `classify_question` in
+  `agents/ledger_agent.py` is the $0 regex layer (watch, graph, elections, place, bill ID,
+  local). `structure_question` in `agents/router_agent.py` is the second layer (state and
+  federal fast paths, then the LLM). `/ledger` renders every plate; `/search` stops at
+  the local plate and otherwise dispatches the second layer's answer.
 - **Lots of capability is built but unreachable by typing.** Member finance, stock
   trades, lobbying, the geo resolvers — all live endpoints, all click-only. "It doesn't
   work" usually means "nothing routes to it."

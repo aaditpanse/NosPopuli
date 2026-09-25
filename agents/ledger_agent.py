@@ -210,6 +210,7 @@ def classify_question(question, state_code=None, allow_graph=True):
     st = (state_code or extract_state(q) or "").upper() or None
     return {
         "plate": "ledger",
+        "jurisdiction": "state" if st else "federal",
         "state_code": st,
         "place_name": STATE_NAMES.get(st) if st else None,
         "question": q,

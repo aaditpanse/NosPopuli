@@ -24,8 +24,8 @@ sources, with the uncertified records visibly quarantined rather than quietly pu
 
 **What's half-built.** State legislation is fully implemented for all 50 states
 through LegiScan — and the home page cannot reach it. `/ledger` forces every query to
-federal unless it matches the state-bill-ID fast path (`api.py:1618`), so "Virginia
-housing bills" sets my *place* for personalization and then searches Congress. The only
+federal (the federal override in `ledger_ask` (`api.py:1633`)), so "Virginia housing bills" is classified as a
+state question and then searched in Congress. The only
 door to state search is the Federal/State picker on the orphaned `/newspaper`.
 
 Money, lobbying and stock trades are the same story: implemented, live endpoints, and
@@ -74,8 +74,8 @@ Two things follow, and they're worth separating because they come from different
   vote → person → seat → contest → money to be one connected path. That is what mapping
   buys, and it's the only thing that buys it.
 - **Accuracy comes from certification, not from mapping.** A complete map can be
-  confidently wrong — this app currently answers "LA County" as off-topic with 0.95
-  confidence. So every edge carries whether an independent source affirms it, and every
+  confidently wrong — until its two routers were unified, this app answered "LA County"
+  as off-topic with 0.95 confidence. So every edge carries whether an independent source affirms it, and every
   answer reports the weakest hop it crossed.
 
 And note what is *not* the goal: anticipating the questions. I can't enumerate what
@@ -157,9 +157,10 @@ actually mine.
 
 In order. Each step is independently useful, so none of it is wasted if I stop partway.
 
-**1. Unify the two routers.** `_resolve_routing` and `classify_question` disagree and
-each has fast paths the other lacks. Extract `search_dispatcher.py` out of the
-3,763-line `api.py` while I'm in there.
+**1. Unify the two routers.** *Routing is done:* `/search` and `/ledger` now share
+`classify_question` and `structure_question`, so they no longer disagree about what a
+question is. Still to do: extract `search_dispatcher.py` (the `handle_*` functions) out
+of `api.py`.
 
 **2. Give the ask SPA a state plate.** Stop `/ledger` forcing federal, and add a state
 bill view to `ledger.js`. This is the biggest live capability gap: the state layer is
@@ -293,7 +294,7 @@ if I ever want to look.
 
 | # | Capability | Endpoints | Notes |
 |---|---|---|---|
-| 1 | **State legislation search** | `POST /search` with `state_code` | Needs the Federal/State toggle and 50-state picker, and `/ledger` must stop forcing federal (`api.py:1618`). Biggest gap — the whole state layer is behind this. |
+| 1 | **State legislation search** | `POST /search` with `state_code` | Needs the Federal/State toggle and 50-state picker, and `/ledger` must stop forcing federal (the federal override in `ledger_ask` (`api.py:1633`)). Biggest gap — the whole state layer is behind this. |
 | 2 | **State bill detail** | `POST /state/bill` | Streams like `/bill`. Needs a state variant of `billView`. |
 | 3 | **State member lookup** | `POST /state/member/search` | `memberView` already exists; needs the state branch. |
 | 4 | **Public law detail** | `POST /law` + `/law/{congress}/{number}` routes | Same generator as `/bill`; the old app just picked the endpoint off `is_law`. Small. |
@@ -350,9 +351,10 @@ Logging              every agent action → agent_log.json
                      all three feed the analyst at /monitor
 ```
 
-Two routers exist and disagree with each other — `_resolve_routing` in `api.py` for
-`/search`, and `classify_question` in `agents/ledger_agent.py` for `/ledger`. Unifying them is
-the first thing the graph work should do.
+Routing is two layers that both routes share: `classify_question` in
+`agents/ledger_agent.py` (regex, $0), then `structure_question` in `agents/router_agent.py`
+(fast paths, then the LLM). `/search` answers a local place from the first layer and
+never from Congress.
 
 ---
 
@@ -446,7 +448,7 @@ python -m scripts.clear_search_cache   # --all to include feed/elections
 Two tiers, kept apart on purpose.
 
 **Tier 1 — regression.** Free, deterministic, and the only thing CI gates on
-(`.github/workflows/tests.yml`). 299 tests in ~3s with no network, no LLM and no
+(`.github/workflows/tests.yml`). 301 tests in ~3s with no network, no LLM and no
 database: the pure-logic tests, plus 56 golden fixtures over the route surface —
 request → exact response JSON, captured once and committed under `tests/golden/`.
 
@@ -559,7 +561,7 @@ Then update the table below if the test guards something new.
 | `test_parse_amends.py` | "To amend the X Act of YYYY" extraction in the Connections panel | Pure regex; if it silently degrades, every bill detail page loses its primary law reference |
 | `test_foundry_health.py` | `foundry/health.py` — the scraper-health status vocabulary (`summarize`) and the ledger's bounds | The console at `/admin/foundry` reads nothing else; if `summarize` mislabels a source, the operator is told a scraper is healthy when it is not. Also pins the rule that a quarantine caused by publication lag is never reported as a failure |
 | `test_endpoints.py` | 56 fixtures over the 88 routes, request → exact response, via `tests/replay.py` | The oracle the suite didn't have. Turns "read api.py and reason about equivalence" into "make this JSON match", which is what makes the planned `search_dispatcher.py` extraction verifiable instead of hopeful |
-| `test_ledger.py` | `classify_question`, the funnel, compact titles, shelves — and `KnownDefects` | The defects below are pinned here as strict expected-failures, so they're recorded without leaving the suite red. Includes the control that `classify_question` gets "LA County" *right*, which is what makes `/search` answering `off_topic` a bug rather than an opinion |
+| `test_ledger.py` | `classify_question`, the funnel, compact titles, shelves — and `KnownDefects` | The defects below are pinned here as strict expected-failures, so they're recorded without leaving the suite red. Includes the control that `classify_question` gets "LA County" *right* — the decision `/search` now shares |
 | `test_feed_rank.py` | Feed scoring and the interest/blocklist gates | 40 cases; the scoring is pure and the rendering is currently offline, so this is all that holds it |
 | `test_search_rank.py` | `rank_by_relevance` determinism and order stability | Ranking is re-sorted by the validator downstream, so a silent change here is invisible in the UI |
 | `test_graph.py` | `graph.py` — identity resolution, node/edge building, the as-of seat resolver, and the answer shape | Fixtures replay the real Fairfax defects (duplicate spelling, sentence fragment as a member, three roll calls on one item, a seat that changed hands with no contest on disk, a person who won two bodies' seats in one district). Pins that certification follows the asserting record, that `elected_in` is scoped to the seat and never to the surname, and that an empty answer always says why |
@@ -610,7 +612,7 @@ Live problems I know about and haven't fixed. Listed so nobody has to rediscover
 - The watchlist regex is anchored, so "show me what I'm watching" misses and falls
   through to federal bill search.
 - Local search discards the topic (above).
-- `/ledger` forces every query to federal (`api.py:1618`), so state legislation search
+- `/ledger` forces every query to federal (the federal override in `ledger_ask` (`api.py:1633`)), so state legislation search
   is unreachable from the home page despite being fully built for all 50 states.
 - Braddock District resolves to nobody from 2025-09-10 to 2026-01-12. Walkinshaw's hold
   now closes the day before his federal term (right), but Sizemore Heizer's begins at
@@ -627,14 +629,15 @@ Found while building the golden fixtures, all four now pinned as expected-failur
   already exists. The shape to copy is the graph route's `empty_reason`
   (`api.py:3050`).
 - **"Nothing in Virginia matched that ask."** is what `/ledger` answers for
-  *Healthcare bills in Virginia* — after `api.py:1617-1621` rewrote the query to
+  *Healthcare bills in Virginia* — after the federal override in `ledger_ask` (`api.py:1633`) rewrote the query to
   federal and searched Congress. It blames the jurisdiction for my own gap, which is
   the inverse of the rule I care most about. Captured in
   `tests/golden/post_ledger__healthcare_bills_in.json`.
 - **Confidence is inverted, not merely useless.** Across the 73 logged searches,
   `conf=0.95` is 9-of-11 zero-result while `conf=0.6` and `0.75` are 0-for-3. The most
-  confident bucket is the least correct one. `/search "LA County"` returns
-  `off_topic` at 0.95 while `classify_question` resolves it to `lacounty-bos`.
+  confident bucket is the least correct one. (`/search "LA County"` was the sharpest
+  case, `off_topic` at 0.95; it now stops at the local plate before the LLM, but the
+  confidence the LLM reports is still not calibrated.)
 - **`/api/member/{bioguide}` returns `chambers` in an unstable order.**
   `agents/member_search_agent.py:165` builds it as a `set` and returns `list(chambers)` at
   `:186`, so the order tracks `PYTHONHASHSEED` — stable within a process, different

@@ -4,6 +4,7 @@ import re
 import json
 from dotenv import load_dotenv
 from agents.documentor_agent import log_action
+from agents.state_search_agent import ENABLED_STATES
 
 load_dotenv()
 
@@ -757,6 +758,76 @@ Return ONLY this JSON structure:
 )
     
     return structured
+
+
+# ── One routing decision for /search and /ledger ──
+#
+# Both routes used to run this sequence as their own copy of five calls in
+# api.py. /ledger runs classify_question (ledger_agent) first and then this;
+# /search now does the same, so the two cannot disagree about what a
+# question is — only about how they render the answer.
+
+_PRESIDENTS = ("trump", "biden", "obama", "bush", "clinton", "reagan")
+_PRESIDENTIAL_SIGNALS = ("signed", "passed", "under", "era", "administration", "presidency", "white house")
+_CONGRESSIONAL_SIGNALS = ("voted", "sponsored", "senator", "representative", "voting record", "cosponsored")
+
+
+def structure_question(question, state_code=None, *, full_history=False,
+                       before_congress=None, max_results=None, fresh=False,
+                       get_client):
+    """Pick the cheapest router that answers: state fast-path → federal
+    fast-path → LLM, then apply the request knobs and the president rules.
+
+    `get_client` is a callable, called only when the LLM is needed, so a
+    fast-path hit never builds a client. Fail-closed: an LLM error raises
+    into the caller, which already turns it into its own error response."""
+    structured = None
+    if state_code and state_code.upper() in ENABLED_STATES:
+        structured = fast_route_state(question, state_code)
+    if structured is None:
+        structured = fast_route(question)
+    if structured is None:
+        structured = route_query(question, get_client(), full_history=full_history)
+    else:
+        print(f"[ROUTER] fast-path hit: {structured.get('_fast_path')}")
+    structured["intents"] = intents_from_structured(structured)
+
+    structured["full_history"] = full_history
+    structured["max_results_override"] = max_results if full_history else None
+    structured["_bypass_search_cache"] = bool(fresh)
+    if full_history and before_congress:
+        structured["before_congress"] = before_congress
+
+    _apply_presidential_term_filter(structured, question)
+    _disambiguate_president_query(structured, question)
+    return structured
+
+
+def _apply_presidential_term_filter(structured, question):
+    """When the question references a president by era, restrict to their Congress numbers."""
+    congresses = extract_president_congress(question)
+    if congresses:
+        structured["congress_numbers"] = congresses
+        structured["time_range"] = "presidential term"
+
+
+def _disambiguate_president_query(structured, question):
+    """Ex-presidents have both member records and signed legislation. When the
+    user means the *legislation* (e.g. "trump signed border bills"), reclassify
+    the member query as legislation. Trump defaults to legislation when
+    ambiguous — historically he's queried more about laws than service."""
+    if structured.get("query_type") != "member":
+        return
+    entity = (structured.get("entity_name") or "").lower()
+    if not any(p in entity for p in _PRESIDENTS):
+        return
+    q = question.lower()
+    has_pres = any(s in q for s in _PRESIDENTIAL_SIGNALS)
+    has_cong = any(s in q for s in _CONGRESSIONAL_SIGNALS)
+    if (has_pres and not has_cong) or (not has_cong and "trump" in entity):
+        structured["query_type"] = "legislation"
+        structured["entity_name"] = None
+
 
 if __name__ == "__main__":
     import anthropic

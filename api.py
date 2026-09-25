@@ -44,7 +44,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from agents.router_agent import route_query, extract_president_congress, fast_route, fast_route_state, intents_from_structured
+from agents.router_agent import route_query, fast_route_state, intents_from_structured, structure_question
 from agents.search_agent import search_bills, search_summaries
 from agents.title_search_agent import search_by_title
 from sources.bill_fetcher import fetch_bill
@@ -1291,63 +1291,9 @@ async def get_feed(request: Request, body: FeedRequest):
 
 # ── Search dispatcher helpers ──
 #
-# These are step-by-step transformations of a SearchRequest into a structured
-# query, then a handler call. Each function does one thing so the /search
-# endpoint can read top-to-bottom in 20 lines.
-
-_PRESIDENTS = ("trump", "biden", "obama", "bush", "clinton", "reagan")
-_PRESIDENTIAL_SIGNALS = ("signed", "passed", "under", "era", "administration", "presidency", "white house")
-_CONGRESSIONAL_SIGNALS = ("voted", "sponsored", "senator", "representative", "voting record", "cosponsored")
-
-
-def _resolve_routing(body: "SearchRequest") -> dict:
-    """Pick the cheapest router that answers: state fast-path → federal fast-path → LLM."""
-    structured = None
-    if body.state_code and body.state_code.upper() in ENABLED_STATES:
-        structured = fast_route_state(body.question, body.state_code)
-    if structured is None:
-        structured = fast_route(body.question)
-    if structured is None:
-        structured = route_query(body.question, get_client(), full_history=body.full_history)
-    else:
-        print(f"[ROUTER] fast-path hit: {structured.get('_fast_path')}")
-    structured["intents"] = intents_from_structured(structured)
-    return structured
-
-
-def _apply_request_flags(structured: dict, body: "SearchRequest") -> None:
-    """Merge SearchRequest knobs (fresh, full_history, before_congress) into structured."""
-    structured["full_history"] = body.full_history
-    structured["max_results_override"] = body.max_results if body.full_history else None
-    structured["_bypass_search_cache"] = bool(body.fresh)
-    if body.full_history and body.before_congress:
-        structured["before_congress"] = body.before_congress
-
-
-def _apply_presidential_term_filter(structured: dict, question: str) -> None:
-    """When the question references a president by era, restrict to their Congress numbers."""
-    congresses = extract_president_congress(question)
-    if congresses:
-        structured["congress_numbers"] = congresses
-        structured["time_range"] = "presidential term"
-
-
-def _disambiguate_president_query(structured: dict, question: str) -> None:
-    """Ex-presidents have both member records and signed legislation. When the
-    user means the *legislation* (e.g. "trump signed border bills"), reclassify
-    the member query as legislation. Trump defaults to legislation when
-    ambiguous — historically he's queried more about laws than service."""
-    if structured.get("query_type") != "member":
-        return
-    entity = (structured.get("entity_name") or "").lower()
-    if not any(p in entity for p in _PRESIDENTS):
-        return
-    q = question.lower()
-    has_pres = any(s in q for s in _PRESIDENTIAL_SIGNALS)
-    has_cong = any(s in q for s in _CONGRESSIONAL_SIGNALS)
-    if (has_pres and not has_cong) or (not has_cong and "trump" in entity):
-        structured["query_type"] = "legislation"
-        structured["entity_name"] = None
+# The routing decision itself is router_agent.structure_question, shared with
+# /ledger. What stays here turns that decision into a handler call. Each
+# function does one thing so the /search endpoint can read top-to-bottom.
 
 
 def _route_jurisdiction(structured: dict, body: "SearchRequest") -> str | None:
@@ -1384,6 +1330,38 @@ def _off_topic_response(structured: dict, question: str) -> dict:
             "or civic policy. Try a topic, bill ID (e.g. \"HR 4838\"), or a name."
         ),
         "query": structured,
+        "results": [],
+        "cached": False,
+    }
+
+
+def _local_response(place: dict, question: str) -> dict:
+    """/search covers Congress and the state legislatures. A local question gets
+    the place and what I hold for it, never federal bills about it. The empty
+    answer names the gap as mine. Radnor-style places have no name, so the
+    question stands in for it."""
+    slug = place.get("slug") or ""
+    coverage = foundry_place_coverage(slug) if slug else None
+    name = place.get("name") or question.strip()
+    if coverage and coverage.get("found"):
+        reason = (f"{name} is local government. Search covers Congress and state "
+                  f"legislatures; its board records are on the home page.")
+    else:
+        reason = f"{name} is local government. I have not charted its records yet."
+    log_search(
+        query=question,
+        query_type="local",
+        expanded_terms=[],
+        results_count=0,
+        result_ids=[],
+        confidence=1.0,
+    )
+    return {
+        "query_type": "local",
+        "confidence": 1.0,
+        "ambiguity_reason": reason,
+        "place": place,
+        "coverage": coverage,
         "results": [],
         "cached": False,
     }
@@ -1461,10 +1439,16 @@ async def search(request: Request, body: SearchRequest):
 
     try:
         loop = asyncio.get_event_loop()
-        structured = _resolve_routing(body)
-        _apply_request_flags(structured, body)
-        _apply_presidential_term_filter(structured, body.question)
-        _disambiguate_president_query(structured, body.question)
+        # Same first layer as /ledger. Without it the LLM router called
+        # "LA County" off_topic at 0.95; a local place is never answered
+        # from Congress (the rule against adjacent data).
+        classified = classify_question(body.question, body.state_code, allow_graph=False)
+        if classified.get("plate") == "uncharted":
+            return _local_response(classified["place"], body.question)
+        structured = structure_question(
+            body.question, body.state_code, full_history=body.full_history,
+            before_congress=body.before_congress, max_results=body.max_results,
+            fresh=body.fresh, get_client=get_client)
         return await _dispatch(structured, body, body.question, loop)
     except HTTPException:
         raise
@@ -1638,15 +1622,18 @@ async def ledger_ask(request: Request, body: LedgerAsk):
     member_out = None
     structured = {}
     try:
-        structured = _resolve_routing(search_body)
-        _apply_request_flags(structured, search_body)
-        _apply_presidential_term_filter(structured, body.question)
-        _disambiguate_president_query(structured, body.question)
-        if structured.get("_fast_path") != "state_bill_id":
-            structured["jurisdiction"] = "federal"
-            structured.pop("state_code", None)
-            if structured.get("query_type") in ("state_legislation", "state_member"):
-                structured["query_type"] = "legislation"
+        structured = structure_question(
+            search_body.question, search_body.state_code,
+            max_results=search_body.max_results, get_client=get_client)
+        # Every /ledger ask is searched in Congress, even when classify_question
+        # says the jurisdiction is a state. The ledger cannot show a state bill
+        # yet: stories_from_results drops any row without a Congress number, so
+        # state results would become a silent zero. That is roadmap item 2.
+        # (search_body carries no state_code, so the state fast path never ran.)
+        structured["jurisdiction"] = "federal"
+        structured.pop("state_code", None)
+        if structured.get("query_type") in ("state_legislation", "state_member"):
+            structured["query_type"] = "legislation"
         structured["intents"] = intents_from_structured(structured)
         member_out, search_out = await _ledger_member_and_search(
             structured, search_body, body.question, loop

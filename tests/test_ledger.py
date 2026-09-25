@@ -80,6 +80,28 @@ class ClassifyTests(unittest.TestCase):
     def test_election_topic_without_election_word_is_ledger(self):
         self.assertEqual(classify_question("voting rights bills")["plate"], "ledger")
 
+    def test_virginia_question_carries_state_jurisdiction(self):
+        """Was a known defect: `extract_state` found VA, but nothing carried a
+        state jurisdiction forward, so /ledger had nothing to route on. The
+        decision now says "state"; /ledger still searches Congress (api.py, the
+        federal override in ledger_ask) until the ledger can show a state bill."""
+        q = "Healthcare bills in Virginia"
+        self.assertEqual(extract_state(q), "VA")
+        got = classify_question(q)
+        self.assertEqual(got.get("state_code"), "VA")
+        self.assertEqual(got.get("jurisdiction"), "state")
+        self.assertEqual(classify_question("voting rights bills")["jurisdiction"], "federal")
+
+    def test_county_word_alone_is_not_local(self):
+        """/search now stops at a local answer, so a federal question that
+        only mentions counties must still reach Congress."""
+        self.assertEqual(classify_question("county road funding bills")["plate"], "ledger")
+
+    def test_named_county_is_local(self):
+        out = classify_question("Fairfax county road funding")
+        self.assertEqual(out["plate"], "uncharted")
+        self.assertEqual(out["place"]["slug"], "fairfax-bos")
+
 
 class FunnelTests(unittest.TestCase):
     def test_stage_from_action(self):
@@ -325,11 +347,9 @@ class KnownDefects(unittest.TestCase):
         correctly, including the LA City/LA County sibling split
         (ledger_agent.py:55-60).
 
-        This is what makes the /search router's `off_topic` answer a bug rather
-        than a matter of opinion: the right answer already exists in this file,
-        and the other router reaches a different one. Captured live in
-        tests/golden/post_search__la_county.json — query_type off_topic,
-        confidence 0.95.
+        /search used to answer it off_topic at 0.95 from the LLM router. It now
+        consults this decision first, so tests/golden/post_search__la_county.json
+        pins query_type "local".
         """
         for q in ("LA County", "La county", "la COUNTY"):
             got = classify_question(q)
@@ -355,20 +375,6 @@ class KnownDefects(unittest.TestCase):
                   "show me my watch list"):
             self.assertEqual(classify_question(q)["plate"], "watching", q)
 
-    @unittest.expectedFailure
-    def test_virginia_question_carries_state_jurisdiction(self):
-        """`extract_state` finds VA, but nothing in the classification carries a
-        state jurisdiction forward, so /ledger has nothing to route on and
-        api.py:1617-1621 overwrites the query to federal.
-
-        Observed 10 times in search_log.jsonl: 4 zero-result, and 6 answered
-        with hr10293/hr10287/hr10280 — federal House bills for a Virginia
-        question."""
-        q = "Healthcare bills in Virginia"
-        self.assertEqual(extract_state(q), "VA")
-        got = classify_question(q)
-        self.assertEqual(got.get("state_code"), "VA")
-        self.assertEqual(got.get("jurisdiction"), "state")
 
 
 if __name__ == "__main__":
