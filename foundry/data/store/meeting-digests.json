@@ -3440,5 +3440,60 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "newyork-bos-2026-09-24": {
+  "digest": "The Committee on Land Use approved two rezones\u2014one for 815 Hutchinson River Parkway in the Bronx and one for 158-06 Northern Boulevard in Queens\u2014to permit different land uses. The committee also disapproved a zoning application for Cali Tajadas Bakery & Restaurant in Queens. All three votes passed 11-0 with two members absent (Banks and Cab\u00e1n).",
+  "notable": [
+   "Two Bronx and Queens properties rezoned for new land uses, both approved unanimously",
+   "Zoning application for Cali Tajadas Bakery & Restaurant in Queens was disapproved"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-09-24-Subcommittee-on-Zoning-and-Franchises-Fa": {
+  "digest": "The Subcommittee on Zoning and Franchises unanimously approved two zoning applications for 158-06 Northern Boulevard in Queens\u2014a rezoning application and a zoning text amendment\u2014with modifications, sending both to the City Planning Commission for further review. Both items passed 9-0 with no dissent.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-09-24-Committee-on-Housing-and-Buildings": {
+  "digest": "The Committee on Housing and Buildings voted unanimously to extend the J-51 tax abatement program, which provides tax breaks for condo and coop building alterations and improvements. The extension covers projects completed over the next decade, from June 30, 2026 through June 30, 2036, and passed with all 11 committee members voting in favor.",
+  "notable": [
+   "J-51 tax abatement extended 10 years for condo/coop renovation projects\u2014all 11 members voted yes"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-09-24-Committee-on-Cultural-Affairs-Libraries-": {
+  "digest": "The Committee on Cultural Affairs approved two annual observances for New York City: Korean Cultural Awareness Day on October 3 and African Immigrant Heritage Month in September. Both measures passed unanimously among the six committee members present, with one member absent.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-09-24-Committee-on-Finance-Linda-Lee-Chair-Mem": {
+  "digest": "The Finance Committee approved new and updated nonprofit organization designations to receive city funding, with 12 votes in favor and 5 members absent. The vote proceeded despite significant absenteeism but had no recorded opposition.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }

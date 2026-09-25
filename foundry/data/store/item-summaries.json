@@ -22213,5 +22213,50 @@
   "plain_english": "Requires the Department of Correction to inform incarcerated individuals of their commissary account balance and return all unused commissary funds in cash when they are released from custody.",
   "topic": "criminal justice",
   "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-24-item-1": {
+  "plain_english": "Rezones 815 Hutchinson River Parkway in the Bronx to allow different land use.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-24-item-4": {
+  "plain_english": "Rezones 158-06 Northern Boulevard in Queens to allow different land use.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-24-item-9": {
+  "plain_english": "Disapproves a zoning application for Cali Tajadas Bakery & Restaurant in Queens.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-24-Subcommittee-on-Zoning-and-Franchises-Fa-item-1": {
+  "plain_english": "Approves with modifications a rezoning application for 158-06 Northern Boulevard in Queens, referring it to the City Planning Commission.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-24-Subcommittee-on-Zoning-and-Franchises-Fa-item-2": {
+  "plain_english": "Approves with modifications a zoning text amendment for 158-06 Northern Boulevard in Queens, referring it to the City Planning Commission.",
+  "topic": "zoning",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-24-Committee-on-Housing-and-Buildings-item-1": {
+  "plain_english": "Extends the J-51 tax abatement for condo and coop building alterations and improvements to cover projects completed between June 30, 2026 and June 30, 2036, for buildings with average assessed valuation under $60,000.",
+  "topic": "tax abatement",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-24-Committee-on-Cultural-Affairs-Libraries--item-1": {
+  "plain_english": "Establishes October 3 as Korean Cultural Awareness Day to be observed annually in New York City.",
+  "topic": "cultural recognition",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-24-Committee-on-Cultural-Affairs-Libraries--item-3": {
+  "plain_english": "Establishes September as African Immigrant Heritage Month in New York City.",
+  "topic": "cultural recognition",
+  "derived_by": "claude-haiku-4-5"
+ },
+ "newyork-bos-2026-09-24-Committee-on-Finance-Linda-Lee-Chair-Mem-item-1": {
+  "plain_english": "Approves new nonprofit organization designations and changes to existing designations to receive funding from the city expense budget.",
+  "topic": "budget allocation",
+  "derived_by": "claude-haiku-4-5"
  }
 }

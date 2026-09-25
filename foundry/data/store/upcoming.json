@@ -1,18 +1,8 @@
 {
  "la-primegov": {
-  "upcoming": [
-   {
-    "date": "2026-09-25",
-    "time": "10:00 AM",
-    "body": "City Council"
-   }
-  ],
-  "next": {
-   "date": "2026-09-25",
-   "time": "10:00 AM",
-   "body": "City Council"
-  },
-  "checked": "2026-09-24",
+  "upcoming": [],
+  "next": null,
+  "checked": "2026-09-25",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -49,14 +39,24 @@
    "time": "4:00 PM",
    "body": "Board of Supervisors Business Meeting"
   },
-  "checked": "2026-09-24",
+  "checked": "2026-09-25",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "pittsburgh-legistar": {
-  "upcoming": [],
-  "next": null,
-  "checked": "2026-09-24",
+  "upcoming": [
+   {
+    "date": "2026-09-29",
+    "time": "10:01 AM",
+    "body": "City Council"
+   }
+  ],
+  "next": {
+   "date": "2026-09-29",
+   "time": "10:01 AM",
+   "body": "City Council"
+  },
+  "checked": "2026-09-25",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -64,31 +64,31 @@
   "upcoming": [
    {
     "date": "2026-10-06",
-    "time": "14:00",
+    "time": "02:00 pm",
     "body": "Board of County Supervisors Meeting"
    },
    {
     "date": "2026-10-13",
-    "time": "14:00",
+    "time": "02:00 pm",
     "body": "Board of County Supervisors Meeting - Work Session"
    },
    {
     "date": "2026-10-13",
-    "time": "18:00",
+    "time": "06:00 pm",
     "body": "Board of County Supervisors - Joint Meeting with the School Board"
    },
    {
     "date": "2026-10-20",
-    "time": "14:00",
+    "time": "02:00 pm",
     "body": "Board of County Supervisors Meeting"
    }
   ],
   "next": {
    "date": "2026-10-06",
-   "time": "14:00",
+   "time": "02:00 pm",
    "body": "Board of County Supervisors Meeting"
   },
-  "checked": "2026-09-24",
+  "checked": "2026-09-25",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -120,7 +120,7 @@
    "time": null,
    "body": "Fairfax County Board of Supervisors"
   },
-  "checked": "2026-09-24",
+  "checked": "2026-09-25",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -157,7 +157,7 @@
    "time": "17:00",
    "body": "September 29, 2026 Joint Board of Supervisors and Economic Development Authority Meeting"
   },
-  "checked": "2026-09-24",
+  "checked": "2026-09-25",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -194,39 +194,14 @@
    "time": "1:30 PM",
    "body": "City Council Stated Meeting"
   },
-  "checked": "2026-09-24",
+  "checked": "2026-09-25",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "fairfax-cip": {
-  "upcoming": [
-   {
-    "date": "2026-10-13",
-    "time": null,
-    "body": "Board of Supervisors Meeting"
-   },
-   {
-    "date": "2026-10-27",
-    "time": null,
-    "body": "Board of Supervisors Meeting"
-   },
-   {
-    "date": "2026-11-17",
-    "time": null,
-    "body": "Board of Supervisors Meeting"
-   },
-   {
-    "date": "2026-12-08",
-    "time": null,
-    "body": "Board of Supervisors Meeting"
-   }
-  ],
-  "next": {
-   "date": "2026-10-13",
-   "time": null,
-   "body": "Board of Supervisors Meeting"
-  },
-  "checked": "2026-09-24",
+  "upcoming": [],
+  "next": null,
+  "checked": "2026-09-25",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -234,82 +209,72 @@
   "upcoming": [
    {
     "date": "2026-10-06",
-    "time": "02:00 pm",
+    "time": "14:00",
     "body": "Board of County Supervisors Meeting"
    },
    {
     "date": "2026-10-13",
-    "time": "02:00 pm",
+    "time": "14:00",
     "body": "Board of County Supervisors Meeting - Work Session"
    },
    {
     "date": "2026-10-13",
-    "time": "06:00 pm",
+    "time": "18:00",
     "body": "Board of County Supervisors - Joint Meeting with the School Board"
    },
    {
     "date": "2026-10-20",
-    "time": "02:00 pm",
+    "time": "14:00",
     "body": "Board of County Supervisors Meeting"
    }
   ],
   "next": {
    "date": "2026-10-06",
-   "time": "02:00 pm",
+   "time": "14:00",
    "body": "Board of County Supervisors Meeting"
   },
-  "checked": "2026-09-24",
+  "checked": "2026-09-25",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "chicago-bos": {
   "upcoming": [
    {
-    "date": "2026-09-25",
-    "time": "15:00",
-    "body": "City Council Special Meeting"
-   },
-   {
     "date": "2026-09-29",
     "time": "15:00",
-    "body": "City Council Meeting"
+    "body": "City Council"
    }
   ],
   "next": {
-   "date": "2026-09-25",
+   "date": "2026-09-29",
    "time": "15:00",
-   "body": "City Council Special Meeting"
+   "body": "City Council"
   },
-  "checked": "2026-09-24",
+  "checked": "2026-09-25",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "seattle-bos": {
   "upcoming": [],
   "next": null,
-  "checked": "2026-09-24",
+  "checked": "2026-09-25",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "chicago-cip": {
   "upcoming": [
    {
-    "date": "2026-09-25",
-    "time": "15:00",
-    "body": "City Council meeting"
-   },
-   {
     "date": "2026-09-29",
     "time": "15:00",
-    "body": "City Council meeting"
+    "body": "City Council meeting at City Council Chamber, 2nd Floor, City Hall, 121 North LaSalle Street - Chicago, IL 60602"
    }
   ],
   "next": {
-   "date": "2026-09-25",
+   "date": "2026-09-29",
    "time": "15:00",
-   "body": "City Council meeting"
+   "body": "City Council meeting at City Council Chamber, 2nd Floor, City Hall, 121 North LaSalle Street - Chicago, IL 60602"
   },
-  "checked": "2026-09-24",
+  "checked": "2026-09-25",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  }
