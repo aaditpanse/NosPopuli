@@ -318,6 +318,22 @@ class HoldersAsOfTest(unittest.TestCase):
         self.assertEqual(self.holder("2026-03-03"), ["Rachna Sizemore Heizer"])
         self.assertEqual(self.holder("2023-12-31"), [])
 
+    def test_on_handover_day_the_incoming_holder_has_the_seat(self):
+        seat = "ocd-post/president"
+        biden = {"src": "biden", "dst": seat, "valid_from": "2021-01-20", "valid_to": "2025-01-20"}
+        trump = {"src": "trump", "dst": seat, "valid_from": "2025-01-20", "valid_to": None}
+        elsewhere = {"src": "other", "dst": "ocd-post/elsewhere", "valid_from": "2025-01-20", "valid_to": None}
+        rows = [biden, trump, elsewhere]
+        on = lambda day: sorted(r["src"] for r in graph.holders_as_of(rows, day) if r["dst"] == seat)  # noqa: E731
+        self.assertEqual(on("2025-01-19"), ["biden"])
+        self.assertEqual(on("2025-01-20"), ["trump"])
+        # A term that ends with nobody starting keeps its last day.
+        self.assertEqual(on("2025-01-20") and sorted(r["src"] for r in graph.holders_as_of([biden], "2025-01-20")), ["biden"])
+        # One person's consecutive terms: one row that day, the new term.
+        griffith = [{"src": "g", "dst": "va9", "valid_from": "2023-01-03", "valid_to": "2025-01-03"},
+                    {"src": "g", "dst": "va9", "valid_from": "2025-01-03", "valid_to": None}]
+        self.assertEqual([r["valid_from"] for r in graph.holders_as_of(griffith, "2025-01-03")], ["2025-01-03"])
+
 
 class ShapeAnswerTest(unittest.TestCase):
     P = [{"id": "ocd-person/x", "name": "Patrick S. Herrity"}]

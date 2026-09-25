@@ -1562,9 +1562,18 @@ def holders_as_of(hold_edges, as_of):
     `seat_holder` feeds it the rows from Postgres so the SQL and the tests
     share one definition of 'in force'."""
     as_of = str(as_of)
-    return [e for e in hold_edges
+    live = [e for e in hold_edges
             if e["valid_from"] is not None and str(e["valid_from"]) <= as_of
             and (e["valid_to"] is None or str(e["valid_to"]) >= as_of)]
+    # Handover day: the legislators and executive files end a term on the
+    # day the next one begins (3 January, 20 January at noon). The seat has
+    # one holder that day, and it is the incoming one. Only a hold that
+    # ends exactly when another on the same seat starts gives way, so an
+    # inferred end ('the day before the successor') keeps its last day.
+    starts = {(e.get("dst"), str(e["valid_from"])) for e in live}
+    return [e for e in live
+            if not (e["valid_to"] is not None and str(e["valid_to"]) == as_of
+                    and (e.get("dst"), as_of) in starts and str(e["valid_from"]) != as_of)]
 
 
 # ------------------------------------------------------------------ answer
@@ -2058,7 +2067,7 @@ _ASK_VOTES = (
 # a seat word, a district code (VA-11), or an ordinal district. "Who is Ted
 # Cruz" is a member lookup and stays with the ledger.
 _SEAT_SIGNAL = re.compile(
-    r"\b(seat|district|supervisor|representative|senator|chair(?:man|woman)?|delegate)s?\b"
+    r"\b(seat|district|supervisor|representative|senator|chair(?:man|woman)?|delegate|president)s?\b"
     r"|\b[a-z]{2}-?\d{1,2}\b|\b\d{1,2}(?:st|nd|rd|th)\b", re.I)
 _POSITION_WORDS = {"aye": "aye", "yes": "aye", "yea": "aye", "for": "aye",
                    "no": "no", "nay": "no", "against": "no",
@@ -2167,12 +2176,14 @@ def _seat_terms(seat_query):
     if m:
         return state + [f"cd:{m.group(1)}"]
     q = re.sub(r"\b(the|of|for|district|seat|county|board|supervisor|supervisors|from)\b", " ", q)
-    return state + [t for t in re.split(r"[^a-z0-9]+", q) if t]
+    # "President" is inside "Vice President": say which one is not meant.
+    exclude = ["!vice"] if "president" in q and "vice" not in q else []
+    return state + [t for t in re.split(r"[^a-z0-9]+", q) if t] + exclude
 
 
 def _post_matches(post, terms):
     hay = f"{post['props'].get('natural_key', '')} {post['props'].get('role', '')} {post['name']}".lower()
-    return all(t in hay for t in terms)
+    return all((t[1:] not in hay) if t.startswith("!") else (t in hay) for t in terms)
 
 
 def memory_backend(nodes, edges):
