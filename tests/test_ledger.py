@@ -93,8 +93,8 @@ class ClassifyTests(unittest.TestCase):
         self.assertEqual(classify_question("voting rights bills")["jurisdiction"], "federal")
 
     def test_county_word_alone_is_not_local(self):
-        """/search now stops at a local answer, so a federal question that
-        only mentions counties must still reach Congress."""
+        """A local plate is never answered from Congress, so a federal question
+        that only mentions counties must not become one."""
         self.assertEqual(classify_question("county road funding bills")["plate"], "ledger")
 
     def test_named_county_is_local(self):
@@ -347,9 +347,11 @@ class KnownDefects(unittest.TestCase):
         correctly, including the LA City/LA County sibling split
         (ledger_agent.py:55-60).
 
-        /search used to answer it off_topic at 0.95 from the LLM router. It now
-        consults this decision first, so tests/golden/post_search__la_county.json
-        pins query_type "local".
+        This is what makes the /search router's `off_topic` answer a bug rather
+        than a matter of opinion: the right answer already exists in this file,
+        and /search does not consult it. Captured live in
+        tests/golden/post_search__la_county.json — query_type off_topic,
+        confidence 0.95.
         """
         for q in ("LA County", "La county", "la COUNTY"):
             got = classify_question(q)

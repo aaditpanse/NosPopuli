@@ -131,8 +131,8 @@ def test_replay_miss_is_loud(app):
 # ------------------------------- defects that need a fixture or the app itself
 # The pure-logic defects (Radnor, the watchlist anchor) and the LA County control
 # live in test_ledger.py::KnownDefects, with the other pure ledger_agent tests.
-# The Virginia classification defect is fixed; its test is in ClassifyTests. Only the two that need a captured response or the
-# api.py source belong here.
+# The Virginia classification defect is fixed; its test is in ClassifyTests.
+# Only the two that need a captured response or the api.py source belong here.
 
 @pytest.mark.xfail(strict=True, reason="ledger_ask's federal override rewrites the query to "
                                        "federal, so a Virginia ask is answered "

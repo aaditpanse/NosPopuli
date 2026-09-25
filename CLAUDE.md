@@ -59,11 +59,11 @@ By path, `sys.path[0]` becomes `scripts/` and every local import fails.
   `jurisdiction: "state"`, then searched in Congress.
 - **State legislation is LegiScan, not OpenStates.** Any comment or identifier
   suggesting otherwise is stale. `grep -rl openstates *.py` is empty.
-- **Routing is two layers, and both routes run both.** `classify_question` in
-  `agents/ledger_agent.py` is the $0 regex layer (watch, graph, elections, place, bill ID,
-  local). `structure_question` in `agents/router_agent.py` is the second layer (state and
-  federal fast paths, then the LLM). `/ledger` renders every plate; `/search` stops at
-  the local plate and otherwise dispatches the second layer's answer.
+- **Routing is two layers.** `classify_question` in `agents/ledger_agent.py` is the $0
+  regex layer (watch, graph, elections, place, bill ID, local). `structure_question` in
+  `agents/router_agent.py` is the second layer (state and federal fast paths, then the
+  LLM). `/ledger` runs both; `/search` runs only the second, so it still calls "LA
+  County" off-topic. Don't polish either layer: the graph replaces both.
 - **Lots of capability is built but unreachable by typing.** Member finance, stock
   trades, lobbying, the geo resolvers — all live endpoints, all click-only. "It doesn't
   work" usually means "nothing routes to it."

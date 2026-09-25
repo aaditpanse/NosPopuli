@@ -1335,38 +1335,6 @@ def _off_topic_response(structured: dict, question: str) -> dict:
     }
 
 
-def _local_response(place: dict, question: str) -> dict:
-    """/search covers Congress and the state legislatures. A local question gets
-    the place and what I hold for it, never federal bills about it. The empty
-    answer names the gap as mine. Radnor-style places have no name, so the
-    question stands in for it."""
-    slug = place.get("slug") or ""
-    coverage = foundry_place_coverage(slug) if slug else None
-    name = place.get("name") or question.strip()
-    if coverage and coverage.get("found"):
-        reason = (f"{name} is local government. Search covers Congress and state "
-                  f"legislatures; its board records are on the home page.")
-    else:
-        reason = f"{name} is local government. I have not charted its records yet."
-    log_search(
-        query=question,
-        query_type="local",
-        expanded_terms=[],
-        results_count=0,
-        result_ids=[],
-        confidence=1.0,
-    )
-    return {
-        "query_type": "local",
-        "confidence": 1.0,
-        "ambiguity_reason": reason,
-        "place": place,
-        "coverage": coverage,
-        "results": [],
-        "cached": False,
-    }
-
-
 async def _dispatch_legislation_subtype(structured: dict, question: str, loop) -> dict:
     """Route the *legislation* family by subtype. Caller has already handled
     member, committee, specific_bill, off_topic, and state-jurisdiction."""
@@ -1439,12 +1407,6 @@ async def search(request: Request, body: SearchRequest):
 
     try:
         loop = asyncio.get_event_loop()
-        # Same first layer as /ledger. Without it the LLM router called
-        # "LA County" off_topic at 0.95; a local place is never answered
-        # from Congress (the rule against adjacent data).
-        classified = classify_question(body.question, body.state_code, allow_graph=False)
-        if classified.get("plate") == "uncharted":
-            return _local_response(classified["place"], body.question)
         structured = structure_question(
             body.question, body.state_code, full_history=body.full_history,
             before_congress=body.before_congress, max_results=body.max_results,

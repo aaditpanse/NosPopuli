@@ -1,7 +1,7 @@
 {
  "meta": {
-  "app_sha": "6b770b8",
-  "captured": "2026-09-24T20:28:11",
+  "app_sha": "33e5b54",
+  "captured": "2026-09-20T22:37:33",
   "notes": "off_topic @0.95 on a local-government ask",
   "volatile": []
  },
@@ -15,17 +15,36 @@
  },
  "response": {
   "json": {
-   "ambiguity_reason": "Radnor County is local government. I have not charted its records yet.",
+   "ambiguity_reason": "This doesn't look like a question about legislation, members of Congress, or civic policy. Try a topic, bill ID (e.g. \"HR 4838\"), or a name.",
    "cached": false,
-   "confidence": 1.0,
-   "coverage": null,
-   "place": {
-    "body": "Local government",
-    "name": null,
-    "slug": "",
-    "state": null
+   "confidence": 0.95,
+   "query": {
+    "_bypass_search_cache": false,
+    "ambiguity_reason": null,
+    "bill_type": null,
+    "confidence": 0.95,
+    "congress_numbers": [
+     119,
+     118
+    ],
+    "entity_name": null,
+    "full_history": false,
+    "intents": [],
+    "jurisdiction": null,
+    "keywords": [],
+    "max_results_override": null,
+    "named_entity": null,
+    "query_subtype": null,
+    "query_type": "off_topic",
+    "result_count": null,
+    "specific_bill": null,
+    "state_code": null,
+    "status": null,
+    "time_filter": false,
+    "time_range": null,
+    "topic": null
    },
-   "query_type": "local",
+   "query_type": "off_topic",
    "results": []
   },
   "status": 200
