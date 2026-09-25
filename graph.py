@@ -879,7 +879,7 @@ def build_enactment(snapshots, hold_edges, instrument_ids):
                 text = a.get("text") or ""
                 pred = "signed" if text.startswith("Signed by President") else \
                     "vetoed" if "Vetoed by President" in text else None
-                if pred is None or a.get("type") != "President" or (pred, a["date"]) in seen:
+                if pred is None or (pred, a["date"]) in seen:
                     continue    # the House and the Library each record the one event
                 seen.add((pred, a["date"]))
                 who = holders_as_of(president, a["date"])
@@ -1623,7 +1623,7 @@ def merge_legislators(current, historical):
     came from. The current file wins a collision: it is maintained, and
     the historical one only receives a member after they leave. Pure.
     Returns (legislators, gaps)."""
-    seen = {leg["id"].get("bioguide") for leg in current}
+    seen = {leg["id"].get("bioguide") for leg in current} - {None}
     out = [{**leg, "_source": LEGISLATORS_SOURCE} for leg in current]
     dupes = []
     for leg in historical:
