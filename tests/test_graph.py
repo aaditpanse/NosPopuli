@@ -630,6 +630,80 @@ class EnactmentTest(unittest.TestCase):
         self.assertTrue(any("1 bill(s) have no action record" in g for g in self.gaps))
 
 
+COMMITTEES = [
+    {"type": "house", "name": "House Committee on the Judiciary", "thomas_id": "HSJU",
+     "subcommittees": [{"name": "Crime and Federal Government Surveillance", "thomas_id": "10"}]},
+    {"type": "senate", "name": "Senate Committee on Finance", "thomas_id": "SSFI"},
+    {"type": "joint", "name": "Joint Economic Committee", "thomas_id": "JSEC"},
+]
+MEMBERSHIP = {
+    "HSJU": [{"name": "H. Morgan Griffith", "party": "majority", "rank": 1, "title": "Chairman", "bioguide": "G000568"},
+             {"name": "James R. Walkinshaw", "party": "minority", "rank": 1, "title": "Ranking Member",
+              "bioguide": "W000831"}],
+    "HSJU10": [{"name": "H. Morgan Griffith", "party": "majority", "rank": 2, "bioguide": "G000568"}],
+    "SSFI": [{"name": "Mark R. Warner", "party": "minority", "rank": 3, "bioguide": "W000805"}],
+    "JSEC": [{"name": "Mark R. Warner", "party": "minority", "rank": 1, "bioguide": "W000805"}],
+}
+REFERRED = {**SNAPSHOT, "meta": {"congress": 119, "instruments_fetched": "2026-09-25"}, "instruments": {
+    "hr/5184": {**bill_rec([]), "committees": [
+        {"code": "hsju00", "name": "Judiciary Committee", "chamber": "House", "parent": None,
+         "activities": [{"name": "Referred To", "date": "2026-01-02"}, {"name": "Reported By", "date": "2026-01-05"}]},
+        {"code": "hsju10", "name": "Crime Subcommittee", "chamber": "House", "parent": "hsju00",
+         "activities": [{"name": "Referred To", "date": "2026-01-03"}]},
+        {"code": "hsif00", "name": "Energy and Commerce Committee", "chamber": "House", "parent": None,
+         "activities": [{"name": "Referred To", "date": "2026-01-02"}]}],
+        "reports": [{"endpoint": "119/HRPT/7", "citation": "H. Rept. 119-7", "date": "2026-01-06",
+                     "committees": ["hsju00"]}]},
+    "s/3627": {**bill_rec([]), "committees": [], "reports": []},
+}}
+
+
+class CommitteesTest(unittest.TestCase):
+    def setUp(self):
+        self.nodes, self.edges, _ = graph.build_congress(LEGISLATORS, [REFERRED], today=TODAY)
+        people = {n["props"]["bioguide"]: n["id"] for n in self.nodes if n["props"].get("bioguide")}
+        cn, ce, self.gaps = graph.build_committees(COMMITTEES, MEMBERSHIP, "2026-09-25", [REFERRED], people)
+        self.nodes += cn
+        self.edges += ce
+        self.b = graph.memory_backend(self.nodes, self.edges)
+        self.ask = lambda q: graph.search(q, self.b, today=TODAY)  # noqa: E731
+
+    def test_committees_hang_under_their_chamber_and_joint_under_the_country(self):
+        parent = {e["dst"]: e["src"] for e in by_pred(self.edges, "has_body")}
+        self.assertEqual(parent[graph.committee_id("hsju00")], graph.node_id("organization", "us/house"))
+        self.assertEqual(parent[graph.committee_id("hsju10")], graph.committee_id("hsju00"))
+        self.assertEqual(parent[graph.committee_id("jsec00")], graph.US)
+
+    def test_membership_is_observed_not_dated_and_never_a_hold(self):
+        seats = by_pred(self.edges, "member_of")
+        self.assertEqual(len(seats), 5)
+        self.assertTrue(all(e["valid_from"] == "2026-09-25" and e["valid_to"] is None
+                            and e["props"]["bound_from"] == "observed" for e in seats))
+        self.assertFalse(any(e["dst"] == graph.committee_id("hsju00") for e in by_pred(self.edges, "holds")))
+
+    def test_chair_and_members(self):
+        chair = self.ask("who chairs the House Judiciary Committee")
+        self.assertEqual([(r["person"], r["position"]) for r in chair["rows"]], [("H. Morgan Griffith", "Chairman")])
+        self.assertIn("observed on 2026-09-25", chair["rows"][0]["question"])
+        members = self.ask("who sits on the Judiciary Committee")
+        self.assertEqual(members["committees"], ["House Committee on the Judiciary"])   # not the subcommittee
+        self.assertEqual([r["person"] for r in members["rows"]], ["H. Morgan Griffith", "James R. Walkinshaw"])
+        self.assertIn("no committee in the graph", self.ask("who chairs the Ways and Means Committee")["empty_reason"])
+
+    def test_referrals_and_reports(self):
+        ref = self.ask("what committee has HR 5184 been referred to")
+        self.assertEqual([r["person"] for r in ref["rows"]],
+                         ["House Committee on the Judiciary", "Energy and Commerce Committee",
+                          "House Committee on the Judiciary: Subcommittee on Crime and Federal Government Surveillance"])
+        # A committee the bill names but the current file lacks is kept, and said.
+        self.assertTrue(any("hsif00" in g for g in self.gaps))
+        rep_ = self.ask("what did the House Judiciary Committee report")
+        self.assertEqual([(r["item_id"], r["question"]) for r in rep_["rows"]],
+                         [("instrument/us/119/hr/5184", "H. Rept. 119-7")])
+        # A committee record on disk with nothing in it is a real 'none'.
+        self.assertIn("no committee (none on record)", self.ask("which committee is S 3627 in")["empty_reason"])
+
+
 class ParseInstrumentTest(unittest.TestCase):
     def test_house_forms(self):
         for legis, want in (("H R 5184", ("hr", "5184")), ("H J RES 3", ("hjres", "3")),

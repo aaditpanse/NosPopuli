@@ -1534,6 +1534,7 @@ def _graph_plate(ask):
         return None
     reason = out.get("empty_reason") or ""
     if reason.startswith(("no person in the graph", "no seat in the graph", "no instrument in the graph",
+                          "no committee in the graph",
                           "graph not loaded")):
         return None
     return out

@@ -43,7 +43,7 @@ DATA_DIR = _HERE / "data"
 # graph cannot grow a new relation type by accident.
 PREDICATES = ("contains", "has_body", "has_seat", "holds", "represents",
               "sponsored", "voted_on", "considered", "elected_in", "for_seat",
-              "signed", "vetoed", "enacted_as")
+              "signed", "vetoed", "enacted_as", "member_of", "referred_to", "reported")
 
 # Ordered weakest → strongest. An answer reports the weakest hop it crossed.
 CERTIFICATION_RANK = {"advisory": 0, "ingested": 1, "certified": 2}
@@ -94,6 +94,10 @@ EXECUTIVE_POSTS = {"prez": ("us/president", "President of the United States"),
 PUBLIC_DATA_URL = "https://raw.githubusercontent.com/unitedstates/congress-legislators/gh-pages/{}.json"
 PUBLIC_FILES = ("legislators-current", "legislators-historical", "executive",
                 "committees-current", "committee-membership-current")
+# When each public file was last downloaded. The membership file carries no
+# dates at all, so the download date is the only honest bound it has.
+FETCHED_PATH = DATA_DIR / "public-fetched.json"
+COMMITTEES_SOURCE = "committees-current"
 
 _NS = uuid.uuid5(uuid.NAMESPACE_DNS, "nospopuli.org")
 _OCD_PREFIX = {"organization": "ocd-organization", "post": "ocd-post",
@@ -712,6 +716,8 @@ def build_congress(legislators, snapshots, states=None, today=None):
                     props["topic_derived_by"] = "congress.gov policyArea"
                 if rec.get("introduced"):
                     props["introduced"] = rec["introduced"]
+                if "committees" in rec:
+                    props["committees_fetched"] = (snap.get("meta") or {}).get("instruments_fetched")
                 if "actions" in rec:
                     # The date the presidential actions were read: "no law on
                     # record" is only true as of then.
@@ -881,6 +887,119 @@ def build_enactment(snapshots, hold_edges, instrument_ids):
     if no_actions:
         g["gaps"].append(f"{no_actions} bill(s) have no action record on disk; whether they became "
                          f"law is unknown here, not 'no'")
+    return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
+
+
+def committee_id(code):
+    """Congress.gov's systemCode ('hsju00', 'hsju10') is the thomas id
+    lowercased plus the subcommittee id, '00' for the full committee."""
+    return node_id("organization", f"us/committee/{code.lower()}")
+
+
+def build_committees(committees, membership, observed, snapshots, person_ids):
+    """Committees and subcommittees as organizations under their chamber
+    (joint ones under the country), who sits on them, and which bills were
+    referred to and reported by them.
+
+    Membership is `member_of`, never `holds`: a member sits on several
+    committees at once and a hold would close the others. The file carries
+    no dates, so each seat starts on the day it was observed (`bound_from:
+    observed`) and is open. Referrals and reports come from the snapshot's
+    Congress.gov records. Pure. Returns (nodes, edges, gaps)."""
+    g = _graph()
+    parent_of = {"house": node_id("organization", HOUSE_KEY),
+                 "senate": node_id("organization", SENATE_KEY), "joint": US}
+    known = {}
+    for c in committees:
+        code = f"{c['thomas_id'].lower()}00"
+        cid = committee_id(code)
+        known[code] = cid
+        _node(g, cid, "organization", c["name"],
+              {"natural_key": f"us/committee/{code}", "committee_code": code, "chamber": c["type"],
+               "jurisdiction": US}, COMMITTEES_SOURCE, c["thomas_id"])
+        _edge(g, parent_of[c["type"]], "has_body", cid, None, None, "ingested", COMMITTEES_SOURCE,
+              "seed", US, {"derived": "seed"})
+        for sc in c.get("subcommittees") or []:
+            scode = f"{c['thomas_id'].lower()}{sc['thomas_id']}"
+            sid = committee_id(scode)
+            known[scode] = sid
+            _node(g, sid, "organization", f"{c['name']}: Subcommittee on {sc['name']}",
+                  {"natural_key": f"us/committee/{scode}", "committee_code": scode, "chamber": c["type"],
+                   "parent_code": code, "jurisdiction": US}, COMMITTEES_SOURCE, c["thomas_id"] + sc["thomas_id"])
+            _edge(g, cid, "has_body", sid, None, None, "ingested", COMMITTEES_SOURCE, "seed", US,
+                  {"derived": "seed"})
+    unmatched = {}
+    for thomas, seats in membership.items():
+        code = f"{thomas.lower()}00" if len(thomas) == 4 else thomas.lower()
+        cid = known.get(code)
+        if cid is None:
+            g["gaps"].append(f"membership lists committee {thomas}, which committees-current does not; skipped")
+            continue
+        for m in seats:
+            pid = person_ids.get(m.get("bioguide"))
+            if pid is None:
+                unmatched[m.get("bioguide")] = m.get("name")
+                continue
+            _edge(g, pid, "member_of", cid, observed, None, "ingested", COMMITTEES_SOURCE,
+                  f"{thomas}/{m.get('bioguide')}", US,
+                  {"role": m.get("title") or "Member", "rank": m.get("rank"), "side": m.get("party"),
+                   "bound_from": "observed",
+                   "observed_note": f"seat observed on {observed}; the membership file carries no dates"})
+    if unmatched:
+        g["gaps"].append(f"{len(unmatched)} committee member(s) not in the legislators files "
+                         f"({', '.join(sorted(v or k for k, v in unmatched.items())[:3])}…) skipped")
+
+    created, unreported = set(), 0
+    for snap in snapshots:
+        congress = (snap.get("meta") or {}).get("congress")
+        for label, rec in (snap.get("instruments") or {}).items():
+            itype, number = label.split("/")
+            iid = f"instrument/us/{congress}/{itype}/{number}"
+            ref = f"us/{congress}/{itype}/{number}/committees"
+
+            def unit(code, name=None, chamber=None):
+                # A committee the bill names but the current file does not
+                # (renamed, abolished) still exists for this bill's history.
+                if code not in known:
+                    cid = committee_id(code)
+                    _node(g, cid, "organization", name or code.upper(),
+                          {"natural_key": f"us/committee/{code}", "committee_code": code,
+                           "chamber": (chamber or "").lower() or None, "jurisdiction": US},
+                          "congress.gov", ref)
+                    known[code] = cid
+                    created.add(code)
+                return known[code]
+
+            reported_by = set()
+            for rpt in rec.get("reports") or []:
+                for code in rpt["committees"] or [None]:
+                    if code is None:
+                        unreported += 1
+                        continue
+                    _edge(g, unit(code), "reported", iid, rpt["date"] or None, rpt["date"] or None,
+                          "ingested", "congress.gov", f"report/{rpt['citation']}", US,
+                          {"citation": rpt["citation"]})
+                    reported_by.add(code)
+            for c in rec.get("committees") or []:
+                if not c.get("code"):
+                    continue
+                for act in c["activities"]:
+                    name = (act.get("name") or "").lower()
+                    if name.startswith("referred to") or name == "referral":
+                        _edge(g, iid, "referred_to", unit(c["code"], c.get("name"), c.get("chamber")),
+                              act["date"] or None, act["date"] or None, "ingested", "congress.gov",
+                              f"{ref}/{c['code']}/{act['date']}", US, {"activity": act.get("name")})
+                    elif name.startswith("reported") and c["code"] not in reported_by:
+                        # Reported without a written report on disk.
+                        _edge(g, unit(c["code"], c.get("name"), c.get("chamber")), "reported", iid,
+                              act["date"] or None, act["date"] or None, "ingested", "congress.gov",
+                              f"{ref}/{c['code']}/{act['date']}", US,
+                              {"citation": None, "activity": act.get("name")})
+    if created:
+        g["gaps"].append(f"{len(created)} committee(s) named by a bill are not in committees-current "
+                         f"({', '.join(sorted(created)[:5])}); kept with the bill record's name")
+    if unreported:
+        g["gaps"].append(f"{unreported} committee report(s) name no committee; no `reported` edge for them")
     return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
 
 
@@ -1268,6 +1387,9 @@ def fetch_public(names=PUBLIC_FILES):
         json.loads(r.content)   # fail-closed: never overwrite a good file with a bad one
         (DATA_DIR / f"{name}.json").write_bytes(r.content)
         out[name] = len(r.content)
+    fetched = json.loads(FETCHED_PATH.read_text()) if FETCHED_PATH.exists() else {}
+    fetched.update({name: datetime.date.today().isoformat() for name in out})
+    FETCHED_PATH.write_text(json.dumps(fetched, indent=1, sort_keys=True) + "\n")
     return out
 
 
@@ -1297,6 +1419,22 @@ def build_source(source, states=None):
             gaps += eg
         else:
             gaps.append("no data/executive.json: the presidency is not loaded (run `python graph.py fetch`)")
+        cpath, mpath = DATA_DIR / "committees-current.json", DATA_DIR / "committee-membership-current.json"
+        if cpath.exists() and mpath.exists():
+            fetched = json.loads(FETCHED_PATH.read_text()) if FETCHED_PATH.exists() else {}
+            observed = fetched.get("committee-membership-current")
+            if not observed:
+                observed = datetime.date.today().isoformat()
+                gaps.append("committee membership has no recorded download date; observed as of today")
+            person_ids = {n["props"]["bioguide"]: n["id"] for n in nodes
+                          if n["kind"] == "person" and n["props"].get("bioguide")}
+            cn, ce, cg = build_committees(json.loads(cpath.read_text()), json.loads(mpath.read_text()),
+                                          observed, snaps, person_ids)
+            nodes += cn
+            edges += ce
+            gaps += cg
+        else:
+            gaps.append("no committee files in data/: committees are not loaded (run `python graph.py fetch`)")
         if not historical:
             gaps.append("no data/legislators-historical.json: former members are not loaded "
                         "(run `python graph.py fetch`)")
@@ -1586,6 +1724,17 @@ _ASK_LAW = (
 _ASK_SIGNED_BY = re.compile(
     r"^\s*(?:what|which)\s+(?:bills?\s+|laws?\s+)?(?:did|has)\s+(?:president\s+)?(?P<person>.+?)\s+"
     r"(?P<verb>sign|signed|veto|vetoed)\s*\??\s*$", re.I)
+_ASK_COMMITTEE = (
+    re.compile(r"^\s*who\s+(?P<role>chairs|chaired|leads|is\s+(?:the\s+)?(?:chair(?:man|woman)?|ranking\s+member)\s+(?:of|on))"
+               r"\s+(?:the\s+)?(?P<committee>.+?)\s*\??\s*$", re.I),
+    re.compile(r"^\s*(?:who\s+(?:sits|serves|is|are)\s+on|(?:the\s+)?members\s+of)\s+(?:the\s+)?"
+               r"(?P<committee>.*?\bcommittee\b.*?)\s*\??\s*$", re.I),
+)
+_ASK_REFERRALS = re.compile(
+    r"^\s*(?:what|which)\s+committees?\s+(?:has|have|had|did|is|was)\s+(?:the\s+)?(?P<topic>.+?)"
+    r"(?:\s+(?:been\s+)?(?:referred\s+to|go\s+to|in|sent\s+to))?\s*\??\s*$", re.I)
+_ASK_REPORTED = re.compile(
+    r"^\s*what\s+(?:bills?\s+)?(?:did|has)\s+(?:the\s+)?(?P<committee>.+?)\s+report(?:ed)?\s*\??\s*$", re.I)
 _ASK_VOTERS = re.compile(
     r"^\s*who\s+voted\s+(?:(?P<position>aye|yes|yea|no|nay|present|abstain(?:ed)?)\s+)?"
     r"(?P<connector>on|for|against)\s+(?:the\s+)?(?P<topic>.+?)\s*\??\s*$", re.I)
@@ -1651,6 +1800,20 @@ def parse_question(question, today=None):
         m = rx.match(q)
         if m:
             return {"ask": "sponsored", "person": m.group("person").strip()}
+    for rx in _ASK_COMMITTEE:
+        m = rx.match(q)
+        if m:
+            role = (m.groupdict().get("role") or "").lower()
+            if role.startswith("is") and "committee" not in m.group("committee").lower():
+                break   # "who is the chair of the Board of Supervisors" is a seat
+            return {"ask": "committee", "committee": m.group("committee").strip(),
+                    "role": "ranking" if "ranking" in role else "chair" if role else None}
+    m = _ASK_REFERRALS.match(q)
+    if m:
+        return {"ask": "referrals", "topic": m.group("topic").strip()}
+    m = _ASK_REPORTED.match(q)
+    if m:
+        return {"ask": "reported", "committee": m.group("committee").strip()}
     m = _ASK_SIGNED_BY.match(q)
     if m:
         return {"ask": "signed_by", "person": m.group("person").strip(),
@@ -1747,6 +1910,25 @@ def memory_backend(nodes, edges):
         t = topic.lower()
         return (i["props"].get("topic") or "").lower().startswith(t) or t in i["name"].lower()
 
+    def committees(query):
+        return committee_matches([n for n in nodes if n["kind"] == "organization"
+                                  and n["props"].get("natural_key", "").startswith("us/committee/")], query)
+
+    def items(topic, limit):
+        return sorted(({"id": n["id"], "name": n["name"], "props": n["props"]} for n in nodes
+                       if n["kind"] == "instrument" and topic_ok(n, topic)
+                       and n["props"].get("instrument_type") not in _LAW_TYPES),
+                      key=lambda n: n["id"])[:limit]
+
+    def edges_of(node_ids, predicate, direction):
+        """direction 'out': node → other; 'in': other → node."""
+        side = out if direction == "out" else inn
+        return [{"src": e["src"], "src_name": by_id[e["src"]]["name"], "dst": e["dst"],
+                 "dst_name": by_id[e["dst"]]["name"], "valid_from": e["valid_from"],
+                 "valid_to": e["valid_to"], "certification": e["certification"],
+                 "source_id": e["source_id"], "source_ref": e["source_ref"], "props": e["props"]}
+                for nid in node_ids for e in side.get(nid, []) if e["predicate"] == predicate]
+
     def laws(topic, limit):
         items = sorted((n for n in nodes if n["kind"] == "instrument" and topic_ok(n, topic)
                         and n["props"].get("instrument_type") not in _LAW_TYPES),
@@ -1803,7 +1985,8 @@ def memory_backend(nodes, edges):
         return rows[:limit], len(rows) > limit
 
     return {"persons": persons, "votes": votes_of, "posts": posts, "careers": careers,
-            "holds": holds_of, "voters": voters, "laws": laws, "loaded": lambda: bool(nodes)}
+            "holds": holds_of, "voters": voters, "laws": laws, "committees": committees,
+            "items": items, "edges": edges_of, "loaded": lambda: bool(nodes)}
 
 
 def pg_backend():
@@ -1825,6 +2008,40 @@ def pg_backend():
     def careers(person_ids):
         return run(lambda cur: (cur.execute(_CAREERS_SQL, (person_ids,)),
                                 careers_from_holds(cur.fetchall()))[1])
+
+    def committees(query):
+        def q(cur):
+            cur.execute("SELECT id, name, props FROM graph_node WHERE kind = 'organization' "
+                        "AND props->>'natural_key' LIKE 'us/committee/%%'")
+            return committee_matches(cur.fetchall(), query)
+        return run(q)
+
+    def items(topic, limit):
+        clause, targs = _topic_sql(topic)
+
+        def q(cur):
+            cur.execute(f"""SELECT i.id, i.name, i.props FROM graph_node i
+                            WHERE i.kind = 'instrument'
+                              AND COALESCE(i.props->>'instrument_type', '') <> ALL(%s) AND {clause}
+                            ORDER BY i.id LIMIT %s""", [list(_LAW_TYPES)] + targs + [limit])
+            return cur.fetchall()
+        return run(q)
+
+    def edges_of(node_ids, predicate, direction):
+        near, far = ("src", "dst") if direction == "out" else ("dst", "src")
+
+        def q(cur):
+            cur.execute(f"""
+                SELECT e.src, s.name AS src_name, e.dst, d.name AS dst_name, e.valid_from, e.valid_to,
+                       e.certification, e.source_id, e.source_ref, e.props
+                FROM graph_edge e JOIN graph_node s ON s.id = e.src JOIN graph_node d ON d.id = e.dst
+                WHERE e.predicate = %s AND e.{near} = ANY(%s)""", (predicate, list(node_ids)))
+            rows = cur.fetchall()
+            for r in rows:
+                r["valid_from"] = r["valid_from"].isoformat() if r["valid_from"] else None
+                r["valid_to"] = r["valid_to"].isoformat() if r["valid_to"] else None
+            return rows
+        return run(q)
 
     def laws(topic, limit):
         clause, targs = _topic_sql(topic)
@@ -1897,7 +2114,8 @@ def pg_backend():
                                 cur.fetchone()["any"])[1])
 
     return {"persons": persons, "votes": votes_of, "posts": posts, "careers": careers,
-            "holds": holds_of, "voters": voters, "laws": laws, "loaded": loaded}
+            "holds": holds_of, "voters": voters, "laws": laws, "committees": committees,
+            "items": items, "edges": edges_of, "loaded": loaded}
 
 
 _PLACE_WORDS = None
@@ -1923,6 +2141,26 @@ def strip_place(topic):
 
 
 _MAX_CANDIDATES = 25
+_COMMITTEE_STOP = {"the", "committee", "committees", "on", "of", "and", "for", "house", "senate",
+                   "joint", "subcommittee", "select", "permanent", "u.s.", "us"}
+
+
+def committee_matches(orgs, query):
+    """Committee organizations whose name holds every word of the query.
+    'House' or 'Senate' narrows the chamber; a full committee beats its
+    subcommittees unless the query says 'subcommittee'. Pure; both
+    backends feed it the committee rows."""
+    q = query.lower()
+    words = [w for w in re.split(r"[^a-z0-9.']+", q) if w and w not in _COMMITTEE_STOP]
+    if not words:
+        return []
+    chamber = "house" if re.search(r"\bhouse\b", q) else "senate" if re.search(r"\bsenate\b", q) else \
+        "joint" if re.search(r"\bjoint\b", q) else None
+    hits = [o for o in orgs if all(w in o["name"].lower() for w in words)
+            and (chamber is None or o["props"].get("chamber") == chamber)]
+    if "subcommittee" not in q and any(not o["props"].get("parent_code") for o in hits):
+        hits = [o for o in hits if not o["props"].get("parent_code")]
+    return sorted(hits, key=lambda o: o["name"])
 _LAW_TYPES = ("pl", "pvtl")
 
 
@@ -2035,6 +2273,64 @@ def answer(parsed, backend, limit=200):
                 "hops": hops, "weak_hops": [h for h in hops if h["weakest"] != "certified"],
                 "advisory_fields": [], "place_ignored": place,
                 "empty_reason": None if rows else f"no instrument in the graph matches {topic!r}"}
+    if ask in ("committee", "reported"):
+        cmts = backend["committees"](parsed["committee"])
+        if not cmts:
+            return {"ask": ask, "query": parsed["committee"], "rows": [], "hops": [], "weak_hops": [],
+                    "empty_reason": f"no committee in the graph matches {parsed['committee']!r}"}
+        names = {c["id"]: c["name"] for c in cmts}
+        if ask == "committee":
+            es = backend["edges"](list(names), "member_of", "in")
+            role = parsed.get("role")
+            if role == "chair":
+                es = [e for e in es if (e["props"].get("role") or "").lower().startswith("chair")]
+            elif role == "ranking":
+                es = [e for e in es if (e["props"].get("role") or "").lower() == "ranking member"]
+            es.sort(key=lambda e: (names[e["dst"]], e["props"].get("side") != "majority",
+                                   e["props"].get("rank") or 999))
+            rows = [{"person": e["src_name"], "title": names[e["dst"]], "position": e["props"].get("role"),
+                     "date": e["valid_from"], "certification": e["certification"], "jurisdiction": US,
+                     "question": f"{e['props'].get('side')} · rank {e['props'].get('rank')} · "
+                                 f"{e['props'].get('observed_note')}"} for e in es[:limit]]
+            pred = "member_of"
+            empty = f"no {'chair' if role else 'member'} of {', '.join(names.values())} on disk"
+        else:
+            es = sorted(backend["edges"](list(names), "reported", "out"),
+                        key=lambda e: (e["valid_from"] or "", e["dst"]), reverse=True)
+            rows = [{"person": names[e["src"]], "title": e["dst_name"], "position": "reported",
+                     "date": e["valid_from"], "certification": e["certification"], "jurisdiction": US,
+                     "item_id": e["dst"], "question": e["props"].get("citation") or "no written report on disk"}
+                    for e in es[:limit]]
+            pred = "reported"
+            empty = (f"no bill on disk reported by {', '.join(names.values())} "
+                     f"(only bills with a recorded vote are loaded)")
+        counts = {}
+        for r in rows:
+            counts[r["certification"]] = counts.get(r["certification"], 0) + 1
+        hops = [{"predicate": pred, "weakest": min(counts, key=CERTIFICATION_RANK.get), "counts": counts}] if rows else []
+        return {"ask": ask, "query": parsed["committee"], "committees": list(names.values()), "role": parsed.get("role"),
+                "rows": rows, "count": len(rows), "truncated": len(es) > limit,
+                "persons": sorted({r["person"] for r in rows}), "hops": hops,
+                "weak_hops": [h for h in hops if h["weakest"] != "certified"],
+                "empty_reason": None if rows else empty}
+    if ask == "referrals":
+        its = backend["items"](topic, limit)
+        if not its:
+            return {"ask": ask, "query": topic, "rows": [], "hops": [], "weak_hops": [],
+                    "empty_reason": f"no instrument in the graph matches {topic!r}"}
+        titles = {i["id"]: i["name"] for i in its}
+        es = sorted(backend["edges"](list(titles), "referred_to", "out"),
+                    key=lambda e: (e["src"], e["valid_from"] or ""))
+        rows = [{"person": e["dst_name"], "title": titles[e["src"]], "position": "referred",
+                 "date": e["valid_from"], "certification": e["certification"], "jurisdiction": US,
+                 "item_id": e["src"], "question": f"referred to {e['dst_name']}"} for e in es]
+        no_record = [i["name"] for i in its if "committees_fetched" not in i["props"]]
+        hops = [{"predicate": "referred_to", "weakest": "ingested", "counts": {"ingested": len(rows)}}] if rows else []
+        return {"ask": ask, "query": topic, "topic": topic, "rows": rows, "count": len(rows), "truncated": False,
+                "persons": sorted({r["person"] for r in rows}), "hops": hops, "weak_hops": hops,
+                "empty_reason": None if rows else
+                (f"no committee record on disk for {', '.join(no_record)}" if no_record
+                 else f"{', '.join(titles.values())} went to no committee (none on record)")}
     if ask == "sponsors":
         rows, truncated = backend["voters"](topic, None, limit, "sponsored")
         out = shape_answer(rows, [{"name": "anyone"}], topic, topic, None, truncated, predicate="sponsored")
