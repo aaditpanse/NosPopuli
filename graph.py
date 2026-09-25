@@ -2236,7 +2236,9 @@ def memory_backend(nodes, edges):
                 for nid in node_ids for e in side.get(nid, []) if e["predicate"] == predicate]
 
     def laws(topic, limit):
+        # Federal bills only: a county motion has no President and no public law.
         items = sorted((n for n in nodes if n["kind"] == "instrument" and topic_ok(n, topic)
+                        and n["id"].startswith("instrument/us/")
                         and n["props"].get("instrument_type") not in _LAW_TYPES),
                        key=lambda n: n["id"])[:limit + 1]
         raw = []
@@ -2358,7 +2360,7 @@ def pg_backend():
                 WITH items AS (
                     SELECT i.id, i.name, i.props->>'actions_fetched' AS actions_fetched
                     FROM graph_node i
-                    WHERE i.kind = 'instrument'
+                    WHERE i.kind = 'instrument' AND i.id LIKE 'instrument/us/%%'
                       AND COALESCE(i.props->>'instrument_type', '') <> ALL(%s) AND {clause}
                     ORDER BY i.id LIMIT %s)
                 SELECT it.id AS item_id, it.name AS title, it.actions_fetched,
@@ -2692,8 +2694,16 @@ def answer(parsed, backend, limit=200):
         rows = [{"person": e["dst_name"], "title": titles[e["src"]], "position": "referred",
                  "date": e["valid_from"], "certification": e["certification"], "jurisdiction": US,
                  "item_id": e["src"], "question": f"referred to {e['dst_name']}"} for e in es]
+        # An original measure is reported by a committee without a referral.
+        rows += [{"person": e["src_name"], "title": titles[e["dst"]], "position": "reported",
+                  "date": e["valid_from"], "certification": e["certification"], "jurisdiction": US,
+                  "item_id": e["dst"], "question": f"reported by {e['src_name']}"
+                  + (f" ({e['props']['citation']})" if e["props"].get("citation") else "")}
+                 for e in sorted(backend["edges"](list(titles), "reported", "in"),
+                                 key=lambda e: (e["dst"], e["valid_from"] or ""))]
         no_record = [i["name"] for i in its if "committees_fetched" not in i["props"]]
         hops = [{"predicate": "referred_to", "weakest": "ingested", "counts": {"ingested": len(rows)}}] if rows else []
+        rows = rows[:limit]
         return {"ask": ask, "query": topic, "topic": topic, "rows": rows, "count": len(rows), "truncated": False,
                 "persons": sorted({r["person"] for r in rows}), "hops": hops, "weak_hops": hops,
                 "empty_reason": None if rows else

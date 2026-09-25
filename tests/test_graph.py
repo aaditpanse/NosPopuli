@@ -696,9 +696,13 @@ class CommitteesTest(unittest.TestCase):
 
     def test_referrals_and_reports(self):
         ref = self.ask("what committee has HR 5184 been referred to")
-        self.assertEqual([r["person"] for r in ref["rows"]],
-                         ["House Committee on the Judiciary", "Energy and Commerce Committee",
-                          "House Committee on the Judiciary: Subcommittee on Crime and Federal Government Surveillance"])
+        self.assertEqual([(r["person"], r["position"]) for r in ref["rows"]],
+                         [("House Committee on the Judiciary", "referred"),
+                          ("Energy and Commerce Committee", "referred"),
+                          ("House Committee on the Judiciary: Subcommittee on Crime and Federal Government Surveillance",
+                           "referred"),
+                          # What came back out: an original measure has only this row.
+                          ("House Committee on the Judiciary", "reported")])
         # A committee the bill names but the current file lacks is kept, and said.
         self.assertTrue(any("hsif00" in g for g in self.gaps))
         rep_ = self.ask("what did the House Judiciary Committee report")
