@@ -38,11 +38,14 @@ permissions:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    # 60, not 45: the snapshot's per-bill pass (about 6 Congress.gov calls a
+    # bill) and the 15-minute FEC slice were added to the same job.
+    timeout-minutes: 60
     env:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
       CONGRESS_API_KEY: ${{ secrets.CONGRESS_API_KEY }}
+      FEC_API_KEY: ${{ secrets.FEC_API_KEY }}
       FOUNDRY_AUTO_REPAIR: "off"
     steps:
       - uses: actions/checkout@v4
@@ -70,13 +73,32 @@ jobs:
       - name: Snapshot the current session's roll calls
         run: python graph.py snapshot
 
+      # The public legislators, executive and committee files change rarely;
+      # once a week (Mondays, or on a manual run) is enough. fetch rewrites a
+      # file only when its content changed, so an unchanged week is no diff.
+      - name: Fetch the public legislators and committee files
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$(date -u +%u)" = "1" ]; then
+            python graph.py fetch
+          fi
+
+      # Campaign money, a slice a day: members older than 30 days are
+      # re-fetched until 15 minutes are spent (the key allows 60 calls a
+      # minute; a full pass takes hours). Skipped without the secret.
+      - name: Refresh campaign committees and PACs
+        if: env.FEC_API_KEY != ''
+        run: |
+          year=$(date -u +%Y)
+          python graph.py snapshot-fec $(( year + year % 2 )) --max-age-days 30 --budget-minutes 15
+
       - name: Rebuild the graph
         if: env.SUPABASE_DB_URL != ''
         run: python graph.py load all
 
       - name: Commit and push if the store changed
         run: |
-          git add foundry/data data/congress-votes-*.json
+          git add foundry/data data/congress-votes-*.json data/fec-*.json data/public-fetched.json \
+                  data/legislators-*.json data/executive.json data/committee*.json
           if git diff --cached --quiet; then
             echo "No data changes — nothing to deploy."
             exit 0

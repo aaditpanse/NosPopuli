@@ -1346,13 +1346,15 @@ def top_pacs(receipts, candidate_name, limit=FEC_TOP_PACS):
     return rows[:limit], round(sum(a["amount"] for a in rows), 2), sum(a["receipts"] for a in rows)
 
 
-def snapshot_fec(cycle, out_path, pause=1.05, pacs=True):
+def snapshot_fec(cycle, out_path, pause=1.05, pacs=True, max_age_days=None, budget_minutes=None):
     """For each current member: the principal campaign committee, its
     totals, and (pacs) its top PAC donors, summed over every line-11C
     receipt. Resumable: members already complete in the file are skipped,
     and the file is written after each member, because the key allows 60
     calls a minute and a full run takes hours. Refuses to run without
-    FEC_API_KEY: the DEMO_KEY fallback allows about 50 calls a day."""
+    FEC_API_KEY: the DEMO_KEY fallback allows about 50 calls a day.
+    max_age_days re-fetches members older than that; budget_minutes stops
+    between members, so a scheduled run can refresh a slice at a time."""
     import os
     import requests
     key = os.getenv("FEC_API_KEY")
@@ -1377,12 +1379,19 @@ def snapshot_fec(cycle, out_path, pause=1.05, pacs=True):
         raise RuntimeError(f"{p}: rate-limited five times")
 
     legs = json.loads((DATA_DIR / "legislators-current.json").read_text())
+    today = datetime.date.today()
+    stale_before = (today - datetime.timedelta(days=max_age_days)).isoformat() if max_age_days else ""
+    deadline = time.time() + budget_minutes * 60 if budget_minutes else None
     for leg in legs:
         bio = leg["id"]["bioguide"]
-        if snap["members"].get(bio, {}).get("complete"):
+        old = snap["members"].get(bio, {})
+        if old.get("complete") and old.get("fetched", "") >= stale_before:
             continue
+        if deadline and time.time() > deadline:
+            break
         name = leg["name"].get("official_full") or leg["name"].get("last")
-        rec = {"name": name, "candidate_ids": fec_candidate_ids(leg), "complete": False}
+        rec = {"name": name, "candidate_ids": fec_candidate_ids(leg), "complete": False,
+               "fetched": today.isoformat()}
         try:
             if not rec["candidate_ids"]:
                 rec.update(complete=True, gap="no FEC candidate id for this chamber in the legislators file")
@@ -1631,15 +1640,20 @@ def fetch_public(names=PUBLIC_FILES):
     """Download the public data files into data/. The only network step for
     them; the loader reads the files. Returns {name: bytes written}."""
     import requests
-    out = {}
+    out, changed = {}, []
     for name in names:
         r = requests.get(PUBLIC_DATA_URL.format(name), timeout=60)
         r.raise_for_status()
         json.loads(r.content)   # fail-closed: never overwrite a good file with a bad one
-        (DATA_DIR / f"{name}.json").write_bytes(r.content)
+        path = DATA_DIR / f"{name}.json"
+        if not path.exists() or path.read_bytes() != r.content:
+            path.write_bytes(r.content)
+            changed.append(name)
         out[name] = len(r.content)
+    # The date a file's content was first seen, not the last download: a
+    # committee seat observed in March is still observed in March.
     fetched = json.loads(FETCHED_PATH.read_text()) if FETCHED_PATH.exists() else {}
-    fetched.update({name: datetime.date.today().isoformat() for name in out})
+    fetched.update({name: datetime.date.today().isoformat() for name in changed})
     FETCHED_PATH.write_text(json.dumps(fetched, indent=1, sort_keys=True) + "\n")
     return out
 
@@ -2788,6 +2802,8 @@ if __name__ == "__main__":
     s = sub.add_parser("snapshot-fec", help="campaign committee, totals and top PACs per member (resumable)")
     s.add_argument("cycle", type=int)
     s.add_argument("--no-pacs", action="store_true", help="totals only")
+    s.add_argument("--max-age-days", type=int, help="re-fetch members fetched longer ago than this")
+    s.add_argument("--budget-minutes", type=int, help="stop between members after this long")
     sub.add_parser("fetch", help="download the public legislators, executive and committee files to data/")
     s = sub.add_parser("snapshot", help="fetch one session's roll calls to data/ (no args: the current session)")
     s.add_argument("congress", type=int, nargs="?")
@@ -2826,7 +2842,8 @@ if __name__ == "__main__":
         for e in meta["instrument_errors"][:20]:
             print("  -", e)
     elif a.cmd == "snapshot-fec":
-        print(json.dumps(snapshot_fec(a.cycle, DATA_DIR / f"fec-{a.cycle}.json", pacs=not a.no_pacs), indent=1))
+        print(json.dumps(snapshot_fec(a.cycle, DATA_DIR / f"fec-{a.cycle}.json", pacs=not a.no_pacs,
+                                      max_age_days=a.max_age_days, budget_minutes=a.budget_minutes), indent=1))
     elif a.cmd == "fetch":
         for name, n in fetch_public().items():
             print(f"{name}: {n:,} bytes")

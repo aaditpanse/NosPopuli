@@ -837,6 +837,15 @@ class OlderSessionsTest(unittest.TestCase):
                 self.assertEqual({r["date"][:4] for r in now["rows"]}, {"2026"})
 
 
+class VocabularyTest(unittest.TestCase):
+    def test_the_predicate_set_is_pinned(self):
+        # A new relation type is a schema change: it lands here on purpose.
+        self.assertEqual(set(graph.PREDICATES), {
+            "contains", "has_body", "has_seat", "holds", "represents", "sponsored", "voted_on",
+            "considered", "elected_in", "for_seat", "signed", "vetoed", "enacted_as", "member_of",
+            "referred_to", "reported", "related_to", "campaign_committee"})
+
+
 class ParseInstrumentTest(unittest.TestCase):
     def test_house_forms(self):
         for legis, want in (("H R 5184", ("hr", "5184")), ("H J RES 3", ("hjres", "3")),
