@@ -57,6 +57,24 @@ _CONFIG = json.loads(_SOURCES_PATH.read_text())
 SOURCES = _CONFIG["sources"]
 STATE_NAMES = _CONFIG["states"]
 IDENTITIES = _CONFIG["identities"]
+# Every state, DC and territory a member of Congress has sat for, by name.
+# STATE_NAMES is the sidecar's list of states to *load*; this is the list of
+# states that *exist*, so a node for Texas is never named "TX".
+DIVISION_NAMES = {
+    "al": "Alabama", "ak": "Alaska", "az": "Arizona", "ar": "Arkansas", "ca": "California",
+    "co": "Colorado", "ct": "Connecticut", "de": "Delaware", "fl": "Florida", "ga": "Georgia",
+    "hi": "Hawaii", "id": "Idaho", "il": "Illinois", "in": "Indiana", "ia": "Iowa",
+    "ks": "Kansas", "ky": "Kentucky", "la": "Louisiana", "me": "Maine", "md": "Maryland",
+    "ma": "Massachusetts", "mi": "Michigan", "mn": "Minnesota", "ms": "Mississippi",
+    "mo": "Missouri", "mt": "Montana", "ne": "Nebraska", "nv": "Nevada", "nh": "New Hampshire",
+    "nj": "New Jersey", "nm": "New Mexico", "ny": "New York", "nc": "North Carolina",
+    "nd": "North Dakota", "oh": "Ohio", "ok": "Oklahoma", "or": "Oregon", "pa": "Pennsylvania",
+    "ri": "Rhode Island", "sc": "South Carolina", "sd": "South Dakota", "tn": "Tennessee",
+    "tx": "Texas", "ut": "Utah", "vt": "Vermont", "va": "Virginia", "wa": "Washington",
+    "wv": "West Virginia", "wi": "Wisconsin", "wy": "Wyoming",
+    "dc": "District of Columbia", "as": "American Samoa", "gu": "Guam",
+    "mp": "Northern Mariana Islands", "pr": "Puerto Rico", "vi": "U.S. Virgin Islands",
+}
 
 US = "ocd-division/country:us"
 HOUSE_KEY, SENATE_KEY = "us/house", "us/senate"
@@ -576,7 +594,7 @@ def build_congress(legislators, snapshots, states=None, today=None):
         pid = node_id("post", key)
         if pid not in g["nodes"]:
             if state_div(st) not in g["nodes"]:
-                _node(g, state_div(st), "jurisdiction", STATE_NAMES.get(st.lower(), st),
+                _node(g, state_div(st), "jurisdiction", DIVISION_NAMES.get(st.lower(), st),
                       {"level": "state", "jurisdiction": state_div(st)}, LEGISLATORS_SOURCE)
                 _edge(g, US, "contains", state_div(st), None, None, "ingested",
                       LEGISLATORS_SOURCE, "seed", state_div(st), {"derived": "seed"})
@@ -706,9 +724,10 @@ def build_congress(legislators, snapshots, states=None, today=None):
                     _edge(g, pid, "voted_on", iid, v["date"], v["date"], "ingested",
                           v["source_id"], v["vote_id"],
                           g["nodes"][pid]["props"]["jurisdiction"],
+                          # roll and result are the roll call's, not the member's: the
+                          # `considered` edge carries them once instead of 400 times.
                           {"position": position, "vote_id": v["vote_id"], "chamber": chamber,
-                           "roll": v["roll"], "question": v.get("question"),
-                           "result": v.get("result"), "amendment": v.get("amendment")})
+                           "question": v.get("question"), "amendment": v.get("amendment")})
     # A member recorded voting on a date held the seat that day, and the
     # clerk who recorded it is independent of the legislators file that
     # asserted the term. That affirms the assertion (the term record), so
@@ -1103,12 +1122,12 @@ def _close_holds_in_db(person_ids):
 
 
 def load_all():
-    """Every county in the sidecar, then every state the sidecar names for
-    Congress. Returns {source: (summary, gaps)}."""
+    """Every county in the sidecar, then every member of Congress. Returns
+    {source: (summary, gaps)}."""
     out = {}
     for source in sorted(SOURCES):
         out[source] = load(source)
-    out["us-congress"] = load("us-congress", sorted(STATE_NAMES))
+    out["us-congress"] = load("us-congress")
     return out
 
 
@@ -1636,7 +1655,7 @@ if __name__ == "__main__":
                 n, e, _, _ = build_source(src)
                 nodes += n
                 edges += e
-            n, e, _, _ = build_source("us-congress", sorted(STATE_NAMES))
+            n, e, _, _ = build_source("us-congress")
             nodes += n
             edges += e
             close_holds_across(edges)

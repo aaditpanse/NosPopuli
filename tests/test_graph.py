@@ -465,6 +465,31 @@ class BuildCongressTest(unittest.TestCase):
         self.assertTrue(any("ZZ99999" in g or "1 member id" in g for g in gaps_all))
 
 
+class AllMembersTest(unittest.TestCase):
+    """Every member, not one delegation: the vote edge is the row that
+    multiplies, so its props are pinned, and every state node has a name."""
+    def setUp(self):
+        self.nodes, self.edges, _ = graph.build_congress(LEGISLATORS, [SNAPSHOT], today=TODAY)
+
+    def test_vote_edge_props_are_exactly_the_members_own(self):
+        for e in by_pred(self.edges, "voted_on"):
+            self.assertEqual(set(e["props"]), {"jurisdiction", "position", "vote_id", "chamber",
+                                               "amendment", "question"})
+        # The roll call's own facts stay on the chamber's one edge.
+        considered = by_pred(self.edges, "considered")
+        self.assertTrue(considered and all({"roll", "result"} <= set(e["props"]) for e in considered))
+
+    def test_a_vote_answer_row_still_carries_the_question(self):
+        b = graph.memory_backend(self.nodes, self.edges)
+        out = graph.answer({"ask": "votes", "person": "Adams", "topic": None}, b)
+        self.assertTrue(out["rows"])
+        self.assertTrue(all(r["question"] == "On Passage" for r in out["rows"]))
+
+    def test_every_state_node_has_a_name_not_a_code(self):
+        states = [n for n in self.nodes if n["props"].get("level") == "state"]
+        self.assertEqual(sorted(n["name"] for n in states), ["North Carolina", "Virginia"])
+
+
 class ParseInstrumentTest(unittest.TestCase):
     def test_house_forms(self):
         for legis, want in (("H R 5184", ("hr", "5184")), ("H J RES 3", ("hjres", "3")),
