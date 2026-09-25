@@ -1533,7 +1533,8 @@ def _graph_plate(ask):
         print(f"[LEDGER] graph error: {e}")
         return None
     reason = out.get("empty_reason") or ""
-    if reason.startswith(("no person in the graph", "no seat in the graph", "graph not loaded")):
+    if reason.startswith(("no person in the graph", "no seat in the graph", "no instrument in the graph",
+                          "graph not loaded")):
         return None
     return out
 

@@ -1057,7 +1057,7 @@
     } else {
       const rows = G.rows || [];
       const who = G.ask === "voters" ? (G.persons || []).join(", ") : (G.persons || []).map(p => p.name).join(", ");
-      const noun = (G.ask === "sponsors" || G.ask === "sponsored") ? "bill" : "recorded vote";
+      const noun = ["sponsors", "sponsored", "law", "signed_by"].includes(G.ask) ? "bill" : "recorded vote";
       head = rows.length ? `${rows.length}${G.truncated ? "+" : ""} ${noun}${rows.length === 1 ? "" : "s"}.` : `No ${noun}s.`;
       deck = G.ask === "voters" || G.ask === "sponsors"
         ? `${G.ask === "sponsors" ? "Sponsored: " : G.position ? esc(G.position) + " on " : "On "}${esc(G.topic)} · ${who || "nobody"}`
@@ -1065,6 +1065,15 @@
       body = rows.map(r => `<div style="display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--rule)">
           <span class="read" style="margin:0">${G.ask === "voters" ? esc(r.person) + " · " : ""}${esc(r.title)}</span>${pos(r.position)}
           <span class="meta" style="grid-column:1/-1;margin:0">${esc(r.date)} · ${layer(r.jurisdiction)}${r.question ? " · " + esc(r.question) : ""}${r.topic ? " · topic: " + esc(r.topic) : ""} ${stamp(r.certification)}</span>
+        </div>`).join("");
+    }
+    const cands = G.candidates || [];
+    if (G.ambiguous) {
+      head = `Which ${G.query}?`;
+      deck = `${G.candidate_count} people in the graph have that name`;
+      body = cands.map(c => `<div style="padding:8px 0;border-bottom:1px solid var(--rule)">
+          <span class="read" style="margin:0">${esc(c.name)}</span>
+          <span class="meta" style="display:block;margin:0">${esc((c.seats || [])[0] || "")} · ${esc(c.from || "?")}–${esc(c.to || "now")}</span>
         </div>`).join("");
     }
     const tries = ["how did Herrity vote on zoning", "who voted no on the Affordable HOMES Act", "who held the Braddock seat on 2025-11-18", "who sponsored the Affordable HOMES Act", "what did Kaine sponsor"];

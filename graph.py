@@ -14,8 +14,8 @@ Both emit the same row dicts and the same predicates.
 
 Everything that decides shape is a pure function over parsed JSON so it can
 be tested without a database. `load`, `votes` and `seat_holder` are the only
-functions that touch Postgres; `snapshot_congress` is the only one that
-touches the network.
+functions that touch Postgres; `snapshot_congress`, `enrich_snapshot` and
+`fetch_public` are the only ones that touch the network.
 
 Deliberate limits, each reversible in one function: meetings are not nodes
 (they are events; `considered` carries the meeting id); a local person is
@@ -42,7 +42,8 @@ DATA_DIR = _HERE / "data"
 # The full predicate vocabulary. The loader refuses anything else so the
 # graph cannot grow a new relation type by accident.
 PREDICATES = ("contains", "has_body", "has_seat", "holds", "represents",
-              "sponsored", "voted_on", "considered", "elected_in", "for_seat")
+              "sponsored", "voted_on", "considered", "elected_in", "for_seat",
+              "signed", "vetoed", "enacted_as")
 
 # Ordered weakest → strongest. An answer reports the weakest hop it crossed.
 CERTIFICATION_RANK = {"advisory": 0, "ingested": 1, "certified": 2}
@@ -83,6 +84,10 @@ HOUSE_KEY, SENATE_KEY = "us/house", "us/senate"
 CHAMBER_NAME = {"house": "U.S. House of Representatives", "senate": "U.S. Senate"}
 LEGISLATORS_SOURCE = "legislators-current"
 HISTORICAL_SOURCE = "legislators-historical"
+EXECUTIVE_SOURCE = "executive"
+EXECUTIVE_KEY = "us/executive"
+EXECUTIVE_POSTS = {"prez": ("us/president", "President of the United States"),
+                   "viceprez": ("us/vice-president", "Vice President of the United States")}
 # The public files `python graph.py fetch` downloads into data/. Congress
 # itself does not publish these as data; the unitedstates project assembles
 # them from the Biographical Directory and the clerks.
@@ -707,6 +712,10 @@ def build_congress(legislators, snapshots, states=None, today=None):
                     props["topic_derived_by"] = "congress.gov policyArea"
                 if rec.get("introduced"):
                     props["introduced"] = rec["introduced"]
+                if "actions" in rec:
+                    # The date the presidential actions were read: "no law on
+                    # record" is only true as of then.
+                    props["actions_fetched"] = (snap.get("meta") or {}).get("instruments_fetched")
                 name = f"{label}: {rec.get('title') or v.get('description') or ''}".strip(": ")
                 _node(g, iid, "instrument", name, props, v["source_id"], v["vote_id"])
                 # Who wrote it. Instantaneous edges on the date each name
@@ -775,6 +784,103 @@ def build_congress(legislators, snapshots, states=None, today=None):
     if unknown:
         g["gaps"].append(f"{sum(unknown.values())} vote position(s) by {len(unknown)} member "
                          f"id(s) not in the legislators files dropped")
+    return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
+
+
+def build_executive(executive, today=None):
+    """executive.json → the presidency: an executive organization under the
+    country, the two posts, and every President and Vice President holding
+    them. A person with a bioguide id gets the id Congress gives them, so
+    Vance is one node whether he is asked about as senator or as Vice
+    President; the thirteen with none are keyed by govtrack id. Pure."""
+    today = today or datetime.date.today().isoformat()
+    g = _graph()
+    org = node_id("organization", EXECUTIVE_KEY)
+    _node(g, US, "jurisdiction", "United States", {"level": "country"}, EXECUTIVE_SOURCE)
+    _node(g, org, "organization", "Executive Branch of the United States",
+          {"natural_key": EXECUTIVE_KEY, "jurisdiction": US}, EXECUTIVE_SOURCE)
+    _edge(g, US, "has_body", org, None, None, "ingested", EXECUTIVE_SOURCE, "seed", US, {"derived": "seed"})
+    for key, label in EXECUTIVE_POSTS.values():
+        pid = node_id("post", key)
+        _node(g, pid, "post", label, {"natural_key": key, "role": label, "jurisdiction": US},
+              EXECUTIVE_SOURCE)
+        _edge(g, org, "has_seat", pid, None, None, "ingested", EXECUTIVE_SOURCE, "seed", US, {"derived": "seed"})
+        _edge(g, pid, "represents", US, None, None, "ingested", EXECUTIVE_SOURCE, "seed", US, {"derived": "seed"})
+    for person in executive:
+        ids = person.get("id", {})
+        nk = f"bioguide/{ids['bioguide']}" if ids.get("bioguide") else f"govtrack/{ids.get('govtrack')}"
+        if not ids.get("bioguide") and not ids.get("govtrack"):
+            g["gaps"].append(f"{person['name'].get('last')} has neither bioguide nor govtrack id; skipped")
+            continue
+        pid = node_id("person", nk)
+        name = person["name"].get("official_full") or \
+            f"{person['name'].get('first', '')} {person['name'].get('last', '')}".strip()
+        aliases = [f"{person['name']['nickname']} {person['name']['last']}"] if person["name"].get("nickname") else []
+        _node(g, pid, "person", name,
+              {"natural_key": nk, "aliases": aliases, "bioguide": ids.get("bioguide"),
+               "external_ids": {k: ids[k] for k in ("govtrack", "wikidata") if k in ids},
+               "jurisdiction": US}, EXECUTIVE_SOURCE, ids.get("bioguide") or str(ids.get("govtrack")))
+        for t in person["terms"]:
+            key, _ = EXECUTIVE_POSTS[t["type"]]
+            expired = t.get("end") and t["end"] <= today
+            props = {"bound_from": "exact", "party": t.get("party"), "how": t.get("how")}
+            if expired:
+                props["bound_to"] = "exact"
+            else:
+                props["term_expires"] = t.get("end")
+            _edge(g, pid, "holds", node_id("post", key), t["start"], t["end"] if expired else None,
+                  "ingested", EXECUTIVE_SOURCE, f"{nk}/{t['type']}/{t['start']}", US, props)
+    return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
+
+
+def build_enactment(snapshots, hold_edges, instrument_ids):
+    """What happened after the vote: the President who signed or vetoed a
+    bill, resolved by the date of the action through `holders_as_of`, and the
+    public law it became. Congress.gov's action says 'Signed by President.'
+    and never names him; the name is a join, which is why it is an edge. The
+    law is `ingested`: the law corpus reads the same publisher, so it cannot
+    affirm it. Pure. Returns (nodes, edges, gaps)."""
+    g = _graph()
+    president = [e for e in hold_edges if e["dst"] == node_id("post", EXECUTIVE_POSTS["prez"][0])]
+    no_actions = 0
+    for snap in snapshots:
+        congress = (snap.get("meta") or {}).get("congress")
+        for label, rec in (snap.get("instruments") or {}).items():
+            itype, number = label.split("/")
+            iid = f"instrument/us/{congress}/{itype}/{number}"
+            if iid not in instrument_ids:
+                continue
+            if "actions" not in rec:
+                no_actions += 1
+                continue
+            ref = f"us/{congress}/{itype}/{number}/actions"
+            for a in rec["actions"]:
+                text = a.get("text") or ""
+                pred = "signed" if text.startswith("Signed by President") else \
+                    "vetoed" if "Vetoed by President" in text else None
+                if pred is None or a.get("type") != "President":
+                    continue    # BecameLaw repeats the same event in the Library's code
+                who = holders_as_of(president, a["date"])
+                if len(who) != 1:
+                    g["gaps"].append(f"{label}: {pred} on {a['date']} but {len(who)} President(s) "
+                                     f"held office that day; no edge")
+                    continue
+                _edge(g, who[0]["src"], pred, iid, a["date"], a["date"], "ingested", "congress.gov",
+                      ref, US, {"role": pred, "action_code": a.get("code"), "text": text,
+                                **({"pocket": True} if "Pocket" in text else {})})
+            became = [a for a in rec["actions"] if a.get("type") == "BecameLaw"
+                      and (a.get("text") or "").startswith("Became")]
+            for law in rec.get("laws") or []:
+                kind = "pl" if (law.get("type") or "").startswith("Public") else "pvtl"
+                lid = f"instrument/us/{kind}/{law['number']}"
+                _node(g, lid, "instrument", f"{law.get('type') or 'Public Law'} {law['number']}",
+                      {"instrument_type": kind, "number": law["number"], "jurisdiction": US},
+                      "congress.gov", ref)
+                _edge(g, iid, "enacted_as", lid, became[0]["date"] if became else None,
+                      None, "ingested", "congress.gov", ref, US, {"law_type": law.get("type")})
+    if no_actions:
+        g["gaps"].append(f"{no_actions} bill(s) have no action record on disk; whether they became "
+                         f"law is unknown here, not 'no'")
     return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
 
 
@@ -873,7 +979,7 @@ def snapshot_congress(congress, session, year, out_path, max_misses=3, pause=0.1
                 errors.append(f"{url}: {type(e).__name__}: {e}")
             roll += 1
             time.sleep(pause)
-    instruments, sponsor_errors = fetch_sponsors(votes, s, congress)
+    instruments, sponsor_errors = fetch_instruments(votes, s, congress)
     errors += sponsor_errors
     out = {"meta": {"congress": congress, "session": session, "year": year,
                     "fetched": datetime.datetime.now().isoformat(timespec="seconds"),
@@ -882,6 +988,7 @@ def snapshot_congress(congress, session, year, out_path, max_misses=3, pause=0.1
                     "errors": errors},
            "votes": votes, "instruments": instruments}
     out["meta"]["counts"]["instruments"] = len(instruments)
+    out["meta"]["instruments_fetched"] = out["meta"]["fetched"][:10]
     pathlib.Path(out_path).write_text(json.dumps(out, separators=(",", ":")))
     return out["meta"]
 
@@ -889,11 +996,35 @@ def snapshot_congress(congress, session, year, out_path, max_misses=3, pause=0.1
 _BILL_TYPES = {"hr", "s", "hres", "sres", "hjres", "sjres", "hconres", "sconres"}
 
 
-def fetch_sponsors(votes, session_, congress, pause=0.1):
-    """Congress.gov's record of who introduced and cosponsored each bill the
-    session voted on: title, policy area, sponsor, cosponsors with dates.
-    Needs CONGRESS_API_KEY; without it the snapshot carries votes only and
-    says so. Returns ({"hr/5184": {...}}, errors)."""
+def _paged(session_, url, key, list_key, errors):
+    """Every page of one Congress.gov list, or None when any page fails —
+    a partial list would read as a complete one. The failure is recorded."""
+    items, params = [], {"api_key": key, "format": "json", "limit": 250}
+    while url:
+        r = session_.get(url, params=params, timeout=30)
+        if r.status_code != 200:
+            errors.append(f"{url}: HTTP {r.status_code}")
+            return None
+        page = r.json()
+        items += page.get(list_key, [])
+        url, params = (page.get("pagination") or {}).get("next"), {"api_key": key}
+    return items
+
+
+def _presidential(action):
+    """The actions kept: what the President did and what became law. The
+    rest of a bill's history is unbounded and not a graph fact."""
+    text = action.get("text") or ""
+    return action.get("type") in ("President", "BecameLaw") or "Vetoed" in text
+
+
+def fetch_instruments(votes, session_, congress, pause=0.1):
+    """Congress.gov's record of each bill the session voted on: title,
+    policy area, sponsor and cosponsors, laws, presidential actions,
+    committee referrals and reports, related bills. Needs CONGRESS_API_KEY;
+    without it the snapshot carries votes only and says so. A list that
+    failed to download is absent from the record, never empty, and its name
+    is missing from `passes`. Returns ({"hr/5184": {...}}, errors)."""
     import os
     key = os.getenv("CONGRESS_API_KEY")
     wanted = {}
@@ -907,7 +1038,7 @@ def fetch_sponsors(votes, session_, congress, pause=0.1):
     for label, (itype, number) in sorted(wanted.items()):
         base = f"https://api.congress.gov/v3/bill/{congress}/{itype}/{number}"
         try:
-            r = session_.get(base, params={"api_key": key, "format": "json"}, timeout=20)
+            r = session_.get(base, params={"api_key": key, "format": "json"}, timeout=30)
             if r.status_code != 200:
                 errors.append(f"{base}: HTTP {r.status_code}")
                 continue
@@ -915,24 +1046,98 @@ def fetch_sponsors(votes, session_, congress, pause=0.1):
             rec = {"title": bill.get("title"), "introduced": bill.get("introducedDate"),
                    "policy_area": (bill.get("policyArea") or {}).get("name"),
                    "sponsors": [sp.get("bioguideId") for sp in bill.get("sponsors", []) if sp.get("bioguideId")],
-                   "cosponsors": []}
-            url, params = base + "/cosponsors", {"api_key": key, "format": "json", "limit": 250}
-            while url:
-                r = session_.get(url, params=params, timeout=20)
-                if r.status_code != 200:
-                    errors.append(f"{url}: HTTP {r.status_code}")
-                    break
-                page = r.json()
-                rec["cosponsors"] += [{"id": c.get("bioguideId"), "date": c.get("sponsorshipDate"),
-                                       "original": bool(c.get("isOriginalCosponsor")),
-                                       "withdrawn": c.get("sponsorshipWithdrawnDate")}
-                                      for c in page.get("cosponsors", []) if c.get("bioguideId")]
-                url, params = (page.get("pagination") or {}).get("next"), {"api_key": key}
+                   "laws": [{"number": law.get("number"), "type": law.get("type")}
+                            for law in bill.get("laws") or []],
+                   "passes": ["bill"]}
+            cos = _paged(session_, base + "/cosponsors", key, "cosponsors", errors)
+            if cos is not None:
+                rec["cosponsors"] = [{"id": c.get("bioguideId"), "date": c.get("sponsorshipDate"),
+                                      "original": bool(c.get("isOriginalCosponsor")),
+                                      "withdrawn": c.get("sponsorshipWithdrawnDate")}
+                                     for c in cos if c.get("bioguideId")]
+                rec["passes"].append("cosponsors")
+            acts = _paged(session_, base + "/actions", key, "actions", errors)
+            if acts is not None:
+                rec["actions"] = [{"date": a.get("actionDate"), "code": a.get("actionCode"),
+                                   "type": a.get("type"), "text": a.get("text")}
+                                  for a in acts if _presidential(a)]
+                rec["passes"].append("actions")
+            cms = _paged(session_, base + "/committees", key, "committees", errors)
+            if cms is not None:
+                rec["committees"] = []
+                for c in cms:
+                    for unit, parent in [(c, None)] + [(sc, c.get("systemCode")) for sc in c.get("subcommittees") or []]:
+                        rec["committees"].append({
+                            "code": (unit.get("systemCode") or "").lower(), "name": unit.get("name"),
+                            "chamber": c.get("chamber"), "parent": parent,
+                            "activities": [{"name": a.get("name"), "date": (a.get("date") or "")[:10]}
+                                           for a in unit.get("activities") or []]})
+                rec["passes"].append("committees")
+            reports, ok = [], True
+            for cr in bill.get("committeeReports") or []:
+                ep = _report_endpoint(cr.get("citation"), cr.get("url"))
+                if ep is None:
+                    errors.append(f"{base}: unparsed report citation {cr.get('citation')!r}")
+                    ok = False
+                    continue
+                if any(x["endpoint"] == ep for x in reports):
+                    continue    # "Book 1" and "Book 2" share one endpoint
+                url = f"https://api.congress.gov/v3/committee-report/{ep}"
+                rr = session_.get(url, params={"api_key": key, "format": "json"}, timeout=30)
+                if rr.status_code != 200:
+                    errors.append(f"{url}: HTTP {rr.status_code}")
+                    ok = False
+                    continue
+                for part in rr.json().get("committeeReports", []):
+                    reports.append({"endpoint": ep, "citation": part.get("citation"),
+                                    "date": (part.get("issueDate") or "")[:10],
+                                    "committees": [(c.get("systemCode") or "").lower()
+                                                   for c in part.get("committees") or []]})
+            if ok:
+                rec["reports"] = reports
+                rec["passes"].append("reports")
+            rel = _paged(session_, base + "/relatedbills", key, "relatedBills", errors)
+            if rel is not None:
+                rec["related"] = [{"congress": b.get("congress"), "type": (b.get("type") or "").lower(),
+                                   "number": str(b.get("number")), "title": b.get("title"),
+                                   "relationships": [{"type": d.get("type"), "identified_by": d.get("identifiedBy")}
+                                                     for d in b.get("relationshipDetails") or []]}
+                                  for b in rel]
+                rec["passes"].append("related")
             out[label] = rec
         except Exception as e:
             errors.append(f"{base}: {type(e).__name__}: {e}")
         time.sleep(pause)
     return out, errors
+
+
+def _report_endpoint(citation, url):
+    """'119/HRPT/106' from a report's url, else from its citation. The
+    parser is the report fetcher's, which is pure; its fetch is not reused
+    because it returns [] when its breaker is open."""
+    from sources.committee_reports_fetcher import _parse_citation_to_endpoint
+    ep = _parse_citation_to_endpoint(citation or "", url)
+    return f"{ep[0]}/{ep[1]}/{ep[2]}" if ep else None
+
+
+def enrich_snapshot(path, pause=0.1):
+    """Re-fetch the Congress.gov records of an existing roll-call snapshot
+    without re-fetching the roll calls. Writes the file back; returns meta."""
+    import os
+    import requests
+    if not os.getenv("CONGRESS_API_KEY"):
+        # Fail-closed: an empty re-fetch must not overwrite records on disk.
+        raise RuntimeError("CONGRESS_API_KEY not set; the snapshot is unchanged")
+    snap = json.loads(pathlib.Path(path).read_text())
+    s = requests.Session()
+    s.headers["User-Agent"] = "NosPopuli graph snapshot (nospopuli.org)"
+    instruments, errors = fetch_instruments(snap["votes"], s, snap["meta"]["congress"], pause)
+    snap["instruments"] = instruments
+    snap["meta"]["instruments_fetched"] = datetime.date.today().isoformat()
+    snap["meta"]["counts"]["instruments"] = len(instruments)
+    snap["meta"]["instrument_errors"] = errors
+    pathlib.Path(path).write_text(json.dumps(snap, separators=(",", ":")))
+    return snap["meta"]
 
 
 # ---------------------------------------------------------------- temporal
@@ -1079,6 +1284,19 @@ def build_source(source, states=None):
             raise RuntimeError("no data/congress-votes-*.json — run `python graph.py snapshot 119 2 2026`")
         nodes, edges, gaps = build_congress(legislators, snaps, states)
         gaps = merge_gaps + gaps
+        exec_path = DATA_DIR / "executive.json"
+        if exec_path.exists():
+            xn, xe, xg = build_executive(json.loads(exec_path.read_text()))
+            known = {n["id"] for n in nodes}
+            nodes += [n for n in xn if n["id"] not in known]
+            edges += xe
+            gaps += xg
+            en, ee, eg = build_enactment(snaps, xe, {n["id"] for n in nodes if n["kind"] == "instrument"})
+            nodes += en
+            edges += ee
+            gaps += eg
+        else:
+            gaps.append("no data/executive.json: the presidency is not loaded (run `python graph.py fetch`)")
         if not historical:
             gaps.append("no data/legislators-historical.json: former members are not loaded "
                         "(run `python graph.py fetch`)")
@@ -1263,6 +1481,25 @@ _VOTE_ROW_SQL = """
     JOIN graph_node i ON i.id = e.dst
 """
 _TOPIC_SQL = " (i.props->>'topic' ILIKE %s OR i.name ILIKE %s)"
+# "HR 1", "H.R. 1", "S 3627", "HJRes 3" → (type, number). A bill number
+# matches the instrument id, not the title: the clerk writes "H R 1", and
+# "%H R 1%" would also match H R 10.
+_BILL_REF = re.compile(r"^\s*(h\.?\s*r|s|h\.?\s*res|s\.?\s*res|h\.?\s*j\.?\s*res|s\.?\s*j\.?\s*res|"
+                       r"h\.?\s*con\.?\s*res|s\.?\s*con\.?\s*res)\.?\s*(\d+)\s*$", re.I)
+
+
+def _bill_ref(topic):
+    m = _BILL_REF.match(topic or "")
+    return (re.sub(r"[^a-z]", "", m.group(1).lower()), m.group(2)) if m else None
+
+
+def _topic_sql(topic):
+    """(clause, args) for the instrument alias `i`: a bill number by id,
+    anything else by policy area or title."""
+    ref = _bill_ref(topic)
+    if ref:
+        return " i.id LIKE %s", [f"instrument/us/%/{ref[0]}/{ref[1]}"]
+    return _TOPIC_SQL, [f"{topic}%", f"%{topic}%"]
 
 
 def _pg_votes(cur, person_ids, topic, limit, predicate="voted_on"):
@@ -1272,8 +1509,9 @@ def _pg_votes(cur, person_ids, topic, limit, predicate="voted_on"):
     total = cur.fetchone()["n"]
     sql, args = _VOTE_ROW_SQL.replace("'voted_on'", "%s") + " WHERE p.id = ANY(%s)", [predicate, person_ids]
     if topic:
-        sql += " AND" + _TOPIC_SQL
-        args += [f"{topic}%", f"%{topic}%"]
+        clause, targs = _topic_sql(topic)
+        sql += " AND" + clause
+        args += targs
     sql += " ORDER BY e.valid_from DESC, i.id LIMIT %s"
     cur.execute(sql, args + [limit + 1])
     rows = cur.fetchall()
@@ -1340,6 +1578,14 @@ _ASK_HOLDER = re.compile(
     r"(?:the\s+)?(?P<seat>.+?)"
     r"(?:\s+(?:seat|district|supervisor|representative|senator|chair)s?)?"
     r"(?:\s+(?:as\s+of|on|in)\s+(?P<date>\d{4}(?:-\d{2}(?:-\d{2})?)?))?\s*\??\s*$", re.I)
+_ASK_LAW = (
+    re.compile(r"^\s*who\s+(?:signed|vetoed)\s+(?:the\s+)?(?P<topic>.+?)\s*\??\s*$", re.I),
+    re.compile(r"^\s*(?:did|has|was|is)\s+(?:the\s+)?(?P<topic>.+?)\s+(?:become|became|made|(?:get\s+)?signed|"
+               r"enacted|vetoed|(?:a\s+)?law)(?:\s+(?:a\s+)?law|\s+into\s+law)?\s*\??\s*$", re.I),
+)
+_ASK_SIGNED_BY = re.compile(
+    r"^\s*(?:what|which)\s+(?:bills?\s+|laws?\s+)?(?:did|has)\s+(?:president\s+)?(?P<person>.+?)\s+"
+    r"(?P<verb>sign|signed|veto|vetoed)\s*\??\s*$", re.I)
 _ASK_VOTERS = re.compile(
     r"^\s*who\s+voted\s+(?:(?P<position>aye|yes|yea|no|nay|present|abstain(?:ed)?)\s+)?"
     r"(?P<connector>on|for|against)\s+(?:the\s+)?(?P<topic>.+?)\s*\??\s*$", re.I)
@@ -1405,6 +1651,14 @@ def parse_question(question, today=None):
         m = rx.match(q)
         if m:
             return {"ask": "sponsored", "person": m.group("person").strip()}
+    m = _ASK_SIGNED_BY.match(q)
+    if m:
+        return {"ask": "signed_by", "person": m.group("person").strip(),
+                "predicate": "vetoed" if m.group("verb").lower().startswith("veto") else "signed"}
+    for rx in _ASK_LAW:
+        m = rx.match(q)
+        if m:
+            return {"ask": "law", "topic": m.group("topic").strip()}
     m = _ASK_VOTERS.match(q)
     if m:
         # "voted against X" and "voted for X" carry the position in the
@@ -1487,8 +1741,27 @@ def memory_backend(nodes, edges):
                 "result": i["props"].get("result"), "meeting_id": i["props"].get("meeting_id")}
 
     def topic_ok(i, topic):
+        ref = _bill_ref(topic)
+        if ref:
+            return i["id"].startswith("instrument/us/") and i["id"].endswith(f"/{ref[0]}/{ref[1]}")
         t = topic.lower()
         return (i["props"].get("topic") or "").lower().startswith(t) or t in i["name"].lower()
+
+    def laws(topic, limit):
+        items = sorted((n for n in nodes if n["kind"] == "instrument" and topic_ok(n, topic)
+                        and n["props"].get("instrument_type") not in _LAW_TYPES),
+                       key=lambda n: n["id"])[:limit + 1]
+        raw = []
+        for i in items:
+            es = [e for e in out.get(i["id"], []) if e["predicate"] == "enacted_as"] + \
+                 [e for e in inn.get(i["id"], []) if e["predicate"] in ("signed", "vetoed")]
+            base = {"item_id": i["id"], "title": i["name"],
+                    "actions_fetched": i["props"].get("actions_fetched")}
+            raw += [base | {"predicate": e["predicate"], "date": e["valid_from"],
+                            "certification": e["certification"],
+                            "other": by_id[e["dst"] if e["src"] == i["id"] else e["src"]]["name"]}
+                    for e in es] or [base | {"predicate": None}]
+        return raw
 
     def persons(query):
         toks = _name_tokens(query) or [query.lower()]
@@ -1530,7 +1803,7 @@ def memory_backend(nodes, edges):
         return rows[:limit], len(rows) > limit
 
     return {"persons": persons, "votes": votes_of, "posts": posts, "careers": careers,
-            "holds": holds_of, "voters": voters, "loaded": lambda: bool(nodes)}
+            "holds": holds_of, "voters": voters, "laws": laws, "loaded": lambda: bool(nodes)}
 
 
 def pg_backend():
@@ -1552,6 +1825,31 @@ def pg_backend():
     def careers(person_ids):
         return run(lambda cur: (cur.execute(_CAREERS_SQL, (person_ids,)),
                                 careers_from_holds(cur.fetchall()))[1])
+
+    def laws(topic, limit):
+        clause, targs = _topic_sql(topic)
+
+        def q(cur):
+            cur.execute(f"""
+                WITH items AS (
+                    SELECT i.id, i.name, i.props->>'actions_fetched' AS actions_fetched
+                    FROM graph_node i
+                    WHERE i.kind = 'instrument'
+                      AND COALESCE(i.props->>'instrument_type', '') <> ALL(%s) AND {clause}
+                    ORDER BY i.id LIMIT %s)
+                SELECT it.id AS item_id, it.name AS title, it.actions_fetched,
+                       e.predicate, e.valid_from AS date, e.certification, o.name AS other
+                FROM items it
+                LEFT JOIN graph_edge e
+                  ON (e.src = it.id AND e.predicate = 'enacted_as')
+                  OR (e.dst = it.id AND e.predicate IN ('signed', 'vetoed'))
+                LEFT JOIN graph_node o ON o.id = CASE WHEN e.src = it.id THEN e.dst ELSE e.src END
+                ORDER BY it.id""", [list(_LAW_TYPES)] + targs + [limit + 1])
+            rows = cur.fetchall()
+            for r in rows:
+                r["date"] = r["date"].isoformat() if r["date"] else None
+            return rows
+        return run(q)
 
     def posts(seat_query):
         terms = _seat_terms(seat_query)
@@ -1580,8 +1878,9 @@ def pg_backend():
 
     def voters(topic, position, limit, predicate="voted_on"):
         def q(cur):
-            sql = _VOTE_ROW_SQL.replace("'voted_on'", "%s") + " WHERE" + _TOPIC_SQL
-            args = [predicate, f"{topic}%", f"%{topic}%"]
+            clause, targs = _topic_sql(topic)
+            sql = _VOTE_ROW_SQL.replace("'voted_on'", "%s") + " WHERE" + clause
+            args = [predicate] + targs
             if position:
                 sql += " AND e.props->>'position' = %s"
                 args.append(position)
@@ -1598,7 +1897,7 @@ def pg_backend():
                                 cur.fetchone()["any"])[1])
 
     return {"persons": persons, "votes": votes_of, "posts": posts, "careers": careers,
-            "holds": holds_of, "voters": voters, "loaded": loaded}
+            "holds": holds_of, "voters": voters, "laws": laws, "loaded": loaded}
 
 
 _PLACE_WORDS = None
@@ -1624,6 +1923,47 @@ def strip_place(topic):
 
 
 _MAX_CANDIDATES = 25
+_LAW_TYPES = ("pl", "pvtl")
+
+
+def law_rows(raw, limit):
+    """The `laws` lookup's rows (one per instrument × edge) → one answer row
+    per instrument: signed, vetoed, law, or which of the two unknowns it
+    is. 'Not law' is only said as of the day the actions were read, and never
+    for a bill whose actions were not read. Pure; both backends feed it."""
+    by_item = {}
+    for r in raw:
+        by_item.setdefault(r["item_id"], []).append(r)
+    rows = []
+    for item_id, rs in list(by_item.items())[:limit]:
+        got = {p: [r for r in rs if r["predicate"] == p] for p in ("enacted_as", "signed", "vetoed")}
+        first, notes = rs[0], []
+        for r in got["signed"]:
+            notes.append(f"signed by {r['other']} on {r['date']}")
+        for r in got["vetoed"]:
+            notes.append(f"vetoed by {r['other']} on {r['date']}")
+        edges = got["enacted_as"] + got["signed"] + got["vetoed"]
+        if got["enacted_as"]:
+            position = "law"
+            notes.append(", ".join(r["other"] for r in got["enacted_as"])
+                         + (" over the veto" if got["vetoed"] else ""))
+        elif got["vetoed"]:
+            position = "vetoed"
+        elif first.get("actions_fetched"):
+            position = "not law"
+            notes.append(f"no law on record as of {first['actions_fetched']}")
+        else:
+            position = "unknown"
+            notes.append("no action record on disk; whether it became law is unknown here")
+        signer = got["signed"] or got["vetoed"]
+        rows.append({"item_id": item_id, "title": first["title"], "position": position,
+                     "person": signer[0]["other"] if signer else None,
+                     "date": max((r["date"] for r in edges if r.get("date")), default=None),
+                     "certification": min((r["certification"] for r in edges),
+                                          key=CERTIFICATION_RANK.get, default="ingested"),
+                     "law": got["enacted_as"][0]["other"] if got["enacted_as"] else None,
+                     "question": "; ".join(notes), "jurisdiction": US})
+    return rows, len(by_item) > limit
 
 
 def _one_person(persons, query, topic, ask, backend):
@@ -1669,6 +2009,32 @@ def answer(parsed, backend, limit=200):
             out["empty_reason"] = (f"no bill on disk names {', '.join(p['name'] for p in persons)} "
                                    f"as sponsor or cosponsor (only bills with a recorded vote this session are loaded)")
         return out | {"ask": ask}
+    if ask == "signed_by":
+        pred = parsed["predicate"]
+        persons = backend["persons"](parsed["person"])
+        if not persons:
+            return shape_answer([], [], parsed["person"], None) | {"ask": ask}
+        which, persons = _one_person(persons, parsed["person"], None, ask, backend)
+        if which:
+            return which
+        rows, total, truncated = backend["votes"]([p["id"] for p in persons], None, limit, pred)
+        out = shape_answer(rows, persons, parsed["person"], None, total, truncated, predicate=pred)
+        if not rows:
+            out["empty_reason"] = (f"no bill on disk records {', '.join(p['name'] for p in persons)} as "
+                                   f"having {pred} it (only bills with a recorded vote are loaded)")
+        return out | {"ask": ask, "predicate": pred}
+    if ask == "law":
+        rows, truncated = law_rows(backend["laws"](topic, limit), limit)
+        counts = {}
+        for r in rows:
+            counts[r["certification"]] = counts.get(r["certification"], 0) + 1
+        hops = [{"predicate": "enacted_as", "weakest": min(counts, key=CERTIFICATION_RANK.get),
+                 "counts": counts}] if rows else []
+        return {"ask": ask, "query": topic, "topic": topic, "rows": rows, "count": len(rows),
+                "truncated": truncated, "persons": sorted({r["person"] for r in rows if r["person"]}),
+                "hops": hops, "weak_hops": [h for h in hops if h["weakest"] != "certified"],
+                "advisory_fields": [], "place_ignored": place,
+                "empty_reason": None if rows else f"no instrument in the graph matches {topic!r}"}
     if ask == "sponsors":
         rows, truncated = backend["voters"](topic, None, limit, "sponsored")
         out = shape_answer(rows, [{"name": "anyone"}], topic, topic, None, truncated, predicate="sponsored")
@@ -1751,6 +2117,8 @@ if __name__ == "__main__":
         s.add_argument("source", choices=sources)
         s.add_argument("--state", action="append",
                        help="us-congress only: delegation(s) to load, e.g. --state VA")
+    s = sub.add_parser("enrich", help="re-fetch the Congress.gov bill records of a snapshot file (not its roll calls)")
+    s.add_argument("path")
     sub.add_parser("fetch", help="download the public legislators, executive and committee files to data/")
     s = sub.add_parser("snapshot", help="fetch one session's roll calls to data/ (no args: the current session)")
     s.add_argument("congress", type=int, nargs="?")
@@ -1782,6 +2150,12 @@ if __name__ == "__main__":
         print(f"{len(gaps)} gap(s):")
         for g in gaps:
             print("  -", g)
+    elif a.cmd == "enrich":
+        meta = enrich_snapshot(a.path)
+        print(json.dumps({k: meta[k] for k in ("counts", "instruments_fetched")}, indent=1))
+        print(f"{len(meta['instrument_errors'])} error(s)")
+        for e in meta["instrument_errors"][:20]:
+            print("  -", e)
     elif a.cmd == "fetch":
         for name, n in fetch_public().items():
             print(f"{name}: {n:,} bytes")

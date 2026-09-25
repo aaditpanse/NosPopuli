@@ -545,6 +545,91 @@ class HistoricalMembersTest(unittest.TestCase):
         self.assertEqual(one["count"], 1)
 
 
+EXECUTIVE = [
+    {"id": {"govtrack": 412733}, "name": {"first": "Joseph", "last": "Biden", "official_full": "Joseph R. Biden"},
+     "terms": [{"type": "prez", "start": "2021-01-20", "end": "2025-01-20", "party": "Democrat", "how": "election"}]},
+    {"id": {"govtrack": 412734}, "name": {"first": "Donald", "last": "Trump", "official_full": "Donald J. Trump"},
+     "terms": [{"type": "prez", "start": "2025-01-20", "end": "2029-01-20", "party": "Republican", "how": "election"}]},
+    # Also a member of Congress: one node, the bioguide id, in both files.
+    {"id": {"bioguide": "W000805", "govtrack": 412321}, "name": {"first": "Mark", "last": "Warner"},
+     "terms": [{"type": "viceprez", "start": "2025-01-20", "end": "2029-01-20", "party": "Democrat"}]},
+]
+
+
+def acted(date, text, type_="President"):
+    return {"date": date, "code": "E30000", "type": type_, "text": text}
+
+
+def bill_rec(actions=None, laws=()):
+    rec = {"title": "A bill", "sponsors": [], "cosponsors": [], "laws": list(laws)}
+    if actions is not None:
+        rec["actions"] = actions
+    return rec
+
+
+ENACTED = {**SNAPSHOT, "meta": {"congress": 119, "instruments_fetched": "2026-09-25"}, "instruments": {
+    "hr/5184": bill_rec([acted("2026-02-01", "Signed by President."),
+                         acted("2026-02-01", "Became Public Law No: 119-90.", "BecameLaw")],
+                        [{"number": "119-90", "type": "Public Law"}]),
+    "s/3627": bill_rec([acted("2025-01-10", "Vetoed by President.")]),
+    "hres/9": bill_rec(None),               # the actions pass failed for this one
+}}
+
+
+class EnactmentTest(unittest.TestCase):
+    def setUp(self):
+        self.nodes, self.edges, _ = graph.build_congress(LEGISLATORS, [ENACTED], today=TODAY)
+        xn, xe, self.xgaps = graph.build_executive(EXECUTIVE, today=TODAY)
+        known = {n["id"] for n in self.nodes}
+        self.nodes += [n for n in xn if n["id"] not in known]
+        self.edges += xe
+        en, ee, self.gaps = graph.build_enactment(
+            [ENACTED], xe, {n["id"] for n in self.nodes if n["kind"] == "instrument"})
+        self.nodes += en
+        self.edges += ee
+        self.b = graph.memory_backend(self.nodes, self.edges)
+
+    def test_the_presidency_is_a_body_with_two_seats(self):
+        pres = graph.node_id("post", "us/president")
+        a = graph.answer({"ask": "holder", "seat": "President of the United States", "as_of": "2024-06-01"}, self.b)
+        self.assertEqual([h["name"] for h in a["holders"]], ["Joseph R. Biden"])
+        self.assertIn(pres, {e["dst"] for e in by_pred(self.edges, "has_seat")})
+        # The Vice President who sat in the Senate is one node, keyed by bioguide.
+        warner = [n for n in self.nodes if n["props"].get("bioguide") == "W000805"]
+        self.assertEqual(len(warner), 1)
+        self.assertEqual({e["dst"] for e in by_pred(self.edges, "holds") if e["src"] == warner[0]["id"]},
+                         {graph.node_id("post", "us/senate/va/class:2"),
+                          graph.node_id("post", "us/vice-president")})
+
+    def test_the_signer_is_resolved_by_date(self):
+        (s,) = by_pred(self.edges, "signed")
+        self.assertEqual((s["src"], s["dst"], s["valid_from"]),
+                         (graph.node_id("person", "govtrack/412734"), "instrument/us/119/hr/5184", "2026-02-01"))
+        (v,) = by_pred(self.edges, "vetoed")
+        self.assertEqual(v["src"], graph.node_id("person", "govtrack/412733"))   # Biden, 2025-01-10
+        (law,) = by_pred(self.edges, "enacted_as")
+        self.assertEqual((law["dst"], law["certification"]), ("instrument/us/pl/119-90", "ingested"))
+
+    def test_questions(self):
+        ask = lambda q: graph.search(q, self.b, today=TODAY)  # noqa: E731
+        self.assertEqual(graph.parse_question("did HR 5184 become law"), {"ask": "law", "topic": "HR 5184"})
+        self.assertEqual(graph.parse_question("who signed H.R. 5184?"), {"ask": "law", "topic": "H.R. 5184"})
+        self.assertEqual(graph.parse_question("what did Biden veto"),
+                         {"ask": "signed_by", "person": "Biden", "predicate": "vetoed"})
+        law = ask("did HR 5184 become law")
+        self.assertEqual([(r["position"], r["person"], r["law"]) for r in law["rows"]],
+                         [("law", "Donald J. Trump", "Public Law 119-90")])
+        self.assertEqual(ask("who signed S 3627")["rows"][0]["position"], "vetoed")
+        vetoes = ask("what did Biden veto")
+        self.assertEqual([r["item_id"] for r in vetoes["rows"]], ["instrument/us/119/s/3627"])
+
+    def test_no_action_record_is_unknown_never_no(self):
+        (row,) = graph.search("did H RES 9 become law", self.b, today=TODAY)["rows"]
+        self.assertEqual(row["position"], "unknown")
+        self.assertIn("no action record on disk", row["question"])
+        self.assertTrue(any("1 bill(s) have no action record" in g for g in self.gaps))
+
+
 class ParseInstrumentTest(unittest.TestCase):
     def test_house_forms(self):
         for legis, want in (("H R 5184", ("hr", "5184")), ("H J RES 3", ("hjres", "3")),
