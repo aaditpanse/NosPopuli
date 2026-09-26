@@ -1109,6 +1109,9 @@ class BillScopeTest(unittest.TestCase):
         out = graph.search("who sponsored HR 5184", b, today=TODAY)
         self.assertTrue(out["rows"])
         self.assertEqual({r["item_id"] for r in out["rows"]}, {"instrument/us/119/hr/5184"})
+        # Naming the Congress picks it.
+        out = graph.search("who sponsored HR 5184 in the 118th Congress", b, today=TODAY)
+        self.assertEqual({r["item_id"] for r in out["rows"]}, {"instrument/us/118/hr/5184"})
 
     def test_a_related_bill_with_its_own_record_is_never_a_title_only_node(self):
         # hr/77 has a record in another scope: the link is made, the node is

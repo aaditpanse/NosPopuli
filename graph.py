@@ -2073,12 +2073,15 @@ _TOPIC_SQL = " (i.props->>'topic' ILIKE %s OR i.name ILIKE %s)"
 # matches the instrument id, not the title: the clerk writes "H R 1", and
 # "%H R 1%" would also match H R 10.
 _BILL_REF = re.compile(r"^\s*(h\.?\s*r|s|h\.?\s*res|s\.?\s*res|h\.?\s*j\.?\s*res|s\.?\s*j\.?\s*res|"
-                       r"h\.?\s*con\.?\s*res|s\.?\s*con\.?\s*res)\.?\s*(\d+)\s*$", re.I)
+                       r"h\.?\s*con\.?\s*res|s\.?\s*con\.?\s*res)\.?\s*(\d+)"
+                       r"(?:\s*,?\s*(?:in|of|from)\s+the\s+(\d+)(?:st|nd|rd|th)(?:\s+congress)?)?\s*$", re.I)
 
 
 def _bill_ref(topic):
+    """(type, number, congress or None) for "HR 1" or "HR 1 in the 110th"."""
     m = _BILL_REF.match(topic or "")
-    return (re.sub(r"[^a-z]", "", m.group(1).lower()), m.group(2)) if m else None
+    return (re.sub(r"[^a-z]", "", m.group(1).lower()), m.group(2),
+            int(m.group(3)) if m.group(3) else None) if m else None
 
 
 def _topic_sql(topic):
@@ -2090,7 +2093,8 @@ def _topic_sql(topic):
         # on record, never all of them at once.
         # The candidate ids are listed, newest first, so the primary key
         # finds them; a LIKE with a leading wildcard would scan every bill.
-        ids = [f"instrument/us/{c}/{ref[0]}/{ref[1]}" for c in range(current_session()[0] + 1, 0, -1)]
+        congresses = [ref[2]] if ref[2] else range(current_session()[0] + 1, 0, -1)
+        ids = [f"instrument/us/{c}/{ref[0]}/{ref[1]}" for c in congresses]
         return (" i.id = (SELECT n.id FROM graph_node n WHERE n.id = ANY(%s)"
                 " ORDER BY array_position(%s, n.id) LIMIT 1)", [ids, ids])
     return _TOPIC_SQL, [f"{topic}%", f"%{topic}%"]
@@ -2385,7 +2389,8 @@ def memory_backend(nodes, edges):
         """The SQL's rule: the most recent Congress with this bill number."""
         if ref not in newest_of:
             hits = [n for n in nodes if n["kind"] == "instrument" and n["id"].startswith("instrument/us/")
-                    and n["id"].endswith(f"/{ref[0]}/{ref[1]}")]
+                    and n["id"].endswith(f"/{ref[0]}/{ref[1]}")
+                    and (ref[2] is None or n["id"].startswith(f"instrument/us/{ref[2]}/"))]
             newest_of[ref] = max(hits, key=lambda n: int(n["props"].get("congress") or 0))["id"] if hits else None
         return newest_of[ref]
 
