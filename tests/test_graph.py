@@ -823,10 +823,10 @@ class MoneyTest(unittest.TestCase):
         self.assertIn("api_key=REDACTED&designation=P", out)
         self.assertTrue(out.startswith("ConnectionError: "))
 
-    def test_snapshot_refuses_without_a_key(self):
-        with mock.patch.dict(os.environ, {"FEC_API_KEY": ""}):
-            with self.assertRaisesRegex(RuntimeError, "DEMO_KEY"):
-                graph.snapshot_fec(2026, "/nonexistent/fec.json")
+    def test_the_pac_label_names_the_filing_that_was_read(self):
+        self.assertEqual(graph._pac_label("FEC bulk downloads, cycle 2026: pas2 (…)"),
+                         "FEC bulk pas2, 24K contributions filed by the PAC")
+        self.assertEqual(graph._pac_label(None), "FEC Schedule A line 11C")
 
 
 OLDER = {"meta": {"congress": 118, "session": 2, "year": 2024},

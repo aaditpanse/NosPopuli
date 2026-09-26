@@ -296,7 +296,10 @@ def _pac_totals(candidate_id, cycle, candidate_name=None):
     FEC Schedule A line F3-11C = "contributions from other political committees"
     (actual PACs; the broad contributor_type=committee also returned entity_type
     =ORG bank/processor rows). Drops the candidate's own committees, conduits
-    (ActBlue/WinRed), and joint-fundraising vehicles bearing the candidate name."""
+    (ActBlue/WinRed), and joint-fundraising vehicles bearing the candidate name.
+    This is the campaign's side of the money, read live for the member
+    routes. The graph's top PACs are the PACs' side (pas2 24K, via
+    snapshot_fec_bulk); the two filings do not always agree."""
     name_tokens = {t.upper() for t in clean_name(candidate_name).split() if len(t) > 2}
     cm = _principal_committee(candidate_id)
     if not cm:
