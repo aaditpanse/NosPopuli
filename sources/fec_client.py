@@ -168,112 +168,120 @@ def _pick_candidate(results, name, office):
     return scored[0][2]
 
 
-def candidate_finance(name, state=None, office=None, cycle=None):
-    """Resolve a candidate to their latest FEC finance totals.
+# -------------------------------------------------------- local reads
+#
+# Since Phase 6 (2026-09-26) the finance routes read the bulk snapshot, not
+# the API: derived/fec/candidates-<cycle>.json (every candidate's committee
+# totals and sources; each member's PACs) beside fec-<cycle>.json. Donor
+# employers (member_industries) stay live: they need the multi-GB indiv file.
 
-    Returns a dict (candidate_id, name, party, office, incumbent, cycle,
-    receipts, disbursements, cash_on_hand, from_individuals, from_pacs, fec_url)
-    or None when there's no confident federal match. `office` is 'H'/'S'/'P'.
-    """
-    name = (name or "").strip()
-    if not name:
-        return None
-    query = clean_name(name) or name
-    usps = _usps(state)
-
-    ck = f"fec:cand:v2:{query.lower()}:{usps or ''}:{office or ''}:{cycle or 'latest'}"
-    cached = _cache_get(ck)
-    if cached is not None:
-        return cached or None  # cached {} (a confirmed miss) -> None
-
-    base = {"per_page": 8, "sort": "-election_years"}
-    if office:
-        base["office"] = office
-    if usps and office != "P":
-        base["state"] = usps
-
-    def _search(q):
-        try:
-            return _get("candidates/search/", {**base, "q": q}).get("results", [])
-        except Exception as e:
-            print(f"[FEC] candidate search error {q!r}: {e}")
-            return []
-
-    # Full name first; then fall back to the surname alone, which catches
-    # nicknames FEC files under (Thom vs Thomas, Bob vs Robert).
-    cand = _pick_candidate(_search(query), query, office)
-    if not cand:
-        surname = _last_name(query)
-        if surname and surname != query.lower():
-            cand = _pick_candidate(_search(surname), query, office)
-    if not cand:
-        _cache_set(ck, {})  # remember the miss so we don't re-query all day
-        return None
-
-    out = _finance_dict(cand, _latest_totals(cand["candidate_id"], cycle))
-    _cache_set(ck, out)
-    return out
+_CAND_FILES = {}
 
 
-def _latest_totals(cid, cycle=None):
-    """The candidate's most-recent real election-cycle totals row. FEC returns
-    one row per cycle plus, for some candidates, a null-cycle career-aggregate
-    row that sorts first — we want the latest cycle, not the lifetime total."""
+def _candidates(cycle):
+    """One cycle's candidates file, reread when it changes; None if absent."""
+    import graph
+    path = graph.data_path("fec_candidates", cycle=cycle)
     try:
-        tp = {"per_page": 20, "sort": "-cycle"}
-        if cycle:
-            tp["cycle"] = cycle
-        rows = _get(f"candidate/{cid}/totals/", tp).get("results") or []
-    except Exception as e:
-        print(f"[FEC] totals error {cid}: {e}")
-        return {}
-    dated = [r for r in rows if r.get("cycle")]
-    return max(dated, key=lambda r: r["cycle"]) if dated else (rows[0] if rows else {})
+        mtime = path.stat().st_mtime_ns
+    except FileNotFoundError:
+        return None
+    hit = _CAND_FILES.get(int(cycle))
+    if not hit or hit[0] != mtime:
+        hit = _CAND_FILES[int(cycle)] = (mtime, json.loads(path.read_text()))
+    return hit[1]
 
 
-def _finance_dict(cand, t):
-    cid = cand["candidate_id"]
+def _cycles():
+    """The cycles on disk, newest first."""
+    import graph
+    return sorted((int(p.stem.split("-")[-1]) for p in graph.data_glob("fec_candidates")), reverse=True)
+
+
+def finance_row(cid, rec, cycle):
+    """A candidates-file record in the shape the API path returned. Pure."""
     return {
-        "candidate_id": cid,
-        "name": cand.get("name", ""),
-        "party": cand.get("party_full") or cand.get("party") or "",
-        "office": cand.get("office_full") or cand.get("office") or "",
-        "incumbent": cand.get("incumbent_challenge_full") or "",
-        "cycle": t.get("cycle"),
-        "receipts": t.get("receipts"),
-        "disbursements": t.get("disbursements"),
-        "cash_on_hand": t.get("last_cash_on_hand_end_period"),
-        "from_individuals": t.get("individual_itemized_contributions"),
-        "from_pacs": t.get("other_political_committee_contributions"),
-        # Composition — where the money comes from. FEC reports these cleanly;
-        # named donors/industries do not (self-reported employer fields are
-        # unusable), so that's the OpenSecrets layer, not this.
-        "indiv_itemized": t.get("individual_itemized_contributions"),
-        "indiv_unitemized": t.get("individual_unitemized_contributions"),
-        "from_party": t.get("political_party_committee_contributions"),
-        "self_funding": t.get("candidate_contribution"),
+        "candidate_id": cid, "name": rec["name"],
+        "party": _PARTY_FULL.get(rec["party"], rec["party"]),
+        "office": _OFFICE_FULL.get(rec["office"], rec["office"]),
+        "incumbent": _ICI_FULL.get(rec["ici"], ""), "cycle": cycle,
+        **{k: rec.get(k) for k in ("receipts", "disbursements", "cash_on_hand", "from_individuals",
+                                   "from_pacs", "indiv_itemized", "indiv_unitemized", "from_party",
+                                   "self_funding", "coverage_end_date")},
         "fec_url": f"https://www.fec.gov/data/candidate/{cid}/",
+        "source": "FEC bulk: committee_summary for the principal campaign committee",
     }
+
+
+def candidate_finance(name, state=None, office=None, cycle=None):
+    """A candidate's latest totals by name, from the candidates files: the
+    surname must agree, then the expected office, then the latest election
+    year (as the API search was used). None when nothing agrees."""
+    query = clean_name(name) or (name or "").strip()
+    if not query:
+        return None
+    usps = _usps(state)
+    for cy in ([int(cycle)] if cycle else _cycles()):
+        data = _candidates(cy)
+        if not data:
+            continue
+        results = [{"candidate_id": cid, "name": r["name"], "office": r["office"],
+                    "election_years": [r["election_year"]]}
+                   for cid, r in data["candidates"].items()
+                   if (not office or r["office"] == office) and (not usps or office == "P" or r["state"] == usps)]
+        cand = _pick_candidate(results, query, office)
+        if cand:
+            return finance_row(cand["candidate_id"], data["candidates"][cand["candidate_id"]], cy)
+    return None
+
+
+def _member(name, state, office):
+    """The legislator a name means, among those who served in the state and
+    chamber given; None unless exactly one fits."""
+    import graph
+    from agents.member_search_agent import match_members
+    usps = _usps(state)
+    term = {"S": "sen", "H": "rep"}.get(office)
+    pool = [leg for leg in graph.legislators()
+            if (not usps or any(t.get("state") == usps for t in leg.get("terms", [])))
+            and (not term or any(t.get("type") == term for t in leg.get("terms", [])))]
+    member, _ = match_members(clean_name(name) or name or "", pool)
+    return member
+
+
+def member_finance(name, state, chamber, cycle=None):
+    """FEC campaign finance for a federal member, scoped by chamber: the
+    member's own FEC ids from the legislators file, never a name search of
+    the FEC's candidates (two Rick Scotts). Latest cycle with money."""
+    c = (chamber or "").lower()
+    office = "S" if "senate" in c or "senator" in c else "H" if "house" in c or "rep" in c else None
+    leg = _member(name, state, office)
+    if not leg:
+        return None
+    ids = [i for i in leg["id"].get("fec", []) if not office or i.startswith(office)]
+    for cy in ([int(cycle)] if cycle else _cycles()):
+        data = _candidates(cy) or {"candidates": {}}
+        for cid in ids:
+            if cid in data["candidates"]:
+                return finance_row(cid, data["candidates"][cid], cy)
+    return None
 
 
 def sponsor_finance(sponsor_name, state, bill_type, cycle=None):
     """FEC campaign totals for a bill sponsor, scoped by the bill's chamber."""
-    return candidate_finance(
-        sponsor_name, state=state, office=office_for_bill_type(bill_type), cycle=cycle
-    )
+    office = office_for_bill_type(bill_type)
+    return member_finance(sponsor_name, state, {"S": "senate", "H": "house"}.get(office), cycle)
 
 
-def member_finance(name, state, chamber, cycle=None):
-    """FEC campaign finance for a sitting federal member, scoped by chamber."""
-    c = (chamber or "").lower()
-    office = "S" if "senate" in c or "senator" in c else "H" if "house" in c or "rep" in c else None
-    return candidate_finance(name, state=state, office=office, cycle=cycle)
+def _member_pacs(candidate_id, cycle):
+    data = _candidates(cycle) or {}
+    return {n: a for n, a in (data.get("pacs") or {}).get(candidate_id, [])}
 
 
-_CONDUITS = ("ACTBLUE", "WINRED")  # pass-throughs for individual donors, not org donors
 
 
 def _principal_committee(cid):
+    """Live, for member_industries only."""
     try:
         r = _get(f"candidate/{cid}/committees/", {"designation": "P", "per_page": 5})
         cms = r.get("results", [])
@@ -291,80 +299,36 @@ def _pac_title(name):
     return t
 
 
-def _pac_totals(candidate_id, cycle, candidate_name=None):
-    """Raw {pac_name: dollars} of committee (PAC) contributions to a candidate.
-    FEC Schedule A line F3-11C = "contributions from other political committees"
-    (actual PACs; the broad contributor_type=committee also returned entity_type
-    =ORG bank/processor rows). Drops the candidate's own committees, conduits
-    (ActBlue/WinRed), and joint-fundraising vehicles bearing the candidate name.
-    This is the campaign's side of the money, read live for the member
-    routes. The graph's top PACs are the PACs' side (pas2 24K, via
-    snapshot_fec_bulk); the two filings do not always agree."""
-    name_tokens = {t.upper() for t in clean_name(candidate_name).split() if len(t) > 2}
-    cm = _principal_committee(candidate_id)
-    if not cm:
-        return {}
-    # Span the current + prior cycle (~4 years). A senator's real PAC money —
-    # including causes like pro-Israel — often lands in their election cycle, so
-    # an off-cycle current view alone hides it.
-    agg = {}
-    for cy in (int(cycle), int(cycle) - 2):
-        try:
-            data = _get("schedules/schedule_a/", {
-                "committee_id": cm, "two_year_transaction_period": cy,
-                "line_number": "F3-11C", "sort": "-contribution_receipt_amount",
-                "per_page": 100,
-            })
-        except Exception as e:
-            print(f"[FEC] pac contributors {candidate_id} {cy}: {e}")
-            continue
-        for r in data.get("results", []):
-            nm = (r.get("contributor_name") or "").strip()
-            up = nm.upper()
-            if not nm or r.get("entity_type") == "CAN":
-                continue
-            if any(c in up for c in _CONDUITS):
-                continue
-            if any(t in up for t in name_tokens):
-                continue
-            amt = r.get("contribution_receipt_amount") or 0
-            if amt > 0:
-                agg[nm] = agg.get(nm, 0.0) + amt
-    return agg
-
-
 def top_pac_contributors(candidate_id, cycle, candidate_name=None, limit=8):
-    """Named PAC/committee contributors to a candidate, ranked. [{name, amount}]."""
+    """Named PACs that gave to a member over the cycle and the one before,
+    ranked. [{name, amount}]. The PACs' own filings (pas2, 24K): what each
+    PAC reported giving, which does not always equal what the campaign
+    reported receiving."""
     if not candidate_id or not cycle:
         return []
-    ck = f"fec:pac:v4:{candidate_id}:{cycle}"
-    cached = _cache_get(ck)
-    if cached is not None:
-        return cached
-    agg = _pac_totals(candidate_id, cycle, candidate_name)
-    rows = [{"name": _pac_title(k), "amount": round(v, 2)}
-            for k, v in sorted(agg.items(), key=lambda kv: kv[1], reverse=True)][:limit]
-    _cache_set(ck, rows)
-    return rows
+    pacs = {}
+    for cy in (int(cycle), int(cycle) - 2):
+        for n, a in _member_pacs(candidate_id, cy).items():
+            pacs[n] = pacs.get(n, 0.0) + a
+    return [{"name": _pac_title(n), "amount": round(a, 2)}
+            for n, a in sorted(pacs.items(), key=lambda kv: kv[1], reverse=True)][:limit]
 
 
 def member_pac_interests(candidate_id, cycle, candidate_name=None, limit=12):
     """A member's PAC money grouped by the interest each PAC represents — the
     generalized "who funds this candidate," from factual PAC identity (industry,
-    cause, or political vehicle), never a guess about individual donors. Returns
-    {"cycle", "total", "interests": [{interest, total, share, top: [names]}]}."""
+    cause, or political vehicle), never a guess about individual donors. Spans
+    the cycle and the one before: a senator's PAC money lands in their
+    election cycle. Returns {"cycle", "total", "interests": [{interest,
+    total, share, top: [names]}]}."""
     if not candidate_id or not cycle:
         return {"cycle": cycle, "interests": []}
-    ck = f"fec:pacint:v3:{candidate_id}:{cycle}"
-    cached = _cache_get(ck)
-    if cached is not None:
-        return cached
-
-    agg = _pac_totals(candidate_id, cycle, candidate_name)
+    agg = {}
+    for cy in (int(cycle), int(cycle) - 2):
+        for n, a in _member_pacs(candidate_id, cy).items():
+            agg[n] = agg.get(n, 0.0) + a
     if not agg:
-        out = {"cycle": cycle, "total": 0, "interests": []}
-        _cache_set(ck, out)
-        return out
+        return {"cycle": cycle, "total": 0, "interests": []}
 
     from money import industry_classifier
     labels = industry_classifier.classify_pacs(list(agg))
@@ -381,11 +345,8 @@ def member_pac_interests(candidate_id, cycle, candidate_name=None, limit=12):
         top = [_pac_title(n) for n, _ in sorted(b["pacs"], key=lambda x: x[1], reverse=True)[:4]]
         rows.append({"interest": interest, "total": round(b["total"], 2),
                      "share": round(b["total"] / total, 3), "top": top})
-    # Push "Other"/leadership-style buckets after the real interests? Keep them —
-    # colleague money is real; but sort by dollars so the biggest lead.
-    out = {"cycle": cycle, "total": round(total, 2), "interests": rows[:limit]}
-    _cache_set(ck, out)
-    return out
+    return {"cycle": cycle, "total": round(total, 2), "interests": rows[:limit],
+            "source": "FEC bulk pas2, 24K contributions filed by the PAC"}
 
 
 # Employer strings that carry no industry — donors' non-jobs. FEC is full of
@@ -480,40 +441,22 @@ def member_industries(candidate_id, cycle, limit=10):
 
 
 def race_candidates(office, state, cycle, limit=10):
-    """Every FEC-registered candidate for a federal race, with finance — used
-    when we have no candidate roster from elsewhere (Google Civic voterinfo is
-    gone), so a "U.S. Senate (VA)" page can populate straight from the FEC.
-
-    `office` is 'S'/'H'/'P'; `state` is required for House/Senate, ignored for
-    President. Returns finance dicts sorted by receipts, only those with money
-    reported (drops paper filers), or [] when the race has none.
-    """
+    """Every FEC-registered candidate for a federal race who reported money,
+    from the cycle's candidates file, largest receipts first — used when we
+    have no candidate roster from elsewhere, so a "U.S. Senate (VA)" page can
+    populate straight from the FEC. `office` is 'S'/'H'/'P'; `state` is
+    required for House/Senate, ignored for President. [] when none."""
     if office not in ("S", "H", "P") or not cycle:
         return []
-    ck = f"fec:race:v1:{office}:{(state or '').upper()}:{cycle}"
-    cached = _cache_get(ck)
-    if cached is not None:
-        return cached
-
-    params = {"office": office, "election_year": int(cycle),
-              "candidate_status": "C", "per_page": 30, "sort": "-first_file_date"}
-    if state and office != "P":
-        params["state"] = state.upper()
-    try:
-        results = _get("candidates/", params).get("results", [])
-    except Exception as e:
-        print(f"[FEC] race lookup error {office}/{state}/{cycle}: {e}")
+    data = _candidates(cycle)
+    if not data:
         return []
-
-    out = []
-    for cand in results:
-        fin = _finance_dict(cand, _latest_totals(cand["candidate_id"], cycle))
-        if fin.get("receipts") or fin.get("disbursements"):
-            out.append(fin)
+    usps = (state or "").upper()
+    out = [finance_row(cid, r, int(cycle)) for cid, r in data["candidates"].items()
+           if r["office"] == office and r["status"] == "C" and r["election_year"] == int(cycle)
+           and (office == "P" or r["state"] == usps) and (r["receipts"] or r["disbursements"])]
     out.sort(key=lambda f: f.get("receipts") or 0, reverse=True)
-    out = out[:limit]
-    _cache_set(ck, out)
-    return out
+    return out[:limit]
 
 
 # ------------------------------------------------------------- bulk files
@@ -584,7 +527,7 @@ def _bulk_manifest(cycle):
         return {}  # a corrupt manifest just re-downloads everything, not fatal
 
 
-def _download_bulk(name, cycle, manifest, errors):
+def _download_bulk(name, cycle, manifest, errors, remote=None):
     """One bulk zip, conditional on the Last-Modified we recorded last time.
     Writes to a `.part` file and only `os.replace`s it in on a full 200 —
     a network error partway through must never clobber a good file with a
@@ -593,9 +536,10 @@ def _download_bulk(name, cycle, manifest, errors):
     download with nothing on disk is fatal for the whole run, because a
     snapshot missing a file would silently under-report every member."""
     yy = str(cycle)[-2:]
-    path = f"/files/bulk-downloads/{cycle}/{name}{yy}.zip"
-    url = FEC_BULK_BASE + f"/{cycle}/{name}{yy}.zip"
-    dest = _bulk_dir(cycle) / f"{name}.zip"
+    remote = remote or f"{name}{yy}.zip"
+    path = f"/files/bulk-downloads/{cycle}/{remote}"
+    url = FEC_BULK_BASE + f"/{cycle}/{remote}"
+    dest = _bulk_dir(cycle) / (f"{name}.zip" if remote.endswith(".zip") else f"{name}.csv")
     headers = {}
     prior = manifest.get(name, {})
     if prior.get("last_modified") and dest.exists():
@@ -614,7 +558,7 @@ def _download_bulk(name, cycle, manifest, errors):
         if dest.exists():
             return dest
         raise RuntimeError(f"bulk download failed with no cached copy: {path}")
-    part = dest.with_suffix(".zip.part")
+    part = dest.with_name(dest.name + ".part")
     part.write_bytes(resp.content)
     os.replace(part, dest)  # atomic: a reader never sees a half-written zip
     lm = resp.headers.get("Last-Modified")
@@ -712,7 +656,7 @@ def bulk_totals(weball_rows):
     return out
 
 
-def bulk_top_pacs(pas2_rows, committee_id, candidate_name, cm_names):
+def bulk_top_pacs(pas2_rows, committee_id, candidate_name, cm_names, limit=None):
     """graph.top_pacs's ranking, fed from the giving side instead of the
     receiving side: pas2 rows are each PAC's own itemization of a 24K
     contribution (line 11C, per the pas2 header file) it made, so a row
@@ -739,7 +683,57 @@ def bulk_top_pacs(pas2_rows, committee_id, candidate_name, cm_names):
                 for r in pas2_rows
                 if r["OTHER_ID"] == committee_id and r["TRANSACTION_TP"] == "24K"
                 and r["MEMO_CD"] != "X"]
-    return graph.top_pacs(receipts, candidate_name)
+    return graph.top_pacs(receipts, candidate_name, **({"limit": limit} if limit else {}))
+
+
+_PARTY_FULL = {"DEM": "DEMOCRATIC PARTY", "REP": "REPUBLICAN PARTY", "IND": "INDEPENDENT",
+               "LIB": "LIBERTARIAN PARTY", "GRE": "GREEN PARTY", "NNE": "NONE", "UNK": "UNKNOWN"}
+_OFFICE_FULL = {"H": "House", "S": "Senate", "P": "President"}
+_ICI_FULL = {"I": "Incumbent", "C": "Challenger", "O": "Open seat"}
+
+
+def _ymd_iso(yyyymmdd):
+    """committee_summary's dates are YYYYMMDD; the API gave isoformat()."""
+    try:
+        return datetime.datetime.strptime(yyyymmdd, "%Y%m%d").isoformat()
+    except (TypeError, ValueError):
+        return None
+
+
+def bulk_composition(summary_rows):
+    """committee id -> where its money came from, from FEC's committee
+    summary file: the same split the API's committee totals gave (small
+    unitemized gifts, itemized individuals, PACs, party, the candidate's
+    own money), which weball does not carry. Pure."""
+    out = {}
+    for r in summary_rows:
+        out[r["CMTE_ID"]] = {
+            "receipts": _f(r["TTL_RECEIPTS"]), "disbursements": _f(r["TTL_DISB"]),
+            "cash_on_hand": _f(r["COH_COP"]), "from_individuals": _f(r["INDV_CONTB"]),
+            "indiv_itemized": _f(r["INDV_ITEM_CONTB"]), "indiv_unitemized": _f(r["INDV_UNITEM_CONTB"]),
+            "from_pacs": _f(r["OTH_CMTE_CONTB"]), "from_party": _f(r["PTY_CMTE_CONTB"]),
+            "self_funding": _f(r["CAND_CNTB"]), "coverage_end_date": _ymd_iso(r.get("CVG_END_DT")),
+        }
+    return out
+
+
+def bulk_candidates(cn_rows, principal, composition):
+    """Every candidate of the cycle whose principal committee filed a
+    summary: who they are (cn) and their committee's money (composition).
+    A candidate with no filed summary has nothing to show and is left out.
+    Pure."""
+    out = {}
+    for r in cn_rows:
+        cm = principal.get(r["CAND_ID"])
+        money = composition.get(cm) if cm else None
+        if not money:
+            continue
+        out[r["CAND_ID"]] = {
+            "name": r["CAND_NAME"], "party": r["CAND_PTY_AFFILIATION"], "office": r["CAND_OFFICE"],
+            "state": r["CAND_OFFICE_ST"], "district": r["CAND_OFFICE_DISTRICT"], "ici": r["CAND_ICI"],
+            "status": r["CAND_STATUS"], "election_year": int(r["CAND_ELECTION_YR"] or 0),
+            "committee_id": cm, **money}
+    return out
 
 
 def snapshot_fec_bulk(cycle, out_path=None):
@@ -755,6 +749,8 @@ def snapshot_fec_bulk(cycle, out_path=None):
     try:
         for name in ("weball", "cn", "ccl", "cm", "pas2"):
             paths[name] = _download_bulk(name, cycle, manifest, errors)
+        paths["committee_summary"] = _download_bulk("committee_summary", cycle, manifest, errors,
+                                                    remote=f"committee_summary_{cycle}.csv")
     finally:
         (_bulk_dir(cycle) / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True))
 
@@ -764,9 +760,15 @@ def snapshot_fec_bulk(cycle, out_path=None):
     cm = _bulk_rows(paths["cm"], _CM_COLS)
     pas2 = _bulk_rows(paths["pas2"], _PAS2_COLS)
 
+    import csv
+    import io
+    summary = list(csv.DictReader(io.StringIO(paths["committee_summary"].read_bytes().decode("latin-1"))))
+
     principal = bulk_principal_committees(ccl, cn, cycle)
     cm_names = bulk_committee_names(cm)
     totals_by_cand = bulk_totals(weball)
+    candidates = bulk_candidates(cn, principal, bulk_composition(summary))
+    member_pacs = {}
 
     legs = json.loads(graph.data_path("public", name=graph.LEGISLATORS_SOURCE).read_text())
     today = datetime.date.today().isoformat()
@@ -792,8 +794,9 @@ def snapshot_fec_bulk(cycle, out_path=None):
                 rec["totals"] = t
             else:
                 rec["gap"] = f"no weball totals row for {cid} in {cycle}"
-            rows, total, n = bulk_top_pacs(pas2, cm_id, name, cm_names)
-            rec["top_pacs"], rec["pac_total"], rec["pac_receipts"] = rows, total, n
+            rows, total, n = bulk_top_pacs(pas2, cm_id, name, cm_names, limit=10 ** 6)
+            rec["top_pacs"], rec["pac_total"], rec["pac_receipts"] = rows[:graph.FEC_TOP_PACS], total, n
+            member_pacs[cid] = [[r["name"], r["amount"]] for r in rows]
             placed = True
             break
         if not placed:
@@ -813,6 +816,16 @@ def snapshot_fec_bulk(cycle, out_path=None):
     tmp = path.with_suffix(".json.part")
     tmp.write_text(json.dumps(snap, separators=(",", ":")))
     os.replace(tmp, path)  # same atomic-write guarantee as the bulk zips
+    # Every candidate, and each member's whole PAC list: what the finance
+    # routes read. Its own file, untracked, so the tracked fec file stays
+    # the size the graph needs.
+    if not out_path:
+        cpath = graph.data_path("fec_candidates", cycle=cycle)
+        ctmp = cpath.with_name(cpath.name + ".part")
+        ctmp.write_text(json.dumps({"meta": {"cycle": cycle, "source": source, "updated": snap["meta"]["updated"],
+                                             "counts": {"candidates": len(candidates), "members_with_pacs": len(member_pacs)}},
+                                    "candidates": candidates, "pacs": member_pacs}, separators=(",", ":")))
+        os.replace(ctmp, cpath)
     return snap["meta"]
 
 

@@ -47,6 +47,7 @@ foundry/golden/*/http_cache.json
 data/raw/
 data/datasets.json
 data/derived/bills/
+data/derived/fec/candidates-*.json
 data/derived/certification/
 data/derived/nominations/
 data/derived/lobbying/

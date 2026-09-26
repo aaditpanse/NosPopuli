@@ -1830,6 +1830,35 @@ def pas2_row(**kw):
     return d
 
 
+class FecLocalFinanceTest(unittest.TestCase):
+    """The finance routes from the bulk files (Phase 6). Checked 2026-09-26
+    on Tammy Baldwin's 2026 committee: receipts, disbursements, cash on
+    hand, PAC, party and self-funding equal the API's to the cent."""
+
+    SUMMARY = {"CMTE_ID": "C00326801", "TTL_RECEIPTS": "2823440.81", "TTL_DISB": "2200827.44",
+               "COH_COP": "647880.22", "INDV_CONTB": "2539000.98", "INDV_ITEM_CONTB": "1214684.09",
+               "INDV_UNITEM_CONTB": "1324316.89", "OTH_CMTE_CONTB": "127264", "PTY_CMTE_CONTB": "",
+               "CAND_CNTB": "0", "CVG_END_DT": "20260630"}
+    CN = {"CAND_ID": "S2WI00219", "CAND_NAME": "BALDWIN, TAMMY", "CAND_PTY_AFFILIATION": "DEM",
+          "CAND_OFFICE": "S", "CAND_OFFICE_ST": "WI", "CAND_OFFICE_DISTRICT": "00", "CAND_ICI": "I",
+          "CAND_STATUS": "C", "CAND_ELECTION_YR": "2030"}
+
+    def test_a_candidate_with_a_filed_summary_in_the_api_shape(self):
+        from sources import fec_client as f
+        comp = f.bulk_composition([self.SUMMARY])
+        self.assertEqual(comp["C00326801"]["from_party"], 0.0)       # blank is zero, not missing
+        self.assertEqual(comp["C00326801"]["coverage_end_date"], "2026-06-30T00:00:00")
+        cands = f.bulk_candidates([self.CN, {**self.CN, "CAND_ID": "S0XX00001"}],
+                                  {"S2WI00219": "C00326801", "S0XX00001": "C99999999"}, comp)
+        # No summary filed, nothing to show: left out, not zero.
+        self.assertEqual(list(cands), ["S2WI00219"])
+        row = f.finance_row("S2WI00219", cands["S2WI00219"], 2026)
+        self.assertEqual((row["party"], row["office"], row["incumbent"]),
+                         ("DEMOCRATIC PARTY", "Senate", "Incumbent"))
+        self.assertEqual((row["receipts"], row["indiv_unitemized"], row["from_pacs"]),
+                         (2823440.81, 1324316.89, 127264.0))
+
+
 class FecBulkTest(unittest.TestCase):
     """Pure functions over small inline rows in the real `|`-column order —
     no network, no zip file. Real-download parity (weball totals for
