@@ -1152,6 +1152,66 @@ class HelperTest(unittest.TestCase):
         self.assertEqual(k("The Company"), "COMPANY")
 
 
+NOMS = {
+    "PN1020": {"citation": "PN1020", "number": 1020, "part": "00", "received": "2023-09-11", "military": False,
+               "organization": "The Judiciary",
+               "description": "John A. Kazen, of Texas, to be United States District Judge for the Southern "
+                              "District of Texas, vice Vanessa D. Gilmore, retired.",
+               "positions": [{"title": "United States District Judge", "organization": "The Judiciary",
+                              "nominees": 1}],
+               "latest_action": {"date": "2024-01-09", "text": "Confirmed by the Senate by Yea-Nay Vote."},
+               "updated": "2026-01-01"},
+    "PN781": {"citation": "PN781", "number": 781, "part": "00", "received": "2023-06-01", "military": True,
+              "organization": "Army", "description": None,
+              "positions": [{"title": "Colonel", "organization": "Army", "nominees": 40}],
+              "latest_action": {"date": "2023-07-01", "text": "Confirmed by the Senate by Voice Vote."},
+              "updated": "2026-01-01"},
+    "PN78-1": {"citation": "PN78-1", "number": 78, "part": "01", "received": "2023-01-20", "military": False,
+               "organization": "Department of State", "description": None, "positions": [],
+               "latest_action": {"date": "2023-12-01", "text": "Returned to the President under the provisions"},
+               "updated": "2026-01-01"},
+}
+
+
+class NominationTest(unittest.TestCase):
+    def setUp(self):
+        _, self.xe, _ = graph.build_executive(EXECUTIVE, today=TODAY)
+
+    def test_a_nomination_is_an_instrument_with_the_nominee_as_data(self):
+        nodes, edges, gaps = graph.build_nominations(118, NOMS, self.xe)
+        (n,) = [x for x in nodes if x["id"] == "instrument/us/118/pn/1020"]
+        self.assertEqual(n["name"], "PN1020: John A. Kazen, to be United States District Judge for the "
+                                    "Southern District of Texas")
+        self.assertEqual((n["props"]["nominee"], n["props"]["outcome"]), ("John A. Kazen", "confirmed"))
+        self.assertFalse(any(x["kind"] == "person" for x in nodes))   # never a person node
+        (nom,) = [e for e in by_pred(edges, "nominated") if e["dst"] == n["id"]]
+        self.assertEqual(nom["src"], graph.node_id("person", "govtrack/412733"))   # Biden, 2023
+
+    def test_a_military_list_names_no_nominee(self):
+        nodes, _, _ = graph.build_nominations(118, NOMS, self.xe)
+        (n,) = [x for x in nodes if x["id"] == "instrument/us/118/pn/781"]
+        self.assertIsNone(n["props"]["nominee"])
+        self.assertEqual(n["props"]["nominee_parse"], "list or unparsed")
+        self.assertEqual(n["name"], "PN781: Colonel (Army)")
+
+    def test_a_collapsed_split_citation_is_never_linked(self):
+        # Voteview writes PN78-1 as PN781, which is also a real nomination:
+        # the vote must not land on PN781.
+        votes = [("PN781", "us/118/voteview/senate/9", "2023-07-01"),
+                 ("PN1020", "us/118/voteview/senate/12", "2024-01-09")]
+        nodes, _, gaps = graph.build_nominations(118, NOMS, self.xe, votes)
+        props = {n["id"]: n["props"] for n in nodes}
+        self.assertNotIn("confirmation_votes", props["instrument/us/118/pn/781"])
+        self.assertEqual(props["instrument/us/118/pn/1020"]["confirmation_votes"],
+                         [{"vote_id": "us/118/voteview/senate/12", "date": "2024-01-09"}])
+        self.assertTrue(any("collapsed" in g for g in gaps))
+
+    def test_nominations_are_not_bills(self):
+        nodes, edges, _ = graph.build_nominations(118, NOMS, self.xe)
+        b = graph.memory_backend(nodes, edges)
+        self.assertEqual(b["items"]("PN1020", 10), [])
+
+
 class DataLayoutTest(unittest.TestCase):
     def test_every_dataset_has_one_path_and_the_repo_mirrors_it(self):
         with mock.patch.object(graph, "DATA_DIR", pathlib.Path("/srv/bulk")):
@@ -1212,7 +1272,7 @@ class VocabularyTest(unittest.TestCase):
         self.assertEqual(set(graph.PREDICATES), {
             "contains", "has_body", "has_seat", "holds", "represents", "sponsored", "voted_on",
             "considered", "elected_in", "for_seat", "signed", "vetoed", "enacted_as", "member_of",
-            "referred_to", "reported", "related_to", "campaign_committee"})
+            "referred_to", "reported", "related_to", "campaign_committee", "nominated"})
 
 
 class ParseInstrumentTest(unittest.TestCase):

@@ -167,7 +167,7 @@ def data_glob(kind, **fields):
 PREDICATES = ("contains", "has_body", "has_seat", "holds", "represents",
               "sponsored", "voted_on", "considered", "elected_in", "for_seat",
               "signed", "vetoed", "enacted_as", "member_of", "referred_to", "reported",
-              "related_to", "campaign_committee")
+              "related_to", "campaign_committee", "nominated")
 
 # Ordered weakest → strongest. An answer reports the weakest hop it crossed.
 CERTIFICATION_RANK = {"advisory": 0, "ingested": 1, "certified": 2}
@@ -1145,7 +1145,7 @@ def build_related(snapshots, instrument_ids, known_ids=frozenset()):
 # What a bill scope owns. Everything else is the skeleton: people, seats,
 # the presidency, committees as the file lists them, money.
 BILL_PREDICATES = frozenset({"sponsored", "voted_on", "considered", "referred_to", "reported",
-                             "related_to", "enacted_as", "signed", "vetoed"})
+                             "related_to", "enacted_as", "signed", "vetoed", "nominated"})
 
 
 def partition(nodes, edges):
@@ -1214,6 +1214,80 @@ def build_bills_scope(congress, bills, legislators, executive, committees, obser
         gaps.append(f"{sum(unknown.values())} sponsor(s) of the {congress}th Congress's bills not in the "
                     f"legislators files ({', '.join(sorted(unknown)[:5])}); no edge for them")
     return nodes, edges, gaps
+
+
+_NOMINEE_RE = re.compile(r"^(?P<nominee>[^,]+?), of (?P<of>[^,]+?), to be (?P<position>.+?)"
+                         r"(?:,?\s+vice\s.*|\s*\(.*\)\.?|\.)?$", re.S)
+_OUTCOMES = (("confirmed", "Confirmed"), ("withdrawn", "withdrawal"), ("returned", "Returned to the President"),
+             ("failed", "sine die adjournment"))
+
+
+def nomination_outcome(latest_action_text):
+    """What became of a nomination, read from its latest action's words.
+    'other' keeps any wording this does not know rather than guessing. Pure."""
+    text = latest_action_text or ""
+    return next((name for name, phrase in _OUTCOMES if phrase in text), "pending" if text else "other")
+
+
+def build_nominations(congress, noms, exec_holds, senate_votes=()):
+    """One Congress's nominations → (nodes, edges, gaps). A nomination is an
+    instrument (instrument/us/<c>/pn/<number>[-<part>], the id a roll call on
+    it already has); the nominee is data on it, never a person node, because
+    Congress.gov gives a name and no identifier. `nominated` comes from the
+    President who held office on the day the Senate received it.
+
+    senate_votes: (document_name, vote_id, date) of the Congress's Senate
+    roll calls on nominations, read from the files; they become the
+    confirmation_votes prop, not edges (older roll calls stay in files).
+    Voteview collapses split citations (PN78-10 → PN7810), so a document name
+    that a split citation collapses to is never linked: PN78-1 would read as
+    the real PN781. Pure."""
+    g = _graph()
+    president = [e for e in exec_holds if e["dst"] == node_id("post", EXECUTIVE_POSTS["prez"][0])]
+    collapsed = {c.replace("-", "") for c in noms if "-" in c}
+    votes_of, ambiguous = {}, 0
+    for name, vote_id, date in senate_votes:
+        if name in collapsed:
+            ambiguous += 1
+            continue
+        if name in noms:
+            votes_of.setdefault(name, []).append({"vote_id": vote_id, "date": date})
+    no_president = 0
+    for cit, rec in noms.items():
+        number = cit[2:]
+        iid = f"instrument/us/{congress}/pn/{number}"
+        m = _NOMINEE_RE.match(rec.get("description") or "")
+        pos = (rec.get("positions") or [{}])[0]
+        props = {"instrument_type": "pn", "congress": congress, "number": number, "jurisdiction": US,
+                 "positions": rec.get("positions") or [], "organization": rec.get("organization"),
+                 "military": rec.get("military"), "received": rec.get("received"),
+                 "latest_action": rec.get("latest_action"),
+                 "outcome": nomination_outcome((rec.get("latest_action") or {}).get("text")),
+                 "outcome_derived_by": "the words of Congress.gov's latest action"}
+        if m and not rec.get("military"):
+            props.update(nominee=m.group("nominee").strip(), nominee_of=m.group("of").strip(),
+                         nominee_parsed_by="regex over Congress.gov's description")
+            name = f"{cit}: {props['nominee']}, to be {m.group('position').strip().rstrip(',.')}"
+        else:
+            props.update(nominee=None, nominee_parse="list or unparsed")
+            title = pos.get("title") or rec.get("description") or "nomination"
+            name = f"{cit}: {title}" + (f" ({rec['organization']})" if rec.get("organization") else "")
+        if cit in votes_of:
+            props["confirmation_votes"] = sorted(votes_of[cit], key=lambda v: v["date"])
+        _node(g, iid, "instrument", name[:300], props, "congress.gov", f"us/{congress}/pn/{number}")
+        who = holders_as_of(president, rec["received"]) if rec.get("received") else []
+        if len(who) != 1:
+            no_president += 1
+            continue
+        _edge(g, who[0]["src"], "nominated", iid, rec["received"], rec["received"], "ingested",
+              "congress.gov", f"us/{congress}/pn/{number}/nominated", US, {"received": rec["received"]})
+    if no_president:
+        g["gaps"].append(f"{no_president} nomination(s) of the {congress}th Congress: no single President "
+                         f"held office on the day received; no `nominated` edge")
+    if ambiguous:
+        g["gaps"].append(f"{ambiguous} roll call(s) of the {congress}th Congress name a nomination whose split "
+                         f"citation Voteview collapsed; not linked")
+    return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
 
 
 def committee_id(code):
@@ -1784,6 +1858,17 @@ def fetch_public(names=PUBLIC_FILES):
     return out
 
 
+def _senate_pn_votes(congress):
+    """(document name, vote id, date) of one Congress's Senate roll calls on
+    nominations, read from its roll-call files one at a time."""
+    out = []
+    for p in data_glob("votes", congress=congress):
+        for v in json.loads(p.read_text()).get("votes", []):
+            if v.get("chamber") == "senate" and (v.get("document_type") or "").upper() == "PN":
+                out.append((v.get("document_name") or f"PN{v.get('document_number')}", v["vote_id"], v["date"]))
+    return out
+
+
 def _bill_ids_on_disk(exclude=None):
     """Every bill id with a record in a bills-<c>.json, read one file at a
     time and only its keys: the bills that are nodes in their own scope."""
@@ -1849,6 +1934,19 @@ def build_source(source, states=None):
             nodes += en
             edges += ee
             gaps += eg
+            noms_path = data_path("nominations", congress=congress)
+            if noms_path.exists():
+                # The roll calls made thin PN nodes from their own labels;
+                # the nomination record replaces their name and props, and
+                # its votes stay the roll calls' edges.
+                nn, ne, ng = build_nominations(congress, json.loads(noms_path.read_text())["nominations"], xe)
+                rich = {n["id"]: n for n in nn}
+                nodes = [rich.pop(n["id"]) if n["id"] in rich else n for n in nodes] + list(rich.values())
+                edges += ne
+                gaps += ng
+            else:
+                gaps.append(f"no derived/nominations/nominations-{congress}.json: nominations are named "
+                            f"only by their roll calls")
         else:
             gaps.append("no public/executive.json: the presidency is not loaded (run `python graph.py fetch`)")
         cpath, mpath = data_path("public", name=COMMITTEES_SOURCE), data_path("public", name="committee-membership-current")
@@ -2021,6 +2119,23 @@ def load_us(cur, only_current=False, force=False):
                                            committees, observed)
             load_scope(cur, scope, bn, be, fp, orphan_kinds=["instrument"])
             out[scope] = (_summary(bn, be), bg)
+        _, exec_holds, _ = build_executive(executive)
+        for p in data_glob("nominations"):
+            c = int(p.stem.split("-")[1])
+            if c >= this:
+                continue
+            noms = json.loads(p.read_text())["nominations"]
+            scope = f"us/nominations/{c}"
+            fp = json.dumps({"v": SCOPE_VERSION, "n": len(noms),
+                             "updated": max((r.get("updated") or "" for r in noms.values()), default=""),
+                             "votes": [f.stat().st_mtime_ns for f in data_glob("votes", congress=c)],
+                             "executive": (json.loads(_fetched_path().read_text()) if _fetched_path().exists()
+                                           else {}).get(EXECUTIVE_SOURCE)}, sort_keys=True)
+            if not force and loaded.get(scope) == fp:
+                continue
+            nn, ne, ng = build_nominations(c, noms, exec_holds, _senate_pn_votes(c))
+            load_scope(cur, scope, nn, ne, fp, orphan_kinds=["instrument"])
+            out[scope] = (_summary(nn, ne), ng)
     load_scope(cur, CURRENT, cur_n, cur_e, orphan_kinds=["instrument"])
     out[CURRENT] = (_summary(cur_n, cur_e), gaps)
     return out
@@ -2565,7 +2680,7 @@ def memory_backend(nodes, edges):
     def items(topic, limit):
         return sorted(({"id": n["id"], "name": n["name"], "props": n["props"]} for n in nodes
                        if n["kind"] == "instrument" and topic_ok(n, topic)
-                       and n["props"].get("instrument_type") not in _LAW_TYPES),
+                       and n["props"].get("instrument_type") not in _NOT_BILLS),
                       key=lambda n: n["id"])[:limit]
 
     def edges_of(node_ids, predicate, direction):
@@ -2581,7 +2696,7 @@ def memory_backend(nodes, edges):
         # Federal bills only: a county motion has no President and no public law.
         items = sorted((n for n in nodes if n["kind"] == "instrument" and topic_ok(n, topic)
                         and n["id"].startswith("instrument/us/")
-                        and n["props"].get("instrument_type") not in _LAW_TYPES),
+                        and n["props"].get("instrument_type") not in _NOT_BILLS),
                        key=lambda n: n["id"])[:limit + 1]
         raw = []
         for i in items:
@@ -2674,7 +2789,7 @@ def pg_backend():
             cur.execute(f"""SELECT i.id, i.name, i.props FROM graph_node i
                             WHERE i.kind = 'instrument'
                               AND COALESCE(i.props->>'instrument_type', '') <> ALL(%s) AND {clause}
-                            ORDER BY i.id LIMIT %s""", [list(_LAW_TYPES)] + targs + [limit])
+                            ORDER BY i.id LIMIT %s""", [list(_NOT_BILLS)] + targs + [limit])
             return cur.fetchall()
         return run(q)
 
@@ -2712,7 +2827,7 @@ def pg_backend():
                   ON (e.src = it.id AND e.predicate = 'enacted_as')
                   OR (e.dst = it.id AND e.predicate IN ('signed', 'vetoed'))
                 LEFT JOIN graph_node o ON o.id = CASE WHEN e.src = it.id THEN e.dst ELSE e.src END
-                ORDER BY it.id""", [list(_LAW_TYPES)] + targs + [limit + 1])
+                ORDER BY it.id""", [list(_NOT_BILLS)] + targs + [limit + 1])
             rows = cur.fetchall()
             for r in rows:
                 r["date"] = r["date"].isoformat() if r["date"] else None
@@ -2813,6 +2928,9 @@ def committee_matches(orgs, query):
         hits = [o for o in hits if not o["props"].get("parent_code")]
     return sorted(hits, key=lambda o: o["name"])
 _LAW_TYPES = ("pl", "pvtl")
+# Instruments that are not bills: laws, and nominations (a nomination has no
+# law to become, so "law about X" must never list one as "no law").
+_NOT_BILLS = _LAW_TYPES + ("pn",)
 
 
 def law_rows(raw, limit):
