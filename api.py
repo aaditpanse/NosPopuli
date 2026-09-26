@@ -2542,7 +2542,7 @@ def _trade_row(entry):
 async def stocks_notable_endpoint(request: Request):
     """The most dramatic trades: biggest post-trade moves in the trade's favor."""
     try:
-        with open("data/notable_trades.json") as f:
+        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "app", "notable_trades.json")) as f:
             return json.load(f)
     except Exception:
         return {"trades": []}

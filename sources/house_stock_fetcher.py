@@ -4,7 +4,7 @@ Members of the House must file a Periodic Transaction Report (PTR) within ~45
 days of any securities trade over $1,000. The Clerk publishes them as a free
 yearly bulk index (XML) plus one PDF per filing. This batch job walks the index,
 pulls each PTR PDF, parses its transaction table, matches the filer to a
-bioguide id, and writes an aggregated data/house_stocks.json that the app serves
+bioguide id, and writes an aggregated data/app/house_stocks.json that the app serves
 read-only (no live parsing on request).
 
 Honest limits, surfaced in the UI:
@@ -32,7 +32,7 @@ import xml.etree.ElementTree as ET
 import requests
 
 ROOT = pathlib.Path(__file__).parent.parent   # repo root; data/ lives there, not in sources/
-OUT = ROOT / "data" / "house_stocks.json"
+OUT = ROOT / "data" / "app" / "house_stocks.json"
 BULK = "https://disclosures-clerk.house.gov/public_disc/financial-pdfs/{year}FD.zip"
 PTR_PDF = "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/{year}/{doc}.pdf"
 _UA = {"User-Agent": "NosPopuli/1.0 (civic transparency; nospopuli.org)"}
@@ -73,7 +73,7 @@ def _range_label(low):
 
 def _bioguide_index():
     """(last, state, district) -> bioguide, for current House members."""
-    data = json.loads((ROOT / "data" / "legislators-current.json").read_text())
+    data = json.loads((ROOT / "data" / "public" / "legislators-current.json").read_text())
     idx = {}
     for m in data:
         bg = m.get("id", {}).get("bioguide")

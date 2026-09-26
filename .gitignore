@@ -41,7 +41,16 @@ foundry/extractors/*/*.findings.json
 foundry/golden/*/http_cache.json
 !foundry/golden/pittsburgh/http_cache.json
 
-# Bulk sync output: large or rebuilt daily on the server in /srv/bulk.
+# Bulk sync output (graph.DATASETS): large or rebuilt daily on the server in
+# /srv/bulk. The clerks' roll calls (118th on), fec-<cycle>.json and public/
+# stay tracked: the sync copies tracked files back and commits them.
 data/raw/
-data/bills-*.json
-data/member-congress.json
+data/datasets.json
+data/derived/bills/
+data/derived/certification/
+data/derived/nominations/
+data/derived/lobbying/
+data/derived/votes/congress-votes-[1-9]-*.json
+data/derived/votes/congress-votes-[1-9][0-9]-*.json
+data/derived/votes/congress-votes-10[0-9]-*.json
+data/derived/votes/congress-votes-11[0-7]-*.json

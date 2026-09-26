@@ -65,7 +65,7 @@ _POLICY_TO_SECTORS = {
     "Public Lands and Natural Resources": ["Materials & Mining", "Energy (Oil & Gas)"],
 }
 
-_HS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "house_stocks.json")
+_HS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "app", "house_stocks.json")
 
 
 # ---------------------------------------------------------------- disk cache

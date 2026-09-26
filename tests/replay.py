@@ -627,7 +627,7 @@ CASES = (
     ("GET", "/health", None, None, None, "the only dependency-free route"),
     ("GET", "/robots.txt", None, None, None, "static text"),
     ("GET", "/sitemap.xml", None, None, None, "static text"),
-    ("GET", "/stocks/notable", None, None, None, "reads data/notable_trades.json"),
+    ("GET", "/stocks/notable", None, None, None, "reads data/app/notable_trades.json"),
     ("GET", "/stocks/all", None, {"page": 1, "page_size": 5}, None, "pure pagination"),
     # /api/stocks/traded is deliberately NOT pinned. It looks pure but calls
     # bill_market.sector_of_tickers, which classifies 1,249 tickers via Haiku in

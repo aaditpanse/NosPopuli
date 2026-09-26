@@ -850,7 +850,9 @@ class OlderSessionsTest(unittest.TestCase):
 
     def test_a_vote_question_in_an_older_year_reads_the_file(self):
         with tempfile.TemporaryDirectory() as d:
-            pathlib.Path(d, "congress-votes-118-2.json").write_text(json.dumps(OLDER))
+            votes = pathlib.Path(d, "derived", "votes")
+            votes.mkdir(parents=True)
+            (votes / "congress-votes-118-2.json").write_text(json.dumps(OLDER))
             with mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)), \
                     mock.patch.object(graph, "current_session", return_value=(119, 2, 2026)):
                 nodes, edges, _ = graph.build_congress(LEGISLATORS, [SNAPSHOT], today=TODAY)
@@ -890,9 +892,11 @@ class OlderSessionsTest(unittest.TestCase):
 
     def test_an_older_year_opens_only_its_own_congress_files(self):
         with tempfile.TemporaryDirectory() as d:
-            pathlib.Path(d, "congress-votes-118-2.json").write_text(json.dumps(OLDER))
+            votes = pathlib.Path(d, "derived", "votes")
+            votes.mkdir(parents=True)
+            (votes / "congress-votes-118-2.json").write_text(json.dumps(OLDER))
             # Unparseable on purpose: opening it would raise.
-            pathlib.Path(d, "congress-votes-50-1.json").write_text("{not json")
+            (votes / "congress-votes-50-1.json").write_text("{not json")
             with mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)):
                 rows, _, _, files = graph.snapshot_votes(
                     [{"id": "p", "name": "G", "bioguide": "G000568"}], 2024, None, 10, 119)
@@ -1121,6 +1125,31 @@ class BillScopeTest(unittest.TestCase):
         rn, re_, gaps = graph.build_related([RELATED], ids, known_ids={"instrument/us/119/hr/77"})
         self.assertEqual(rn, [])
         self.assertIn("instrument/us/119/hr/77", {e["dst"] for e in re_})
+
+
+class DataLayoutTest(unittest.TestCase):
+    def test_every_dataset_has_one_path_and_the_repo_mirrors_it(self):
+        with mock.patch.object(graph, "DATA_DIR", pathlib.Path("/srv/bulk")):
+            self.assertEqual(graph.data_path("bills", congress=119),
+                             pathlib.Path("/srv/bulk/derived/bills/bills-119.json"))
+            self.assertEqual(graph.data_path("public", name="executive"),
+                             pathlib.Path("/srv/bulk/public/executive.json"))
+            # The app's own files never move to the data dir.
+            self.assertEqual(graph.data_path("app", name="zip3_to_state"),
+                             graph.REPO_DATA / "app" / "zip3_to_state.json")
+        for kind, d in graph.DATASETS.items():
+            self.assertTrue({"path", "by", "source", "licence"} <= set(d), kind)
+
+    def test_a_glob_leaves_unnamed_fields_open(self):
+        with tempfile.TemporaryDirectory() as d:
+            votes = pathlib.Path(d, "derived", "votes")
+            votes.mkdir(parents=True)
+            for name in ("congress-votes-118-1.json", "congress-votes-119-2.json"):
+                (votes / name).write_text("{}")
+            with mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)):
+                self.assertEqual([p.name for p in graph.data_glob("votes", congress=119)],
+                                 ["congress-votes-119-2.json"])
+                self.assertEqual(len(graph.data_glob("votes")), 2)
 
 
 class NominationAndLobbyingRecordTest(unittest.TestCase):

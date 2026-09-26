@@ -5,7 +5,7 @@ call at a time: title, sponsors, cosponsors, actions, committees, reports,
 related bills, laws. One zip per Congress and bill type, back to the 108th
 (2003), all in schema 3.0.0. The sync downloads a zip only when GovInfo's
 listing shows a new size or modification time, so a second run fetches
-nothing. `bills-<congress>.json` in graph.DATA_DIR is the output; the graph
+nothing. `derived/bills/bills-<congress>.json` is the output; the graph
 reads it and never calls Congress.gov for a bill record.
 
 A committee report's date and committees come from its CRPT package
@@ -296,7 +296,7 @@ def congress_gov_counts(congress, session_=None):
 
 def add_counts(congress):
     """Put Congress.gov's counts into an existing bills-<c>.json."""
-    path = graph.DATA_DIR / f"bills-{congress}.json"
+    path = graph.data_path("bills", congress=congress)
     data = json.loads(path.read_text())
     counts = congress_gov_counts(congress)
     if counts is None:
@@ -334,7 +334,9 @@ def build_bills(congress, session_=None):
     cg = congress_gov_counts(congress, s)
     if cg is not None:
         out["meta"].update(congress_gov_counts=cg, congress_gov_checked=today)
-    _write_atomic(graph.DATA_DIR / f"bills-{congress}.json",
+    out_path = graph.data_path("bills", congress=congress)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    _write_atomic(out_path,
                   json.dumps(out, separators=(",", ":"), sort_keys=True).encode())
     return out["meta"]
 
@@ -397,7 +399,7 @@ def sync_law_text(congress, session_=None, errors=None, pause=0.1):
     import gzip
     s = session_ or _session()
     errors = [] if errors is None else errors
-    bills_path = graph.DATA_DIR / f"bills-{congress}.json"
+    bills_path = graph.data_path("bills", congress=congress)
     if not bills_path.exists():
         raise RuntimeError(f"no bills-{congress}.json; run `python -m sources.govinfo billstatus {congress}` first")
     laws = [label for label, rec in json.loads(bills_path.read_text())["instruments"].items() if rec.get("laws")]
@@ -439,7 +441,7 @@ def sync(congresses=None):
             out[c] = {"congress": c, "unchanged": True, "download_errors": errors
                       + [f"not rebuilt: no zip on disk for {', '.join(missing)}"]}
             continue
-        if fetched or not (graph.DATA_DIR / f"bills-{c}.json").exists():
+        if fetched or not graph.data_path("bills", congress=c).exists():
             meta = build_bills(c, s)
             meta["download_errors"] = errors
             out[c] = meta

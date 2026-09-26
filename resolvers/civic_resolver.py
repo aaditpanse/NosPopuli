@@ -3,8 +3,8 @@ import os
 from agents.documentor_agent import log_action
 
 _HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # repo root, not resolvers/
-_DATA_PATH = os.path.join(_HERE, "data", "legislators-current.json")
-_ZIP3_PATH = os.path.join(_HERE, "data", "zip3_to_state.json")
+_DATA_PATH = os.path.join(_HERE, "data", "public", "legislators-current.json")
+_ZIP3_PATH = os.path.join(_HERE, "data", "app", "zip3_to_state.json")
 
 _LEGISLATORS = None
 

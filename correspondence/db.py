@@ -257,11 +257,11 @@ def init_db():
 
 def _bootstrap_known_elections_from_file():
     """One-shot: if known_elections is empty, populate from the shipped
-    data/known_elections.json. Idempotent — skips when any row already exists,
+    data/app/known_elections.json. Idempotent — skips when any row already exists,
     so admin edits via /admin/elections never get overwritten."""
     path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-        "data", "known_elections.json",
+        "data", "app", "known_elections.json",
     )
     try:
         with _cursor() as cur:
@@ -536,7 +536,7 @@ def get_known_elections(state_code):
     ago onward.
 
     Source of truth is now Postgres. The table is bootstrapped from the shipped
-    data/known_elections.json on first init when empty; admin edits via
+    data/app/known_elections.json on first init when empty; admin edits via
     /admin/elections persist there and are never overwritten.
     """
     from datetime import date, timedelta

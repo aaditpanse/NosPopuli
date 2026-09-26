@@ -768,7 +768,7 @@ def snapshot_fec_bulk(cycle, out_path=None):
     cm_names = bulk_committee_names(cm)
     totals_by_cand = bulk_totals(weball)
 
-    legs = json.loads((graph.DATA_DIR / "legislators-current.json").read_text())
+    legs = json.loads(graph.data_path("public", name=graph.LEGISLATORS_SOURCE).read_text())
     today = datetime.date.today().isoformat()
     source = f"FEC bulk downloads, cycle {cycle}: " + ", ".join(
         f"{n} ({manifest.get(n, {}).get('last_modified', 'unknown date')})"
@@ -808,7 +808,8 @@ def snapshot_fec_bulk(cycle, out_path=None):
         "complete": sum(1 for m in snap["members"].values() if m["complete"]),
         "with_committee": sum(1 for m in snap["members"].values() if m.get("committee_id")),
     }
-    path = pathlib.Path(out_path) if out_path else graph.DATA_DIR / f"fec-{cycle}.json"
+    path = pathlib.Path(out_path) if out_path else graph.data_path("fec", cycle=cycle)
+    path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(".json.part")
     tmp.write_text(json.dumps(snap, separators=(",", ":")))
     os.replace(tmp, path)  # same atomic-write guarantee as the bulk zips
@@ -816,7 +817,7 @@ def snapshot_fec_bulk(cycle, out_path=None):
 
 
 if __name__ == "__main__" and len(sys.argv) > 1 and sys.argv[1] == "bulk":
-    # python -m sources.fec_client bulk <cycle> — writes graph.DATA_DIR/fec-<cycle>.json
+    # python -m sources.fec_client bulk <cycle> — writes derived/fec/fec-<cycle>.json
     print(json.dumps(snapshot_fec_bulk(int(sys.argv[2])), indent=1))
 
 elif __name__ == "__main__":

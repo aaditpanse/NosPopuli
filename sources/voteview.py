@@ -1,9 +1,9 @@
 """Voteview: every roll call of Congress since 1789, read from files.
 
 Voteview (UCLA) publishes each Congress's roll calls, member positions and
-member list as CSV. This module turns them into congress-votes-<c>-<n>.json
-in graph.DATA_DIR, the same shape as the clerks' snapshots, so the graph
-answers "how did X vote in 1995" from a file and certifies older terms
+member list as CSV. This module turns them into
+derived/votes/congress-votes-<c>-<n>.json, the same shape as the clerks'
+snapshots, so the graph answers "how did X vote in 1995" from a file and certifies older terms
 through member-congress.json. It never covers a Congress the clerks' files
 cover (118th onward): Voteview does not certify a clerk record, and two
 copies of one roll call would count twice.
@@ -172,13 +172,14 @@ def write_congress(congress, by_icpsr):
         meta = {"congress": congress, "session": n, "year": int(year), "fetched": today, "source": "voteview",
                 "counts": {c: sum(1 for v in votes if v["chamber"] == c) for c in ("house", "senate")},
                 "errors": [], "gaps": gaps}
-        path = graph.DATA_DIR / f"congress-votes-{congress}-{n}.json"
+        path = graph.data_path("votes", congress=congress, session=n)
+        path.parent.mkdir(parents=True, exist_ok=True)
         tmp = path.with_name(path.name + ".part")
         tmp.write_text(json.dumps({"meta": meta, "votes": votes}, separators=(",", ":")))
         tmp.replace(path)
         written.add(path.name)
         out.append(meta)
-    for old in graph.DATA_DIR.glob(f"congress-votes-{congress}-*.json"):
+    for old in graph.data_glob("votes", congress=congress):
         if old.name not in written:
             old.unlink()
     return out
@@ -191,15 +192,15 @@ def sync(congresses=None):
     congresses = congresses or range(1, FIRST_CLERK_CONGRESS)
     if any(c >= FIRST_CLERK_CONGRESS for c in congresses):
         raise ValueError(f"the {FIRST_CLERK_CONGRESS}th Congress onward comes from the clerks' files")
-    current = json.loads((graph.DATA_DIR / "legislators-current.json").read_text())
-    hist = graph.DATA_DIR / "legislators-historical.json"
+    current = json.loads(graph.data_path("public", name=graph.LEGISLATORS_SOURCE).read_text())
+    hist = graph.data_path("public", name=graph.HISTORICAL_SOURCE)
     by_icpsr = icpsr_index(current + (json.loads(hist.read_text()) if hist.exists() else []))
     s = requests.Session()
     out = {}
     for c in congresses:
         errors = []
         fetched = download(c, s, errors)
-        if fetched or not any(graph.DATA_DIR.glob(f"congress-votes-{c}-*.json")):
+        if fetched or not graph.data_glob("votes", congress=c):
             out[c] = {"files": write_congress(c, by_icpsr), "download_errors": errors}
         else:
             out[c] = {"unchanged": True, "download_errors": errors}

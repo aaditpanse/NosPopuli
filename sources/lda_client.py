@@ -443,7 +443,7 @@ def bulk_record(f):
 
 
 def sync_lobbying_year(year, pause=None):
-    """Every LDA filing of one year → lobbying-<year>.json in graph.DATA_DIR.
+    """Every LDA filing of one year → derived/lobbying/lobbying-<year>.json.
     A year already on disk is extended with the filings posted since its
     newest one, so a daily run makes a few calls. The API allows about 15
     calls a minute without LDA_API_KEY and 120 with it; the pause follows.
@@ -452,7 +452,8 @@ def sync_lobbying_year(year, pause=None):
     import graph
     import time
     pause = pause if pause is not None else (0.6 if LDA_API_KEY else 4.2)
-    path = graph.DATA_DIR / f"lobbying-{year}.json"
+    path = graph.data_path("lobbying", year=year)
+    path.parent.mkdir(parents=True, exist_ok=True)
     old = json.loads(path.read_text()) if path.exists() else None
     filings = dict(old["filings"]) if old else {}
     since = old["meta"].get("newest_posted") if old else None

@@ -1,10 +1,10 @@
 """Most dramatic congressional trades — biggest post-trade stock moves.
 
-For every equity trade in data/house_stocks.json, compute how the stock moved
+For every equity trade in data/app/house_stocks.json, compute how the stock moved
 after the transaction date and rank the trades where the move most favored the
 trade: a buy right before a jump, a sale right before a slide. One price
 history is fetched per ticker (not per trade), so ~1,300 requests cover ~10k
-trades. Writes data/notable_trades.json for the app to serve.
+trades. Writes data/app/notable_trades.json for the app to serve.
 
 Neutral by construction: we report the stock's percentage move, never a dollar
 gain (amounts are ranges, quantities unknown), and never assert wrongdoing —
@@ -22,8 +22,8 @@ from collections import defaultdict
 from money import stock_perf
 
 ROOT = pathlib.Path(__file__).parent.parent   # repo root; data/ lives there, not in scripts/
-SRC = ROOT / "data" / "house_stocks.json"
-OUT = ROOT / "data" / "notable_trades.json"
+SRC = ROOT / "data" / "app" / "house_stocks.json"
+OUT = ROOT / "data" / "app" / "notable_trades.json"
 _MIN_ELAPSED = 30      # need at least the 1-month window to have data
 _TOP = 60              # how many dramatic trades to keep
 _MIN_FAVORABLE = 12.0  # ignore trades whose best favorable move is under this %

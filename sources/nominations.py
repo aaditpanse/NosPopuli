@@ -2,8 +2,8 @@
 
 The Senate snapshots already hold the confirmation votes (document PN1020),
 but not the nomination behind them: who was nominated to what, and what
-happened. This batch job writes nominations-<congress>.json in
-graph.DATA_DIR from the Congress.gov API: the list for the dates and the
+happened. This batch job writes derived/nominations/nominations-<congress>.json
+from the Congress.gov API: the list for the dates and the
 latest action, one detail call for the nominee and the position. A detail
 is fetched again only when the list shows a new updateDate, so a daily run
 makes a few list calls. Never called while a user waits.
@@ -72,7 +72,8 @@ def sync_congress(congress, key, s, pause=0.05):
     nomination that is new or has a new updateDate. Fail-closed on the list:
     if any list page fails, the file is left as it was, because a short
     list would read as nominations that never happened."""
-    path = graph.DATA_DIR / f"nominations-{congress}.json"
+    path = graph.data_path("nominations", congress=congress)
+    path.parent.mkdir(parents=True, exist_ok=True)
     old = json.loads(path.read_text())["nominations"] if path.exists() else {}
     errors, items, offset = [], [], 0
     while True:

@@ -443,6 +443,31 @@ Frontend      Vanilla HTML/CSS/JS. Playfair Display · Source Serif 4 · IBM Ple
 Deploy        Railway, auto-deploy from GitHub
 ```
 
+### Where the data lives
+
+`graph.DATASETS` names every dataset once: its path, source, licence and the code
+that writes it. Everything reads and writes through `graph.data_path` / `data_glob`.
+The root is `NOSPOPULI_DATA_DIR` (`/srv/bulk` on the server, `data/` in a checkout):
+
+```
+raw/<source>/…            downloads exactly as published, each with its manifest
+                          (govinfo/, voteview/, fec/, districts/)
+derived/bills/            bills-<congress>.json        GovInfo BILLSTATUS + CRPT
+derived/votes/            congress-votes-<c>-<n>.json  clerks (118th on), Voteview (1st–117th)
+derived/fec/              fec-<cycle>.json             FEC bulk
+derived/nominations/      nominations-<congress>.json  Congress.gov
+derived/lobbying/         lobbying-<year>.json         lda.gov
+derived/certification/    member-congress.json         from the older roll calls
+public/                   the unitedstates project's legislators, executive, committees
+datasets.json             written by `graph.py manifest` after each sync
+```
+
+The app's own files (`app/`: house_stocks, known_elections, notable_trades,
+zip3_to_state) live only in the checkout's `data/app/`. The checkout's `data/` mirrors
+the relative paths above, so the sync copies the tracked files back by path. Only the
+small ones are tracked: `public/`, the clerks' roll calls and `fec-<cycle>.json`.
+`python graph.py migrate-layout` moves a flat data dir into this layout once.
+
 ---
 
 ## Running it

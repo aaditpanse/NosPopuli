@@ -42,6 +42,125 @@ STORE_DIR = _HERE / "foundry" / "data" / "store"
 # (/srv/bulk), because the bulk files are too large for git and the deploy's
 # `git reset --hard` must never touch them.
 DATA_DIR = pathlib.Path(os.environ.get("NOSPOPULI_DATA_DIR") or _HERE / "data")
+# The files the app itself ships (not graph inputs); always in the checkout.
+REPO_DATA = _HERE / "data"
+
+# Every dataset, where it lives, and where it comes from. `raw/` holds the
+# downloads exactly as published; `derived/` what the graph reads; `public/`
+# the unitedstates project's files; `app/` the app's own files (checkout
+# only). The checkout's data/ mirrors these relative paths, so the sync's
+# copy-back of tracked files is a path join. `graph.py manifest` turns this
+# into datasets.json with coverage and last sync. Fields a pattern names
+# ({congress}) are filled by data_path; a glob leaves them as '*'.
+DATASETS = {
+    "bills": {"path": "derived/bills/bills-{congress}.json", "by": "sources/govinfo.py billstatus",
+              "source": "GovInfo BILLSTATUS bulk data and CRPT package metadata",
+              "licence": "public domain (U.S. government work)"},
+    "votes": {"path": "derived/votes/congress-votes-{congress}-{session}.json",
+              "by": "graph.py snapshot (118th on); sources/voteview.py (1st–117th)",
+              "source": "House and Senate clerks' roll calls; Voteview (Lewis et al., UCLA)",
+              "licence": "public domain (clerks); Voteview, cite Lewis et al."},
+    "certification": {"path": "derived/certification/member-congress.json", "by": "graph.py certify-index",
+                      "source": "derived from the older roll-call files", "licence": "derived"},
+    "fec": {"path": "derived/fec/fec-{cycle}.json", "by": "sources/fec_client.py bulk",
+            "source": "FEC bulk downloads (weball, cn, ccl, cm, pas2)",
+            "licence": "public domain (U.S. government work)"},
+    "nominations": {"path": "derived/nominations/nominations-{congress}.json", "by": "sources/nominations.py",
+                    "source": "api.congress.gov nomination", "licence": "public domain (U.S. government work)"},
+    "lobbying": {"path": "derived/lobbying/lobbying-{year}.json", "by": "sources/lda_client.py bulk",
+                 "source": "lda.gov LDA filings API", "licence": "public record (Lobbying Disclosure Act)"},
+    "public": {"path": "public/{name}.json", "by": "graph.py fetch",
+               "source": "unitedstates/congress-legislators", "licence": "CC0"},
+    "raw": {"path": "raw/{source}", "by": "each downloader",
+            "source": "as published by each upstream; see the downloader", "licence": "as upstream"},
+    "app": {"path": "app/{name}.json", "root": "repo", "by": "sources/house_stock_fetcher.py and others",
+            "source": "the app's own files", "licence": "n/a"},
+}
+
+
+def migrate_layout():
+    """Move a flat data dir (every file at the top) into DATASETS' layout.
+    Idempotent. Fail-closed: a file present at both the old and the new
+    place stops the move before anything changes, because one of the two
+    is stale and only a person can say which. The app's own files found in
+    the data dir are copies of the checkout's and are removed. Returns the
+    moves made."""
+    kinds = [("bills-", "bills"), ("congress-votes-", "votes"), ("fec-", "fec"),
+             ("nominations-", "nominations"), ("lobbying-", "lobbying")]
+    public = {"legislators-current", "legislators-historical", "executive", "committees-current",
+              "committee-membership-current", "public-fetched"}
+    app = {"house_stocks", "known_elections", "notable_trades", "zip3_to_state"}
+    plan, stale = [], []
+    for p in sorted(DATA_DIR.glob("*.json")):
+        stem = p.stem
+        if stem in app:
+            stale.append(p)
+            continue
+        if stem in public:
+            dest = data_path("public", name=stem)
+        elif stem == "member-congress":
+            dest = data_path("certification")
+        else:
+            kind = next((k for prefix, k in kinds if stem.startswith(prefix)), None)
+            if kind is None:
+                continue
+            dest = DATA_DIR / pathlib.Path(DATASETS[kind]["path"]).parent / p.name
+        if dest.exists():
+            raise RuntimeError(f"{p.name} exists at {p} and at {dest}; nothing moved")
+        plan.append((p, dest))
+    for src, dest in plan:
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        src.rename(dest)
+    for p in stale:
+        p.unlink()
+    return [(str(s.relative_to(DATA_DIR)), str(d.relative_to(DATA_DIR))) for s, d in plan] + \
+        [(str(p.relative_to(DATA_DIR)), "removed: a copy of the checkout's data/app/") for p in stale]
+
+
+def write_manifest():
+    """datasets.json: for each dataset, where it comes from, its licence,
+    what it covers (the range of the field in its file names), how many
+    files and bytes, and when a file of it last changed. Written by the
+    sync after every run, so a reader can see what is on disk without
+    listing 4 GB of files."""
+    out = {"built": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"), "datasets": {}}
+    for kind, d in DATASETS.items():
+        root = REPO_DATA if d.get("root") == "repo" else DATA_DIR
+        if kind == "raw":
+            files = [f for f in (DATA_DIR / "raw").rglob("*") if f.is_file()] if (DATA_DIR / "raw").exists() else []
+            coverage = sorted({f.relative_to(DATA_DIR / "raw").parts[0] for f in files})
+        else:
+            files = data_glob(kind)
+            nums = sorted({int(m) for f in files for m in re.findall(r"-(\d+)", f.stem)[:1]})
+            coverage = f"{nums[0]}–{nums[-1]}" if nums else None
+        out["datasets"][kind] = {
+            "path": str(root / d["path"]), "source": d["source"], "licence": d["licence"], "by": d["by"],
+            "files": len(files), "bytes": sum(f.stat().st_size for f in files), "coverage": coverage,
+            "last_changed": datetime.datetime.fromtimestamp(max(f.stat().st_mtime for f in files),
+                                                            datetime.timezone.utc).isoformat(timespec="seconds")
+            if files else None}
+    path = DATA_DIR / "datasets.json"
+    path.write_text(json.dumps(out, indent=1, ensure_ascii=False) + "\n")
+    return out
+
+
+class _Glob(dict):
+    def __missing__(self, key):
+        return "*"
+
+
+def data_path(kind, **fields):
+    """The file for one dataset, e.g. data_path("bills", congress=119)."""
+    d = DATASETS[kind]
+    root = REPO_DATA if d.get("root") == "repo" else DATA_DIR
+    return root / d["path"].format(**fields)
+
+
+def data_glob(kind, **fields):
+    """Every file of one dataset, sorted; the fields given narrow it."""
+    d = DATASETS[kind]
+    root = REPO_DATA if d.get("root") == "repo" else DATA_DIR
+    return sorted(root.glob(d["path"].format_map(_Glob(fields))))
 
 # The full predicate vocabulary. The loader refuses anything else so the
 # graph cannot grow a new relation type by accident.
@@ -99,9 +218,6 @@ EXECUTIVE_POSTS = {"prez": ("us/president", "President of the United States"),
 PUBLIC_DATA_URL = "https://raw.githubusercontent.com/unitedstates/congress-legislators/gh-pages/{}.json"
 PUBLIC_FILES = ("legislators-current", "legislators-historical", "executive",
                 "committees-current", "committee-membership-current")
-# When each public file was last downloaded. The membership file carries no
-# dates at all, so the download date is the only honest bound it has.
-FETCHED_PATH = DATA_DIR / "public-fetched.json"
 COMMITTEES_SOURCE = "committees-current"
 
 _NS = uuid.uuid5(uuid.NAMESPACE_DNS, "nospopuli.org")
@@ -1385,7 +1501,7 @@ def top_pacs(receipts, candidate_name, limit=FEC_TOP_PACS):
 
 
 def _fec_snapshots():
-    return [json.loads(p.read_text()) for p in sorted(DATA_DIR.glob("fec-*.json"))]
+    return [json.loads(p.read_text()) for p in data_glob("fec")]
 
 
 def build_money(fec_snapshots, person_ids):
@@ -1439,7 +1555,7 @@ def snapshot_votes(persons, year, topic, limit, loaded_congress):
     of an odd year until 1935. Returns (rows, total, truncated, files read)."""
     rows, files = [], []
     wanted = {(year - 1789) // 2 + 1, (year - 1789) // 2}
-    for p in sorted(DATA_DIR.glob("congress-votes-*.json")):
+    for p in data_glob("votes"):
         if _snapshot_congress_of(p) not in wanted:
             continue
         snap = json.loads(p.read_text())
@@ -1485,7 +1601,7 @@ def _pac_label(source):
 def fec_detail(bioguide, cycle):
     """The top PACs for one member and cycle, read from the snapshot at
     answer time: contributions are events, and events stay at the leaf."""
-    p = DATA_DIR / f"fec-{cycle}.json"
+    p = data_path("fec", cycle=cycle)
     if not p.exists():
         return None
     snap = json.loads(p.read_text())
@@ -1598,10 +1714,7 @@ def _read_store(name):
 
 
 def _congress_snapshots(congress):
-    return [json.loads(p.read_text()) for p in sorted(DATA_DIR.glob(f"congress-votes-{congress}-*.json"))]
-
-
-MEMBER_CONGRESS_PATH = DATA_DIR / "member-congress.json"
+    return [json.loads(p.read_text()) for p in data_glob("votes", congress=congress)]
 
 
 def write_member_congress(loaded_congress):
@@ -1609,15 +1722,23 @@ def write_member_congress(loaded_congress):
     edges to member-congress.json, one file in memory at a time. Returns
     (members, files read)."""
     index, files = {}, []
-    for p in sorted(DATA_DIR.glob("congress-votes-*.json")):
+    for p in data_glob("votes"):
         if _snapshot_congress_of(p) in (None, loaded_congress):
             continue
         member_congress_index([json.loads(p.read_text())], index)
         files.append(p.name)
-    MEMBER_CONGRESS_PATH.write_text(json.dumps(
+    path = data_path("certification")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(
         {"meta": {"built": datetime.date.today().isoformat(), "files": files}, "members": index},
         separators=(",", ":"), sort_keys=True))
     return len(index), files
+
+
+def _fetched_path():
+    """When each public file was last downloaded. The membership file carries
+    no dates at all, so the download date is the only honest bound it has."""
+    return data_path("public", name="public-fetched")
 
 
 def merge_legislators(current, historical):
@@ -1639,7 +1760,7 @@ def merge_legislators(current, historical):
 
 
 def fetch_public(names=PUBLIC_FILES):
-    """Download the public data files into data/. The only network step for
+    """Download the public data files into public/. The only network step for
     them; the loader reads the files. Returns {name: bytes written}."""
     import requests
     out, changed = {}, []
@@ -1647,16 +1768,17 @@ def fetch_public(names=PUBLIC_FILES):
         r = requests.get(PUBLIC_DATA_URL.format(name), timeout=60)
         r.raise_for_status()
         json.loads(r.content)   # fail-closed: never overwrite a good file with a bad one
-        path = DATA_DIR / f"{name}.json"
+        path = data_path("public", name=name)
+        path.parent.mkdir(parents=True, exist_ok=True)
         if not path.exists() or path.read_bytes() != r.content:
             path.write_bytes(r.content)
             changed.append(name)
         out[name] = len(r.content)
     # The date a file's content was first seen, not the last download: a
     # committee seat observed in March is still observed in March.
-    fetched = json.loads(FETCHED_PATH.read_text()) if FETCHED_PATH.exists() else {}
+    fetched = json.loads(_fetched_path().read_text()) if _fetched_path().exists() else {}
     fetched.update({name: datetime.date.today().isoformat() for name in changed})
-    FETCHED_PATH.write_text(json.dumps(fetched, indent=1, sort_keys=True) + "\n")
+    _fetched_path().write_text(json.dumps(fetched, indent=1, sort_keys=True) + "\n")
     return out
 
 
@@ -1664,7 +1786,7 @@ def _bill_ids_on_disk(exclude=None):
     """Every bill id with a record in a bills-<c>.json, read one file at a
     time and only its keys: the bills that are nodes in their own scope."""
     ids = set()
-    for p in sorted(DATA_DIR.glob("bills-*.json")):
+    for p in data_glob("bills"):
         c = int(p.stem.split("-")[1])
         if c != exclude:
             ids.update(f"instrument/us/{c}/{k}" for k in json.loads(p.read_text())["instruments"])
@@ -1675,8 +1797,8 @@ def build_source(source, states=None):
     """Read the inputs for one source off disk and build. Returns
     (nodes, edges, gaps, delete scopes)."""
     if source == "us-congress":
-        current = json.loads((DATA_DIR / "legislators-current.json").read_text())
-        hist_path = DATA_DIR / "legislators-historical.json"
+        current = json.loads(data_path("public", name=LEGISLATORS_SOURCE).read_text())
+        hist_path = data_path("public", name=HISTORICAL_SOURCE)
         historical = json.loads(hist_path.read_text()) if hist_path.exists() else []
         legislators, merge_gaps = merge_legislators(current, historical)
         # The current Congress's roll calls are edges; older sessions stay in
@@ -1685,9 +1807,9 @@ def build_source(source, states=None):
         congress = current_session()[0]
         snaps = _congress_snapshots(congress)
         if not snaps:
-            raise RuntimeError(f"no data/congress-votes-{congress}-*.json — "
+            raise RuntimeError(f"no derived/votes/congress-votes-{congress}-*.json — "
                                f"run `python graph.py snapshot {congress} 2 2026`")
-        bills_path = DATA_DIR / f"bills-{congress}.json"
+        bills_path = data_path("bills", congress=congress)
         if bills_path.exists():
             bills = json.loads(bills_path.read_text())
             # Every bill of the Congress is a node, voted on or not. The
@@ -1702,7 +1824,8 @@ def build_source(source, states=None):
         else:
             merge_gaps.append(f"no bills-{congress}.json: bill records come from the snapshots' own copy, "
                         f"if any (run `python -m sources.govinfo billstatus {congress}`)")
-        cert = json.loads(MEMBER_CONGRESS_PATH.read_text()) if MEMBER_CONGRESS_PATH.exists() else None
+        cert_path = data_path("certification")
+        cert = json.loads(cert_path.read_text()) if cert_path.exists() else None
         nodes, edges, gaps = build_congress(legislators, snaps, states,
                                             cert_index=(cert or {}).get("members"))
         if cert:
@@ -1713,7 +1836,7 @@ def build_source(source, states=None):
             gaps.append("no member-congress.json: no term outside the current Congress is certified "
                         "(run `python graph.py certify-index`)")
         gaps = merge_gaps + gaps
-        exec_path = DATA_DIR / "executive.json"
+        exec_path = data_path("public", name="executive")
         if exec_path.exists():
             xn, xe, xg = build_executive(json.loads(exec_path.read_text()))
             known = {n["id"] for n in nodes}
@@ -1725,10 +1848,10 @@ def build_source(source, states=None):
             edges += ee
             gaps += eg
         else:
-            gaps.append("no data/executive.json: the presidency is not loaded (run `python graph.py fetch`)")
-        cpath, mpath = DATA_DIR / "committees-current.json", DATA_DIR / "committee-membership-current.json"
+            gaps.append("no public/executive.json: the presidency is not loaded (run `python graph.py fetch`)")
+        cpath, mpath = data_path("public", name=COMMITTEES_SOURCE), data_path("public", name="committee-membership-current")
         if cpath.exists() and mpath.exists():
-            fetched = json.loads(FETCHED_PATH.read_text()) if FETCHED_PATH.exists() else {}
+            fetched = json.loads(_fetched_path().read_text()) if _fetched_path().exists() else {}
             observed = fetched.get("committee-membership-current")
             if not observed:
                 observed = datetime.date.today().isoformat()
@@ -1741,7 +1864,7 @@ def build_source(source, states=None):
             edges += ce
             gaps += cg
         else:
-            gaps.append("no committee files in data/: committees are not loaded (run `python graph.py fetch`)")
+            gaps.append("no committee files in public/: committees are not loaded (run `python graph.py fetch`)")
         rn, re_, rg = build_related(snaps, {n["id"] for n in nodes if n["kind"] == "instrument"},
                                     _bill_ids_on_disk(exclude=congress))
         nodes += rn
@@ -1756,9 +1879,9 @@ def build_source(source, states=None):
             edges += me
             gaps += mg
         else:
-            gaps.append("no data/fec-*.json: campaign money is not loaded (run `python -m sources.fec_client bulk 2026`)")
+            gaps.append("no derived/fec/fec-*.json: campaign money is not loaded (run `python -m sources.fec_client bulk 2026`)")
         if not historical:
-            gaps.append("no data/legislators-historical.json: former members are not loaded "
+            gaps.append("no public/legislators-historical.json: former members are not loaded "
                         "(run `python graph.py fetch`)")
         scopes = [f"{US}/state:{s.lower()}" for s in states] if states else \
             sorted({e["props"]["jurisdiction"] for e in edges})
@@ -1850,8 +1973,8 @@ def _us_fingerprint(congress):
     """What an older Congress's scope was built from: its bills file, the
     legislators files (a bioguide id moves sponsors), the committee and
     executive files, the build's version."""
-    bills = json.loads((DATA_DIR / f"bills-{congress}.json").read_text())["meta"]
-    fetched = json.loads(FETCHED_PATH.read_text()) if FETCHED_PATH.exists() else {}
+    bills = json.loads(data_path("bills", congress=congress).read_text())["meta"]
+    fetched = json.loads(_fetched_path().read_text()) if _fetched_path().exists() else {}
     # committees-current decides which committee a referral points at;
     # executive decides who signed. Either changing must reload the scope.
     return json.dumps({"v": SCOPE_VERSION, "bills": bills.get("fetched"), "counts": bills.get("counts"),
@@ -1875,17 +1998,17 @@ def load_us(cur, only_current=False, force=False):
         out[SKELETON] = (_summary(skel_n, skel_e),
                          [f"{c['name']}'s hold on {c['post']} closed at {c['valid_to']}: {c['why']}"
                           for c in closed])
-        current = json.loads((DATA_DIR / "legislators-current.json").read_text())
-        hist = DATA_DIR / "legislators-historical.json"
+        current = json.loads(data_path("public", name=LEGISLATORS_SOURCE).read_text())
+        hist = data_path("public", name=HISTORICAL_SOURCE)
         legislators, _ = merge_legislators(current, json.loads(hist.read_text()) if hist.exists() else [])
-        executive = json.loads((DATA_DIR / "executive.json").read_text())
-        committees = json.loads((DATA_DIR / "committees-current.json").read_text())
-        observed = (json.loads(FETCHED_PATH.read_text()) if FETCHED_PATH.exists() else {}).get(
+        executive = json.loads(data_path("public", name="executive").read_text())
+        committees = json.loads(data_path("public", name=COMMITTEES_SOURCE).read_text())
+        observed = (json.loads(_fetched_path().read_text()) if _fetched_path().exists() else {}).get(
             "committee-membership-current") or datetime.date.today().isoformat()
         cur.execute("SELECT scope, fingerprint FROM graph_scope")
         loaded = dict(cur.fetchall())
         this = current_session()[0]
-        for p in sorted(DATA_DIR.glob("bills-*.json")):
+        for p in data_glob("bills"):
             c = int(p.stem.split("-")[1])
             if c >= this:
                 continue
@@ -2998,6 +3121,8 @@ if __name__ == "__main__":
                        help="load all: reload older Congresses even if their inputs did not change")
     sub.add_parser("fetch", help="download the public legislators, executive and committee files to data/")
     sub.add_parser("certify-index", help="reduce older roll-call snapshots to member-congress.json")
+    sub.add_parser("migrate-layout", help="move a flat data dir into the DATASETS layout (idempotent)")
+    sub.add_parser("manifest", help="write datasets.json: sources, licences, coverage, sizes")
     s = sub.add_parser("snapshot", help="fetch one session's roll calls to data/ (no args: the current session)")
     s.add_argument("congress", type=int, nargs="?")
     s.add_argument("session", type=int, nargs="?")
@@ -3027,15 +3152,24 @@ if __name__ == "__main__":
         print(f"{len(gaps)} gap(s):")
         for g in gaps:
             print("  -", g)
+    elif a.cmd == "migrate-layout":
+        moves = migrate_layout()
+        for src, dest in moves:
+            print(f"{src} → {dest}")
+        print(f"{len(moves)} change(s)")
+    elif a.cmd == "manifest":
+        for kind, d in write_manifest()["datasets"].items():
+            print(f"{kind:14} {d['files']:>6} file(s) {d['bytes'] / 2**20:>9.1f} MB  {d['coverage']}")
     elif a.cmd == "certify-index":
         members, files = write_member_congress(current_session()[0])
-        print(f"{members:,} member id(s) from {len(files)} file(s) → {MEMBER_CONGRESS_PATH}")
+        print(f"{members:,} member id(s) from {len(files)} file(s) → {data_path('certification')}")
     elif a.cmd == "fetch":
         for name, n in fetch_public().items():
             print(f"{name}: {n:,} bytes")
     elif a.cmd == "snapshot":
         congress, session, year = (a.congress, a.session, a.year) if a.congress else current_session()
-        out = DATA_DIR / f"congress-votes-{congress}-{session}.json"
+        out = data_path("votes", congress=congress, session=session)
+        out.parent.mkdir(parents=True, exist_ok=True)
         print(json.dumps(snapshot_congress(congress, session, year, out), indent=1))
         print("wrote", out)
     elif a.cmd == "votes":
