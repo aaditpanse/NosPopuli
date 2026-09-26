@@ -60,6 +60,9 @@ def batches(docs, max_inputs=_BATCH_INPUTS, max_chars=_BATCH_CHARS):
 
 # ---------------------------------------------------------------- documents
 
+DOCS_VERSION = 2       # 2: latest action and sponsor columns, for the feed
+
+
 def load_docs(congresses=None, force=False):
     """Load the search documents of each Congress whose BILLSTATUS zips
     changed since the last load (graph_scope row docs/<c>). A document whose
@@ -77,7 +80,8 @@ def load_docs(congresses=None, force=False):
             manifest = raw / "manifest.json"
             if not manifest.exists():
                 continue
-            fp = manifest.read_text()
+            # DOCS_VERSION: a change to what a row holds reloads every Congress.
+            fp = f"{DOCS_VERSION}\n{manifest.read_text()}"
             with conn.transaction(), conn.cursor() as cur:
                 cur.execute("SELECT fingerprint FROM graph_scope WHERE scope = %s", (f"docs/{c}",))
                 row = cur.fetchone()
@@ -94,25 +98,36 @@ def load_docs(congresses=None, force=False):
 def _write_docs(cur, docs):
     cur.execute("""CREATE TEMP TABLE stage_doc (instrument_id TEXT, congress INT, bill_type TEXT, number TEXT,
                    title TEXT, introduced DATE, policy_area TEXT, subjects TEXT[], is_law BOOLEAN,
-                   law_numbers TEXT[], summary TEXT, doc TEXT, doc_sha TEXT) ON COMMIT DROP""")
+                   law_numbers TEXT[], summary TEXT, doc TEXT, doc_sha TEXT, latest_action TEXT,
+                   latest_action_date DATE, sponsor_bioguide TEXT, sponsor_name TEXT) ON COMMIT DROP""")
     n = 0
     with cur.copy("COPY stage_doc FROM STDIN") as cp:
         for d in docs:
             cp.write_row((d["instrument_id"], d["congress"], d["bill_type"], d["number"], d["title"],
                           d["introduced"], d["policy_area"], d["subjects"], d["is_law"], d["law_numbers"],
-                          d["summary"], d["doc"], d["doc_sha"]))
+                          d["summary"], d["doc"], d["doc_sha"], d["latest_action"], d["latest_action_date"],
+                          d["sponsor_bioguide"], d["sponsor_name"]))
             n += 1
+    # A new action changes a row without changing its document, so the
+    # embedding (keyed on doc_sha) stays and only the columns move.
     cur.execute("""
         INSERT INTO bill_doc (instrument_id, congress, bill_type, number, title, introduced, policy_area,
-                              subjects, is_law, law_numbers, summary, doc, doc_sha, updated_at)
+                              subjects, is_law, law_numbers, summary, doc, doc_sha, latest_action,
+                              latest_action_date, sponsor_bioguide, sponsor_name, updated_at)
         SELECT DISTINCT ON (instrument_id) instrument_id, congress, bill_type, number, title, introduced,
-               policy_area, subjects, is_law, law_numbers, summary, doc, doc_sha, NOW()
+               policy_area, subjects, is_law, law_numbers, summary, doc, doc_sha, latest_action,
+               latest_action_date, sponsor_bioguide, sponsor_name, NOW()
         FROM stage_doc
         ON CONFLICT (instrument_id) DO UPDATE SET
             title = excluded.title, introduced = excluded.introduced, policy_area = excluded.policy_area,
             subjects = excluded.subjects, is_law = excluded.is_law, law_numbers = excluded.law_numbers,
-            summary = excluded.summary, doc = excluded.doc, doc_sha = excluded.doc_sha, updated_at = NOW()
-        WHERE bill_doc.doc_sha IS DISTINCT FROM excluded.doc_sha""")
+            summary = excluded.summary, doc = excluded.doc, doc_sha = excluded.doc_sha,
+            latest_action = excluded.latest_action, latest_action_date = excluded.latest_action_date,
+            sponsor_bioguide = excluded.sponsor_bioguide, sponsor_name = excluded.sponsor_name, updated_at = NOW()
+        WHERE (bill_doc.doc_sha, bill_doc.latest_action, bill_doc.latest_action_date, bill_doc.sponsor_bioguide,
+               bill_doc.sponsor_name)
+              IS DISTINCT FROM (excluded.doc_sha, excluded.latest_action, excluded.latest_action_date,
+                                excluded.sponsor_bioguide, excluded.sponsor_name)""")
     cur.execute("DROP TABLE stage_doc")
     return n
 

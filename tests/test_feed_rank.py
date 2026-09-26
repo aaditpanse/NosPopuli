@@ -527,5 +527,33 @@ class ClimateWasteStem(unittest.TestCase):
         self.assertFalse(title_matches_interest("Solid Waste Disposal Study", "climate"))
 
 
+class LocalFeedRows(unittest.TestCase):
+    """The feed from the local bill tables (Phase 6)."""
+
+    @staticmethod
+    def _row(number, role, member, acted="2026-09-20", title="Healthcare Access Act"):
+        import datetime as dt
+        return {"congress": 119, "bill_type": "hr", "number": str(number), "title": title,
+                "introduced": dt.date(2026, 1, 5), "latest_action": "Referred to committee.",
+                "latest_action_date": dt.date.fromisoformat(acted), "is_law": False, "law_numbers": None,
+                "sponsor_bioguide": "X000001", "sponsor_name": "Rep. X [D-VT-1]", "role": role, "member": member}
+
+    def test_a_row_in_the_feed_shape(self):
+        from agents.feed_agent import feed_row
+        r = feed_row({**self._row(1, "sponsor", "A"), "law_numbers": ["119-7"], "latest_action_date": None})
+        # No action yet: the date falls back to introduction, as before.
+        self.assertEqual((r["date"], r["latest_action_date"], r["law_number"]), ("2026-01-05", "", "7"))
+
+    def test_a_member_with_no_recent_sponsorship_shows_a_cosponsorship(self):
+        from agents.feed_agent import member_pool
+        rows = [self._row(1, "sponsor", "A", "2026-09-10"), self._row(2, "cosponsor", "A", "2026-09-20"),
+                self._row(3, "original cosponsor", "B", "2026-09-15"),
+                self._row(4, "cosponsor", "B", "2026-09-18", title="Congratulating the Vermont pickle makers")]
+        pool = member_pool(rows, ["A", "B", "C"])
+        got = sorted((b["sponsor_bioguide"], b["number"], b["feed_rep_role"]) for b in pool)
+        # A's own bill wins over A's cosponsorship; B's ceremonial one is skipped; C has nothing.
+        self.assertEqual(got, [("A", "1", "sponsor"), ("B", "3", "cosponsor")])
+
+
 if __name__ == "__main__":
     unittest.main()

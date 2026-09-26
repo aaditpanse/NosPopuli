@@ -993,6 +993,8 @@ class BillStatusTest(unittest.TestCase):
             "Summary: This bill sets rules for digital assets."])
         self.assertTrue(d["is_law"])
         self.assertEqual(len(d["doc_sha"]), 40)
+        # The feed's columns: who brought it, and where it stands.
+        self.assertEqual((d["sponsor_bioguide"], d["latest_action_date"]), ("H001072", None))
 
     def test_an_erratum_names_no_committee(self):
         meta = self.g.parse_crpt_mods(CRPT_MODS)

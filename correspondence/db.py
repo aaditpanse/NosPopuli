@@ -274,6 +274,13 @@ def init_db():
             );
             CREATE INDEX IF NOT EXISTS idx_bill_doc_tsv ON bill_doc USING gin (tsv);
             CREATE INDEX IF NOT EXISTS idx_bill_doc_congress ON bill_doc (congress);
+            -- Where each bill stands and who brought it: the feed reads these
+            -- instead of asking Congress.gov (Phase 6).
+            ALTER TABLE bill_doc ADD COLUMN IF NOT EXISTS latest_action TEXT;
+            ALTER TABLE bill_doc ADD COLUMN IF NOT EXISTS latest_action_date DATE;
+            ALTER TABLE bill_doc ADD COLUMN IF NOT EXISTS sponsor_bioguide TEXT;
+            ALTER TABLE bill_doc ADD COLUMN IF NOT EXISTS sponsor_name TEXT;
+            CREATE INDEX IF NOT EXISTS idx_bill_doc_latest ON bill_doc (congress, latest_action_date);
         """)
         # One vector per bill and embedding space. Needs pgvector; without
         # it the table is not made and search keeps its full-text path.

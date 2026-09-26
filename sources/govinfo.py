@@ -302,7 +302,9 @@ def parse_bill_doc(xml_bytes, congress):
             "bill_type": itype, "number": number, "title": title, "introduced": _t(b, "introducedDate"),
             "policy_area": policy, "subjects": subjects, "is_law": bool(laws), "law_numbers": laws,
             "summary": summary, "doc": doc,
-            "doc_sha": hashlib.sha1(doc.encode()).hexdigest()}
+            "doc_sha": hashlib.sha1(doc.encode()).hexdigest(),
+            "latest_action": _t(b, "latestAction/text"), "latest_action_date": _t(b, "latestAction/actionDate"),
+            "sponsor_bioguide": _t(b, "sponsors/item/bioguideId"), "sponsor_name": _t(b, "sponsors/item/fullName")}
 
 
 def bill_docs(congress):
