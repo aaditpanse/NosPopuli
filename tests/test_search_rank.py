@@ -62,3 +62,14 @@ class RankTests(unittest.TestCase):
         b = [r["number"] for r in rank_by_relevance(list(reversed(rows)), "insulin prices")]
         self.assertEqual(a, b)
         self.assertEqual(a[0], 8)
+
+
+class EmbeddingBatchTest(unittest.TestCase):
+    def test_requests_respect_the_input_and_size_caps(self):
+        from search.bill_index import batches
+        docs = [(str(i), "x" * 100) for i in range(10)]
+        self.assertEqual([len(b) for b in batches(docs, max_inputs=4, max_chars=10_000)], [4, 4, 2])
+        self.assertEqual([len(b) for b in batches(docs, max_inputs=100, max_chars=250)], [2, 2, 2, 2, 2])
+        # One document over the budget still travels, alone.
+        self.assertEqual([len(b) for b in batches([("a", "x" * 999), ("b", "y")], max_chars=500)], [1, 1])
+

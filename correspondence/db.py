@@ -252,6 +252,46 @@ def init_db():
                 congress        TEXT
             );
         """)
+        # The bill search index (search/bill_index.py): one document per bill
+        # from GovInfo's BILLSTATUS, with a full-text column.
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS bill_doc (
+                instrument_id TEXT PRIMARY KEY,
+                congress      INTEGER NOT NULL,
+                bill_type     TEXT NOT NULL,
+                number        TEXT NOT NULL,
+                title         TEXT,
+                introduced    DATE,
+                policy_area   TEXT,
+                subjects      TEXT[],
+                is_law        BOOLEAN,
+                law_numbers   TEXT[],
+                summary       TEXT,
+                doc           TEXT NOT NULL,
+                doc_sha       TEXT NOT NULL,
+                updated_at    TIMESTAMPTZ,
+                tsv           tsvector GENERATED ALWAYS AS (to_tsvector('english', doc)) STORED
+            );
+            CREATE INDEX IF NOT EXISTS idx_bill_doc_tsv ON bill_doc USING gin (tsv);
+            CREATE INDEX IF NOT EXISTS idx_bill_doc_congress ON bill_doc (congress);
+        """)
+        # One vector per bill and embedding space. Needs pgvector; without
+        # it the table is not made and search keeps its full-text path.
+        cur.execute("SELECT 1 FROM pg_extension WHERE extname = 'vector'")
+        if cur.fetchone():
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS bill_embedding (
+                    instrument_id TEXT NOT NULL REFERENCES bill_doc(instrument_id) ON DELETE CASCADE,
+                    space         TEXT NOT NULL,
+                    embedding     halfvec(1024) NOT NULL,
+                    text_sha      TEXT NOT NULL,
+                    embedded_by   TEXT NOT NULL,
+                    embedded_at   TIMESTAMPTZ,
+                    PRIMARY KEY (instrument_id, space)
+                );
+                CREATE INDEX IF NOT EXISTS idx_bill_embedding_hnsw ON bill_embedding
+                    USING hnsw (embedding halfvec_cosine_ops) WITH (m = 16, ef_construction = 64);
+            """)
         # District shapes (graph_geometry) need PostGIS, which only a
         # superuser can install. Fail-open: without it the table is not made,
         # the app starts, and the districts scope says why it is missing.

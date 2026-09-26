@@ -1,0 +1,8 @@
+# Query embedding (search/bill_index.py): voyage-4-nano on the server's CPU.
+# Installed on the server only, not in CI:
+#   pip install --index-url https://download.pytorch.org/whl/cpu torch
+#   pip install -r requirements-embed.txt
+# transformers is pinned to 4.57: the model's remote code imports
+# transformers.masking_utils (4.53+) and does not load under 5.x.
+sentence-transformers==5.0.0
+transformers==4.57.6

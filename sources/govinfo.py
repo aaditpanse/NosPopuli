@@ -24,6 +24,7 @@ BILLSUM collection starts at the 113th, so it is not downloaded.
 """
 
 import datetime
+import hashlib
 import io
 import json
 import pathlib
@@ -237,6 +238,67 @@ def parse_billstatus(xml_bytes):
     rec["_report_citations"] = [_t(cr, "citation") for cr in b.findall("committeeReports/committeeReport")
                                 if _t(cr, "citation")]
     return f"{itype}/{number}", rec
+
+
+_SUMMARY_CHARS = 12000
+_TAG = re.compile(r"<[^>]+>")
+
+
+def parse_bill_doc(xml_bytes, congress):
+    """One BILLSTATUS XML → the bill's search document: its titles, policy
+    area, subjects and latest CRS summary as plain text, for full-text
+    search and one embedding per bill. The summary is cut at 12,000
+    characters: the opening states what the bill does, and the tail of a
+    long one (H.R. 1 of the 119th runs to 174,000) is section-by-section
+    detail. Pure."""
+    b = ET.fromstring(xml_bytes).find("bill")
+    itype, number = (_t(b, "type") or "").lower(), _t(b, "number")
+    label = f"{graph.BILL_LABEL.get(itype, itype.upper())} {number}"
+    title = _t(b, "title") or ""
+    others = []
+    for t in b.findall("titles/item"):
+        text = _t(t, "title")
+        kind = (_t(t, "titleType") or "").lower()
+        if text and text != title and text not in others and ("short" in kind or "popular" in kind):
+            others.append(text)
+    subjects = [n for n in (_t(s, "name") for s in b.findall("subjects/legislativeSubjects/item")) if n]
+    summaries = sorted(b.findall("summaries/summary"),
+                       key=lambda s: (_t(s, "actionDate") or "", _t(s, "updateDate") or ""))
+    summary = ""
+    if summaries:
+        raw = _t(summaries[-1], "text") or ""
+        summary = re.sub(r"\s+", " ", _TAG.sub(" ", raw).replace("&nbsp;", " ")).strip()[:_SUMMARY_CHARS]
+    policy = _t(b, "policyArea/name")
+    laws = [_t(law, "number") for law in b.findall("laws/item") if _t(law, "number")]
+    parts = [f"{label}: {title}"]
+    if others:
+        parts.append("Also known as: " + "; ".join(others[:8]))
+    if policy:
+        parts.append(f"Policy area: {policy}")
+    if subjects:
+        parts.append("Subjects: " + "; ".join(subjects[:40]))
+    if summary:
+        parts.append(f"Summary: {summary}")
+    doc = "\n".join(parts)
+    return {"instrument_id": f"instrument/us/{congress}/{itype}/{number}", "congress": congress,
+            "bill_type": itype, "number": number, "title": title, "introduced": _t(b, "introducedDate"),
+            "policy_area": policy, "subjects": subjects, "is_law": bool(laws), "law_numbers": laws,
+            "summary": summary, "doc": doc,
+            "doc_sha": hashlib.sha1(doc.encode()).hexdigest()}
+
+
+def bill_docs(congress):
+    """Every bill's search document for one Congress, read from the
+    BILLSTATUS zips on disk one file at a time."""
+    raw = _raw("govinfo", "BILLSTATUS", str(congress))
+    for itype in BILL_TYPES:
+        path = raw / f"BILLSTATUS-{congress}-{itype}.zip"
+        if not path.exists():
+            continue
+        with zipfile.ZipFile(path) as z:
+            for n in z.namelist():
+                if n.endswith(".xml"):
+                    yield parse_bill_doc(z.read(n), congress)
 
 
 def attach_reports(rec, meta_for, errors):

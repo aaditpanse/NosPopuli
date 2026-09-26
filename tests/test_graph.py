@@ -971,6 +971,29 @@ class BillStatusTest(unittest.TestCase):
             ("H. Rept. 119-168,Part 2", "2025-06-23", ["hsba00"])])
         self.assertIn("reports", rec["passes"])
 
+    def test_the_search_document_carries_titles_subjects_and_the_latest_summary(self):
+        xml = BILLSTATUS_XML.replace(b"</bill>", b"""<titles>
+  <item><titleType>Display Title</titleType><title>Digital Asset Market Clarity Act of 2025</title></item>
+  <item><titleType>Popular Titles</titleType><title>CLARITY Act</title></item>
+  <item><titleType>Official Title as Introduced</titleType><title>To provide for a system</title></item></titles>
+<subjects><legislativeSubjects><item><name>Securities</name></item><item><name>Banking</name></item>
+</legislativeSubjects></subjects>
+<summaries><summary><actionDate>2025-05-29</actionDate><text><![CDATA[<p>Old.</p>]]></text></summary>
+<summary><actionDate>2025-07-17</actionDate><text><![CDATA[<p>This bill &nbsp;sets rules</p><p>for digital assets.</p>]]></text></summary>
+</summaries></bill>""")
+        from sources import govinfo
+        d = govinfo.parse_bill_doc(xml, 119)
+        self.assertEqual(d["instrument_id"], "instrument/us/119/hr/3633")
+        self.assertEqual(d["summary"], "This bill sets rules for digital assets.")   # the latest, plain text
+        self.assertEqual(d["doc"].splitlines(), [
+            "H.R. 3633: Digital Asset Market Clarity Act of 2025",
+            "Also known as: CLARITY Act",          # short and popular titles, not the official one
+            "Policy area: Finance and Financial Sector",
+            "Subjects: Securities; Banking",
+            "Summary: This bill sets rules for digital assets."])
+        self.assertTrue(d["is_law"])
+        self.assertEqual(len(d["doc_sha"]), 40)
+
     def test_an_erratum_names_no_committee(self):
         meta = self.g.parse_crpt_mods(CRPT_MODS)
         self.assertEqual(self.g.report_meta("S. Rept. 119-39,Errata", meta), {"date": "", "committees": []})
