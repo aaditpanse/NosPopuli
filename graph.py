@@ -1787,7 +1787,7 @@ SCOPE_VERSION = 1
 SKELETON, CURRENT = "us/skeleton", "us/current"
 
 
-def load_scope(cur, scope, nodes, edges, fingerprint=None):
+def load_scope(cur, scope, nodes, edges, fingerprint=None, orphan_kinds=None):
     """Replace one scope's rows, on the caller's cursor (so one transaction
     can hold many scopes). COPY into staging, then set-based upserts:
     nodes merge props and never change owner; edges take this scope. A
@@ -1829,11 +1829,15 @@ def load_scope(cur, scope, nodes, edges, fingerprint=None):
             valid_from = excluded.valid_from, valid_to = excluded.valid_to,
             certification = excluded.certification, source_id = excluded.source_id,
             props = excluded.props, scope = excluded.scope""", (scope,))
+    # orphan_kinds: a bill scope deletes only its bills. A committee that
+    # only bill records name is shared by several Congresses, and a later
+    # scope's edges to it are not inserted yet when this one looks.
     cur.execute("""
-        DELETE FROM graph_node n WHERE n.scope = %s
+        DELETE FROM graph_node n WHERE n.scope = %s AND (%s::text[] IS NULL OR n.kind = ANY(%s))
           AND NOT EXISTS (SELECT 1 FROM stage_node s WHERE s.id = n.id)
           AND NOT EXISTS (SELECT 1 FROM graph_edge e WHERE e.src = n.id)
-          AND NOT EXISTS (SELECT 1 FROM graph_edge e WHERE e.dst = n.id)""", (scope,))
+          AND NOT EXISTS (SELECT 1 FROM graph_edge e WHERE e.dst = n.id)""",
+                (scope, orphan_kinds, orphan_kinds))
     cur.execute("""
         INSERT INTO graph_scope (scope, fingerprint, loaded_at, nodes, edges) VALUES (%s, %s, NOW(), %s, %s)
         ON CONFLICT (scope) DO UPDATE SET fingerprint = excluded.fingerprint, loaded_at = NOW(),
@@ -1844,11 +1848,15 @@ def load_scope(cur, scope, nodes, edges, fingerprint=None):
 
 def _us_fingerprint(congress):
     """What an older Congress's scope was built from: its bills file, the
-    legislators files (a bioguide id moves sponsors), the build's version."""
+    legislators files (a bioguide id moves sponsors), the committee and
+    executive files, the build's version."""
     bills = json.loads((DATA_DIR / f"bills-{congress}.json").read_text())["meta"]
     fetched = json.loads(FETCHED_PATH.read_text()) if FETCHED_PATH.exists() else {}
+    # committees-current decides which committee a referral points at;
+    # executive decides who signed. Either changing must reload the scope.
     return json.dumps({"v": SCOPE_VERSION, "bills": bills.get("fetched"), "counts": bills.get("counts"),
-                       "legislators": [fetched.get(LEGISLATORS_SOURCE), fetched.get(HISTORICAL_SOURCE)]},
+                       "inputs": {k: fetched.get(k) for k in (LEGISLATORS_SOURCE, HISTORICAL_SOURCE,
+                                                              COMMITTEES_SOURCE, EXECUTIVE_SOURCE)}},
                       sort_keys=True)
 
 
@@ -1886,9 +1894,9 @@ def load_us(cur, only_current=False, force=False):
                 continue
             bn, be, bg = build_bills_scope(c, json.loads(p.read_text()), legislators, executive,
                                            committees, observed)
-            load_scope(cur, scope, bn, be, fp)
+            load_scope(cur, scope, bn, be, fp, orphan_kinds=["instrument"])
             out[scope] = (_summary(bn, be), bg)
-    load_scope(cur, CURRENT, cur_n, cur_e)
+    load_scope(cur, CURRENT, cur_n, cur_e, orphan_kinds=["instrument"])
     out[CURRENT] = (_summary(cur_n, cur_e), gaps)
     return out
 
@@ -2080,9 +2088,11 @@ def _topic_sql(topic):
     if ref:
         # Every Congress has an H.R. 1: a bare number is the most recent one
         # on record, never all of them at once.
-        return (" i.id = (SELECT n.id FROM graph_node n WHERE n.kind = 'instrument' AND n.id LIKE %s"
-                " ORDER BY (n.props->>'congress')::int DESC NULLS LAST LIMIT 1)",
-                [f"instrument/us/%/{ref[0]}/{ref[1]}"])
+        # The candidate ids are listed, newest first, so the primary key
+        # finds them; a LIKE with a leading wildcard would scan every bill.
+        ids = [f"instrument/us/{c}/{ref[0]}/{ref[1]}" for c in range(current_session()[0] + 1, 0, -1)]
+        return (" i.id = (SELECT n.id FROM graph_node n WHERE n.id = ANY(%s)"
+                " ORDER BY array_position(%s, n.id) LIMIT 1)", [ids, ids])
     return _TOPIC_SQL, [f"{topic}%", f"%{topic}%"]
 
 
