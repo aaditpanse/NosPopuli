@@ -15,8 +15,9 @@ does not change once published, so each is fetched once and kept.
 Run on the server, not in a request:
     python -m sources.govinfo billstatus            # 108th → current
     python -m sources.govinfo billstatus 119 118    # some Congresses
-    python -m sources.govinfo text                  # bill typescript: all versions of the
-                                                    # 118th–119th, enacted text back to the 108th
+    python -m sources.govinfo text                  # bill typescript, every version: the
+                                                    # current and previous Congress
+    python -m sources.govinfo text 108 109          # backfill older Congresses
 
 The CRS summaries are in BILLSTATUS too, back to the 108th; the separate
 BILLSUM collection starts at the 113th, so it is not downloaded.
@@ -341,79 +342,66 @@ def build_bills(congress, session_=None):
     return out["meta"]
 
 
-TEXT_CONGRESSES = (118, 119)
 _TEXT = "https://www.govinfo.gov/content/pkg/{pkg}/html/{pkg}.htm"
+_SITEMAP = "https://www.govinfo.gov/sitemap/BILLS_{year}_sitemap.xml"
+# The BILLS bulk listing starts at the 113th Congress; before it, GovInfo's
+# yearly sitemaps are the only list of every published version.
+FIRST_LISTED = 113
+_PKG = re.compile(r"BILLS-(\d+)([a-z]+)(\d+)([a-z]+)")
+
+
+def text_versions(congress, session_=None, errors=None):
+    """Every published text version (package id, e.g. BILLS-108hr1ih) of
+    one Congress's bills: from the bulk listing from the 113th on, from the
+    sitemaps of the Congress's years (and the January after) before it.
+    Fail-open per listing: a failed one is recorded and the rest counted."""
+    s = session_ or _session()
+    errors = [] if errors is None else errors
+    pkgs = set()
+    if congress >= FIRST_LISTED:
+        for sess in (1, 2):
+            for itype in BILL_TYPES:
+                url = f"{LISTING}/BILLS/{congress}/{sess}/{itype}"
+                try:
+                    r = s.get(url, headers={"Accept": "application/json"}, timeout=60)
+                    if r.status_code == 404:
+                        continue    # a session not begun yet, or a type with no bills
+                    r.raise_for_status()
+                    pkgs.update(m.group(0) for f in r.json().get("files", [])
+                                for m in [_PKG.match(f["name"])] if m)
+                except Exception as e:
+                    errors.append(_error(url, e))
+        return pkgs
+    first = 1789 + 2 * (congress - 1)
+    for year in (first, first + 1, first + 2):
+        url = _SITEMAP.format(year=year)
+        try:
+            r = s.get(url, timeout=120)
+            r.raise_for_status()
+            pkgs.update(m.group(0) for m in _PKG.finditer(r.text) if int(m.group(1)) == congress)
+        except Exception as e:
+            errors.append(_error(url, e))
+    return pkgs
 
 
 def sync_bill_text(congress, session_=None, errors=None, pause=0.1):
     """The typescript of every published version of every bill in one
     Congress: GPO's 70-column text, which render/bill_text_format.py parses
     and the BILLS XML cannot reproduce. A version never changes once
-    published, so each is fetched once and kept gzipped; the BILLS bulk
-    listing names the versions. Fail-open per version: a failure is
-    recorded and retried on the next run. Returns the number fetched."""
+    published, so each is fetched once and kept gzipped. Fail-open per
+    version: a failure is recorded and retried on the next run. Returns the
+    number fetched."""
     import gzip
     s = session_ or _session()
     errors = [] if errors is None else errors
     out_dir = _raw("govinfo", "BILLS-htm", str(congress))
     have = {p.name[:-len(".htm.gz")] for p in out_dir.glob("*.htm.gz")}
     fetched = 0
-    for sess in (1, 2):
-        for itype in BILL_TYPES:
-            url = f"{LISTING}/BILLS/{congress}/{sess}/{itype}"
-            try:
-                r = s.get(url, headers={"Accept": "application/json"}, timeout=60)
-                if r.status_code == 404:
-                    continue    # a session not begun yet, or a type with no bills
-                r.raise_for_status()
-                names = [f["name"] for f in r.json().get("files", [])]
-            except Exception as e:
-                errors.append(_error(url, e))
-                continue
-            for name in names:
-                m = re.match(r"^(BILLS-\d+[a-z]+\d+[a-z]+)\.xml$", name)
-                if not m or m.group(1) in have:
-                    continue
-                pkg = m.group(1)
-                try:
-                    t = s.get(_TEXT.format(pkg=pkg), timeout=120, allow_redirects=False)
-                    t.raise_for_status()
-                    if not t.content.lstrip().startswith(b"<html"):   # an error page is not a bill
-                        raise ValueError("not a typescript page")
-                    _write_atomic(out_dir / f"{pkg}.htm.gz", gzip.compress(t.content))
-                    have.add(pkg)
-                    fetched += 1
-                except Exception as e:
-                    errors.append(_error(_TEXT.format(pkg=pkg), e))
-                time.sleep(pause)
-    return fetched
-
-
-def sync_law_text(congress, session_=None, errors=None, pause=0.1):
-    """The enrolled typescript of every bill that became law in one
-    Congress, for the Congresses before TEXT_CONGRESSES: the text of what
-    was enacted, not of every draft. The BILLS bulk listing starts at the
-    113th, so the laws are read from bills-<congress>.json instead; GPO
-    publishes the enrolled typescript back to the 103rd. Stored beside the
-    other versions, fetched once. Returns the number fetched."""
-    import gzip
-    s = session_ or _session()
-    errors = [] if errors is None else errors
-    bills_path = graph.data_path("bills", congress=congress)
-    if not bills_path.exists():
-        raise RuntimeError(f"no bills-{congress}.json; run `python -m sources.govinfo billstatus {congress}` first")
-    laws = [label for label, rec in json.loads(bills_path.read_text())["instruments"].items() if rec.get("laws")]
-    out_dir = _raw("govinfo", "BILLS-htm", str(congress))
-    fetched = 0
-    for label in sorted(laws):
-        itype, number = label.split("/")
-        pkg = f"BILLS-{congress}{itype}{number}enr"
-        if (out_dir / f"{pkg}.htm.gz").exists():
-            continue
+    for pkg in sorted(text_versions(congress, s, errors) - have):
         try:
             t = s.get(_TEXT.format(pkg=pkg), timeout=120, allow_redirects=False)
             t.raise_for_status()
-            if not t.content.lstrip().startswith(b"<html"):
+            if not t.content.lstrip().startswith(b"<html"):   # an error page is not a bill
                 raise ValueError("not a typescript page")
             _write_atomic(out_dir / f"{pkg}.htm.gz", gzip.compress(t.content))
             fetched += 1
@@ -456,7 +444,8 @@ if __name__ == "__main__":
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("billstatus", help="sync BILLSTATUS zips and write bills-<c>.json")
     p.add_argument("congress", type=int, nargs="*")
-    p = sub.add_parser("text", help="bill typescript: every version (118th, 119th), enacted text before")
+    p = sub.add_parser("text", help="bill typescript, every version: the current and previous Congress, "
+                                    "or the Congresses named (108 on)")
     p.add_argument("congress", type=int, nargs="*")
     p = sub.add_parser("counts", help="add Congress.gov's bill counts to existing bills-<c>.json")
     p.add_argument("congress", type=int, nargs="*")
@@ -465,10 +454,13 @@ if __name__ == "__main__":
         for c in a.congress or range(FIRST_CONGRESS, graph.current_session()[0] + 1):
             print(c, add_counts(c))
     if a.cmd == "text":
-        # Every version for the recent Congresses; only the enacted text before them.
-        for c in a.congress or range(FIRST_CONGRESS, graph.current_session()[0] + 1):
+        # Daily: the current Congress and the one before (a version can
+        # still be published in its first weeks). An older Congress
+        # publishes nothing new; name it to backfill.
+        this = graph.current_session()[0]
+        for c in a.congress or (this - 1, this):
             errs = []
-            n = sync_bill_text(c, errors=errs) if c in TEXT_CONGRESSES else sync_law_text(c, errors=errs)
+            n = sync_bill_text(c, errors=errs)
             print(c, f"{n} version(s) fetched", f"{len(errs)} error(s)")
             for e in errs[:10]:
                 print("  -", e)
