@@ -2425,8 +2425,15 @@ async def stocks_traded():
 async def member_photo(bioguide_id: str):
     from fastapi.responses import Response
 
+    import graph
     bg = bioguide_id.strip()
-    # The unitedstates/images repo is community-maintained and covers newer
+    if re.fullmatch(r"[A-Za-z]\d{6}", bg):
+        local = graph.data_path("images", bioguide=bg.upper())
+        if local.exists():
+            return Response(content=local.read_bytes(), media_type="image/jpeg",
+                            headers={"Cache-Control": "public, max-age=604800"})
+    # Kept live: a member newer than the mirror's last weekly pull. The
+    # unitedstates/images repo is community-maintained and covers newer
     # members that congress.gov's /img/member/*_200.jpg path is missing (e.g.
     # Suhas Subramanyam) — try it first, then fall back to congress.gov.
     sources = [
