@@ -1261,3 +1261,134 @@ class SponsorSearchTest(unittest.TestCase):
     def test_county_topic_filter_is_still_advisory(self):
         a = self.ask("how did Herrity vote on zoning")
         self.assertEqual(a["advisory_fields"], ["topic"])
+
+
+# ------------------------------------------------------- FEC bulk files
+
+from sources import fec_client  # noqa: E402
+
+
+def ccl_row(**kw):
+    d = dict(CAND_ID="S6VA00093", CAND_ELECTION_YR="2026", FEC_ELECTION_YR="2026",
+              CMTE_ID="C00438713", CMTE_TP="S", CMTE_DSGN="P", LINKAGE_ID="259083")
+    d.update(kw)
+    return d
+
+
+def pas2_row(**kw):
+    d = dict(CMTE_ID="C00451518", AMNDT_IND="N", RPT_TP="M3", TRANSACTION_PGI="P2026",
+              IMAGE_NUM="1", TRANSACTION_TP="24K", ENTITY_TP="CCM", NAME="FRIENDS OF MARK WARNER",
+              CITY="ALEXANDRIA", STATE="VA", ZIP_CODE="22314", EMPLOYER="", OCCUPATION="",
+              TRANSACTION_DT="02242025", TRANSACTION_AMT="1000", OTHER_ID="C00438713",
+              CAND_ID="S6VA00093", TRAN_ID="T1", FILE_NUM="1", MEMO_CD="", MEMO_TEXT="", SUB_ID="1")
+    d.update(kw)
+    return d
+
+
+class FecBulkTest(unittest.TestCase):
+    """Pure functions over small inline rows in the real `|`-column order —
+    no network, no zip file. Real-download parity (weball totals for
+    Warner, S6VA00093 -> C00438713) is reported separately, not pinned
+    here, because it depends on a live FEC snapshot."""
+
+    def test_principal_committee_needs_this_cycles_linkage(self):
+        # A candidate's ccl row from a stale cycle (FEC_ELECTION_YR 2024) is
+        # not this snapshot's principal committee, even though it's the
+        # only 'P' row on file for the candidate.
+        rows = [ccl_row(FEC_ELECTION_YR="2024")]
+        self.assertEqual(fec_client.bulk_principal_committees(rows, [], 2026), {})
+        rows = [ccl_row(FEC_ELECTION_YR="2026")]
+        self.assertEqual(fec_client.bulk_principal_committees(rows, [], 2026),
+                         {"S6VA00093": "C00438713"})
+
+    def test_principal_committee_tie_break_is_highest_linkage_id(self):
+        rows = [ccl_row(CMTE_ID="C1", LINKAGE_ID="100"),
+                ccl_row(CMTE_ID="C2", LINKAGE_ID="200")]
+        self.assertEqual(fec_client.bulk_principal_committees(rows, [], 2026),
+                         {"S6VA00093": "C2"})
+
+    def test_principal_committee_ignores_non_p_designations(self):
+        rows = [ccl_row(CMTE_DSGN="J", CMTE_ID="C_JFC")]
+        self.assertEqual(fec_client.bulk_principal_committees(rows, [], 2026), {})
+
+    def test_principal_committee_falls_back_to_cn_cand_pcc_when_ccl_has_no_row(self):
+        # Real 2026 case: Andy Barr (H0KY06104) has zero ccl rows for any
+        # cycle, but cn's CAND_PCC (C00467571) matches the API-built
+        # fec-2026.json's committee_id for him.
+        cn_rows = [{"CAND_ID": "H0KY06104", "CAND_PCC": "C00467571"}]
+        self.assertEqual(fec_client.bulk_principal_committees([], cn_rows, 2026),
+                         {"H0KY06104": "C00467571"})
+
+    def test_principal_committee_prefers_ccl_over_cn_when_both_exist(self):
+        rows = [ccl_row()]
+        cn_rows = [{"CAND_ID": "S6VA00093", "CAND_PCC": "C_STALE"}]
+        self.assertEqual(fec_client.bulk_principal_committees(rows, cn_rows, 2026),
+                         {"S6VA00093": "C00438713"})
+
+    def test_committee_names(self):
+        cm_rows = [{"CMTE_ID": "C00438713", "CMTE_NM": "FRIENDS OF MARK WARNER"}]
+        self.assertEqual(fec_client.bulk_committee_names(cm_rows), {"C00438713": "FRIENDS OF MARK WARNER"})
+
+    def test_totals_column_mapping_and_date_conversion(self):
+        # Real weball26 row for S6VA00093 (2026-09-26 download), one field per
+        # _WEBALL_COLS position, values matching the committed API snapshot.
+        row = dict(zip(fec_client._WEBALL_COLS,
+                       "S6VA00093|WARNER, MARK ROBERT|I|1|DEM|17889335.15|5792755.4|7327843.73|0|"
+                       "5553233.82|16114725.24|0|0|0|0|0|0|9258155.93|VA|00||||||2117795|0|"
+                       "07/15/2026|295824.5|14500".split("|")))
+        totals = fec_client.bulk_totals([row])["S6VA00093"]
+        self.assertEqual(totals, {
+            "receipts": 17889335.15, "disbursements": 7327843.73,
+            "last_cash_on_hand_end_period": 16114725.24, "individual_contributions": 9258155.93,
+            "other_political_committee_contributions": 2117795.0,
+            "coverage_end_date": "2026-07-15T00:00:00",
+        })
+
+    def test_totals_blank_money_fields_are_zero_not_missing(self):
+        # 5 name/party columns + 13 blank money columns (TTL_RECEIPTS..
+        # TTL_INDIV_CONTRIB) + CAND_OFFICE_ST/DISTRICT + 10 more blanks
+        # (election flags through CMTE_REFUNDS) = 30, matching _WEBALL_COLS.
+        row = dict(zip(fec_client._WEBALL_COLS, ["C1", "N", "C", "1", "DEM"] + [""] * 13 +
+                                                 ["VA", "00"] + [""] * 10))
+        totals = fec_client.bulk_totals([row])["C1"]
+        self.assertEqual(totals["receipts"], 0.0)
+        self.assertEqual(totals["individual_contributions"], 0.0)
+        self.assertIsNone(totals["coverage_end_date"])
+
+    def test_top_pacs_scopes_to_the_recipient_committee_and_24k(self):
+        rows = [pas2_row(), pas2_row(OTHER_ID="C_OTHER", CMTE_ID="C_OTHER_PAC"),
+                pas2_row(TRANSACTION_TP="15", CMTE_ID="C_NOT_24K")]
+        cm_names = {"C00451518": "CROWE PAC"}
+        top, total, n = fec_client.bulk_top_pacs(rows, "C00438713", "Mark Warner", cm_names)
+        self.assertEqual([t["name"] for t in top], ["CROWE PAC"])
+        self.assertEqual(total, 1000.0)
+        self.assertEqual(n, 1)
+
+    def test_top_pacs_drops_memo_rows(self):
+        # MEMO_CD 'X': FEC's convention for a transaction already itemized
+        # elsewhere (e.g. a joint fundraising transfer restated at the
+        # receiving end) — counting it would double the dollars.
+        rows = [pas2_row(TRANSACTION_AMT="5000", MEMO_CD="X"), pas2_row(TRANSACTION_AMT="1000")]
+        top, total, n = fec_client.bulk_top_pacs(rows, "C00438713", "Mark Warner", {})
+        self.assertEqual(total, 1000.0)
+        self.assertEqual(n, 1)
+
+    def test_top_pacs_reuses_graphs_conduit_and_self_name_exclusions(self):
+        rows = [pas2_row(CMTE_ID="C_ACTBLUE", NAME="ACTBLUE"),
+                pas2_row(CMTE_ID="C_SELF", TRANSACTION_AMT="500")]
+        cm_names = {"C_ACTBLUE": "ACTBLUE", "C_SELF": "WARNER FOR SENATE"}
+        top, total, n = fec_client.bulk_top_pacs(rows, "C00438713", "Mark Warner", cm_names)
+        # ActBlue is a conduit and "WARNER" is the candidate's own name token —
+        # graph.top_pacs excludes both, so nothing survives.
+        self.assertEqual(top, [])
+        self.assertEqual(total, 0.0)
+
+    def test_amendment_rows_are_kept_and_a_same_key_reversal_nets_out(self):
+        # A contribution and its later correction, filed under the same
+        # (CMTE_ID, TRAN_ID) — both AMNDT_IND 'N' in the real 2026 pas2
+        # file. Summed, not deduplicated: they net to the true balance.
+        rows = [pas2_row(TRAN_ID="B1", TRANSACTION_AMT="2500"),
+                pas2_row(TRAN_ID="B1", TRANSACTION_AMT="-2500", AMNDT_IND="N")]
+        top, total, n = fec_client.bulk_top_pacs(rows, "C00438713", "Mark Warner",
+                                                  {"C00451518": "CROWE PAC"})
+        self.assertEqual(total, 0.0)
