@@ -14,6 +14,7 @@ same space.
     python -m search.bill_index docs [congress ...]   # load changed documents
     python -m search.bill_index embed                  # embed new or changed documents
     python -m search.bill_index query "text"           # nearest bills
+    python -m search.bill_index search "text"          # full-text + nearest, fused
     python -m search.bill_index latency                # query embedding time here
 """
 
@@ -215,6 +216,107 @@ def knn(query, k=20):
         return cur.fetchall()
 
 
+# ------------------------------------------------------------------- search
+
+# Cormack et al.'s constant. Fusion reads only ranks, so the two lists need
+# no common scale: a ts_rank and a cosine are not comparable numbers.
+RRF_K = 60
+# How deep each list goes before fusion. A bill ranked 50th in one list and
+# absent from the other cannot reach a top 10 against k=60.
+_DEPTH = 50
+
+
+def rrf(*rankings, k=RRF_K):
+    """Reciprocal-rank fusion of ranked id lists. Ties break on the id, so
+    the same inputs give the same order in every process. Pure."""
+    score = {}
+    for ranking in rankings:
+        for i, x in enumerate(ranking):
+            score[x] = score.get(x, 0.0) + 1.0 / (k + i + 1)
+    return sorted(score, key=lambda x: (-score[x], x))
+
+
+def as_result(row):
+    """A bill_doc row in the shape search_bills has always returned, so the
+    ranker and validator downstream need no change. Pure."""
+    laws = row.get("law_numbers") or []
+    return {
+        "package_id": f"BILLS-{row['congress']}{row['bill_type']}{row['number']}",
+        "title": row.get("title") or f"{row['bill_type'].upper()} {row['number']}",
+        "date_issued": row["introduced"].isoformat() if row.get("introduced") else "",
+        "congress": row["congress"],
+        "type": row["bill_type"],
+        "number": int(row["number"]),
+        "is_law": bool(row.get("is_law")),
+        "law_number": laws[0].split("-")[-1] if laws else None,
+        "policy_area": row.get("policy_area"),
+    }
+
+
+def fts_terms(question):
+    """The question's content words, each with the spellings a bill may use
+    instead: search_rank folds "artificial intelligence" to "ai" for its
+    title match, and a summary usually spells the phrase out. Pure."""
+    from search.search_rank import _ALIASES, query_stems
+    return [[s] + [long for long, short in _ALIASES if short == s] for s in query_stems(question)]
+
+
+def _tsquery_sql(terms, op):
+    """A tsquery expression over fts_terms, joined by op (&& or ||), with
+    one placeholder per spelling."""
+    one = lambda alts: "(" + " || ".join("phraseto_tsquery('english', %s)" for _ in alts) + ")"
+    return f" {op} ".join(one(t) for t in terms), [a for t in terms for a in t]
+
+
+def search(question, congresses=None, limit=10, laws_only=False):
+    """Bills for a question: full-text and nearest-vector lists over
+    bill_doc, fused by rank. Local only; nothing leaves the server.
+
+    The full-text list takes the bills with every content word first, then
+    tops up with bills that have any of them: a plain AND drops every bill
+    that lacks one incidental word of a spoken question, and a plain OR lets
+    a long summary that repeats one common word ("regulation") outrank the
+    bills about the whole question. Fail-closed: a database or model error
+    raises, and the caller decides what the user sees."""
+    from psycopg.rows import dict_row
+    from correspondence.db import _get_pool
+    terms = fts_terms(question)
+    vec = json.dumps(embed_query([question])[0])
+    where, args = "", []
+    if congresses:
+        where += " AND d.congress = ANY(%s)"
+        args.append(list(congresses))
+    if laws_only:
+        where += " AND d.is_law"
+    with _get_pool().connection() as conn, conn.cursor(row_factory=dict_row) as cur:
+        fts = []
+        for op in (("&&", "||") if len(terms) > 1 else ("&&",)) if terms else ():
+            expr, targs = _tsquery_sql(terms, op)
+            cur.execute(f"""
+                SELECT d.instrument_id FROM bill_doc d, (SELECT {expr} AS q) q
+                WHERE d.tsv @@ q.q{where} AND NOT d.instrument_id = ANY(%s::text[])
+                ORDER BY ts_rank_cd(d.tsv, q.q, 1) DESC, d.instrument_id LIMIT %s""",
+                        [*targs, *args, fts, _DEPTH - len(fts)])
+            fts += [r["instrument_id"] for r in cur.fetchall()]
+            if len(fts) >= _DEPTH:
+                break
+        cur.execute("SET LOCAL hnsw.ef_search = 100")
+        # A Congress or law filter removes most neighbours; iterative scan
+        # keeps walking the graph until enough survive the filter.
+        cur.execute("SET LOCAL hnsw.iterative_scan = relaxed_order")
+        cur.execute(f"""
+            SELECT e.instrument_id FROM bill_embedding e JOIN bill_doc d USING (instrument_id)
+            WHERE e.space = %s{where}
+            ORDER BY e.embedding <=> %s::halfvec LIMIT %s""", [SPACE, *args, vec, _DEPTH])
+        near = [r["instrument_id"] for r in cur.fetchall()]
+        ids = rrf(fts, near)[:limit]
+        cur.execute("""SELECT instrument_id, congress, bill_type, number, title, introduced,
+                              policy_area, is_law, law_numbers
+                       FROM bill_doc WHERE instrument_id = ANY(%s)""", (ids,))
+        rows = {r["instrument_id"]: r for r in cur.fetchall()}
+    return [as_result(rows[i]) for i in ids if i in rows]
+
+
 if __name__ == "__main__":
     cmd, args = (sys.argv[1] if len(sys.argv) > 1 else ""), sys.argv[2:]
     if cmd == "docs":
@@ -228,6 +330,12 @@ if __name__ == "__main__":
         t0 = time.time()
         for iid, title, sim in knn(" ".join(args)):
             print(f"{sim:.3f}  {iid}  {title[:90]}")
+        print(f"{(time.time() - t0) * 1000:.0f} ms")
+    elif cmd == "search":
+        embed_query(["warm up"])
+        t0 = time.time()
+        for r in search(" ".join(args)):
+            print(f"{r['congress']} {r['type'].upper()} {r['number']:<6} {'LAW ' if r['is_law'] else ''}{r['title'][:90]}")
         print(f"{(time.time() - t0) * 1000:.0f} ms")
     elif cmd == "latency":
         embed_query(["warm up"])

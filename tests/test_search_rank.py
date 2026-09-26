@@ -73,3 +73,34 @@ class EmbeddingBatchTest(unittest.TestCase):
         # One document over the budget still travels, alone.
         self.assertEqual([len(b) for b in batches([("a", "x" * 999), ("b", "y")], max_chars=500)], [1, 1])
 
+
+class FusionTest(unittest.TestCase):
+    def test_a_bill_in_both_lists_beats_a_bill_first_in_one(self):
+        from search.bill_index import rrf
+        self.assertEqual(rrf(["a", "b", "c"], ["b", "d"]), ["b", "a", "d", "c"])
+
+    def test_ties_break_on_the_id_whatever_the_input_order(self):
+        from search.bill_index import rrf
+        self.assertEqual(rrf(["y"], ["x"]), ["x", "y"])
+        self.assertEqual(rrf(["x"], ["y"]), ["x", "y"])
+        self.assertEqual(rrf([], []), [])
+
+    def test_full_text_terms_spell_out_the_folded_phrases(self):
+        from search.bill_index import fts_terms, _tsquery_sql
+        self.assertEqual(fts_terms("AI regulation bills"),
+                         [["ai", "artificial intelligence"], ["regulation"]])
+        expr, args = _tsquery_sql(fts_terms("AI regulation"), "&&")
+        self.assertEqual(expr.count("%s"), len(args))
+        self.assertEqual(args, ["ai", "artificial intelligence", "regulation"])
+
+    def test_a_row_keeps_the_shape_search_bills_returned(self):
+        import datetime
+        from search.bill_index import as_result
+        r = as_result({"congress": 110, "bill_type": "hr", "number": "6", "title": "Energy Act",
+                       "introduced": datetime.date(2007, 1, 12), "is_law": True,
+                       "law_numbers": ["110-140"], "policy_area": "Energy"})
+        self.assertEqual(r["package_id"], "BILLS-110hr6")
+        self.assertEqual((r["number"], r["law_number"], r["date_issued"]), (6, "140", "2007-01-12"))
+        self.assertIsNone(as_result({"congress": 119, "bill_type": "s", "number": "5",
+                                     "title": None, "law_numbers": None})["law_number"])
+
