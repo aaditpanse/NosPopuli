@@ -26,6 +26,7 @@ seeds for a county are hand-written per source in SOURCES.
 
 import datetime
 import json
+import os
 import pathlib
 import re
 import sys
@@ -37,7 +38,10 @@ sys.path.insert(0, str(_HERE / "foundry"))
 from harness import member_key  # noqa: E402  — the certify canon; never fork it
 
 STORE_DIR = _HERE / "foundry" / "data" / "store"
-DATA_DIR = _HERE / "data"
+# The graph's inputs. On the server they live outside the checkout
+# (/srv/bulk), because the bulk files are too large for git and the deploy's
+# `git reset --hard` must never touch them.
+DATA_DIR = pathlib.Path(os.environ.get("NOSPOPULI_DATA_DIR") or _HERE / "data")
 
 # The full predicate vocabulary. The loader refuses anything else so the
 # graph cannot grow a new relation type by accident.
