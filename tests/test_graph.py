@@ -1034,6 +1034,72 @@ class VoteviewTest(unittest.TestCase):
         self.assertIn("29911 (G000286 vs X999999)", gaps[0])
 
 
+OLDER_BILLS = {"meta": {"congress": 118, "fetched": "2026-09-26"}, "instruments": {
+    "hr/99": {**bill_rec([acted("2024-03-01", "Signed by President."),
+                          acted("2024-03-01", "Became Public Law No: 118-5.", "BecameLaw")],
+                         [{"number": "118-5", "type": "Public Law"}]),
+              "introduced": "2023-02-01", "sponsors": ["G000568"],
+              "cosponsors": [{"id": "ZZ99999", "date": "2023-02-02", "original": True, "withdrawn": None}],
+              "committees": [{"code": "hsxx00", "name": "Abolished Committee", "chamber": "House", "parent": None,
+                              "activities": [{"name": "Referred To", "date": "2023-02-01"}]}],
+              "reports": [],
+              "related": [{"congress": 117, "type": "hr", "number": "5", "title": "Older",
+                           "relationships": [{"type": "Related bill", "identified_by": "CRS"}]}]},
+}}
+
+
+class BillScopeTest(unittest.TestCase):
+    """Phase 4: an older Congress's bills load as their own scope."""
+
+    def setUp(self):
+        legs = LEGISLATORS
+        self.nodes, self.edges, self.gaps = graph.build_bills_scope(
+            118, OLDER_BILLS, legs, EXECUTIVE, COMMITTEES, "2026-09-25")
+
+    def test_only_bill_rows_and_the_committees_bills_name(self):
+        self.assertEqual({n["kind"] for n in self.nodes}, {"instrument", "organization"})
+        self.assertEqual({n["id"] for n in self.nodes if n["kind"] == "organization"},
+                         {graph.committee_id("hsxx00")})    # not the committees-current ones
+        self.assertTrue({e["predicate"] for e in self.edges} <= graph.BILL_PREDICATES)
+        self.assertEqual({e["predicate"] for e in self.edges},
+                         {"sponsored", "referred_to", "signed", "enacted_as"})
+        # Related-bill links stay in the file for an older Congress.
+        self.assertFalse(any(n["id"].startswith("instrument/us/117/") for n in self.nodes))
+
+    def test_the_bill_the_sponsor_and_the_president_who_signed(self):
+        (bill,) = [n for n in self.nodes if n["id"] == "instrument/us/118/hr/99"]
+        self.assertEqual(bill["name"], "H.R. 99: A bill")
+        self.assertEqual(bill["source_id"], "govinfo")
+        sponsor = [e for e in by_pred(self.edges, "sponsored")]
+        self.assertEqual([e["src"] for e in sponsor], [graph.node_id("person", "bioguide/G000568")])
+        self.assertEqual(sponsor[0]["props"]["jurisdiction"], f"{graph.US}/state:va")
+        (signed,) = by_pred(self.edges, "signed")
+        self.assertEqual(signed["src"], graph.node_id("person", "govtrack/412733"))   # Biden in 2024
+        self.assertTrue(any("1 sponsor" in g and "ZZ99999" in g for g in self.gaps), self.gaps)
+
+    def test_the_partition_puts_bills_and_their_committees_in_the_bill_scope(self):
+        nodes, edges, _ = graph.build_congress(LEGISLATORS, [REFERRED], today=TODAY)
+        people = {n["props"]["bioguide"]: n["id"] for n in nodes if n["props"].get("bioguide")}
+        cn, ce, _ = graph.build_committees(COMMITTEES, MEMBERSHIP, "2026-09-25", [REFERRED], people)
+        skel_n, skel_e, bill_n, bill_e = graph.partition(nodes + cn, edges + ce)
+        self.assertEqual({n["kind"] for n in bill_n}, {"instrument", "organization"})
+        self.assertEqual({n["id"] for n in bill_n if n["kind"] == "organization"},
+                         {graph.committee_id("hsif00")})    # named by the bill, not in the file
+        self.assertIn(graph.committee_id("hsju00"), {n["id"] for n in skel_n})
+        self.assertEqual({e["predicate"] for e in skel_e} & graph.BILL_PREDICATES, set())
+        self.assertIn("member_of", {e["predicate"] for e in skel_e})
+        self.assertEqual(len(nodes + cn), len(skel_n) + len(bill_n))
+
+    def test_a_related_bill_with_its_own_record_is_never_a_title_only_node(self):
+        # hr/77 has a record in another scope: the link is made, the node is
+        # left alone, so its real name and props are never overwritten.
+        nodes, _, _ = graph.build_congress(LEGISLATORS, [RELATED], today=TODAY)
+        ids = {n["id"] for n in nodes if n["kind"] == "instrument"}
+        rn, re_, gaps = graph.build_related([RELATED], ids, known_ids={"instrument/us/119/hr/77"})
+        self.assertEqual(rn, [])
+        self.assertIn("instrument/us/119/hr/77", {e["dst"] for e in re_})
+
+
 class NominationAndLobbyingRecordTest(unittest.TestCase):
     def test_a_nomination_keeps_the_senates_document_name(self):
         from sources import nominations

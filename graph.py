@@ -610,7 +610,7 @@ BILL_LABEL = {"hr": "H.R.", "s": "S.", "hres": "H.Res.", "sres": "S.Res.", "hjre
 
 
 def _instrument(g, iid, itype, number, congress, rec, fetched, label, fallback_title,
-                source_id, source_ref, lookup_bioguide):
+                source_id, source_ref, lookup_bioguide, home=None):
     """One bill's node and who wrote it, from its record. Instantaneous
     `sponsored` edges on the date each name went on the bill; a withdrawn
     cosponsor keeps the edge and the withdrawal date, because they did sign
@@ -633,17 +633,19 @@ def _instrument(g, iid, itype, number, congress, rec, fetched, label, fallback_t
     name = f"{label}: {rec.get('title') or fallback_title or ''}".strip(": ")
     _node(g, iid, "instrument", name, props, source_id, source_ref)
     ref = f"us/{congress}/{itype}/{number}/sponsors"
+    # The sponsor's home state is the edge's delete scope; a bill scope has
+    # no person nodes of its own to read it from.
+    home = home or (lambda pid: g["nodes"][pid]["props"]["jurisdiction"])
     for who in rec.get("sponsors", []):
         pid = lookup_bioguide(who)
         if pid:
             _edge(g, pid, "sponsored", iid, rec.get("introduced"), rec.get("introduced"),
-                  "ingested", "congress.gov", ref, g["nodes"][pid]["props"]["jurisdiction"],
-                  {"role": "sponsor"})
+                  "ingested", "congress.gov", ref, home(pid), {"role": "sponsor"})
     for co in rec.get("cosponsors", []):
         pid = lookup_bioguide(co["id"])
         if pid:
             _edge(g, pid, "sponsored", iid, co.get("date"), co.get("date"),
-                  "ingested", "congress.gov", ref, g["nodes"][pid]["props"]["jurisdiction"],
+                  "ingested", "congress.gov", ref, home(pid),
                   {"role": "original cosponsor" if co.get("original") else "cosponsor",
                    "withdrawn": co.get("withdrawn")})
 
@@ -986,7 +988,7 @@ def build_enactment(snapshots, hold_edges, instrument_ids):
     return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
 
 
-def build_related(snapshots, instrument_ids):
+def build_related(snapshots, instrument_ids, known_ids=frozenset()):
     """Bill-to-bill links from Congress.gov's related-bills record: the
     relationship ('Identical bill', 'Procedurally related') and who said so
     (House, Senate, CRS) ride on the edge. A related bill the session never
@@ -1005,7 +1007,9 @@ def build_related(snapshots, instrument_ids):
                 did = f"instrument/us/{b['congress']}/{b['type']}/{b['number']}"
                 if did == iid:
                     continue
-                if did not in instrument_ids and did not in g["nodes"]:
+                # known_ids: bills with their own record in another scope. A
+                # title-only node for one would overwrite its name and props.
+                if did not in instrument_ids and did not in known_ids and did not in g["nodes"]:
                     _node(g, did, "instrument", f"{b['type'].upper()} {b['number']}: {b.get('title') or ''}".strip(": "),
                           {"instrument_type": b["type"], "congress": b["congress"], "number": b["number"],
                            "title_only": True, "jurisdiction": US}, "congress.gov", f"us/{congress}/{label}/related")
@@ -1015,9 +1019,68 @@ def build_related(snapshots, instrument_ids):
                       {"relationships": b.get("relationships") or [],
                        "types": sorted({r.get("type") for r in b.get("relationships") or [] if r.get("type")})})
     if title_only:
-        g["gaps"].append(f"{title_only} related bill(s) had no recorded vote this session: title-only nodes, "
-                         f"their own links not followed")
+        g["gaps"].append(f"{title_only} related bill(s) have no record on disk (before the 108th Congress, "
+                         f"or not published by GovInfo): title-only nodes, their own links not followed")
     return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
+
+
+# What a bill scope owns. Everything else is the skeleton: people, seats,
+# the presidency, committees as the file lists them, money.
+BILL_PREDICATES = frozenset({"sponsored", "voted_on", "considered", "referred_to", "reported",
+                             "related_to", "enacted_as", "signed", "vetoed"})
+
+
+def partition(nodes, edges):
+    """Split one build into (skeleton nodes, skeleton edges, bill nodes,
+    bill edges). A committee that only a bill record names (renamed,
+    abolished; source congress.gov) goes with the bills that name it. Pure."""
+    def is_bill(n):
+        return n["kind"] == "instrument" or (n["kind"] == "organization" and n["source_id"] == "congress.gov")
+    return ([n for n in nodes if not is_bill(n)], [e for e in edges if e["predicate"] not in BILL_PREDICATES],
+            [n for n in nodes if is_bill(n)], [e for e in edges if e["predicate"] in BILL_PREDICATES])
+
+
+def build_bills_scope(congress, bills, legislators, executive, committees, observed, today=None):
+    """One older Congress's bills → (nodes, edges, gaps) for its scope
+    us/bills/<congress>: every bill, who sponsored and cosponsored it,
+    referrals and reports, and what the President did. Roll calls and
+    related-bill links stay in the files. People are keyed as the
+    skeleton keys them, so the edges meet the skeleton's nodes without
+    building it. Pure."""
+    g = _graph()
+    home, unknown = {}, {}
+    for leg in legislators:
+        bio = leg.get("id", {}).get("bioguide")
+        if bio:
+            home[node_id("person", f"bioguide/{bio}")] = f"{US}/state:{leg['terms'][-1]['state'].lower()}"
+
+    def lookup(bio):
+        pid = node_id("person", f"bioguide/{bio}")
+        if pid in home:
+            return pid
+        unknown[bio] = unknown.get(bio, 0) + 1
+        return None
+
+    fetched = bills["meta"].get("fetched")
+    for label, rec in bills["instruments"].items():
+        itype, number = label.split("/")
+        _instrument(g, f"instrument/us/{congress}/{itype}/{number}", itype, number, congress, rec, fetched,
+                    f"{BILL_LABEL.get(itype, itype.upper())} {number}", None,
+                    "govinfo", f"us/{congress}/{itype}/{number}", lookup, home.get)
+    snap = {"meta": {"congress": congress, "instruments_fetched": fetched}, "votes": [],
+            "instruments": bills["instruments"]}
+    ids = set(g["nodes"])
+    _, xe, _ = build_executive(executive, today)
+    cn, ce, cg = build_committees(committees, {}, observed, [snap], {})
+    en, ee, eg = build_enactment([snap], xe, ids)
+    _, _, bn, be = partition(cn + en, ce + ee)
+    nodes = list(g["nodes"].values()) + bn
+    edges = list(g["edges"].values()) + be
+    gaps = g["gaps"] + cg + eg
+    if unknown:
+        gaps.append(f"{sum(unknown.values())} sponsor(s) of the {congress}th Congress's bills not in the "
+                    f"legislators files ({', '.join(sorted(unknown)[:5])}); no edge for them")
+    return nodes, edges, gaps
 
 
 def committee_id(code):
@@ -1582,6 +1645,17 @@ def fetch_public(names=PUBLIC_FILES):
     return out
 
 
+def _bill_ids_on_disk(exclude=None):
+    """Every bill id with a record in a bills-<c>.json, read one file at a
+    time and only its keys: the bills that are nodes in their own scope."""
+    ids = set()
+    for p in sorted(DATA_DIR.glob("bills-*.json")):
+        c = int(p.stem.split("-")[1])
+        if c != exclude:
+            ids.update(f"instrument/us/{c}/{k}" for k in json.loads(p.read_text())["instruments"])
+    return ids
+
+
 def build_source(source, states=None):
     """Read the inputs for one source off disk and build. Returns
     (nodes, edges, gaps, delete scopes)."""
@@ -1652,7 +1726,8 @@ def build_source(source, states=None):
             gaps += cg
         else:
             gaps.append("no committee files in data/: committees are not loaded (run `python graph.py fetch`)")
-        rn, re_, rg = build_related(snaps, {n["id"] for n in nodes if n["kind"] == "instrument"})
+        rn, re_, rg = build_related(snaps, {n["id"] for n in nodes if n["kind"] == "instrument"},
+                                    _bill_ids_on_disk(exclude=congress))
         nodes += rn
         edges += re_
         gaps += rg
