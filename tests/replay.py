@@ -353,6 +353,14 @@ def _install(monkeypatch, caches):
                         lambda path=None: real_health_load(STORE / "_health.json"))
     api._FOUNDRY_PAYLOAD.update(sig=None, body=None)
 
+    # 8. The bulk data. Since Phase 6 the bill routes read BILLSTATUS, bill
+    #    text and roll calls from NOSPOPULI_DATA_DIR instead of Congress.gov.
+    #    A developer's data dir differs from CI's (which has none), so routes
+    #    read a small frozen subset under golden/_store/bulk: whole files as
+    #    the sync wrote them, zips trimmed to the bills the fixtures open.
+    import graph
+    monkeypatch.setattr(graph, "DATA_DIR", STORE / "bulk")
+
     # 38 routes carry @limiter.limit over in-process storage on a module global
     # that never resets, and get_remote_address collapses every TestClient call
     # to one key — so a 10/min route 429s on the 11th test. RATELIMIT_ENABLED
@@ -429,10 +437,11 @@ def prepare_env():
         load_dotenv(ROOT / ".env")
     # correspondence/router.py calls init_db() at import and api.py imports it,
     # so without this `import api` opens a real pool and runs DDL on production.
-    # Left blank even when recording: capturing a fixture is not worth running
-    # CREATE TABLE against production. DB-backed routes therefore record their
-    # fail-open path, and say so in meta.notes.
-    os.environ["SUPABASE_DB_URL"] = ""
+    # Blank in replay, always. Blank when recording too, unless a local
+    # *_fixture database is named (record_db_url): capturing a fixture is not
+    # worth running CREATE TABLE against production. Without one, DB-backed
+    # routes record their fail-open path, and say so in meta.notes.
+    os.environ["SUPABASE_DB_URL"] = record_db_url() if RECORDING else ""
     # api.py reads MONITOR_SECRET at import: set, an unauthenticated request is
     # 403; unset, 503. A developer's .env set it and CI did not, so every admin
     # fixture was 403 locally and 503 in CI. A fixed placeholder, in both modes,
@@ -450,6 +459,24 @@ def prepare_env():
     os.chdir(ROOT)
     if str(ROOT) not in sys.path:
         sys.path.insert(0, str(ROOT))
+
+
+def record_db_url():
+    """The one database a recording may use: NOSPOPULI_RECORD_DB_URL, and
+    only if it is on this machine and its name ends in _fixture. Anything
+    else records the fail-open path, as before. The name rule is the fence:
+    a fixture database is made for recording and can be dropped, and no
+    production database is named that way. Fail-closed: a URL that breaks
+    the rule raises rather than falling back, so a typo cannot quietly
+    record against the wrong database."""
+    url = os.environ.get("NOSPOPULI_RECORD_DB_URL", "").strip()
+    if not url:
+        return ""
+    from urllib.parse import urlparse
+    u = urlparse(url)
+    if u.hostname not in ("localhost", "127.0.0.1", "::1") or not u.path.lstrip("/").endswith("_fixture"):
+        raise RuntimeError("NOSPOPULI_RECORD_DB_URL must name a database ending in _fixture on localhost")
+    return url
 
 
 def clear_memory_caches():

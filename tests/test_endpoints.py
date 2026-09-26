@@ -137,6 +137,23 @@ def test_no_api_key_is_committed():
     assert not leaks, f"api_key present in: {leaks}"
 
 
+def test_recording_uses_only_a_local_fixture_database(monkeypatch):
+    """The record-mode database is the one fence around "never point the
+    harness at a real database": on this machine, named *_fixture, or
+    nothing; a URL that breaks the rule raises instead of falling back."""
+    monkeypatch.delenv("NOSPOPULI_RECORD_DB_URL", raising=False)
+    assert replay.record_db_url() == ""
+    ok = "postgresql://me@localhost:5432/nospopuli_fixture"
+    monkeypatch.setenv("NOSPOPULI_RECORD_DB_URL", ok)
+    assert replay.record_db_url() == ok
+    for bad in ("postgresql://me@db.example.com/nospopuli_fixture",
+                "postgresql://me@localhost/nospopuli",
+                "postgresql://me@localhost/fixture_nospopuli"):
+        monkeypatch.setenv("NOSPOPULI_RECORD_DB_URL", bad)
+        with pytest.raises(RuntimeError):
+            replay.record_db_url()
+
+
 # ------------------------------- defects that need a fixture or the app itself
 # The pure-logic defects (Radnor, the watchlist anchor) and the LA County control
 # live in test_ledger.py::KnownDefects, with the other pure ledger_agent tests.
