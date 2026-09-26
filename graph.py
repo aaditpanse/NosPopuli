@@ -924,7 +924,7 @@ def build_congress(legislators, snapshots, states=None, today=None, cert_index=N
                             "govinfo", f"us/{congress}/{itype}/{number}", lookup_bioguide)
     for congress, has in by_congress.items():
         if not has:
-            g["gaps"].append(f"the {congress}th Congress has no bill records (no bills-{congress}.json on disk); "
+            g["gaps"].append(f"the {_ordinal(congress)} Congress has no bill records (no bills-{congress}.json on disk); "
                              f"no `sponsored` edges from it")
 
     for snap in snapshots:
@@ -1165,12 +1165,12 @@ def completeness_gap(congress, meta, nodes):
     count, the independent check on GovInfo's files. Pure."""
     cg = meta.get("congress_gov_counts")
     if not cg:
-        return (f"the {congress}th Congress: {nodes:,} bills from GovInfo's {sum(meta.get('files', {}).values()):,} "
+        return (f"the {_ordinal(congress)} Congress: {nodes:,} bills from GovInfo's {sum(meta.get('files', {}).values()):,} "
                 f"files; not checked against Congress.gov's count")
     total = sum(v or 0 for v in cg.values())
     short = {t: cg[t] - meta.get("files", {}).get(t, 0) for t in cg
              if (cg[t] or 0) != meta.get("files", {}).get(t, 0)}
-    return (f"the {congress}th Congress: {nodes:,} of {total:,} bills on Congress.gov "
+    return (f"the {_ordinal(congress)} Congress: {nodes:,} of {total:,} bills on Congress.gov "
             f"(checked {meta.get('congress_gov_checked')})"
             + (f"; differs by type: {json.dumps(short, sort_keys=True)}" if short else ""))
 
@@ -1213,7 +1213,7 @@ def build_bills_scope(congress, bills, legislators, executive, committees, obser
     edges = list(g["edges"].values()) + be
     gaps = g["gaps"] + cg + eg + [completeness_gap(congress, bills["meta"], len(bills["instruments"]))]
     if unknown:
-        gaps.append(f"{sum(unknown.values())} sponsor(s) of the {congress}th Congress's bills not in the "
+        gaps.append(f"{sum(unknown.values())} sponsor(s) of the {_ordinal(congress)} Congress's bills not in the "
                     f"legislators files ({', '.join(sorted(unknown)[:5])}); no edge for them")
     return nodes, edges, gaps
 
@@ -1284,10 +1284,10 @@ def build_nominations(congress, noms, exec_holds, senate_votes=()):
         _edge(g, who[0]["src"], "nominated", iid, rec["received"], rec["received"], "ingested",
               "congress.gov", f"us/{congress}/pn/{number}/nominated", US, {"received": rec["received"]})
     if no_president:
-        g["gaps"].append(f"{no_president} nomination(s) of the {congress}th Congress: no single President "
+        g["gaps"].append(f"{no_president} nomination(s) of the {_ordinal(congress)} Congress: no single President "
                          f"held office on the day received; no `nominated` edge")
     if ambiguous:
-        g["gaps"].append(f"{ambiguous} roll call(s) of the {congress}th Congress name a nomination whose split "
+        g["gaps"].append(f"{ambiguous} roll call(s) of the {_ordinal(congress)} Congress name a nomination whose split "
                          f"citation Voteview collapsed; not linked")
     return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
 

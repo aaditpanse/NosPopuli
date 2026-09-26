@@ -291,6 +291,32 @@ What it proved:
 
 In production (measured 2026-09-25, after one full load): 454,740 edges in 364 MB including indexes, about 800 bytes an edge; 17,906 nodes in 10 MB; the whole database 392 MB. `voted_on` is 379,014 of the edges, and the load takes about two minutes.
 
+*Every bill, every district, nominations and lobbying* (2026-09-26, on the Hetzner
+server). The graph loads by **scope**, each replaced whole in one transaction and
+skipped when its inputs did not change (`graph_scope`): `us/skeleton` (people, seats,
+the presidency, committees, money), `us/districts`, `us/bills/<108…118>`,
+`us/nominations/<97…118>`, `us/current` (the 119th's bills, roll calls and
+nominations), `us/lobbying/orgs` and `us/lobbying/<year>`, and `local/<county>`.
+
+- Every bill since 2003 is a node, with its sponsors, cosponsors, referrals, reports and
+  what the President did; each Congress states "N of M bills" against Congress.gov's own
+  count (0–10 short, GovInfo's publishing lag). A bare bill number is the newest
+  Congress with it; "HR 1 in the 110th" picks one.
+- Nominations since 1981 are instruments; the nominee is data on the node (Congress.gov
+  gives no id), and `nominated` comes from the President in office the day it arrived.
+- District shapes since 1789 (Lewis et al., UCLA) are nodes with PostGIS geometry,
+  represented by the House seat once per Congress: `/resolve-point` with a past `date`
+  answers who represented a point then (a Fairfax point on 1995-06-01: VA-11, Thomas
+  Davis).
+- Lobbying: organizations are exact normalized LDA names; `lobbied_for` (firm → client,
+  income) is ingested, `lobbied_on` (client → bill, read from free text) advisory, and a
+  PAC links to an organization only by an identical name (advisory).
+
+Measured on the fresh load: 42 scopes in 780 s; 269,951 nodes and 3,202,580 edges;
+9,413 district shapes (913 MB of geometry); the database 4.4 GB. A fresh load writes
+about 6.8 GB of WAL, all of it archived. The daily load replaces the skeleton, the
+current Congress and whatever changed: about 75 s.
+
 *Next for the graph:* every bill, not only the voted ones. The 119th Congress has
 19,067 bills and resolutions; the graph holds 1,468. That, the move to one Hetzner
 server, and local copies of the federal bulk data (BILLSTATUS, Voteview, FEC bulk)
@@ -674,10 +700,22 @@ Live problems I know about and haven't fixed. Listed so nobody has to rediscover
   her first observed meeting because the special election that seated her is not on
   disk. The gap is real and the answer says "vacant or not on disk"; the fix is the
   2025 special-election results in `va-elections.json`.
-- **A district number is one node for all time.** VA-1 in 1800 and VA-1 today are the
-  same `…/state:va/cd:1` jurisdiction, although redistricting moved it many times. The
-  seats are right as seats; which land a district covered is not dated. The fix is a
-  district node per Congress from the dated district shapes.
+- **At-large seats beside numbered districts are merged into cd:1.** The seat keys an
+  at-large member as `…/cd:1` (`graph.py` `post_for`), so in a state that elected some
+  members at large and others by district in the same Congress (common from the 1910s
+  to the 1960s), the at-large and district-1 holders share one seat. Their district
+  shapes are left out of `us/districts` (a counted gap) rather than given to the wrong
+  seat. The fix is an at-large post of its own.
+- **Voteview collapses split nomination numbers.** `PN78-10` arrives as `PN7810`, so an
+  older roll call on a nomination in parts cannot be tied to it, and one that a split
+  citation could collapse to (PN78-1 → PN781) is never linked at all. The clerks'
+  files, from the 118th on, keep the hyphen.
+- **A lobbying organization is a spelling, not a registry entry.** Organizations are
+  one node per exact normalized LDA name (`graph.lobby_key`): "Boeing Co" and "The
+  Boeing Company" are one, a subsidiary or a misspelling is another. Bill links are
+  read from the filings' free text and their Congress inferred from the filing year;
+  both are reported as advisory. A PAC is linked to an organization only when its
+  connected-organization name has the same key.
 - **`GET /api/graph/votes` still merges people who share a name.** It reads
   `graph.votes`, which does not go through `answer`'s ambiguity check, so
   `?person=Warner` returns every Warner's votes together. `/api/graph/search` and

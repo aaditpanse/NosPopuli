@@ -27,7 +27,8 @@ graph.py        the property graph: build, load, traverse
 
 agents/         the LLM agents — router, ledger, search, feed, translator,
                 the vote trio, documentor. If it prompts a model, it lives here
-sources/        external data in: congress.gov, LegiScan, FEC, Senate LDA,
+sources/        external data in: congress.gov, GovInfo bulk, Voteview, district
+                shapes, nominations, LegiScan, FEC (API and bulk), Senate LDA,
                 House disclosures. One module per upstream, plus the shared session
 search/         the search plumbing that is not an agent: cache, logger, rank,
                 and the user-flag log that feeds the same loop
