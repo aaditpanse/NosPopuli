@@ -837,7 +837,8 @@ OLDER = {"meta": {"congress": 118, "session": 2, "year": 2024},
 
 class OlderSessionsTest(unittest.TestCase):
     def test_older_roll_calls_certify_terms_without_edges(self):
-        nodes, edges, _ = graph.build_congress(LEGISLATORS, [SNAPSHOT], today=TODAY, cert_snapshots=[OLDER])
+        nodes, edges, _ = graph.build_congress(LEGISLATORS, [SNAPSHOT], today=TODAY,
+                                               cert_index=graph.member_congress_index([OLDER]))
         self.assertFalse(any(e["source_ref"].startswith("us/118/") for e in edges))
         self.assertNotIn("instrument/us/118/hr/99", {n["id"] for n in nodes})
         griffith = person_named(nodes, "H. Morgan Griffith")
@@ -864,6 +865,39 @@ class OlderSessionsTest(unittest.TestCase):
                 now = graph.search("how did Griffith vote in 2026", b, today=TODAY)
                 self.assertNotIn("from_snapshot", now)
                 self.assertEqual({r["date"][:4] for r in now["rows"]}, {"2026"})
+
+    def test_the_index_keeps_only_each_members_first_and_last_roll_call(self):
+        more = {"votes": [house_vote(n, "H R 99", {"no": ["G000568"]}, date=d)
+                          | {"vote_id": f"us/118/2/house/{n}", "congress": 118}
+                          for n, d in ((8, "2024-05-01"), (9, "2024-01-15"), (10, "2024-09-30"))]}
+        idx = graph.member_congress_index([OLDER, more])
+        self.assertEqual(idx["bioguide:G000568"], {"118/house": {
+            "first": "2024-01-15", "first_vote": "us/118/2/house/9",
+            "last": "2024-09-30", "last_vote": "us/118/2/house/10", "source": "clerk.house.gov"}})
+
+    def test_a_term_between_the_two_ends_is_not_certified(self):
+        # Both ends fall outside the 2023–2025 term. The member may well have
+        # voted inside it, but the index cannot show that: it misses the
+        # certification rather than inventing one from the interval.
+        straddle = {"bioguide:G000568": {"118/house": {
+            "first": "2022-12-01", "first_vote": "a", "last": "2025-02-01", "last_vote": "b",
+            "source": "clerk.house.gov"}}}
+        nodes, edges, _ = graph.build_congress(LEGISLATORS, [SNAPSHOT], today=TODAY, cert_index=straddle)
+        griffith = person_named(nodes, "H. Morgan Griffith")
+        old_term = next(e for e in by_pred(edges, "holds")
+                        if e["src"] == griffith["id"] and e["valid_from"] == "2023-01-03")
+        self.assertEqual(old_term["certification"], "ingested")
+
+    def test_an_older_year_opens_only_its_own_congress_files(self):
+        with tempfile.TemporaryDirectory() as d:
+            pathlib.Path(d, "congress-votes-118-2.json").write_text(json.dumps(OLDER))
+            # Unparseable on purpose: opening it would raise.
+            pathlib.Path(d, "congress-votes-50-1.json").write_text("{not json")
+            with mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)):
+                rows, _, _, files = graph.snapshot_votes(
+                    [{"id": "p", "name": "G", "bioguide": "G000568"}], 2024, None, 10, 119)
+        self.assertEqual(files, ["congress-votes-118-2.json"])
+        self.assertEqual([r["vote_id"] for r in rows], ["us/118/2/house/7"])
 
 
 class VocabularyTest(unittest.TestCase):

@@ -578,14 +578,42 @@ def _parse_instrument(chamber, vote):
     return doc_type, number
 
 
-def build_congress(legislators, snapshots, states=None, today=None, cert_snapshots=()):
+def member_congress_index(snapshots, index=None):
+    """Older roll calls → {"<id_kind>:<id>": {"<congress>/<chamber>":
+    {"first": date, "first_vote": vote_id, "last": ..., "last_vote": ...,
+    "source": source_id}}}. Only the two ends of each member's record in a
+    Congress are kept: certifying from every position of every session
+    since 1789 would hold millions of rows in memory on each load. Folds
+    into `index` when given, so files can be read one at a time. Pure."""
+    index = {} if index is None else index
+    for snap in snapshots:
+        for v in snap.get("votes", []):
+            key = f"{v['congress']}/{v['chamber']}"
+            kind = v.get("id_kind") or "bioguide"
+            for ids in v.get("positions", {}).values():
+                for mid in ids:
+                    rec = index.setdefault(f"{kind}:{mid}", {}).get(key)
+                    if rec is None:
+                        index[f"{kind}:{mid}"][key] = {
+                            "first": v["date"], "first_vote": v["vote_id"],
+                            "last": v["date"], "last_vote": v["vote_id"], "source": v["source_id"]}
+                        continue
+                    if v["date"] < rec["first"]:
+                        rec.update(first=v["date"], first_vote=v["vote_id"])
+                    if v["date"] > rec["last"]:
+                        rec.update(last=v["date"], last_vote=v["vote_id"])
+    return index
+
+
+def build_congress(legislators, snapshots, states=None, today=None, cert_index=None):
     """legislators-current.json + roll-call snapshots → (nodes, edges, gaps).
 
     states: iterable of two-letter codes to load (a delegation), or None
-    for every member. snapshots become `voted_on` edges; cert_snapshots
-    (older sessions) only certify the terms their roll calls fall inside
-    and emit no edges: their positions stay in the file and are read at
-    the leaf. Pure; no I/O.
+    for every member. snapshots become `voted_on` edges; cert_index (see
+    member_congress_index: older sessions reduced to each member's first
+    and last roll call per Congress) only certifies the terms those votes
+    fall inside and emits no edges: the positions stay in their files and
+    are read at the leaf. Pure; no I/O.
     """
     today = today or datetime.date.today().isoformat()
     states = {s.upper() for s in states} if states else None
@@ -780,14 +808,19 @@ def build_congress(legislators, snapshots, states=None, today=None, cert_snapsho
     for e in g["edges"].values():
         if e["predicate"] == "voted_on":
             voted_days.setdefault(e["src"], []).append((e["valid_from"], e["source_ref"], e["source_id"]))
-    for snap in cert_snapshots:
-        for v in snap.get("votes", []):
-            lookup = by_lis if v.get("id_kind") == "lis" else by_bioguide
-            for ids in v.get("positions", {}).values():
-                for mid in ids:
-                    pid = lookup.get(mid)
-                    if pid is not None:
-                        voted_days.setdefault(pid, []).append((v["date"], v["vote_id"], v["source_id"]))
+    # An older Congress contributes only its first and last roll call per
+    # member. A term that holds neither date goes uncertified even if the
+    # member voted inside it: the index can miss a certification, never
+    # invent one.
+    for mkey, congresses in (cert_index or {}).items():
+        kind, _, mid = mkey.partition(":")
+        pid = (by_lis if kind == "lis" else by_bioguide).get(mid)
+        if pid is None:
+            continue
+        for rec in congresses.values():
+            voted_days.setdefault(pid, []).append((rec["first"], rec["first_vote"], rec["source"]))
+            if rec["last_vote"] != rec["first_vote"]:
+                voted_days.setdefault(pid, []).append((rec["last"], rec["last_vote"], rec["source"]))
     certified_holds = 0
     for rows in holds.values():
         for h in rows:
@@ -795,9 +828,11 @@ def build_congress(legislators, snapshots, states=None, today=None, cert_snapsho
             hits = sorted(d for d in voted_days.get(h["src"], []) if h["valid_from"] <= d[0] <= end)
             if hits:
                 h["certification"] = "certified"
-                h["props"]["certified_by"] = (f"cross-source: {len(hits)} roll call(s) by this member "
-                                              f"inside the term, first {hits[0][1]} on {hits[0][0]} "
-                                              f"({hits[0][2]}), affirm the term")
+                # No count: an older Congress contributes only its first and
+                # last roll call, so a count would understate the record.
+                h["props"]["certified_by"] = (f"cross-source: roll call {hits[0][1]} on {hits[0][0]} "
+                                              f"({hits[0][2]}) by this member falls inside the term "
+                                              f"and affirms it")
                 certified_holds += 1
     if certified_holds:
         g["gaps"].append(f"{certified_holds} federal term(s) certified by the clerks' roll calls; "
@@ -1488,12 +1523,24 @@ def _instrument_matches(iid, title, topic, policy):
     return (policy or "").lower().startswith(t) or t in title.lower()
 
 
+def _snapshot_congress_of(path):
+    """The Congress in a snapshot's filename (congress-votes-<c>-<n>.json),
+    so a caller can pick files without parsing any of them."""
+    m = re.match(r"congress-votes-(\d+)-\d+\.json$", path.name)
+    return int(m.group(1)) if m else None
+
+
 def snapshot_votes(persons, year, topic, limit, loaded_congress):
     """A person's votes in one year, read from the roll-call snapshots of
     sessions that are not loaded as edges. Same row shape as the graph's.
-    Returns (rows, total, truncated, files read)."""
+    Only the files of the Congresses that can hold the year are opened: the
+    one it falls in, and the one before, whose last session ran into March
+    of an odd year until 1935. Returns (rows, total, truncated, files read)."""
     rows, files = [], []
+    wanted = {(year - 1789) // 2 + 1, (year - 1789) // 2}
     for p in sorted(DATA_DIR.glob("congress-votes-*.json")):
+        if _snapshot_congress_of(p) not in wanted:
+            continue
         snap = json.loads(p.read_text())
         meta = snap.get("meta") or {}
         if meta.get("year") != year or meta.get("congress") == loaded_congress:
@@ -1637,8 +1684,27 @@ def _read_store(name):
     return json.loads(p.read_text()) if p.exists() else {}
 
 
-def _congress_snapshots():
-    return [json.loads(p.read_text()) for p in sorted(DATA_DIR.glob("congress-votes-*.json"))]
+def _congress_snapshots(congress):
+    return [json.loads(p.read_text()) for p in sorted(DATA_DIR.glob(f"congress-votes-{congress}-*.json"))]
+
+
+MEMBER_CONGRESS_PATH = DATA_DIR / "member-congress.json"
+
+
+def write_member_congress(loaded_congress):
+    """Reduce every roll-call snapshot of a Congress that is not loaded as
+    edges to member-congress.json, one file in memory at a time. Returns
+    (members, files read)."""
+    index, files = {}, []
+    for p in sorted(DATA_DIR.glob("congress-votes-*.json")):
+        if _snapshot_congress_of(p) in (None, loaded_congress):
+            continue
+        member_congress_index([json.loads(p.read_text())], index)
+        files.append(p.name)
+    MEMBER_CONGRESS_PATH.write_text(json.dumps(
+        {"meta": {"built": datetime.date.today().isoformat(), "files": files}, "members": index},
+        separators=(",", ":"), sort_keys=True))
+    return len(index), files
 
 
 def merge_legislators(current, historical):
@@ -1689,19 +1755,24 @@ def build_source(source, states=None):
         hist_path = DATA_DIR / "legislators-historical.json"
         historical = json.loads(hist_path.read_text()) if hist_path.exists() else []
         legislators, merge_gaps = merge_legislators(current, historical)
-        every = _congress_snapshots()
-        if not every:
-            raise RuntimeError("no data/congress-votes-*.json — run `python graph.py snapshot 119 2 2026`")
         # The current Congress's roll calls are edges; older sessions stay in
-        # their files (the events rule) and only certify terms.
+        # their files (the events rule) and only certify terms, through the
+        # index write_member_congress reduced them to.
         congress = current_session()[0]
-        snaps = [x for x in every if x["meta"]["congress"] == congress]
-        older = [x for x in every if x["meta"]["congress"] != congress]
-        nodes, edges, gaps = build_congress(legislators, snaps, states, cert_snapshots=older)
-        if older:
-            names = ", ".join(f"{x['meta']['congress']}-{x['meta']['session']}" for x in older)
-            gaps.append(f"{len(older)} older session snapshot(s) ({names}) certify terms and answer "
-                        f"votes from the file; not loaded as edges")
+        snaps = _congress_snapshots(congress)
+        if not snaps:
+            raise RuntimeError(f"no data/congress-votes-{congress}-*.json — "
+                               f"run `python graph.py snapshot {congress} 2 2026`")
+        cert = json.loads(MEMBER_CONGRESS_PATH.read_text()) if MEMBER_CONGRESS_PATH.exists() else None
+        nodes, edges, gaps = build_congress(legislators, snaps, states,
+                                            cert_index=(cert or {}).get("members"))
+        if cert:
+            gaps.append(f"{len(cert['meta']['files'])} older session snapshot(s) certify terms through "
+                        f"member-congress.json (built {cert['meta']['built']}) and answer votes from "
+                        f"the file; not loaded as edges")
+        else:
+            gaps.append("no member-congress.json: no term outside the current Congress is certified "
+                        "(run `python graph.py certify-index`)")
         gaps = merge_gaps + gaps
         exec_path = DATA_DIR / "executive.json"
         if exec_path.exists():
@@ -2840,6 +2911,7 @@ if __name__ == "__main__":
     s.add_argument("--max-age-days", type=int, help="re-fetch members fetched longer ago than this")
     s.add_argument("--budget-minutes", type=int, help="stop between members after this long")
     sub.add_parser("fetch", help="download the public legislators, executive and committee files to data/")
+    sub.add_parser("certify-index", help="reduce older roll-call snapshots to member-congress.json")
     s = sub.add_parser("snapshot", help="fetch one session's roll calls to data/ (no args: the current session)")
     s.add_argument("congress", type=int, nargs="?")
     s.add_argument("session", type=int, nargs="?")
@@ -2879,6 +2951,9 @@ if __name__ == "__main__":
     elif a.cmd == "snapshot-fec":
         print(json.dumps(snapshot_fec(a.cycle, DATA_DIR / f"fec-{a.cycle}.json", pacs=not a.no_pacs,
                                       max_age_days=a.max_age_days, budget_minutes=a.budget_minutes), indent=1))
+    elif a.cmd == "certify-index":
+        members, files = write_member_congress(current_session()[0])
+        print(f"{members:,} member id(s) from {len(files)} file(s) → {MEMBER_CONGRESS_PATH}")
     elif a.cmd == "fetch":
         for name, n in fetch_public().items():
             print(f"{name}: {n:,} bytes")
