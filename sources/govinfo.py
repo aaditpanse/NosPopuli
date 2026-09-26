@@ -670,7 +670,9 @@ def bill_for_law(congress, law_number):
             index = {}
             for key, rec in json.loads(path.read_text())["instruments"].items():
                 for law in rec.get("laws") or []:
-                    index[str(law.get("number") or "").split("-")[-1]] = tuple(key.split("/"))
+                    # Public Law 7 and Private Law 7 share a number; /law is public.
+                    if (law.get("type") or "").lower() == "public law":
+                        index[str(law.get("number") or "").split("-")[-1]] = tuple(key.split("/"))
             hit = _LAWS_CACHE[int(congress)] = (mtime, index)
     return hit[1].get(str(law_number))
 

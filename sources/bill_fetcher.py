@@ -397,6 +397,11 @@ def _strip_html_to_text(html_str: str, max_chars: int) -> str:
 
 # Stage suffixes ranked most-authoritative-first. GovInfo packageId = BILLS-{congress}{type}{number}{stage}.
 _GOVINFO_STAGE_PRIORITY = ["enr", "eas", "eah", "es", "eh", "rs", "rh", "pcs", "pch", "is", "ih"]
+# The stored versions, furthest first, in the order Congress.gov's text list
+# was read: referred to the other chamber comes after placed on the calendar
+# and before introduced. The live probe above keeps its shorter list.
+_LOCAL_STAGE_PRIORITY = ["enr", "eas", "eah", "es", "eh", "rs", "rh", "pcs", "pch",
+                         "rfs", "rfh", "rds", "rdh", "pp", "is", "ih"]
 
 
 def _govinfo_text_fallback(congress, bill_type, bill_number, max_chars):
@@ -464,7 +469,7 @@ def _fetch_bill_text_uncached(congress, bill_type, bill_number, max_chars=8000):
         # text); the furthest along is shown. None is honest: no version
         # was in the last sync.
         import gzip
-        path = govinfo.bill_text_file(congress, bill_type, bill_number, _GOVINFO_STAGE_PRIORITY)
+        path = govinfo.bill_text_file(congress, bill_type, bill_number, _LOCAL_STAGE_PRIORITY)
         if not path:
             return None
         return _strip_html_to_text(gzip.decompress(path.read_bytes()).decode("utf-8", "replace"), max_chars)
