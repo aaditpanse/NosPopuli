@@ -203,6 +203,8 @@ DIVISION_NAMES = {
     "ol": "Territory of Orleans", "dk": "Dakota Territory", "pi": "Philippine Islands",
 }
 
+STATE_CODE = {name: code for code, name in DIVISION_NAMES.items()}
+
 US = "ocd-division/country:us"
 HOUSE_KEY, SENATE_KEY = "us/house", "us/senate"
 CHAMBER_NAME = {"house": "U.S. House of Representatives", "senate": "U.S. Senate"}
@@ -2114,6 +2116,38 @@ def load_all(fresh=False, force=False):
         with conn.transaction(), conn.cursor() as cur:
             out.update(load_us(cur, force=force))
     return out
+
+
+def congress_span(n):
+    """(first day, first day of the next Congress) of the nth Congress. The
+    1st through the 73rd began on 4 March; the 20th Amendment moved the
+    start to 3 January from the 74th (1935), so the 73rd ran short. The end
+    is the next Congress's first day, the convention the terms already use
+    for a handover. Pure."""
+    def start(k):
+        year = 1789 + 2 * (k - 1)
+        return datetime.date(year, 3, 4) if k <= 73 else datetime.date(year, 1, 3)
+    return start(n).isoformat(), start(n + 1).isoformat()
+
+
+_LEGAL_SUFFIXES = {"INC", "INCORPORATED", "LLC", "LLP", "LP", "PLLC", "PLC", "PC", "LTD", "LIMITED",
+                   "CORP", "CORPORATION", "CO", "COMPANY"}
+
+
+def lobby_key(name):
+    """The exact key two LDA names must share to be one organization:
+    upper case, '&' as AND, dots dropped (L.L.C., U.S.), other punctuation
+    as space, a leading THE and trailing legal suffixes removed. Nothing
+    fuzzy: 'AMERICAN ASSOCIATION OF RETIRED PERSONS' and '... OF UNIVERSITY
+    WOMEN' stay two organizations, and a misspelling stays its own. Pure."""
+    t = (name or "").upper().replace("&", " AND ").replace(".", "")
+    tokens = re.sub(r"[^A-Z0-9]+", " ", t).split()
+    if len(tokens) > 1 and tokens[0] == "THE":
+        tokens = tokens[1:]
+    # "Merck & Co." loses CO and then the AND that joined it.
+    while len(tokens) > 1 and (tokens[-1] in _LEGAL_SUFFIXES or tokens[-1] == "AND"):
+        tokens = tokens[:-1]
+    return " ".join(tokens)
 
 
 def current_session(today=None):

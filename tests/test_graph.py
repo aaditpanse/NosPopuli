@@ -1127,6 +1127,31 @@ class BillScopeTest(unittest.TestCase):
         self.assertIn("instrument/us/119/hr/77", {e["dst"] for e in re_})
 
 
+class HelperTest(unittest.TestCase):
+    def test_congress_spans_follow_the_twentieth_amendment(self):
+        self.assertEqual(graph.congress_span(1), ("1789-03-04", "1791-03-04"))
+        self.assertEqual(graph.congress_span(73), ("1933-03-04", "1935-01-03"))   # ran short
+        self.assertEqual(graph.congress_span(74), ("1935-01-03", "1937-01-03"))
+        self.assertEqual(graph.congress_span(119), ("2025-01-03", "2027-01-03"))
+
+    def test_state_code_is_the_inverse_of_the_names(self):
+        self.assertEqual(graph.STATE_CODE["Virginia"], "va")
+        self.assertEqual(graph.STATE_CODE["Dakota Territory"], "dk")
+
+    def test_lobby_key_merges_only_spelling_not_meaning(self):
+        k = graph.lobby_key
+        self.assertEqual(k("AT&T INC."), k("AT & T"))
+        self.assertEqual(k("THE BOEING COMPANY"), k("Boeing Co"))
+        self.assertEqual(k("MERCK & CO., INC."), "MERCK")
+        self.assertEqual(k("Acme Holdings, L.L.C."), k("ACME HOLDINGS LLC"))
+        self.assertEqual(k("U.S. Chamber of Commerce"), "US CHAMBER OF COMMERCE")
+        self.assertNotEqual(k("American Association of Retired Persons"),
+                            k("American Association of University Women"))
+        self.assertNotEqual(k("Pfizer"), k("Pfizer Foundation"))
+        # A name that is only a suffix keeps it rather than becoming empty.
+        self.assertEqual(k("The Company"), "COMPANY")
+
+
 class DataLayoutTest(unittest.TestCase):
     def test_every_dataset_has_one_path_and_the_repo_mirrors_it(self):
         with mock.patch.object(graph, "DATA_DIR", pathlib.Path("/srv/bulk")):
