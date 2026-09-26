@@ -5,8 +5,8 @@ laws in its sector marked on the timeline. Same honesty rules as bill_market —
 a law on the chart is a dated event placed beside the price, never a claim that
 it moved the stock.
 
-Source: Congress.gov `/v3/law/{congress}/pub` (bills that became Public Law),
-which carries the title and the enactment date. Each law is multi-label
+Source: the bills files the daily sync writes from GovInfo's BILLSTATUS
+(bills that became Public Law), with the title and the enactment date. Each law is multi-label
 sector-tagged with the same plain-text Haiku pass used for tickers (a law can
 touch several sectors), cached per law ~forever.
 """
@@ -14,11 +14,8 @@ import os
 import json
 import functools
 
-import requests
-
 from money import bill_market  # reuses its client, SECTORS, sector canon, and disk cache
 
-_TTL_LIST = 7 * 24 * 3600       # law list per congress (119 is still growing)
 _TTL_LAWSEC = 400 * 24 * 3600   # a law's sectors are stable
 
 # Congresses whose laws we plot — aligned with the price/disclosure window.
@@ -26,40 +23,24 @@ CONGRESSES = (117, 118, 119)
 
 
 def _law_list(congress):
-    """[{congress, bill_type, bill_number, law, title, date}] of Public Laws."""
-    ck = f"lawlist:v1:{congress}"
-    hit = bill_market._cache_get(ck, _TTL_LIST)
-    if hit is not None:
-        return hit
-
-    key = os.getenv("CONGRESS_API_KEY")
-    out, offset = [], 0
-    while True:
-        try:
-            r = requests.get(
-                f"https://api.congress.gov/v3/law/{congress}/pub",
-                params={"api_key": key, "limit": 250, "offset": offset, "format": "json"},
-                timeout=30,
-            )
-            data = r.json()
-        except Exception as ex:
-            print(f"[LAW_CORPUS] list error c{congress} off{offset}: {ex}")
-            break
-        bills = data.get("bills", [])
-        for b in bills:
-            laws = b.get("laws") or [{}]
-            out.append({
-                "congress": b.get("congress"),
-                "bill_type": (b.get("type") or "").lower(),
-                "bill_number": b.get("number"),
-                "law": laws[0].get("number"),
-                "title": b.get("title", ""),
-                "date": (b.get("latestAction") or {}).get("actionDate"),
-            })
-        if not (data.get("pagination") or {}).get("next"):
-            break
-        offset += 250
-    bill_market._cache_set(ck, out)
+    """[{congress, bill_type, bill_number, law, title, date}] of Public Laws,
+    from the bills file the daily sync writes (Phase 6). The date is the day
+    the bill became law, from its presidential actions."""
+    import graph
+    path = graph.data_path("bills", congress=congress)
+    if not path.exists():
+        return []
+    out = []
+    for key, rec in json.loads(path.read_text())["instruments"].items():
+        laws = [x for x in rec.get("laws") or [] if (x.get("type") or "").lower() == "public law"]
+        if not laws:
+            continue
+        btype, number = key.split("/")
+        acts = rec.get("actions") or []
+        became = [a for a in acts if "public law" in (a.get("text") or "").lower()] or acts
+        out.append({"congress": congress, "bill_type": btype, "bill_number": number,
+                    "law": laws[0].get("number"), "title": rec.get("title") or "",
+                    "date": max((a.get("date") or "" for a in became), default="") or None})
     return out
 
 

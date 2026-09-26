@@ -74,43 +74,6 @@ def fetch_bill_actions(congress_number, bill_type, bill_number):
 
     return actions
 
-def fetch_related_bills(congress_number, bill_type, bill_number):
-    """Finds bills related to this one"""
-
-    url = f"https://api.congress.gov/v3/bill/{congress_number}/{bill_type}/{bill_number}/relatedbills"
-    params = {"api_key": CONGRESS_API_KEY, "format": "json", "limit": 5}
-
-    try:
-        response = _session.get(url, params=params, timeout=10)
-    except requests.exceptions.Timeout:
-        print(f"[HISTORIAN] Timeout fetching related bills")
-        return None
-    except Exception as e:
-        print(f"[HISTORIAN] Error fetching related bills: {e}")
-        return None
-
-    if response.status_code == 429:
-        print(f"[HISTORIAN] Rate limited fetching related bills")
-        return None
-    if response.status_code != 200:
-        return None
-
-    try:
-        data = response.json()
-    except Exception:
-        return None
-
-    related = data.get("relatedBills", [])
-
-    log_action(
-        agent_name="historian",
-        action="fetch_related_bills",
-        input_data={"congress": congress_number, "type": bill_type, "number": bill_number},
-        output_data={"related_count": len(related)}
-    )
-
-    return related
-
 def summarize_history(actions, client):
     """Uses AI to turn the raw action list into a readable timeline"""
     

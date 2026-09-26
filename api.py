@@ -51,7 +51,6 @@ from sources.bill_fetcher import fetch_bill
 from agents.translator_agent import translate_bill, translate_state_bill, translate_bill_core, resolve_bill_background
 from agents.historian_agent import (
     fetch_bill_actions,
-    fetch_related_bills as historian_fetch_related_bills,
     summarize_history,
     structure_history,
 )
