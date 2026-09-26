@@ -835,7 +835,7 @@ def build_congress(legislators, snapshots, states=None, today=None, cert_index=N
                                               f"and affirms it")
                 certified_holds += 1
     if certified_holds:
-        g["gaps"].append(f"{certified_holds} federal term(s) certified by the clerks' roll calls; "
+        g["gaps"].append(f"{certified_holds} federal term(s) certified by roll calls on disk (the clerks', Voteview's); "
                          f"the rest have no vote inside them on disk")
     for chamber, n in skipped.items():
         g["gaps"].append(f"{n} {chamber} roll call(s) had no legislative instrument "

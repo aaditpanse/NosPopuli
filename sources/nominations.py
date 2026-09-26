@@ -90,7 +90,10 @@ def sync_congress(congress, key, s, pause=0.05):
         if prev and prev.get("updated") == item.get("updateDate"):
             out[cit] = prev
             continue
-        detail = _get(s, f"{BASE}/{congress}/{item['number']}", key, errors=errors)
+        # The list's own url: a nomination in parts has one per part, and
+        # the bare number fails for it.
+        url = (item.get("url") or f"{BASE}/{congress}/{item['number']}").split("?")[0]
+        detail = _get(s, url, key, errors=errors)
         time.sleep(pause)
         if detail is None:
             if prev:
