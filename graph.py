@@ -2811,6 +2811,15 @@ _ASK_LAW = (
     re.compile(r"^\s*(?:did|has|was|is)\s+(?:the\s+)?(?P<topic>.+?)\s+(?:become|became|made|(?:get\s+)?signed|"
                r"enacted|vetoed|(?:a\s+)?law)(?:\s+(?:a\s+)?law|\s+into\s+law)?\s*\??\s*$", re.I),
 )
+_ASK_LOBBIED_ON = re.compile(
+    r"^\s*(?:who|which\s+(?:organizations?|companies|groups|interests|lobbyists))\s+"
+    r"(?:lobbied|lobbies|lobby)\s+(?:on|about|over)\s+(?:the\s+)?(?P<topic>.+?)\s*\??\s*$", re.I)
+_ASK_ORG_LOBBIED = re.compile(
+    r"^\s*(?:what|which\s+bills?)\s+(?:did|does|has|have)\s+(?P<org>.+?)\s+lobb(?:y|ied)"
+    r"(?:\s+(?:on|for|about))?\s*\??\s*$", re.I)
+_ASK_NOMINATED = re.compile(
+    r"^\s*(?:who|whom)\s+(?:did|has)\s+(?:president\s+)?(?P<person>.+?)\s+nominated?"
+    r"(?:\s+(?:for|to\s+be|as)\s+(?P<topic>.+?))?\s*\??\s*$", re.I)
 _ASK_SIGNED_BY = re.compile(
     r"^\s*(?:what|which)\s+(?:bills?\s+|laws?\s+)?(?:did|has)\s+(?:president\s+)?(?P<person>.+?)\s+"
     r"(?P<verb>sign|signed|veto|vetoed)\s*\??\s*$", re.I)
@@ -2890,6 +2899,16 @@ def parse_question(question, today=None):
     q = (question or "").strip()
     if not q:
         return None
+    m = _ASK_LOBBIED_ON.match(q)
+    if m:
+        return {"ask": "lobbied_on", "topic": m.group("topic").strip()}
+    m = _ASK_ORG_LOBBIED.match(q)
+    if m:
+        return {"ask": "org_lobbied", "org": m.group("org").strip()}
+    m = _ASK_NOMINATED.match(q)
+    if m:
+        return {"ask": "nominated", "person": m.group("person").strip(),
+                "topic": (m.group("topic") or "").strip() or None}
     m = _ASK_SPONSORS.match(q)
     if m:
         return {"ask": "sponsors", "topic": m.group("topic").strip()}
@@ -3108,9 +3127,16 @@ def memory_backend(nodes, edges):
         rows.sort(key=lambda r: (r["date"], r["item_id"], r["person"]), reverse=True)
         return rows[:limit], len(rows) > limit
 
+    def orgs(query):
+        key = lobby_key(query)
+        hits = [n for n in nodes if n["kind"] == "organization" and key
+                and (n["props"].get("lobby_key") or "").find(key) >= 0]
+        return sorted(({"id": n["id"], "name": n["name"], "props": n["props"]} for n in hits),
+                      key=lambda o: (o["props"]["lobby_key"] != key, o["name"]))[:_MAX_CANDIDATES + 1]
+
     return {"persons": persons, "votes": votes_of, "posts": posts, "careers": careers,
             "holds": holds_of, "voters": voters, "laws": laws, "committees": committees,
-            "items": items, "edges": edges_of, "loaded": lambda: bool(nodes)}
+            "items": items, "edges": edges_of, "orgs": orgs, "loaded": lambda: bool(nodes)}
 
 
 def pg_backend():
@@ -3233,13 +3259,26 @@ def pg_backend():
             return rows[:limit], len(rows) > limit
         return run(q)
 
+    def orgs(query):
+        key = lobby_key(query)
+        if not key:
+            return []
+
+        def q(cur):
+            cur.execute("""SELECT id, name, props FROM graph_node
+                           WHERE kind = 'organization' AND props->>'lobby_key' LIKE %s
+                           ORDER BY props->>'lobby_key' <> %s, name LIMIT %s""",
+                        (f"%{key}%", key, _MAX_CANDIDATES + 1))
+            return cur.fetchall()
+        return run(q)
+
     def loaded():
         return run(lambda cur: (cur.execute("SELECT EXISTS (SELECT 1 FROM graph_node) AS any"),
                                 cur.fetchone()["any"])[1])
 
     return {"persons": persons, "votes": votes_of, "posts": posts, "careers": careers,
             "holds": holds_of, "voters": voters, "laws": laws, "committees": committees,
-            "items": items, "edges": edges_of, "loaded": loaded}
+            "items": items, "edges": edges_of, "loaded": loaded, "orgs": orgs}
 
 
 _PLACE_WORDS = None
@@ -3352,6 +3391,19 @@ def _one_person(persons, query, topic, ask, backend):
     return out, persons
 
 
+# An organization is one node per exact normalized LDA name: a grouping by
+# name, which the answer reports as an advisory hop of its own.
+_IDENTITY_HOP = {"predicate": "identity", "weakest": "advisory",
+                 "note": "organizations are grouped by exact normalized LDA name, not by a registry"}
+
+
+def _as_org_row(r):
+    """A walk row whose source is an organization, not a person."""
+    r = dict(r)
+    r["organization_id"], r["organization"] = r.pop("person_id", None), r.pop("person", None)
+    return r
+
+
 def answer(parsed, backend, limit=200):
     """Run one parsed question against a backend. Every branch returns a
     dict with `ask`, `hops` / `weak_hops`, and an `empty_reason` when there
@@ -3373,6 +3425,60 @@ def answer(parsed, backend, limit=200):
         if not rows:
             out["empty_reason"] = (f"no bill on disk names {', '.join(p['name'] for p in persons)} "
                                    f"as sponsor or cosponsor (only bills with a recorded vote this session are loaded)")
+        return out | {"ask": ask}
+    if ask == "lobbied_on":
+        rows, truncated = backend["voters"](topic, None, limit, "lobbied_on")
+        rows = [_as_org_row(r) for r in rows]
+        out = shape_answer(rows, [{"name": "anyone"}], topic, topic, None, truncated, predicate="lobbied_on")
+        out |= {"ask": ask, "organizations": sorted({r["organization"] for r in rows}), "persons": [],
+                "place_ignored": place}
+        if rows:
+            out["hops"].append(_IDENTITY_HOP)
+            out["weak_hops"] = [h for h in out["hops"] if h["weakest"] != "certified"]
+        else:
+            out["empty_reason"] = (f"no lobbying report on disk names anything matching {topic!r} "
+                                   f"(filings from 2023 on; bill numbers are read from the filings' text)")
+        return out
+    if ask == "org_lobbied":
+        orgs = backend["orgs"](parsed["org"])
+        base = {"ask": ask, "query": parsed["org"], "persons": [], "hops": [], "weak_hops": [], "rows": []}
+        if not orgs:
+            return base | {"empty_reason": f"no lobbying organization on disk matches {parsed['org']!r}"}
+        key = lobby_key(parsed["org"])
+        exact = [o for o in orgs if o["props"].get("lobby_key") == key]
+        if len(exact) != 1 and len(orgs) > 1:
+            return base | {"ambiguous": True, "candidate_count": len(orgs),
+                           "candidates": [{"id": o["id"], "name": o["name"],
+                                           "lda_ids": len(o["props"].get("lda_client_ids") or [])
+                                           + len(o["props"].get("lda_registrant_ids") or [])}
+                                          for o in orgs[:_MAX_CANDIDATES]],
+                           "empty_reason": f"{len(orgs)} organizations match {parsed['org']!r}; name one of them"}
+        org = (exact or orgs)[0]
+        rows, total, truncated = backend["votes"]([org["id"]], None, limit, "lobbied_on")
+        rows = [_as_org_row(r) for r in rows]
+        out = shape_answer(rows, [org], parsed["org"], None, total, truncated, predicate="lobbied_on")
+        out |= {"ask": ask, "organization": {"id": org["id"], "name": org["name"],
+                                             "name_variants": org["props"].get("name_variants")},
+                "persons": []}
+        if rows:
+            out["hops"].append(_IDENTITY_HOP)
+            out["weak_hops"] = [h for h in out["hops"] if h["weakest"] != "certified"]
+        else:
+            out["empty_reason"] = f"no lobbying report on disk has {org['name']} naming a bill"
+        return out
+    if ask == "nominated":
+        persons = backend["persons"](parsed["person"])
+        if not persons:
+            return shape_answer([], [], parsed["person"], None) | {"ask": ask}
+        which, persons = _one_person(persons, parsed["person"], topic, ask, backend)
+        if which:
+            return which
+        rows, total, truncated = backend["votes"]([p["id"] for p in persons], topic, limit, "nominated")
+        out = shape_answer(rows, persons, parsed["person"], topic, total, truncated, predicate="nominated")
+        if not rows:
+            out["empty_reason"] = (f"no nomination on disk by {', '.join(p['name'] for p in persons)}"
+                                   + (f" matching {topic!r}" if topic else "")
+                                   + " (Congress.gov's records start in 1981)")
         return out | {"ask": ask}
     if ask == "signed_by":
         pred = parsed["predicate"]

@@ -1315,6 +1315,42 @@ class LobbyingTest(unittest.TestCase):
         self.assertEqual(c["dst"], graph.node_id("organization", "fec/committee/C00142711"))
 
 
+class NewAsksTest(unittest.TestCase):
+    """Phase 4b answers, through the memory backend."""
+
+    def setUp(self):
+        on = LobbyingTest("test_a_pac_links_by_name_only_when_a_pac")
+        on.setUp()
+        bill = {"id": "instrument/us/119/hr/1", "kind": "instrument", "name": "H.R. 1: A bill",
+                "props": {"instrument_type": "hr", "congress": 119, "number": "1", "jurisdiction": graph.US},
+                "source_id": "govinfo", "source_ref": "x"}
+        _, xe, _ = graph.build_executive(EXECUTIVE, today=TODAY)
+        xn, _, _ = graph.build_executive(EXECUTIVE, today=TODAY)
+        nn, ne, _ = graph.build_nominations(118, NOMS, xe)
+        self.b = graph.memory_backend(on.nodes + [bill] + xn + nn, on.oedges + on.edges + xe + ne)
+        self.ask = lambda q: graph.search(q, self.b, today=TODAY)  # noqa: E731
+
+    def test_who_lobbied_on_a_bill_is_advisory_and_says_how_orgs_are_grouped(self):
+        out = self.ask("who lobbied on HR 1")
+        self.assertEqual(out["ask"], "lobbied_on")
+        self.assertEqual(out["organizations"], ["Boeing Co"])
+        self.assertEqual({h["predicate"]: h["weakest"] for h in out["hops"]},
+                         {"lobbied_on": "advisory", "identity": "advisory"})
+        self.assertNotIn("person", out["rows"][0])
+
+    def test_what_an_organization_lobbied_on_and_ambiguity(self):
+        out = self.ask("what did Boeing lobby on")
+        self.assertEqual(out["organization"]["name"], "Boeing Co")
+        self.assertEqual([r["item_id"] for r in out["rows"]], ["instrument/us/119/hr/1"])
+        self.assertIn("no lobbying organization", self.ask("what did Nobody Corp lobby on")["empty_reason"])
+
+    def test_who_a_president_nominated(self):
+        out = self.ask("who did Biden nominate for District Judge")
+        self.assertEqual(out["ask"], "nominated")
+        self.assertEqual([r["item_id"] for r in out["rows"]], ["instrument/us/118/pn/1020"])
+        self.assertEqual(out["hops"][0]["predicate"], "nominated")
+
+
 class DataLayoutTest(unittest.TestCase):
     def test_every_dataset_has_one_path_and_the_repo_mirrors_it(self):
         with mock.patch.object(graph, "DATA_DIR", pathlib.Path("/srv/bulk")):
