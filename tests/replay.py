@@ -433,9 +433,6 @@ def prepare_env():
     # CREATE TABLE against production. DB-backed routes therefore record their
     # fail-open path, and say so in meta.notes.
     os.environ["SUPABASE_DB_URL"] = ""
-    # flag_logger reads os.environ[...] directly: absence is a KeyError.
-    os.environ.setdefault("SUPABASE_URL", "http://replay.invalid")
-    os.environ.setdefault("SUPABASE_API_KEY", "replay")
     # api.py reads MONITOR_SECRET at import: set, an unauthenticated request is
     # 403; unset, 503. A developer's .env set it and CI did not, so every admin
     # fixture was 403 locally and 503 in CI. A fixed placeholder, in both modes,

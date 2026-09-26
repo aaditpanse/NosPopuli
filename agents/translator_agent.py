@@ -1,30 +1,14 @@
 import anthropic
 import json
-import os
 import re
 import hashlib
 from dotenv import load_dotenv
 from agents.documentor_agent import log_action
 from agents.state_search_agent import STATE_JURISDICTIONS
 from resolvers.reference_resolver import resolve_references, REF_HARD_LIMIT
-from correspondence.db import get_disk_cache, set_disk_cache
+from correspondence.db import get_disk_cache, set_disk_cache, _cursor
 
 load_dotenv()
-
-_supabase_client = None
-
-
-def _supabase():
-    """Supabase client, built on first use (the package costs ~12 MB to
-    import; the API should not pay that at boot)."""
-    global _supabase_client
-    if _supabase_client is None:
-        from supabase import create_client
-        _supabase_client = create_client(
-            os.getenv("SUPABASE_URL"),
-            os.getenv("SUPABASE_API_KEY")
-        )
-    return _supabase_client
 
 def _cache_key(congress, bill_type, bill_number, fingerprint=None):
     # v3 prefix forced re-translation after the enacted-status fix. The
@@ -82,75 +66,62 @@ def _store_cached_bg(congress, bill_type, bill_number, bg_markdown):
         print(f"[TRANSLATOR] BG cache write error: {e}")
 
 def _get_cached(congress, bill_type, bill_number, fingerprint=None):
-    try:
-        package_id = _cache_key(congress, bill_type, bill_number, fingerprint)
-        result = _supabase().table("bill_translations") \
-            .select("translation") \
-            .eq("package_id", package_id) \
-            .execute()
-        if result.data:
-            print(f"[TRANSLATOR] Cache hit: {package_id}")
-            return result.data[0]["translation"]
-        return None
-    except Exception as e:
-        print(f"[TRANSLATOR] Cache read error: {e}")
-        return None
+    package_id = _cache_key(congress, bill_type, bill_number, fingerprint)
+    return _get_cached_by_key(package_id)
 
 def _store_cached(congress, bill_type, bill_number, translation, fingerprint=None):
+    package_id = _cache_key(congress, bill_type, bill_number, fingerprint)
     try:
-        package_id = _cache_key(congress, bill_type, bill_number, fingerprint)
-        print(f"[TRANSLATOR] Attempting cache write: {package_id}")
-        result = _supabase().table("bill_translations").upsert({
-            "package_id": package_id,
-            "congress": int(congress),
-            "bill_type": str(bill_type),
-            "bill_number": int(bill_number),
-            "translation": translation,
-            "jurisdiction": "federal",
-            "state_code": None,
-        }).execute()
-        print(f"[TRANSLATOR] Cache write result: {result.data}")
-        # Prune superseded rows for this bill — older fingerprints and the old
-        # fingerprint-less v3 row — so the table keeps exactly one current row
-        # per bill instead of one per historical state.
-        if fingerprint:
-            _supabase().table("bill_translations") \
-                .delete() \
-                .eq("congress", int(congress)) \
-                .eq("bill_type", str(bill_type)) \
-                .eq("bill_number", int(bill_number)) \
-                .eq("jurisdiction", "federal") \
-                .neq("package_id", package_id) \
-                .execute()
+        with _cursor() as cur:
+            _upsert_translation(cur, package_id, int(congress), str(bill_type),
+                                int(bill_number), translation, "federal", None)
+            # Prune superseded rows for this bill — older fingerprints and the old
+            # fingerprint-less v3 row — so the table keeps exactly one current row
+            # per bill instead of one per historical state.
+            if fingerprint:
+                cur.execute("""
+                    DELETE FROM bill_translations
+                    WHERE congress = %s AND bill_type = %s AND bill_number = %s
+                      AND jurisdiction = 'federal' AND package_id <> %s
+                """, (int(congress), str(bill_type), int(bill_number), package_id))
+        print(f"[TRANSLATOR] Cached: {package_id}")
     except Exception as e:
         print(f"[TRANSLATOR] Cache write error: {e}")
 
 def _get_cached_by_key(key):
     try:
-        result = _supabase().table("bill_translations") \
-            .select("translation") \
-            .eq("package_id", key) \
-            .execute()
-        if result.data:
+        with _cursor() as cur:
+            cur.execute("SELECT translation FROM bill_translations WHERE package_id = %s", (key,))
+            row = cur.fetchone()
+        if row:
             print(f"[TRANSLATOR] Cache hit: {key}")
-            return result.data[0]["translation"]
+            return row["translation"]
         return None
     except Exception as e:
         print(f"[TRANSLATOR] Cache read error: {e}")
         return None
 
 
+def _upsert_translation(cur, package_id, congress, bill_type, bill_number,
+                        translation, jurisdiction, state_code):
+    cur.execute("""
+        INSERT INTO bill_translations
+            (package_id, congress, bill_type, bill_number, translation, jurisdiction, state_code)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        ON CONFLICT (package_id) DO UPDATE SET
+            congress = EXCLUDED.congress,
+            bill_type = EXCLUDED.bill_type,
+            bill_number = EXCLUDED.bill_number,
+            translation = EXCLUDED.translation,
+            jurisdiction = EXCLUDED.jurisdiction,
+            state_code = EXCLUDED.state_code
+    """, (package_id, congress, bill_type, bill_number, translation, jurisdiction, state_code))
+
+
 def _store_cached_by_key(key, translation, jurisdiction='federal', state_code=None):
     try:
-        _supabase().table("bill_translations").upsert({
-            "package_id": key,
-            "congress": 0,
-            "bill_type": "state",
-            "bill_number": 0,
-            "translation": translation,
-            "jurisdiction": jurisdiction,
-            "state_code": state_code,
-        }).execute()
+        with _cursor() as cur:
+            _upsert_translation(cur, key, 0, "state", 0, translation, jurisdiction, state_code)
         print(f"[TRANSLATOR] Cached: {key}")
     except Exception as e:
         print(f"[TRANSLATOR] Cache write error: {e}")
