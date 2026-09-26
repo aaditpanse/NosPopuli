@@ -900,6 +900,87 @@ class OlderSessionsTest(unittest.TestCase):
         self.assertEqual([r["vote_id"] for r in rows], ["us/118/2/house/7"])
 
 
+BILLSTATUS_XML = b"""<billStatus><version>3.0.0</version><bill>
+<number>3633</number><type>HR</type><introducedDate>2025-05-29</introducedDate><congress>119</congress>
+<committees><item><systemCode>hsag00</systemCode><name>Agriculture Committee</name><chamber>House</chamber>
+  <activities><item><name>Referred to</name><date>2025-05-29T14:00:00Z</date></item></activities>
+  <subcommittees><item><systemCode>hsag22</systemCode><name>Commodity Markets</name>
+    <activities><item><name>Referred to</name><date>2025-06-02T09:00:00Z</date></item></activities></item></subcommittees></item></committees>
+<committeeReports><committeeReport><citation>H. Rept. 119-168,Part 1</citation></committeeReport>
+  <committeeReport><citation>H. Rept. 119-168,Part 2</citation></committeeReport></committeeReports>
+<relatedBills><item><title>Digital Asset Act</title><congress>119</congress><number>4763</number><type>HR</type>
+  <relationshipDetails><item><identifiedBy>CRS</identifiedBy><type>Related bill</type></item></relationshipDetails></item></relatedBills>
+<actions><item><actionDate>2025-07-17</actionDate><text>Passed/agreed to in House.</text><type>Floor</type><actionCode>8000</actionCode></item>
+  <item><actionDate>2025-07-20</actionDate><text>Signed by President.</text><type>President</type><actionCode>E30000</actionCode></item></actions>
+<sponsors><item><bioguideId>H001072</bioguideId></item></sponsors>
+<cosponsors><item><bioguideId>T000467</bioguideId><sponsorshipDate>2025-05-29</sponsorshipDate><isOriginalCosponsor>True</isOriginalCosponsor></item>
+  <item><bioguideId>X000001</bioguideId><sponsorshipDate>2025-06-10</sponsorshipDate><isOriginalCosponsor>False</isOriginalCosponsor>
+  <sponsorshipWithdrawnDate>2025-06-20</sponsorshipWithdrawnDate></item></cosponsors>
+<laws><item><type>Public Law</type><number>119-99</number></item></laws>
+<policyArea><name>Finance and Financial Sector</name></policyArea>
+<title>Digital Asset Market Clarity Act of 2025</title></bill></billStatus>"""
+
+CRPT_MODS = b"""<mods xmlns="http://www.loc.gov/mods/v3"><originInfo><dateIssued>2025-06-23</dateIssued></originInfo>
+<relatedItem type="constituent" ID="p1"><extension><congCommittee authorityId="hsag00"/></extension>
+  <part><detail><number>1</number></detail></part><titleInfo><partNumber>1</partNumber></titleInfo></relatedItem>
+<relatedItem type="constituent" ID="p2"><extension><congCommittee authorityId="hsba00"/></extension>
+  <titleInfo><partNumber>2</partNumber></titleInfo></relatedItem></mods>"""
+
+
+class BillStatusTest(unittest.TestCase):
+    """sources/govinfo.py: BILLSTATUS and CRPT metadata → the record shape the
+    Congress.gov fetch produced (parity on 509 voted bills of the 119th,
+    2026-09-26: see the commit that added this)."""
+
+    def setUp(self):
+        from sources import govinfo
+        self.g = govinfo
+
+    def test_a_bill_record_in_the_congress_gov_shape(self):
+        label, rec = self.g.parse_billstatus(BILLSTATUS_XML)
+        self.assertEqual(label, "hr/3633")
+        self.assertEqual((rec["title"], rec["introduced"], rec["policy_area"], rec["sponsors"], rec["laws"]),
+                         ("Digital Asset Market Clarity Act of 2025", "2025-05-29", "Finance and Financial Sector",
+                          ["H001072"], [{"number": "119-99", "type": "Public Law"}]))
+        self.assertEqual(rec["cosponsors"], [
+            {"id": "T000467", "date": "2025-05-29", "original": True, "withdrawn": None},
+            {"id": "X000001", "date": "2025-06-10", "original": False, "withdrawn": "2025-06-20"}])
+        # Only what the President did is kept, as before.
+        self.assertEqual([a["code"] for a in rec["actions"]], ["E30000"])
+        self.assertEqual([(c["code"], c["parent"], c["activities"]) for c in rec["committees"]], [
+            ("hsag00", None, [{"name": "Referred to", "date": "2025-05-29"}]),
+            ("hsag22", "hsag00", [{"name": "Referred to", "date": "2025-06-02"}])])
+        self.assertEqual(rec["related"], [{"congress": 119, "type": "hr", "number": "4763",
+                                           "title": "Digital Asset Act",
+                                           "relationships": [{"type": "Related bill", "identified_by": "CRS"}]}])
+        # An empty list in the XML is a real zero; only reports wait for CRPT.
+        self.assertEqual(rec["passes"], ["bill", "cosponsors", "actions", "committees", "related"])
+
+    def test_each_part_of_a_report_keeps_its_own_committee(self):
+        _, rec = self.g.parse_billstatus(BILLSTATUS_XML)
+        meta = self.g.parse_crpt_mods(CRPT_MODS)
+        errors = []
+        self.g.attach_reports(rec, lambda ep: meta if ep == "119/HRPT/168" else None, errors)
+        self.assertEqual(errors, [])
+        self.assertEqual([(r["citation"], r["date"], r["committees"]) for r in rec["reports"]], [
+            ("H. Rept. 119-168,Part 1", "2025-06-23", ["hsag00"]),
+            ("H. Rept. 119-168,Part 2", "2025-06-23", ["hsba00"])])
+        self.assertIn("reports", rec["passes"])
+
+    def test_an_erratum_names_no_committee(self):
+        meta = self.g.parse_crpt_mods(CRPT_MODS)
+        self.assertEqual(self.g.report_meta("S. Rept. 119-39,Errata", meta), {"date": "", "committees": []})
+
+    def test_an_unresolved_report_leaves_the_pass_out(self):
+        # A partial report list would read as the whole list.
+        _, rec = self.g.parse_billstatus(BILLSTATUS_XML)
+        errors = []
+        self.g.attach_reports(rec, lambda ep: None, errors)
+        self.assertNotIn("reports", rec)
+        self.assertNotIn("reports", rec["passes"])
+        self.assertEqual(errors, ["CRPT 119/HRPT/168: no package metadata"])
+
+
 class VocabularyTest(unittest.TestCase):
     def test_the_predicate_set_is_pinned(self):
         # A new relation type is a schema change: it lands here on purpose.
@@ -1139,7 +1220,7 @@ class SponsoredTest(unittest.TestCase):
     def test_snapshot_without_sponsors_is_a_named_gap(self):
         _, edges, gaps = graph.build_congress(LEGISLATORS, [SNAPSHOT], states=["VA"], today=TODAY)
         self.assertEqual(by_pred(edges, "sponsored"), [])
-        self.assertTrue(any("no sponsor records" in g for g in gaps))
+        self.assertTrue(any("no bill records" in g for g in gaps))
 
 
 class SponsorSearchTest(unittest.TestCase):

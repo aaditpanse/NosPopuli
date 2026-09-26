@@ -14,7 +14,7 @@ Both emit the same row dicts and the same predicates.
 
 Everything that decides shape is a pure function over parsed JSON so it can
 be tested without a database. `load`, `votes` and `seat_holder` are the only
-functions that touch Postgres; `snapshot_congress`, `enrich_snapshot` and
+functions that touch Postgres; `snapshot_congress` and
 `fetch_public` are the only ones that touch the network.
 
 Deliberate limits, each reversible in one function: meetings are not nodes
@@ -732,7 +732,7 @@ def build_congress(legislators, snapshots, states=None, today=None, cert_index=N
     for snap in snapshots:
         if not snap.get("instruments"):
             g["gaps"].append(f"snapshot {snap.get('meta', {}).get('congress')}/{snap.get('meta', {}).get('session')} "
-                             f"has no sponsor records (snapshot ran without CONGRESS_API_KEY); no `sponsored` edges from it")
+                             f"has no bill records (no bills-<congress>.json on disk); no `sponsored` edges from it")
         for v in snap.get("votes", []):
             chamber = v["chamber"]
             inst = _parse_instrument(chamber, v)
@@ -1187,16 +1187,15 @@ def snapshot_congress(congress, session, year, out_path, max_misses=3, pause=0.1
                 errors.append(f"{url}: {_redact(e)}")
             roll += 1
             time.sleep(pause)
-    instruments, sponsor_errors = fetch_instruments(votes, s, congress)
-    errors += sponsor_errors
+    # The bill records come from GovInfo's BILLSTATUS (sources/govinfo.py →
+    # bills-<congress>.json), joined at build time; the snapshot holds the
+    # roll calls only.
     out = {"meta": {"congress": congress, "session": session, "year": year,
                     "fetched": datetime.datetime.now().isoformat(timespec="seconds"),
                     "counts": {c: sum(1 for v in votes if v["chamber"] == c)
                                for c in ("house", "senate")},
                     "errors": errors},
-           "votes": votes, "instruments": instruments}
-    out["meta"]["counts"]["instruments"] = len(instruments)
-    out["meta"]["instruments_fetched"] = out["meta"]["fetched"][:10]
+           "votes": votes}
     pathlib.Path(out_path).write_text(json.dumps(out, separators=(",", ":")))
     return out["meta"]
 
@@ -1214,119 +1213,11 @@ def _redact(e):
     return f"{type(e).__name__}: {_API_KEY_RE.sub('api_key=REDACTED', str(e))}"
 
 
-def _paged(session_, url, key, list_key, errors):
-    """Every page of one Congress.gov list, or None when any page fails —
-    a partial list would read as a complete one. The failure is recorded."""
-    items, params = [], {"api_key": key, "format": "json", "limit": 250}
-    while url:
-        r = session_.get(url, params=params, timeout=30)
-        if r.status_code != 200:
-            errors.append(f"{url}: HTTP {r.status_code}")
-            return None
-        page = r.json()
-        items += page.get(list_key, [])
-        url, params = (page.get("pagination") or {}).get("next"), {"api_key": key}
-    return items
-
-
 def _presidential(action):
     """The actions kept: what the President did and what became law. The
     rest of a bill's history is unbounded and not a graph fact."""
     text = action.get("text") or ""
     return action.get("type") in ("President", "BecameLaw") or "Vetoed" in text
-
-
-def fetch_instruments(votes, session_, congress, pause=0.1):
-    """Congress.gov's record of each bill the session voted on: title,
-    policy area, sponsor and cosponsors, laws, presidential actions,
-    committee referrals and reports, related bills. Needs CONGRESS_API_KEY;
-    without it the snapshot carries votes only and says so. A list that
-    failed to download is absent from the record, never empty, and its name
-    is missing from `passes`. Returns ({"hr/5184": {...}}, errors)."""
-    import os
-    key = os.getenv("CONGRESS_API_KEY")
-    wanted = {}
-    for v in votes:
-        inst = _parse_instrument(v["chamber"], v)
-        if inst and inst[0] in _BILL_TYPES:
-            wanted[f"{inst[0]}/{inst[1]}"] = inst
-    if not key:
-        return {}, [f"CONGRESS_API_KEY not set: {len(wanted)} bill(s) have no sponsor record"]
-    out, errors = {}, []
-    for label, (itype, number) in sorted(wanted.items()):
-        base = f"https://api.congress.gov/v3/bill/{congress}/{itype}/{number}"
-        try:
-            r = session_.get(base, params={"api_key": key, "format": "json"}, timeout=30)
-            if r.status_code != 200:
-                errors.append(f"{base}: HTTP {r.status_code}")
-                continue
-            bill = r.json().get("bill", {})
-            rec = {"title": bill.get("title"), "introduced": bill.get("introducedDate"),
-                   "policy_area": (bill.get("policyArea") or {}).get("name"),
-                   "sponsors": [sp.get("bioguideId") for sp in bill.get("sponsors", []) if sp.get("bioguideId")],
-                   "laws": [{"number": law.get("number"), "type": law.get("type")}
-                            for law in bill.get("laws") or []],
-                   "passes": ["bill"]}
-            cos = _paged(session_, base + "/cosponsors", key, "cosponsors", errors)
-            if cos is not None:
-                rec["cosponsors"] = [{"id": c.get("bioguideId"), "date": c.get("sponsorshipDate"),
-                                      "original": bool(c.get("isOriginalCosponsor")),
-                                      "withdrawn": c.get("sponsorshipWithdrawnDate")}
-                                     for c in cos if c.get("bioguideId")]
-                rec["passes"].append("cosponsors")
-            acts = _paged(session_, base + "/actions", key, "actions", errors)
-            if acts is not None:
-                rec["actions"] = [{"date": a.get("actionDate"), "code": a.get("actionCode"),
-                                   "type": a.get("type"), "text": a.get("text")}
-                                  for a in acts if _presidential(a)]
-                rec["passes"].append("actions")
-            cms = _paged(session_, base + "/committees", key, "committees", errors)
-            if cms is not None:
-                rec["committees"] = []
-                for c in cms:
-                    for unit, parent in [(c, None)] + [(sc, c.get("systemCode")) for sc in c.get("subcommittees") or []]:
-                        rec["committees"].append({
-                            "code": (unit.get("systemCode") or "").lower(), "name": unit.get("name"),
-                            "chamber": c.get("chamber"), "parent": parent,
-                            "activities": [{"name": a.get("name"), "date": (a.get("date") or "")[:10]}
-                                           for a in unit.get("activities") or []]})
-                rec["passes"].append("committees")
-            reports, ok = [], True
-            for cr in bill.get("committeeReports") or []:
-                ep = _report_endpoint(cr.get("citation"), cr.get("url"))
-                if ep is None:
-                    errors.append(f"{base}: unparsed report citation {cr.get('citation')!r}")
-                    ok = False
-                    continue
-                if any(x["endpoint"] == ep for x in reports):
-                    continue    # "Book 1" and "Book 2" share one endpoint
-                url = f"https://api.congress.gov/v3/committee-report/{ep}"
-                rr = session_.get(url, params={"api_key": key, "format": "json"}, timeout=30)
-                if rr.status_code != 200:
-                    errors.append(f"{url}: HTTP {rr.status_code}")
-                    ok = False
-                    continue
-                for part in rr.json().get("committeeReports", []):
-                    reports.append({"endpoint": ep, "citation": part.get("citation"),
-                                    "date": (part.get("issueDate") or "")[:10],
-                                    "committees": [(c.get("systemCode") or "").lower()
-                                                   for c in part.get("committees") or []]})
-            if ok:
-                rec["reports"] = reports
-                rec["passes"].append("reports")
-            rel = _paged(session_, base + "/relatedbills", key, "relatedBills", errors)
-            if rel is not None:
-                rec["related"] = [{"congress": b.get("congress"), "type": (b.get("type") or "").lower(),
-                                   "number": str(b.get("number")), "title": b.get("title"),
-                                   "relationships": [{"type": d.get("type"), "identified_by": d.get("identifiedBy")}
-                                                     for d in b.get("relationshipDetails") or []]}
-                                  for b in rel]
-                rec["passes"].append("related")
-            out[label] = rec
-        except Exception as e:
-            errors.append(f"{base}: {_redact(e)}")
-        time.sleep(pause)
-    return out, errors
 
 
 def _report_endpoint(citation, url):
@@ -1336,26 +1227,6 @@ def _report_endpoint(citation, url):
     from sources.committee_reports_fetcher import _parse_citation_to_endpoint
     ep = _parse_citation_to_endpoint(citation or "", url)
     return f"{ep[0]}/{ep[1]}/{ep[2]}" if ep else None
-
-
-def enrich_snapshot(path, pause=0.1):
-    """Re-fetch the Congress.gov records of an existing roll-call snapshot
-    without re-fetching the roll calls. Writes the file back; returns meta."""
-    import os
-    import requests
-    if not os.getenv("CONGRESS_API_KEY"):
-        # Fail-closed: an empty re-fetch must not overwrite records on disk.
-        raise RuntimeError("CONGRESS_API_KEY not set; the snapshot is unchanged")
-    snap = json.loads(pathlib.Path(path).read_text())
-    s = requests.Session()
-    s.headers["User-Agent"] = "NosPopuli graph snapshot (nospopuli.org)"
-    instruments, errors = fetch_instruments(snap["votes"], s, snap["meta"]["congress"], pause)
-    snap["instruments"] = instruments
-    snap["meta"]["instruments_fetched"] = datetime.date.today().isoformat()
-    snap["meta"]["counts"]["instruments"] = len(instruments)
-    snap["meta"]["instrument_errors"] = errors
-    pathlib.Path(path).write_text(json.dumps(snap, separators=(",", ":")))
-    return snap["meta"]
 
 
 # ------------------------------------------------------------------ money
@@ -1763,6 +1634,20 @@ def build_source(source, states=None):
         if not snaps:
             raise RuntimeError(f"no data/congress-votes-{congress}-*.json — "
                                f"run `python graph.py snapshot {congress} 2 2026`")
+        bills_path = DATA_DIR / f"bills-{congress}.json"
+        if bills_path.exists():
+            bills = json.loads(bills_path.read_text())
+            # Only the bills a session voted on, as the Congress.gov fetch
+            # gave: the builders take every record they are handed as a
+            # bill in the graph. Every bill becomes a node in Phase 4.
+            for snap in snaps:
+                voted = {"/".join(inst) for inst in (_parse_instrument(v["chamber"], v)
+                                                     for v in snap.get("votes", [])) if inst}
+                snap["instruments"] = {k: r for k, r in bills["instruments"].items() if k in voted}
+                snap["meta"]["instruments_fetched"] = bills["meta"]["fetched"]
+        else:
+            merge_gaps.append(f"no bills-{congress}.json: bill records come from the snapshots' own copy, "
+                        f"if any (run `python -m sources.govinfo billstatus {congress}`)")
         cert = json.loads(MEMBER_CONGRESS_PATH.read_text()) if MEMBER_CONGRESS_PATH.exists() else None
         nodes, edges, gaps = build_congress(legislators, snaps, states,
                                             cert_index=(cert or {}).get("members"))
@@ -2903,8 +2788,6 @@ if __name__ == "__main__":
         s.add_argument("source", choices=sources)
         s.add_argument("--state", action="append",
                        help="us-congress only: delegation(s) to load, e.g. --state VA")
-    s = sub.add_parser("enrich", help="re-fetch the Congress.gov bill records of a snapshot file (not its roll calls)")
-    s.add_argument("path")
     s = sub.add_parser("snapshot-fec", help="campaign committee, totals and top PACs per member (resumable)")
     s.add_argument("cycle", type=int)
     s.add_argument("--no-pacs", action="store_true", help="totals only")
@@ -2942,12 +2825,6 @@ if __name__ == "__main__":
         print(f"{len(gaps)} gap(s):")
         for g in gaps:
             print("  -", g)
-    elif a.cmd == "enrich":
-        meta = enrich_snapshot(a.path)
-        print(json.dumps({k: meta[k] for k in ("counts", "instruments_fetched")}, indent=1))
-        print(f"{len(meta['instrument_errors'])} error(s)")
-        for e in meta["instrument_errors"][:20]:
-            print("  -", e)
     elif a.cmd == "snapshot-fec":
         print(json.dumps(snapshot_fec(a.cycle, DATA_DIR / f"fec-{a.cycle}.json", pacs=not a.no_pacs,
                                       max_age_days=a.max_age_days, budget_minutes=a.budget_minutes), indent=1))
