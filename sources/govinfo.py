@@ -191,6 +191,23 @@ def report_meta(citation, meta):
     return part if part is not None else {"date": meta["date"], "committees": meta["committees"]}
 
 
+def _all(el, *paths):
+    """The items at the first path that has any. BILLSTATUS schema 1.0.0
+    (a few reserved bill numbers still carry it) nests its lists one level
+    deeper than 3.0.0: committees/billCommittees/item, summaries/
+    billSummaries/item, subjects/billSubjects/legislativeSubjects/item."""
+    for p in paths:
+        found = el.findall(p)
+        if found:
+            return found
+    return []
+
+
+def _bill_id(b):
+    """(type, number): 3.0.0 names them type/number, 1.0.0 billType/billNumber."""
+    return (_t(b, "type") or _t(b, "billType") or "").lower(), _t(b, "number") or _t(b, "billNumber")
+
+
 def _t(el, path):
     v = el.findtext(path)
     return v.strip() if v and v.strip() else None
@@ -202,8 +219,7 @@ def parse_billstatus(xml_bytes):
     (see attach_reports). In the XML an empty list is a real zero, not a
     failed call, so every pass but `reports` is present. Pure."""
     b = ET.fromstring(xml_bytes).find("bill")
-    itype = (_t(b, "type") or "").lower()
-    number = _t(b, "number")
+    itype, number = _bill_id(b)
     rec = {"title": _t(b, "title"), "introduced": _t(b, "introducedDate"),
            "policy_area": _t(b, "policyArea/name"),
            "sponsors": [x for x in (_t(sp, "bioguideId") for sp in b.findall("sponsors/item")) if x],
@@ -221,7 +237,7 @@ def parse_billstatus(xml_bytes):
             actions.append(act)
     rec["actions"] = actions
     rec["committees"] = []
-    for c in b.findall("committees/item"):
+    for c in _all(b, "committees/item", "committees/billCommittees/item"):
         units = [(c, None)] + [(sc, _t(c, "systemCode")) for sc in c.findall("subcommittees/item")]
         for unit, parent in units:
             rec["committees"].append({
@@ -252,7 +268,7 @@ def parse_bill_doc(xml_bytes, congress):
     long one (H.R. 1 of the 119th runs to 174,000) is section-by-section
     detail. Pure."""
     b = ET.fromstring(xml_bytes).find("bill")
-    itype, number = (_t(b, "type") or "").lower(), _t(b, "number")
+    itype, number = _bill_id(b)
     label = f"{graph.BILL_LABEL.get(itype, itype.upper())} {number}"
     title = _t(b, "title") or ""
     others = []
@@ -261,8 +277,9 @@ def parse_bill_doc(xml_bytes, congress):
         kind = (_t(t, "titleType") or "").lower()
         if text and text != title and text not in others and ("short" in kind or "popular" in kind):
             others.append(text)
-    subjects = [n for n in (_t(s, "name") for s in b.findall("subjects/legislativeSubjects/item")) if n]
-    summaries = sorted(b.findall("summaries/summary"),
+    subjects = [n for n in (_t(s, "name") for s in _all(b, "subjects/legislativeSubjects/item",
+                                                          "subjects/billSubjects/legislativeSubjects/item")) if n]
+    summaries = sorted(_all(b, "summaries/summary", "summaries/billSummaries/item"),
                        key=lambda s: (_t(s, "actionDate") or "", _t(s, "updateDate") or ""))
     summary = ""
     if summaries:

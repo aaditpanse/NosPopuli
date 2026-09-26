@@ -998,6 +998,19 @@ class BillStatusTest(unittest.TestCase):
         meta = self.g.parse_crpt_mods(CRPT_MODS)
         self.assertEqual(self.g.report_meta("S. Rept. 119-39,Errata", meta), {"date": "", "committees": []})
 
+    def test_the_old_schema_names_the_bill_too(self):
+        # BILLSTATUS 1.0.0 (reserved numbers such as 117 H.R. 9): billType,
+        # billNumber, and lists nested one level deeper.
+        old = b"""<billStatus><bill><billNumber>9</billNumber><billType>HR</billType>
+<introducedDate>2021-01-03</introducedDate><title>Reserved for the Speaker.</title>
+<subjects><billSubjects><legislativeSubjects><item><name>Taxation</name></item></legislativeSubjects></billSubjects></subjects>
+</bill><version>1.0.0</version></billStatus>"""
+        from sources import govinfo
+        label, rec = govinfo.parse_billstatus(old)
+        self.assertEqual((label, rec["title"]), ("hr/9", "Reserved for the Speaker."))
+        d = govinfo.parse_bill_doc(old, 117)
+        self.assertEqual((d["instrument_id"], d["subjects"]), ("instrument/us/117/hr/9", ["Taxation"]))
+
     def test_an_unresolved_report_leaves_the_pass_out(self):
         # A partial report list would read as the whole list.
         _, rec = self.g.parse_billstatus(BILLSTATUS_XML)
