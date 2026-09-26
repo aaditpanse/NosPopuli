@@ -2307,11 +2307,16 @@ def _us_fingerprint(congress):
     """What an older Congress's scope was built from: its bills file, the
     legislators files (a bioguide id moves sponsors), the committee and
     executive files, the build's version."""
-    bills = json.loads(data_path("bills", congress=congress).read_text())["meta"]
+    path = data_path("bills", congress=congress)
+    bills = json.loads(path.read_text())["meta"]
+    # The file itself, not only its meta: a same-day rebuild with the same
+    # counts (a parser fix) keeps both, and must still reload.
+    stat = path.stat()
     fetched = json.loads(_fetched_path().read_text()) if _fetched_path().exists() else {}
     # committees-current decides which committee a referral points at;
     # executive decides who signed. Either changing must reload the scope.
     return json.dumps({"v": SCOPE_VERSION, "bills": bills.get("fetched"), "counts": bills.get("counts"),
+                       "file": [stat.st_size, stat.st_mtime_ns],
                        "inputs": {k: fetched.get(k) for k in (LEGISLATORS_SOURCE, HISTORICAL_SOURCE,
                                                               COMMITTEES_SOURCE, EXECUTIVE_SOURCE)}},
                       sort_keys=True)
