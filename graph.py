@@ -2069,6 +2069,20 @@ def merge_legislators(current, historical):
     return out, gaps
 
 
+_LEGISLATORS = {"sig": None, "rows": []}
+
+
+def legislators():
+    """Both legislators files, merged (merge_legislators), for a request:
+    reread only when a file changes. Loads read the files themselves."""
+    paths = [data_path("public", name=n) for n in (LEGISLATORS_SOURCE, HISTORICAL_SOURCE)]
+    sig = tuple(p.stat().st_mtime_ns if p.exists() else 0 for p in paths)
+    if _LEGISLATORS["sig"] != sig:
+        current, historical = (json.loads(p.read_text()) if p.exists() else [] for p in paths)
+        _LEGISLATORS.update(sig=sig, rows=merge_legislators(current, historical)[0])
+    return _LEGISLATORS["rows"]
+
+
 def fetch_public(names=PUBLIC_FILES):
     """Download the public data files into public/. The only network step for
     them; the loader reads the files. Returns {name: bytes written}."""

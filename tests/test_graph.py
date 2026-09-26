@@ -1935,3 +1935,53 @@ class FecBulkTest(unittest.TestCase):
         top, total, n = fec_client.bulk_top_pacs(rows, "C00438713", "Mark Warner",
                                                   {"C00451518": "CROWE PAC"})
         self.assertEqual(total, 0.0)
+
+
+def _leg(bio, first, last, source="legislators-current", end="2031-01-03", **name):
+    return {"id": {"bioguide": bio}, "name": {"first": first, "last": last, **name}, "_source": source,
+            "terms": [{"type": "sen", "start": "2019-01-03", "end": end, "state": "VA", "party": "Democrat"}]}
+
+
+class MemberLookupTest(unittest.TestCase):
+    """agents/member_search_agent.py, local since Phase 6: names from the
+    legislators files, a guess never made between equals."""
+
+    PEOPLE = [_leg("W000805", "Mark", "Warner", middle="R."),
+              _leg("W000154", "John", "Warner", source="legislators-historical", end="2009-01-03"),
+              _leg("B000444", "Joseph", "Biden", source="legislators-historical", end="2009-01-15"),
+              _leg("J000001", "Ron", "Johnson"), _leg("J000002", "Mike", "Johnson"),
+              _leg("O000172", "Alexandria", "Ocasio-Cortez")]
+
+    def match(self, name):
+        from agents.member_search_agent import match_members
+        member, candidates = match_members(name, self.PEOPLE)
+        return (member["id"]["bioguide"] if member else None), [c["id"]["bioguide"] for c in candidates]
+
+    def test_a_sitting_member_wins_a_bare_last_name(self):
+        self.assertEqual(self.match("Warner"), ("W000805", []))
+        self.assertEqual(self.match("Senator John Warner"), ("W000154", []))
+
+    def test_nicknames_and_hyphenated_names(self):
+        self.assertEqual(self.match("Joe Biden"), ("B000444", []))
+        self.assertEqual(self.match("alexandria ocasio-cortez"), ("O000172", []))
+
+    def test_two_sitting_members_are_candidates_not_a_guess(self):
+        member, cands = self.match("Johnson")
+        self.assertIsNone(member)
+        self.assertEqual(sorted(cands), ["J000001", "J000002"])
+        self.assertEqual(self.match("Ron Johnson"), ("J000001", []))
+
+    def test_a_wrong_first_name_matches_nobody(self):
+        self.assertEqual(self.match("Adam Warner"), (None, []))
+
+    def test_sponsorships_count_what_they_say(self):
+        from agents.member_search_agent import sponsorship_summary
+        rows = [(118, "s", "5", "S. 5: Older Act", "Health", "2023-01-02", "sponsor", None),
+                (119, "s", "9", "S. 9: Newer Act", None, "2025-02-01", "sponsor", None),
+                (119, "hr", "1", "H.R. 1: Big Bill", "Taxation", "2025-01-03", "cosponsor", None),
+                (119, "hr", "2", "H.R. 2: Left Bill", "Taxation", "2025-01-03", "original cosponsor", "2025-03-01")]
+        s = sponsorship_summary(rows, 1)
+        self.assertEqual([(b["number"], b["title"]) for b in s["sponsored"]], [("9", "Newer Act")])
+        # A withdrawn cosponsorship is not one.
+        self.assertEqual((s["sponsored_count"], s["cosponsored_count"], s["counted_since"]), (2, 1, 2003))
+        self.assertEqual(s["policy_areas"], {"Health": 1, "Other": 1})

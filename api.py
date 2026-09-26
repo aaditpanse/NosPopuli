@@ -311,6 +311,14 @@ class BillFlagRequest(BaseModel):
 
 async def handle_member_search(structured, question, loop):
     member = await loop.run_in_executor(None, search_member, structured["entity_name"])
+    if member and member.get("candidates"):
+        return {
+            "query_type": "member",
+            "found": False,
+            "candidates": member["candidates"],
+            "confidence": structured.get("confidence"),
+            "ambiguity_reason": f"More than one member of Congress is named {structured['entity_name']!r}.",
+        }
 
     if not member:
         log_search(
@@ -2255,6 +2263,8 @@ async def member_search(request: MemberSearchRequest):
     loop = asyncio.get_event_loop()
 
     member = await loop.run_in_executor(None, search_member, request.name)
+    if member and member.get("candidates"):
+        return {"found": False, "member": None, "candidates": member["candidates"]}
     if not member:
         return {"found": False, "member": None}
 

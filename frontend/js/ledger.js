@@ -1304,8 +1304,11 @@
       .sort((a, b) => b[1] - a[1]);
     const stats = [
       { n: m.years_served || "n/a", l: "Years served" },
-      { n: Number(legis.sponsored_count || 0).toLocaleString(), l: "Bills sponsored" },
-      { n: Number(legis.cosponsored_count || 0).toLocaleString(), l: "Cosponsored" },
+      // null is "not known here", never zero; the graph's bills start in 2003.
+      { n: legis.sponsored_count == null ? "n/a" : Number(legis.sponsored_count).toLocaleString(),
+        l: legis.counted_since ? `Bills sponsored since ${legis.counted_since}` : "Bills sponsored" },
+      { n: legis.cosponsored_count == null ? "n/a" : Number(legis.cosponsored_count).toLocaleString(),
+        l: legis.counted_since ? `Cosponsored since ${legis.counted_since}` : "Cosponsored" },
       { n: areas.length, l: "Policy areas" },
     ].map(s => `<div class="stat"><div class="stat-n">${esc(String(s.n))}</div><div class="lbl" style="color:var(--muted);font-size:9px">${esc(s.l)}</div></div>`).join("");
     const max = (areas[0] && areas[0][1]) || 1;

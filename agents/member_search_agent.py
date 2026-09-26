@@ -1,14 +1,8 @@
-import requests
+"""Federal members, from the unitedstates legislators files and the bill
+graph (Phase 6, 2026-09-26); no call leaves the server."""
+import datetime
 import os
-from dotenv import load_dotenv
-from agents.documentor_agent import log_action
-from sources.congress_breaker import congress_get, CongressOutageError
-
-load_dotenv()
-
-CONGRESS_API_KEY = os.getenv("CONGRESS_API_KEY")
-_session = requests.Session()
-GOVINFO_API_KEY = os.getenv("GovInfo_API_KEY")
+import re
 
 NICKNAMES = {
     "ted": "edward",
@@ -32,238 +26,175 @@ NICKNAMES = {
     "pat": "patricia",
 }
 
-def search_member(name):
-    parts = [p.lower() for p in name.strip().split()]
-    
-    # Expand nicknames
-    expanded_parts = []
-    for p in parts:
-        if p in NICKNAMES:
-            expanded_parts.append(NICKNAMES[p])
-    
-    all_parts = parts + expanded_parts
-    
-    url = "https://api.congress.gov/v3/member"
-    best_match = None
-    best_score = 0
-    next_url = None
-    pages_checked = 0
-    max_pages = 10
-    
-    params = {
-        "api_key": CONGRESS_API_KEY,
-        "format": "json",
-        "limit": 250,
-    }
-    
-    while pages_checked < max_pages:
-        try:
-            if next_url and pages_checked > 0:
-                response = congress_get(next_url, timeout=10)
-            else:
-                response = congress_get(url, params=params, timeout=10)
-        except CongressOutageError as e:
-            print(f"[MEMBER_SEARCH] Congress.gov unavailable: {e}")
-            return best_match  # may be None — caller handles "not found"
+# Words a person types around a name that are not part of it.
+_TITLES = {"sen", "senator", "rep", "representative", "congressman", "congresswoman", "congressperson",
+           "mr", "mrs", "ms", "dr", "hon", "the", "jr", "sr", "ii", "iii"}
+_PARTY_NAME = {"Democrat": "Democratic"}
+_CHAMBER = {"sen": "Senate", "rep": "House of Representatives"}
 
-        if response.status_code != 200:
-            break
-        
-        data = response.json()
-        members = data.get("members", [])
-        
-        for m in members:
-            member_name = (m.get("name") or "").lower()
-            name_tokens = member_name.replace(",", "").split()
-            
-            score = 0
-            for part in all_parts:
-                if part in member_name:
-                    # Last name (first token before comma) worth 3x
-                    if name_tokens and part == name_tokens[0]:
-                        score += 3
-                    else:
-                        score += 1
-            
-            if score > best_score:
-                best_score = score
-                best_match = m
-        
-        # Perfect match — last name + first name both found
-        if best_score >= 4:
-            break
-        
-        pagination = data.get("pagination", {})
-        next_url = pagination.get("next")
-        if not next_url:
-            break
-        
-        if "api_key" not in next_url:
-            next_url += f"&api_key={CONGRESS_API_KEY}"
-        
-        pages_checked += 1
-    
-    if not best_match or best_score == 0:
-        print(f"[MEMBER SEARCH] No match found for: {name}")
-        return None
-    
-    m = best_match
-    raw_terms = m.get("terms", {})
-    if isinstance(raw_terms, dict):
-        terms = raw_terms.get("item", [])
-    elif isinstance(raw_terms, list):
-        terms = raw_terms
-    else:
-        terms = []
-    
-    result = {
-        "bioguide_id": m.get("bioguideId"),
-        "name": m.get("name"),
-        "party": m.get("partyName"),
-        "state": m.get("state"),
-        "chamber": terms[-1].get("chamber", "") if terms else "",
-        "start_year": terms[0].get("startYear") if terms else None,
-        "end_year": terms[-1].get("endYear") if terms else None,
-        "current": m.get("currentMember", False),
-        "url": m.get("url"),
+
+def _words(text):
+    import unicodedata
+    folded = unicodedata.normalize("NFKD", text or "").encode("ascii", "ignore").decode().lower()
+    return re.findall(r"[a-z]+", folded)
+
+
+def match_members(name, legislators):
+    """(member, candidates) for a typed name, from the legislators files.
+    Every word of a member's last name must be typed; a typed first name
+    must match the member's first, middle or nickname (Joe → Joseph).
+    Among the best matches a sitting member wins alone; otherwise two or
+    more are candidates and member is None, never a guess. Pure."""
+    asked = [w for w in _words(name) if w not in _TITLES]
+    if not asked:
+        return None, []
+    scored = []
+    for leg in legislators:
+        n = leg.get("name") or {}
+        last = _words(n.get("last"))
+        if not last or not all(w in asked for w in last):
+            continue
+        given = set(_words(n.get("first")) + _words(n.get("middle")) + _words(n.get("nickname")))
+        rest = [w for w in asked if w not in last]
+        hits = sum(1 for w in rest if w in given or NICKNAMES.get(w) in given)
+        if rest and not hits:
+            continue
+        scored.append((hits, leg))
+    if not scored:
+        return None, []
+    top = max(h for h, _ in scored)
+    best = [leg for h, leg in scored if h == top]
+    sitting = [leg for leg in best if leg.get("_source") == "legislators-current"]
+    if len(sitting) == 1:
+        return sitting[0], []
+    if len(best) == 1:
+        return best[0], []
+    # Sitting members first, then the most recently serving.
+    best.sort(key=lambda leg: (leg.get("_source") == "legislators-current",
+                               (leg.get("terms") or [{}])[-1].get("end", "")), reverse=True)
+    return None, best
+
+
+def _summary(leg):
+    """A legislator as search_member has always returned one."""
+    import graph
+    terms = leg.get("terms") or [{}]
+    last = terms[-1]
+    current = leg.get("_source") == "legislators-current"
+    n = leg.get("name") or {}
+    return {
+        "bioguide_id": leg["id"].get("bioguide"),
+        "name": n.get("official_full") or f"{n.get('first', '')} {n.get('last', '')}".strip(),
+        "party": _PARTY_NAME.get(last.get("party"), last.get("party") or ""),
+        "state": graph.DIVISION_NAMES.get((last.get("state") or "").lower(), last.get("state") or ""),
+        "chamber": _CHAMBER.get(last.get("type"), ""),
+        "start_year": int(terms[0]["start"][:4]) if terms[0].get("start") else None,
+        "end_year": None if current else (int(last["end"][:4]) if last.get("end") else None),
+        "current": current,
+        "url": None,
     }
-    
-    log_action(
-        agent_name="member_search",
-        action="search_member",
-        input_data={"name": name},
-        output_data={"found": result["name"], "bioguide_id": result["bioguide_id"], "score": best_score}
-    )
-    
-    return result
+
+
+def search_member(name):
+    """The member a typed name means, from the legislators files, or
+    {"candidates": [...]} when the name fits several equally, or None."""
+    import graph
+    member, candidates = match_members(name, graph.legislators())
+    if candidates:
+        return {"candidates": [_summary(c) for c in candidates[:8]]}
+    return _summary(member) if member else None
+
+
+def _years(terms, today):
+    days = 0
+    for t in terms:
+        if t.get("start") and t.get("end"):
+            days += (min(datetime.date.fromisoformat(t["end"]), today) - datetime.date.fromisoformat(t["start"])).days
+    return int(days / 365.25)
+
 
 def fetch_member_profile(bioguide_id):
     """
-    Fetches full member profile including bio, terms, and stats.
+    The member's profile from the legislators files: bio, terms, and stats.
     """
-    url = f"https://api.congress.gov/v3/member/{bioguide_id}"
-    params = {"api_key": CONGRESS_API_KEY, "format": "json"}
-
-    try:
-        response = congress_get(url, params=params, timeout=10)
-    except CongressOutageError as e:
-        print(f"[MEMBER_PROFILE] Congress.gov unavailable: {e}")
+    import graph
+    leg = next((x for x in graph.legislators() if x["id"].get("bioguide") == bioguide_id), None)
+    if not leg:
         return None
-    if response.status_code != 200:
-        return None
-    
-    data = response.json()
-    member = data.get("member", {})
-    
-    photo_url = member.get("depiction", {}).get("imageUrl", "")
-    
-    terms = member.get("terms", [])
-    if isinstance(terms, dict):
-        terms = terms.get("item", [])
-    
-    years_served = 0
-    chambers = set()
-    for term in terms:
-        start = term.get("startYear") or 0
-        end = term.get("endYear") or 2026
-        if start:
-            years_served += (end - start)
-        chamber = term.get("chamber", "")
-        if chamber:
-            chambers.add(chamber)
-    
-    party_history = member.get("partyHistory", [])
-    current_party = party_history[-1].get("partyName", "") if party_history else ""
-    
+    s = _summary(leg)
+    terms = leg.get("terms") or []
+    last = terms[-1] if terms else {}
+    n = leg.get("name") or {}
+    slug = "-".join(_words(f"{n.get('first', '')} {n.get('last', '')}"))
     profile = {
-        "bioguide_id": bioguide_id,
-        "name": member.get("directOrderName", ""),
-        "party": current_party,
-        "state": member.get("state", ""),
-        "birth_year": member.get("birthYear", ""),
-        "photo_url": photo_url,
-        "current": member.get("currentMember", False),
-        "chambers": list(chambers),
-        "terms": terms,
-        "years_served": years_served,
-        "official_url": member.get("officialWebsiteUrl", ""),
-        "congress_url": member.get("url", ""),
+        **{k: s[k] for k in ("bioguide_id", "name", "party", "state", "current", "start_year", "end_year")},
+        "birth_year": ((leg.get("bio") or {}).get("birthday") or "")[:4],
+        "photo_url": "",
+        "chambers": sorted({_CHAMBER[t["type"]] for t in terms if t.get("type") in _CHAMBER}),
+        "terms": [{"chamber": _CHAMBER.get(t.get("type"), ""), "startYear": int(t["start"][:4]),
+                   "endYear": int(t["end"][:4]), "stateCode": t.get("state"),
+                   **({"district": t["district"]} if t.get("type") == "rep" and "district" in t else {}),
+                   "partyName": _PARTY_NAME.get(t.get("party"), t.get("party") or "")}
+                  for t in terms if t.get("start") and t.get("end")],
+        "years_served": _years(terms, datetime.date.today()),
+        "official_url": last.get("url", "") if s["current"] else "",
+        "congress_url": f"https://www.congress.gov/member/{slug}/{bioguide_id}",
     }
-    
-    log_action(
-        agent_name="member_search",
-        action="fetch_member_profile",
-        input_data={"bioguide_id": bioguide_id},
-        output_data={"name": profile["name"], "years_served": years_served}
-    )
-    
+    if last.get("type") == "rep" and last.get("district"):
+        profile["district"] = last["district"]
     return profile
 
-def fetch_member_legislation(bioguide_id, limit=20):
-    sponsored_url = f"https://api.congress.gov/v3/member/{bioguide_id}/sponsored-legislation"
-    cosponsored_url = f"https://api.congress.gov/v3/member/{bioguide_id}/cosponsored-legislation"
 
-    sponsored = []
-    policy_areas = {}
-
-    # Fetch 250 bills for accurate policy area distribution
-    try:
-        r = congress_get(sponsored_url, params={
-            "api_key": CONGRESS_API_KEY, "format": "json", "limit": 250
-        }, timeout=30)
-        bills_raw = r.json().get("sponsoredLegislation", []) if r.status_code == 200 else []
-    except (CongressOutageError, Exception):
-        bills_raw = []
-
-    if bills_raw:
-        bills = bills_raw
-        for bill in bills:
-            policy = (bill.get("policyArea") or {}).get("name", "Other")
-            if policy and policy != "None":
-                policy_areas[policy] = policy_areas.get(policy, 0) + 1
-
-            # Only keep the most recent `limit` bills for display
-            if len(sponsored) < limit:
-                sponsored.append({
-                    "congress": bill.get("congress"),
-                    "type": (bill.get("type") or "").lower(),
-                    "number": bill.get("number"),
-                    "title": bill.get("title", ""),
-                    "latest_action": (bill.get("latestAction") or {}).get("text", ""),
-                    "date": (bill.get("latestAction") or {}).get("actionDate", ""),
-                    "policy_area": policy,
-                })
-
-    # Total counts
-    try:
-        r2 = congress_get(sponsored_url, params={
-            "api_key": CONGRESS_API_KEY, "format": "json", "limit": 1
-        }, timeout=10)
-        sponsored_count = r2.json().get("pagination", {}).get("count", 0) if r2.status_code == 200 else 0
-    except (CongressOutageError, Exception):
-        sponsored_count = 0
-
-    try:
-        r3 = congress_get(cosponsored_url, params={
-            "api_key": CONGRESS_API_KEY, "format": "json", "limit": 1
-        }, timeout=10)
-        cosponsored_count = r3.json().get("pagination", {}).get("count", 0) if r3.status_code == 200 else 0
-    except (CongressOutageError, Exception):
-        cosponsored_count = 0
-
-    log_action(
-        agent_name="member_search",
-        action="fetch_member_legislation",
-        input_data={"bioguide_id": bioguide_id},
-        output_data={"sponsored_count": sponsored_count, "cosponsored_count": cosponsored_count}
-    )
-
+def sponsorship_summary(rows, limit):
+    """Sponsored-edge rows → the member page's legislation block. rows:
+    (congress, type, number, title, topic, introduced, role, withdrawn).
+    A withdrawn cosponsorship is not counted. Pure."""
+    mine = sorted((r for r in rows if r[6] == "sponsor"), key=lambda r: (r[5] or "", r[0]), reverse=True)
+    areas = {}
+    for r in mine:
+        areas[r[4] or "Other"] = areas.get(r[4] or "Other", 0) + 1
     return {
-        "sponsored": sponsored,
-        "sponsored_count": sponsored_count,
-        "cosponsored_count": cosponsored_count,
-        "policy_areas": policy_areas,
+        # A bill node is named "S. 5151: MRRRI Act"; the page prints the number itself.
+        "sponsored": [{"congress": r[0], "type": r[1], "number": r[2], "title": _LABEL.sub("", r[3] or ""),
+                       "latest_action": "", "date": r[5] or "", "policy_area": r[4] or "Other"}
+                      for r in mine[:limit]],
+        "sponsored_count": len(mine),
+        "cosponsored_count": sum(1 for r in rows if r[6] != "sponsor" and not r[7]),
+        "policy_areas": areas,
+        "counted_since": FIRST_BILL_YEAR,
     }
+
+
+_LABEL = re.compile(r"^[A-Z][A-Za-z. ]*\d+: ")
+FIRST_BILL_YEAR = 2003          # the graph's bills begin with the 108th Congress
+
+
+def fetch_member_legislation(bioguide_id, limit=20):
+    """The bills a member sponsored and the count cosponsored, from the
+    graph's sponsored edges: every bill since the 108th Congress (2003), so a
+    longer career is counted from 2003 and the payload says so. Fail-open:
+    without the database the block is empty and names why."""
+    import graph
+    if not os.getenv("SUPABASE_DB_URL"):
+        return {"sponsored": [], "sponsored_count": None, "cosponsored_count": None, "policy_areas": {},
+                "empty_reason": "the bill graph is not reachable from this server"}
+    from correspondence.db import _get_pool
+    try:
+        with _get_pool().connection() as conn, conn.cursor() as cur:
+            cur.execute("""
+                SELECT (n.props->>'congress')::int, n.props->>'instrument_type', n.props->>'number',
+                       n.name, n.props->>'topic', n.props->>'introduced', e.props->>'role', e.props->>'withdrawn'
+                FROM graph_edge e JOIN graph_node n ON n.id = e.dst
+                WHERE e.src = %s AND e.predicate = 'sponsored'""",
+                        (graph.node_id("person", f"bioguide/{bioguide_id}"),))
+            rows = cur.fetchall()
+    except Exception as e:
+        print(f"[MEMBER] legislation lookup error {bioguide_id}: {type(e).__name__}")
+        return {"sponsored": [], "sponsored_count": None, "cosponsored_count": None, "policy_areas": {},
+                "empty_reason": "the bill graph did not answer"}
+    return sponsorship_summary(rows, limit)
+
+
 if __name__ == "__main__":
     print("MEMBER SEARCH TEST")
     print("-" * 40)

@@ -1,0 +1,242 @@
+[
+ {
+  "id": {
+   "bioguide": "B001230",
+   "thomas": "01558",
+   "lis": "S354",
+   "govtrack": 400013,
+   "opensecrets": "N00004367",
+   "votesmart": 3470,
+   "fec": [
+    "H8WI00018",
+    "S2WI00219"
+   ],
+   "cspan": 57884,
+   "wikipedia": "Tammy Baldwin",
+   "house_history": 10361,
+   "ballotpedia": "Tammy Baldwin",
+   "maplight": 136,
+   "icpsr": 29940,
+   "wikidata": "Q40628",
+   "google_entity_id": "kg:/m/024v02",
+   "pictorial": 13412
+  },
+  "name": {
+   "first": "Tammy",
+   "last": "Baldwin",
+   "official_full": "Tammy Baldwin"
+  },
+  "bio": {
+   "birthday": "1962-02-11",
+   "gender": "F"
+  },
+  "leadership_roles": [
+   {
+    "title": "Senate Democratic Conference Secretary",
+    "chamber": "senate",
+    "start": "2021-01-03",
+    "end": "2023-01-03"
+   },
+   {
+    "title": "Senate Democratic Conference Secretary",
+    "chamber": "senate",
+    "start": "2023-01-03",
+    "end": "2025-01-03"
+   },
+   {
+    "title": "Senate Democratic Conference Secretary",
+    "chamber": "senate",
+    "start": "2025-01-03"
+   }
+  ],
+  "terms": [
+   {
+    "type": "rep",
+    "start": "1999-01-06",
+    "end": "2001-01-03",
+    "state": "WI",
+    "district": 2,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "2001-01-03",
+    "end": "2003-01-03",
+    "state": "WI",
+    "district": 2,
+    "party": "Democrat"
+   },
+   {
+    "type": "rep",
+    "start": "2003-01-07",
+    "end": "2005-01-03",
+    "state": "WI",
+    "district": 2,
+    "party": "Democrat",
+    "url": "http://tammybaldwin.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2005-01-04",
+    "end": "2007-01-03",
+    "state": "WI",
+    "district": 2,
+    "party": "Democrat",
+    "url": "http://tammybaldwin.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2007-01-04",
+    "end": "2009-01-03",
+    "state": "WI",
+    "district": 2,
+    "party": "Democrat",
+    "url": "http://tammybaldwin.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2009-01-06",
+    "end": "2011-01-03",
+    "state": "WI",
+    "district": 2,
+    "party": "Democrat",
+    "url": "http://tammybaldwin.house.gov"
+   },
+   {
+    "type": "rep",
+    "start": "2011-01-05",
+    "end": "2013-01-03",
+    "state": "WI",
+    "district": 2,
+    "party": "Democrat",
+    "url": "http://tammybaldwin.house.gov",
+    "address": "2446 Rayburn HOB; Washington DC 20515-4902",
+    "phone": "202-225-2906",
+    "fax": "202-225-6942",
+    "contact_form": "http://www.house.gov/formbaldwin/IMA/get_address.htm",
+    "office": "2446 Rayburn House Office Building"
+   },
+   {
+    "type": "sen",
+    "start": "2013-01-03",
+    "end": "2019-01-03",
+    "state": "WI",
+    "party": "Democrat",
+    "class": 1,
+    "url": "https://www.baldwin.senate.gov",
+    "address": "709 Hart Senate Office Building Washington DC 20510",
+    "phone": "202-224-5653",
+    "fax": "202-225-6942",
+    "contact_form": "https://www.baldwin.senate.gov/feedback",
+    "office": "709 Hart Senate Office Building",
+    "state_rank": "junior",
+    "rss_url": "http://www.baldwin.senate.gov/rss/feeds/?type=all"
+   },
+   {
+    "type": "sen",
+    "start": "2019-01-03",
+    "end": "2025-01-03",
+    "state": "WI",
+    "class": 1,
+    "party": "Democrat",
+    "state_rank": "junior",
+    "url": "https://www.baldwin.senate.gov",
+    "rss_url": "http://www.baldwin.senate.gov/rss/feeds/?type=all",
+    "contact_form": "https://www.baldwin.senate.gov/feedback",
+    "address": "141 Hart Senate Office Building Washington DC 20510",
+    "office": "141 Hart Senate Office Building",
+    "phone": "202-224-5653"
+   },
+   {
+    "type": "sen",
+    "start": "2025-01-03",
+    "end": "2031-01-03",
+    "state": "WI",
+    "class": 1,
+    "state_rank": "junior",
+    "party": "Democrat",
+    "url": "https://www.baldwin.senate.gov",
+    "rss_url": "http://www.baldwin.senate.gov/rss/feeds/?type=all",
+    "contact_form": "https://www.baldwin.senate.gov/feedback",
+    "address": "141 Hart Senate Office Building Washington DC 20510",
+    "office": "141 Hart Senate Office Building",
+    "phone": "202-224-5653"
+   }
+  ]
+ },
+ {
+  "id": {
+   "bioguide": "C001098",
+   "thomas": "02175",
+   "lis": "S355",
+   "govtrack": 412573,
+   "cspan": 1019953,
+   "wikipedia": "Ted Cruz",
+   "votesmart": 135705,
+   "opensecrets": "N00033085",
+   "fec": [
+    "S2TX00312"
+   ],
+   "ballotpedia": "Ted Cruz",
+   "maplight": 1797,
+   "icpsr": 41304,
+   "wikidata": "Q2036942",
+   "google_entity_id": "kg:/m/07j6ty",
+   "pictorial": 13402
+  },
+  "name": {
+   "first": "Ted",
+   "last": "Cruz",
+   "official_full": "Ted Cruz"
+  },
+  "bio": {
+   "gender": "M",
+   "birthday": "1970-12-22"
+  },
+  "terms": [
+   {
+    "type": "sen",
+    "start": "2013-01-03",
+    "end": "2019-01-03",
+    "state": "TX",
+    "party": "Republican",
+    "class": 1,
+    "url": "https://www.cruz.senate.gov",
+    "address": "404 Russell Senate Office Building Washington DC 20510",
+    "office": "404 Russell Senate Office Building",
+    "phone": "202-224-5922",
+    "state_rank": "junior",
+    "contact_form": "https://www.cruz.senate.gov/?p=form&id=16",
+    "fax": "202-228-3398"
+   },
+   {
+    "type": "sen",
+    "start": "2019-01-03",
+    "end": "2025-01-03",
+    "state": "TX",
+    "class": 1,
+    "party": "Republican",
+    "state_rank": "junior",
+    "url": "https://www.cruz.senate.gov",
+    "contact_form": "https://www.cruz.senate.gov/?p=form&id=16",
+    "address": "167 Russell Senate Office Building Washington DC 20510",
+    "office": "167 Russell Senate Office Building",
+    "phone": "202-224-5922"
+   },
+   {
+    "type": "sen",
+    "start": "2025-01-03",
+    "end": "2031-01-03",
+    "state": "TX",
+    "class": 1,
+    "state_rank": "junior",
+    "party": "Republican",
+    "url": "https://www.cruz.senate.gov",
+    "contact_form": "https://www.cruz.senate.gov/?p=form&id=16",
+    "address": "167 Russell Senate Office Building Washington DC 20510",
+    "office": "167 Russell Senate Office Building",
+    "phone": "202-224-5922"
+   }
+  ]
+ }
+]

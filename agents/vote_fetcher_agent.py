@@ -9,23 +9,21 @@ import json
 
 _LOCAL_POSITION = {"aye": "Yea", "no": "Nay", "present": "Present", "absent": "Not Voting"}
 _PARTY = {"Democrat": "D", "Republican": "R", "Independent": "I"}
-_people = {"sig": None}
+_people = {"rows": None, "index": {}}
 
 
 def _legislators():
-    """{("bioguide"|"lis", id): legislator} from both legislators files,
-    reread only when a file changes."""
+    """{("bioguide"|"lis", id): legislator}, rebuilt when graph.legislators()
+    rereads the files."""
     import graph
-    paths = [graph.data_path("public", name=n) for n in (graph.LEGISLATORS_SOURCE, graph.HISTORICAL_SOURCE)]
-    sig = tuple(p.stat().st_mtime_ns if p.exists() else 0 for p in paths)
-    if _people["sig"] != sig:
+    rows = graph.legislators()
+    if _people["rows"] is not rows:
         index = {}
-        for p in reversed(paths):          # the current file wins a collision
-            for leg in (json.loads(p.read_text()) if p.exists() else []):
-                for kind in ("bioguide", "lis"):
-                    if leg["id"].get(kind):
-                        index[(kind, leg["id"][kind])] = leg
-        _people.update(sig=sig, index=index)
+        for leg in rows:
+            for kind in ("bioguide", "lis"):
+                if leg["id"].get(kind):
+                    index[(kind, leg["id"][kind])] = leg
+        _people.update(rows=rows, index=index)
     return _people["index"]
 
 
