@@ -1034,6 +1034,35 @@ class VoteviewTest(unittest.TestCase):
         self.assertIn("29911 (G000286 vs X999999)", gaps[0])
 
 
+class NominationAndLobbyingRecordTest(unittest.TestCase):
+    def test_a_nomination_keeps_the_senates_document_name(self):
+        from sources import nominations
+        item = {"number": 12, "partNumber": "01", "receivedDate": "2023-01-03",
+                "nominationType": {"isMilitary": False}, "organization": "The Judiciary",
+                "latestAction": {"actionDate": "2023-02-01", "text": "Confirmed by the Senate by Voice Vote."},
+                "updateDate": "2026-01-01T00:00:00Z"}
+        rec = nominations.record(item, {"description": "Jane Doe, to be a judge.",
+                                        "nominees": [{"positionTitle": "Judge", "organization": "The Judiciary",
+                                                      "nomineeCount": 1}]})
+        # The roll call names the document PN12-1; the record must too.
+        self.assertEqual(rec["citation"], "PN12-1")
+        self.assertEqual(nominations.citation({"number": 1020, "partNumber": "00"}), "PN1020")
+        self.assertEqual(rec["positions"], [{"title": "Judge", "organization": "The Judiciary", "nominees": 1}])
+        self.assertEqual(rec["latest_action"]["date"], "2023-02-01")
+
+    def test_a_lobbying_filing_names_its_bills_and_keeps_the_text_it_read_them_from(self):
+        from sources import lda_client
+        rec = lda_client.bulk_record({
+            "filing_uuid": "u1", "filing_type": "Q2", "filing_year": 2026, "filing_period": "second_quarter",
+            "dt_posted": "2026-07-20T10:00:00-04:00", "income": None, "expenses": "30000.00",
+            "registrant": {"id": 1, "name": "IANA"}, "client": {"id": 2, "name": "IANA"},
+            "lobbying_activities": [{"general_issue_code": "TRA",
+                                     "description": "H.R. 2853, S. 1404 and truck size rules"}]})
+        self.assertEqual(rec["amount"], 30000.0)
+        self.assertEqual(rec["activities"], [{"issue": "TRA", "bills": ["hr/2853", "s/1404"],
+                                              "description": "H.R. 2853, S. 1404 and truck size rules"}])
+
+
 class VocabularyTest(unittest.TestCase):
     def test_the_predicate_set_is_pinned(self):
         # A new relation type is a schema change: it lands here on purpose.

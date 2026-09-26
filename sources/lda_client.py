@@ -21,6 +21,7 @@ Modeling notes:
 
 import os
 import re
+import json
 import datetime
 import requests
 from dotenv import load_dotenv
@@ -420,13 +421,80 @@ def get_entity_profile(kind, name, years=None):
     return profile
 
 
+# ------------------------------------------------------------------ bulk
+
+def bulk_record(f):
+    """One filing → what the graph needs: who paid whom, how much, and the
+    bills named in each activity. The description is kept, because the
+    bill numbers are read out of free text and a reader must be able to
+    check the reading. Pure."""
+    acts = []
+    for a in f.get("lobbying_activities") or []:
+        desc = a.get("description") or ""
+        acts.append({"issue": a.get("general_issue_code"), "description": desc,
+                     "bills": sorted(f"{t}/{n}" for t, n, _ in extract_bill_refs(desc))})
+    reg, cli = f.get("registrant") or {}, f.get("client") or {}
+    return {"uuid": f["filing_uuid"], "type": f.get("filing_type"), "year": f.get("filing_year"),
+            "period": f.get("filing_period"), "posted": f.get("dt_posted"),
+            "registrant": {"id": reg.get("id"), "name": reg.get("name")},
+            "client": {"id": cli.get("id"), "name": cli.get("name")},
+            "income": f.get("income"), "expenses": f.get("expenses"), "amount": _spend(f),
+            "activities": acts}
+
+
+def sync_lobbying_year(year, pause=None):
+    """Every LDA filing of one year → lobbying-<year>.json in graph.DATA_DIR.
+    A year already on disk is extended with the filings posted since its
+    newest one, so a daily run makes a few calls. The API allows about 15
+    calls a minute without LDA_API_KEY and 120 with it; the pause follows.
+    Fail-closed: a failed page leaves the file as it was, because a partial
+    year would read as a year with less lobbying. Returns meta."""
+    import graph
+    import time
+    pause = pause if pause is not None else (0.6 if LDA_API_KEY else 4.2)
+    path = graph.DATA_DIR / f"lobbying-{year}.json"
+    old = json.loads(path.read_text()) if path.exists() else None
+    filings = dict(old["filings"]) if old else {}
+    since = old["meta"].get("newest_posted") if old else None
+    url = f"{LDA_BASE}/filings/"
+    params = {"filing_year": year, "page_size": 25, "ordering": "dt_posted"}
+    if since:
+        params["filing_dt_posted_after"] = since[:10]
+    calls = 0
+    while url:
+        r = _session.get(url, params=params, timeout=60)
+        calls += 1
+        if r.status_code == 429:
+            time.sleep(int(r.headers.get("Retry-After") or 60))
+            continue
+        if r.status_code != 200:
+            raise RuntimeError(f"{url.split('?')[0]}: HTTP {r.status_code}; lobbying-{year}.json unchanged")
+        page = r.json()
+        for f in page.get("results", []):
+            filings[f["filing_uuid"]] = bulk_record(f)
+        url, params = page.get("next"), None    # `next` carries the query
+        time.sleep(pause)
+    newest = max((x["posted"] for x in filings.values() if x.get("posted")), default=since)
+    meta = {"year": year, "fetched": datetime.date.today().isoformat(), "source": "lda.gov api/v1 filings",
+            "newest_posted": newest, "counts": {"filings": len(filings)}, "calls": calls}
+    tmp = path.with_name(path.name + ".part")
+    tmp.write_text(json.dumps({"meta": meta, "filings": filings}, separators=(",", ":"), sort_keys=True))
+    tmp.replace(path)
+    return meta
+
+
 if __name__ == "__main__":
     import sys
     # Load .env from this file's directory so the seed works regardless of cwd.
     load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env"))
-    from correspondence.db import init_db
-    init_db()
-    if len(sys.argv) > 1 and sys.argv[1] == "seed":
+    if len(sys.argv) > 1 and sys.argv[1] == "bulk":
+        # Default: the current and the previous Congress, the span the graph loads.
+        this = datetime.date.today().year
+        for y in [int(a) for a in sys.argv[2:]] or range(this - 3 + this % 2, this + 1):
+            print(y, json.dumps(sync_lobbying_year(y)))
+    elif len(sys.argv) > 1 and sys.argv[1] == "seed":
+        from correspondence.db import init_db
+        init_db()
         seed_lobbying_index()
     else:
-        print("usage: python lda_client.py seed")
+        print("usage: python -m sources.lda_client bulk [year ...] | seed")

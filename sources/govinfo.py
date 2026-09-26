@@ -15,7 +15,8 @@ does not change once published, so each is fetched once and kept.
 Run on the server, not in a request:
     python -m sources.govinfo billstatus            # 108th → current
     python -m sources.govinfo billstatus 119 118    # some Congresses
-    python -m sources.govinfo text                  # bill typescript, 118th and 119th
+    python -m sources.govinfo text                  # bill typescript: all versions of the
+                                                    # 118th–119th, enacted text back to the 108th
 
 The CRS summaries are in BILLSTATUS too, back to the 108th; the separate
 BILLSUM collection starts at the 113th, so it is not downloaded.
@@ -348,6 +349,40 @@ def sync_bill_text(congress, session_=None, errors=None, pause=0.1):
     return fetched
 
 
+def sync_law_text(congress, session_=None, errors=None, pause=0.1):
+    """The enrolled typescript of every bill that became law in one
+    Congress, for the Congresses before TEXT_CONGRESSES: the text of what
+    was enacted, not of every draft. The BILLS bulk listing starts at the
+    113th, so the laws are read from bills-<congress>.json instead; GPO
+    publishes the enrolled typescript back to the 103rd. Stored beside the
+    other versions, fetched once. Returns the number fetched."""
+    import gzip
+    s = session_ or _session()
+    errors = [] if errors is None else errors
+    bills_path = graph.DATA_DIR / f"bills-{congress}.json"
+    if not bills_path.exists():
+        raise RuntimeError(f"no bills-{congress}.json; run `python -m sources.govinfo billstatus {congress}` first")
+    laws = [label for label, rec in json.loads(bills_path.read_text())["instruments"].items() if rec.get("laws")]
+    out_dir = _raw("govinfo", "BILLS-htm", str(congress))
+    fetched = 0
+    for label in sorted(laws):
+        itype, number = label.split("/")
+        pkg = f"BILLS-{congress}{itype}{number}enr"
+        if (out_dir / f"{pkg}.htm.gz").exists():
+            continue
+        try:
+            t = s.get(_TEXT.format(pkg=pkg), timeout=120, allow_redirects=False)
+            t.raise_for_status()
+            if not t.content.lstrip().startswith(b"<html"):
+                raise ValueError("not a typescript page")
+            _write_atomic(out_dir / f"{pkg}.htm.gz", gzip.compress(t.content))
+            fetched += 1
+        except Exception as e:
+            errors.append(_error(_TEXT.format(pkg=pkg), e))
+        time.sleep(pause)
+    return fetched
+
+
 def sync(congresses=None):
     """Download what changed, then rebuild the bills file of each Congress
     whose zips changed (or that has no file yet). Returns {congress: meta}."""
@@ -372,13 +407,15 @@ if __name__ == "__main__":
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("billstatus", help="sync BILLSTATUS zips and write bills-<c>.json")
     p.add_argument("congress", type=int, nargs="*")
-    p = sub.add_parser("text", help="fetch the typescript of each new bill version (118th, 119th)")
+    p = sub.add_parser("text", help="bill typescript: every version (118th, 119th), enacted text before")
     p.add_argument("congress", type=int, nargs="*")
     a = ap.parse_args()
     if a.cmd == "text":
-        for c in a.congress or TEXT_CONGRESSES:
+        # Every version for the recent Congresses; only the enacted text before them.
+        for c in a.congress or range(FIRST_CONGRESS, graph.current_session()[0] + 1):
             errs = []
-            print(c, f"{sync_bill_text(c, errors=errs)} version(s) fetched", f"{len(errs)} error(s)")
+            n = sync_bill_text(c, errors=errs) if c in TEXT_CONGRESSES else sync_law_text(c, errors=errs)
+            print(c, f"{n} version(s) fetched", f"{len(errs)} error(s)")
             for e in errs[:10]:
                 print("  -", e)
     if a.cmd == "billstatus":
