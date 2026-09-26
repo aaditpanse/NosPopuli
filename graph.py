@@ -1765,87 +1765,207 @@ def _summary(nodes, edges):
     return {"nodes": len(nodes), "edges": len(edges), "by_kind": kinds, "by_predicate": preds}
 
 
-def load(source, states=None):
-    """Rebuild one source's slice of the graph in a single transaction.
-    Fail-closed: any error rolls back and the previous graph stays served.
-    Returns (summary dict, gaps)."""
-    from psycopg.types.json import Jsonb
-    from correspondence.db import _get_pool, init_db
+# Bump when the build changes what a scope contains, so every older
+# Congress reloads once instead of keeping rows the new code would not emit.
+SCOPE_VERSION = 1
+SKELETON, CURRENT = "us/skeleton", "us/current"
 
-    nodes, edges, gaps, scopes = build_source(source, states)
+
+def load_scope(cur, scope, nodes, edges, fingerprint=None):
+    """Replace one scope's rows, on the caller's cursor (so one transaction
+    can hold many scopes). COPY into staging, then set-based upserts:
+    nodes merge props and never change owner; edges take this scope. A
+    node this scope no longer emits is deleted only if no edge of any
+    scope still points at it. Fail-closed: an error rolls the caller's
+    transaction back and the previous graph stays served."""
+    from psycopg.types.json import Jsonb
+    cur.execute("""CREATE TEMP TABLE stage_node (id TEXT, kind TEXT, name TEXT, props JSONB,
+                                                 source_id TEXT, source_ref TEXT) ON COMMIT DROP""")
+    cur.execute("""CREATE TEMP TABLE stage_edge (src TEXT, predicate TEXT, dst TEXT, valid_from DATE,
+                                                 valid_to DATE, certification TEXT, source_id TEXT,
+                                                 source_ref TEXT, props JSONB) ON COMMIT DROP""")
+    with cur.copy("COPY stage_node FROM STDIN") as cp:
+        for n in nodes:
+            cp.write_row((n["id"], n["kind"], n["name"], Jsonb(n["props"]), n["source_id"], n["source_ref"]))
+    with cur.copy("COPY stage_edge FROM STDIN") as cp:
+        for e in edges:
+            cp.write_row((e["src"], e["predicate"], e["dst"], e["valid_from"], e["valid_to"],
+                          e["certification"], e["source_id"], e["source_ref"], Jsonb(e["props"])))
+    cur.execute("DELETE FROM graph_edge WHERE scope = %s", (scope,))
+    # Props merge rather than replace: a person both layers know keeps what
+    # the other loader recorded about them.
+    cur.execute("""
+        INSERT INTO graph_node (id, kind, name, props, source_id, source_ref, scope)
+        SELECT DISTINCT ON (id) id, kind, name, props, source_id, source_ref, %s FROM stage_node
+        ON CONFLICT (id) DO UPDATE SET
+            kind = excluded.kind, name = excluded.name, props = graph_node.props || excluded.props,
+            source_id = excluded.source_id, source_ref = excluded.source_ref, updated_at = NOW(),
+            scope = COALESCE(graph_node.scope, excluded.scope)""", (scope,))
+    # An edge two scopes assert (a shared seed) belongs to whichever loaded
+    # it last; either reload re-asserts it, so it is never lost.
+    cur.execute("""
+        INSERT INTO graph_edge (src, predicate, dst, valid_from, valid_to, certification,
+                                source_id, source_ref, props, scope)
+        SELECT DISTINCT ON (src, predicate, dst, source_ref)
+               src, predicate, dst, valid_from, valid_to, certification, source_id, source_ref, props, %s
+        FROM stage_edge
+        ON CONFLICT (src, predicate, dst, source_ref) DO UPDATE SET
+            valid_from = excluded.valid_from, valid_to = excluded.valid_to,
+            certification = excluded.certification, source_id = excluded.source_id,
+            props = excluded.props, scope = excluded.scope""", (scope,))
+    cur.execute("""
+        DELETE FROM graph_node n WHERE n.scope = %s
+          AND NOT EXISTS (SELECT 1 FROM stage_node s WHERE s.id = n.id)
+          AND NOT EXISTS (SELECT 1 FROM graph_edge e WHERE e.src = n.id)
+          AND NOT EXISTS (SELECT 1 FROM graph_edge e WHERE e.dst = n.id)""", (scope,))
+    cur.execute("""
+        INSERT INTO graph_scope (scope, fingerprint, loaded_at, nodes, edges) VALUES (%s, %s, NOW(), %s, %s)
+        ON CONFLICT (scope) DO UPDATE SET fingerprint = excluded.fingerprint, loaded_at = NOW(),
+            nodes = excluded.nodes, edges = excluded.edges""", (scope, fingerprint, len(nodes), len(edges)))
+    # A --fresh run loads every scope in one transaction: drop now, not at commit.
+    cur.execute("DROP TABLE stage_node, stage_edge")
+
+
+def _us_fingerprint(congress):
+    """What an older Congress's scope was built from: its bills file, the
+    legislators files (a bioguide id moves sponsors), the build's version."""
+    bills = json.loads((DATA_DIR / f"bills-{congress}.json").read_text())["meta"]
+    fetched = json.loads(FETCHED_PATH.read_text()) if FETCHED_PATH.exists() else {}
+    return json.dumps({"v": SCOPE_VERSION, "bills": bills.get("fetched"), "counts": bills.get("counts"),
+                       "legislators": [fetched.get(LEGISLATORS_SOURCE), fetched.get(HISTORICAL_SOURCE)]},
+                      sort_keys=True)
+
+
+def load_us(cur, only_current=False, force=False):
+    """The federal graph, scope by scope, in dependency order: the
+    skeleton (people must exist before anything points at them), each
+    older Congress whose inputs changed, then the current Congress, whose
+    related bills point into the older scopes. Returns {scope: (summary,
+    gaps)}."""
+    out = {}
+    nodes, edges, gaps, _ = build_source("us-congress")
+    skel_n, skel_e, cur_n, cur_e = partition(nodes, edges)
+    if not only_current:
+        load_scope(cur, SKELETON, skel_n, skel_e)
+        closed = _close_holds_in_db(sorted({n["id"] for n in skel_n if n["kind"] == "person"}), cur)
+        out[SKELETON] = (_summary(skel_n, skel_e),
+                         [f"{c['name']}'s hold on {c['post']} closed at {c['valid_to']}: {c['why']}"
+                          for c in closed])
+        current = json.loads((DATA_DIR / "legislators-current.json").read_text())
+        hist = DATA_DIR / "legislators-historical.json"
+        legislators, _ = merge_legislators(current, json.loads(hist.read_text()) if hist.exists() else [])
+        executive = json.loads((DATA_DIR / "executive.json").read_text())
+        committees = json.loads((DATA_DIR / "committees-current.json").read_text())
+        observed = (json.loads(FETCHED_PATH.read_text()) if FETCHED_PATH.exists() else {}).get(
+            "committee-membership-current") or datetime.date.today().isoformat()
+        cur.execute("SELECT scope, fingerprint FROM graph_scope")
+        loaded = dict(cur.fetchall())
+        this = current_session()[0]
+        for p in sorted(DATA_DIR.glob("bills-*.json")):
+            c = int(p.stem.split("-")[1])
+            if c >= this:
+                continue
+            scope, fp = f"us/bills/{c}", _us_fingerprint(c)
+            if not force and loaded.get(scope) == fp:
+                continue
+            bn, be, bg = build_bills_scope(c, json.loads(p.read_text()), legislators, executive,
+                                           committees, observed)
+            load_scope(cur, scope, bn, be, fp)
+            out[scope] = (_summary(bn, be), bg)
+    load_scope(cur, CURRENT, cur_n, cur_e)
+    out[CURRENT] = (_summary(cur_n, cur_e), gaps)
+    return out
+
+
+def load(source, states=None):
+    """Rebuild one source in Postgres. A county is one scope (local/<source>);
+    us-congress is the federal scopes (load_us); us/current is the current
+    Congress alone, on a skeleton already loaded. One transaction: the
+    federal scopes commit together, so a reader never sees a skeleton newer
+    than its bills. Returns {scope: (summary, gaps)}."""
+    from correspondence.db import _get_pool, init_db
+    if states:
+        raise ValueError("a delegation (--state) is for `build` only; the graph loads whole scopes")
     init_db()
     with _get_pool().connection() as conn:
         with conn.cursor() as cur:
-            cur.execute("DELETE FROM graph_edge WHERE props->>'jurisdiction' = ANY(%s)", (scopes,))
-            cur.execute("""DELETE FROM graph_node
-                           WHERE props->>'jurisdiction' = ANY(%s) AND NOT (id = ANY(%s))""",
-                        (scopes, [n["id"] for n in nodes]))
-            # Props merge rather than replace: a person both layers know
-            # keeps what the other loader recorded about them.
-            cur.executemany("""
-                INSERT INTO graph_node (id, kind, name, props, source_id, source_ref)
-                VALUES (%s, %s, %s, %s, %s, %s)
-                ON CONFLICT (id) DO UPDATE SET
-                    kind = excluded.kind, name = excluded.name,
-                    props = graph_node.props || excluded.props,
-                    source_id = excluded.source_id, source_ref = excluded.source_ref,
-                    updated_at = NOW()
-            """, [(n["id"], n["kind"], n["name"], Jsonb(n["props"]),
-                   n["source_id"], n["source_ref"]) for n in nodes])
-            # Edges outside this load's scope but re-asserted by it (the
-            # chambers' `considered` edges, shared seeds) are refreshed.
-            cur.executemany("""
-                INSERT INTO graph_edge (src, predicate, dst, valid_from, valid_to,
-                                        certification, source_id, source_ref, props)
-                VALUES (%s, %s, %s, %s::date, %s::date, %s, %s, %s, %s)
-                ON CONFLICT (src, predicate, dst, source_ref) DO UPDATE SET
-                    valid_from = excluded.valid_from, valid_to = excluded.valid_to,
-                    certification = excluded.certification, source_id = excluded.source_id,
-                    props = excluded.props
-            """, [(e["src"], e["predicate"], e["dst"], e["valid_from"], e["valid_to"],
-                   e["certification"], e["source_id"], e["source_ref"], Jsonb(e["props"]))
-                  for e in edges])
-    closed = _close_holds_in_db(sorted({n["id"] for n in nodes if n["kind"] == "person"}))
-    for c in closed:
-        gaps.append(f"{c['name']}'s hold on {c['post']} closed at {c['valid_to']}: {c['why']}")
-    return _summary(nodes, edges), gaps
+            _refuse_unscoped(cur)
+        if source in ("us-congress", "us/current"):
+            with conn.cursor() as cur:
+                return load_us(cur, only_current=source == "us/current")
+        with conn.cursor() as cur:
+            return {f"local/{source}": _load_local(cur, source)}
 
 
-def _close_holds_in_db(person_ids):
+def _load_local(cur, source):
+    nodes, edges, gaps, _ = build_source(source)
+    load_scope(cur, f"local/{source}", nodes, edges)
+    closed = _close_holds_in_db(sorted({n["id"] for n in nodes if n["kind"] == "person"}), cur)
+    return _summary(nodes, edges), gaps + [f"{c['name']}'s hold on {c['post']} closed at {c['valid_to']}: "
+                                           f"{c['why']}" for c in closed]
+
+
+def _refuse_unscoped(cur):
+    """Rows from before scopes (Phase 4) would never be deleted by a scope
+    reload: the orphan guard only sees its own scope."""
+    cur.execute("SELECT EXISTS (SELECT 1 FROM graph_node WHERE scope IS NULL)")
+    if cur.fetchone()[0]:
+        raise RuntimeError("graph_node has rows without a scope; run `python graph.py load all --fresh` once")
+
+
+def _close_holds_in_db(person_ids, cur):
     """Apply close_holds_across to every hold of these people, across every
     source already loaded — the county loader cannot see a federal term
     and vice versa, so this runs where both are visible."""
     from psycopg.rows import dict_row
     from psycopg.types.json import Jsonb
-    from correspondence.db import _get_pool
-    with _get_pool().connection() as conn:
-        with conn.cursor(row_factory=dict_row) as cur:
-            cur.execute("""
-                SELECT e.id, e.src, e.dst, e.valid_from, e.valid_to, e.props,
-                       p.name, o.name AS post
-                FROM graph_edge e JOIN graph_node p ON p.id = e.src
-                                  JOIN graph_node o ON o.id = e.dst
-                WHERE e.predicate = 'holds' AND e.src = ANY(%s)""", (person_ids,))
-            rows = cur.fetchall()
-            for r in rows:
-                r["predicate"] = "holds"
-                r["valid_from"] = r["valid_from"].isoformat() if r["valid_from"] else None
-                r["valid_to"] = r["valid_to"].isoformat() if r["valid_to"] else None
-            changed = close_holds_across(rows)
-            for r in changed:
-                cur.execute("UPDATE graph_edge SET valid_to = %s::date, props = %s WHERE id = %s",
-                            (r["valid_to"], Jsonb(r["props"]), r["id"]))
+    with cur.connection.cursor(row_factory=dict_row) as dcur:
+        dcur.execute("""
+            SELECT e.id, e.src, e.dst, e.valid_from, e.valid_to, e.props,
+                   p.name, o.name AS post
+            FROM graph_edge e JOIN graph_node p ON p.id = e.src
+                              JOIN graph_node o ON o.id = e.dst
+            WHERE e.predicate = 'holds' AND e.src = ANY(%s)""", (person_ids,))
+        rows = dcur.fetchall()
+        for r in rows:
+            r["predicate"] = "holds"
+            r["valid_from"] = r["valid_from"].isoformat() if r["valid_from"] else None
+            r["valid_to"] = r["valid_to"].isoformat() if r["valid_to"] else None
+        changed = close_holds_across(rows)
+        for r in changed:
+            dcur.execute("UPDATE graph_edge SET valid_to = %s::date, props = %s WHERE id = %s",
+                         (r["valid_to"], Jsonb(r["props"]), r["id"]))
     return [{"name": r["name"], "post": r["post"], "valid_to": r["valid_to"],
              "why": r["props"]["inferred_from"]} for r in changed]
 
 
-def load_all():
-    """Every county in the sidecar, then every member of Congress. Returns
-    {source: (summary, gaps)}."""
+def load_all(fresh=False, force=False):
+    """Every county in the sidecar, each in its own transaction, then the
+    federal scopes in one. fresh: empty both graph tables and reload every
+    scope in ONE transaction, so readers keep the old graph until the new
+    one is whole (a multi-GB transaction; the WAL archive grows with it).
+    Returns {scope: (summary, gaps)}."""
+    from correspondence.db import _get_pool, init_db
+    init_db()
     out = {}
-    for source in sorted(SOURCES):
-        out[source] = load(source)
-    out["us-congress"] = load("us-congress")
+    with _get_pool().connection() as conn:
+        if fresh:
+            with conn.transaction(), conn.cursor() as cur:
+                cur.execute("DELETE FROM graph_edge")
+                cur.execute("DELETE FROM graph_node")
+                cur.execute("DELETE FROM graph_scope")
+                for source in sorted(SOURCES):
+                    out[f"local/{source}"] = _load_local(cur, source)
+                out.update(load_us(cur, force=True))
+            return out
+        with conn.cursor() as cur:
+            _refuse_unscoped(cur)
+        conn.commit()
+        for source in sorted(SOURCES):
+            with conn.transaction(), conn.cursor() as cur:
+                out[f"local/{source}"] = _load_local(cur, source)
+        with conn.transaction(), conn.cursor() as cur:
+            out.update(load_us(cur, force=force))
     return out
 
 
@@ -1942,7 +2062,11 @@ def _topic_sql(topic):
     anything else by policy area or title."""
     ref = _bill_ref(topic)
     if ref:
-        return " i.id LIKE %s", [f"instrument/us/%/{ref[0]}/{ref[1]}"]
+        # Every Congress has an H.R. 1: a bare number is the most recent one
+        # on record, never all of them at once.
+        return (" i.id = (SELECT n.id FROM graph_node n WHERE n.kind = 'instrument' AND n.id LIKE %s"
+                " ORDER BY (n.props->>'congress')::int DESC NULLS LAST LIMIT 1)",
+                [f"instrument/us/%/{ref[0]}/{ref[1]}"])
     return _TOPIC_SQL, [f"{topic}%", f"%{topic}%"]
 
 
@@ -2229,10 +2353,20 @@ def memory_backend(nodes, edges):
                 "topic_derived_by": i["props"].get("topic_derived_by"),
                 "result": i["props"].get("result"), "meeting_id": i["props"].get("meeting_id")}
 
+    newest_of = {}
+
+    def newest(ref):
+        """The SQL's rule: the most recent Congress with this bill number."""
+        if ref not in newest_of:
+            hits = [n for n in nodes if n["kind"] == "instrument" and n["id"].startswith("instrument/us/")
+                    and n["id"].endswith(f"/{ref[0]}/{ref[1]}")]
+            newest_of[ref] = max(hits, key=lambda n: int(n["props"].get("congress") or 0))["id"] if hits else None
+        return newest_of[ref]
+
     def topic_ok(i, topic):
         ref = _bill_ref(topic)
         if ref:
-            return i["id"].startswith("instrument/us/") and i["id"].endswith(f"/{ref[0]}/{ref[1]}")
+            return i["id"] == newest(ref)
         t = topic.lower()
         return (i["props"].get("topic") or "").lower().startswith(t) or t in i["name"].lower()
 
@@ -2818,7 +2952,7 @@ if __name__ == "__main__":
     import argparse
     from dotenv import load_dotenv
     load_dotenv(_HERE / ".env")
-    sources = sorted(SOURCES) + ["us-congress", "all"]
+    sources = sorted(SOURCES) + ["us-congress", "us/current", "all"]
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     for name, help_ in (("build", "build in memory and print the summary; no database"),
@@ -2826,7 +2960,11 @@ if __name__ == "__main__":
         s = sub.add_parser(name, help=help_)
         s.add_argument("source", choices=sources)
         s.add_argument("--state", action="append",
-                       help="us-congress only: delegation(s) to load, e.g. --state VA")
+                       help="build us-congress only: delegation(s), e.g. --state VA")
+        s.add_argument("--fresh", action="store_true",
+                       help="load all: empty the graph and reload every scope in one transaction")
+        s.add_argument("--force", action="store_true",
+                       help="load all: reload older Congresses even if their inputs did not change")
     sub.add_parser("fetch", help="download the public legislators, executive and committee files to data/")
     sub.add_parser("certify-index", help="reduce older roll-call snapshots to member-congress.json")
     s = sub.add_parser("snapshot", help="fetch one session's roll calls to data/ (no args: the current session)")
@@ -2844,18 +2982,17 @@ if __name__ == "__main__":
     s.add_argument("post_id")
     s.add_argument("as_of")
     a = ap.parse_args()
-    if a.cmd == "load" and a.source == "all":
-        for source, (summary, gaps) in load_all().items():
-            print(source, json.dumps(summary["by_predicate"]))
+    if a.cmd == "load":
+        t0 = time.time()
+        result = load_all(fresh=a.fresh, force=a.force) if a.source == "all" else load(a.source, a.state)
+        for scope, (summary, gaps) in result.items():
+            print(scope, summary["nodes"], "nodes", summary["edges"], "edges", json.dumps(summary["by_predicate"]))
             for g in gaps:
                 print("  -", g)
-    elif a.cmd in ("build", "load"):
-        if a.cmd == "build":
-            nodes, edges, gaps, _ = build_source(a.source, a.state)
-            summary = _summary(nodes, edges)
-        else:
-            summary, gaps = load(a.source, a.state)
-        print(json.dumps(summary, indent=1))
+        print(f"loaded {len(result)} scope(s) in {time.time() - t0:.0f} s")
+    elif a.cmd == "build":
+        nodes, edges, gaps, _ = build_source("us-congress" if a.source == "us/current" else a.source, a.state)
+        print(json.dumps(_summary(nodes, edges), indent=1))
         print(f"{len(gaps)} gap(s):")
         for g in gaps:
             print("  -", g)

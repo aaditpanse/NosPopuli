@@ -202,6 +202,26 @@ def init_db():
             CREATE INDEX IF NOT EXISTS idx_graph_edge_dst ON graph_edge (dst, predicate);
             CREATE INDEX IF NOT EXISTS idx_graph_edge_source ON graph_edge (source_id);
 
+            -- Scopes (Phase 4): the unit a load replaces. us/skeleton,
+            -- us/bills/<congress>, us/current, local/<source>. graph_scope
+            -- records what each was built from, so an unchanged older
+            -- Congress is not reloaded.
+            ALTER TABLE graph_node ADD COLUMN IF NOT EXISTS scope TEXT;
+            ALTER TABLE graph_edge ADD COLUMN IF NOT EXISTS scope TEXT;
+            CREATE INDEX IF NOT EXISTS idx_graph_node_scope ON graph_node (scope);
+            CREATE INDEX IF NOT EXISTS idx_graph_edge_scope ON graph_edge (scope);
+            CREATE TABLE IF NOT EXISTS graph_scope (
+                scope       TEXT PRIMARY KEY,
+                fingerprint TEXT,
+                loaded_at   TIMESTAMPTZ,
+                nodes       INTEGER,
+                edges       INTEGER
+            );
+            -- Every bill since 2003 is a node; a bill is found by its name.
+            CREATE EXTENSION IF NOT EXISTS pg_trgm;
+            CREATE INDEX IF NOT EXISTS idx_graph_node_instrument_name
+                ON graph_node USING gin (name gin_trgm_ops) WHERE kind = 'instrument';
+
             -- bill_translations and flags were made in the Supabase dashboard
             -- and written through its REST client. The DDL is copied from the
             -- live schema, odd defaults included, so a fresh database matches

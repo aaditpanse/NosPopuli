@@ -1090,6 +1090,18 @@ class BillScopeTest(unittest.TestCase):
         self.assertIn("member_of", {e["predicate"] for e in skel_e})
         self.assertEqual(len(nodes + cn), len(skel_n) + len(bill_n))
 
+    def test_a_bare_bill_number_is_the_most_recent_congress_with_it(self):
+        # Every Congress has an H.R. 5184; merging them would answer about
+        # several bills at once, as merging every Warner would.
+        nodes, edges, _ = graph.build_congress(LEGISLATORS, [SNAPSHOT_WITH_SPONSORS], today=TODAY)
+        older = {"meta": {"fetched": "2026-09-26"}, "instruments": {
+            "hr/5184": {**bill_rec(None), "sponsors": ["W000831"], "introduced": "2023-05-01"}}}
+        bn, be, _ = graph.build_bills_scope(118, older, LEGISLATORS, EXECUTIVE, COMMITTEES, "2026-09-25")
+        b = graph.memory_backend(nodes + bn, edges + be)
+        out = graph.search("who sponsored HR 5184", b, today=TODAY)
+        self.assertTrue(out["rows"])
+        self.assertEqual({r["item_id"] for r in out["rows"]}, {"instrument/us/119/hr/5184"})
+
     def test_a_related_bill_with_its_own_record_is_never_a_title_only_node(self):
         # hr/77 has a record in another scope: the link is made, the node is
         # left alone, so its real name and props are never overwritten.
