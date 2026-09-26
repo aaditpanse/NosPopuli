@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 CONGRESS_API_KEY = os.getenv("CONGRESS_API_KEY")
-BASE_URL = os.getenv("BASE_URL", "https://nospopuli-production.up.railway.app")
+BASE_URL = os.getenv("BASE_URL", "https://nospopuli.org")
 
 NOTIFY_FROM    = os.getenv("NOTIFY_FROM_EMAIL", "")
 SMTP_HOST      = os.getenv("SMTP_HOST", "smtp.gmail.com")
