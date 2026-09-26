@@ -180,6 +180,15 @@ def send_notification(to_email, bill_id, bill_title, event_phrase, kind="bill"):
 # ── Watcher loop ──
 
 def _fetch_actions(congress, bill_type, bill_number):
+    """The bill's actions from the BILLSTATUS the daily sync keeps (Phase 6):
+    a state change is seen the day after GovInfo publishes it, and a run
+    costs no API call. All actions, not the 30 newest: the state is the
+    furthest any action reached."""
+    from sources import govinfo
+    if int(congress) >= govinfo.FIRST_CONGRESS:
+        rec = govinfo.bill_status(congress, bill_type, bill_number)
+        return rec["actions"] if rec else []
+    # Kept live: before the 108th Congress there is no BILLSTATUS.
     url = (f"https://api.congress.gov/v3/bill"
            f"/{congress}/{bill_type}/{bill_number}/actions")
     try:
