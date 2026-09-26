@@ -605,6 +605,49 @@ def member_congress_index(snapshots, index=None):
     return index
 
 
+BILL_LABEL = {"hr": "H.R.", "s": "S.", "hres": "H.Res.", "sres": "S.Res.", "hjres": "H.J.Res.",
+              "sjres": "S.J.Res.", "hconres": "H.Con.Res.", "sconres": "S.Con.Res."}
+
+
+def _instrument(g, iid, itype, number, congress, rec, fetched, label, fallback_title,
+                source_id, source_ref, lookup_bioguide):
+    """One bill's node and who wrote it, from its record. Instantaneous
+    `sponsored` edges on the date each name went on the bill; a withdrawn
+    cosponsor keeps the edge and the withdrawal date, because they did sign
+    it once."""
+    props = {"instrument_type": itype, "congress": congress, "number": number, "jurisdiction": US}
+    if rec.get("policy_area"):
+        # Congress.gov's own subject, not a model's reading.
+        props["topic"] = rec["policy_area"]
+        props["topic_derived_by"] = "congress.gov policyArea"
+    if rec.get("introduced"):
+        props["introduced"] = rec["introduced"]
+    if "related" in rec:
+        props["related_fetched"] = fetched
+    if "committees" in rec:
+        props["committees_fetched"] = fetched
+    if "actions" in rec:
+        # The date the presidential actions were read: "no law on record" is
+        # only true as of then.
+        props["actions_fetched"] = fetched
+    name = f"{label}: {rec.get('title') or fallback_title or ''}".strip(": ")
+    _node(g, iid, "instrument", name, props, source_id, source_ref)
+    ref = f"us/{congress}/{itype}/{number}/sponsors"
+    for who in rec.get("sponsors", []):
+        pid = lookup_bioguide(who)
+        if pid:
+            _edge(g, pid, "sponsored", iid, rec.get("introduced"), rec.get("introduced"),
+                  "ingested", "congress.gov", ref, g["nodes"][pid]["props"]["jurisdiction"],
+                  {"role": "sponsor"})
+    for co in rec.get("cosponsors", []):
+        pid = lookup_bioguide(co["id"])
+        if pid:
+            _edge(g, pid, "sponsored", iid, co.get("date"), co.get("date"),
+                  "ingested", "congress.gov", ref, g["nodes"][pid]["props"]["jurisdiction"],
+                  {"role": "original cosponsor" if co.get("original") else "cosponsor",
+                   "withdrawn": co.get("withdrawn")})
+
+
 def build_congress(legislators, snapshots, states=None, today=None, cert_index=None):
     """legislators-current.json + roll-call snapshots → (nodes, edges, gaps).
 
@@ -729,10 +772,40 @@ def build_congress(legislators, snapshots, states=None, today=None, cert_index=N
             unknown[bid] = unknown.get(bid, 0) + 1
         return pid
 
+    # Every bill with a record is a node, voted on or not. A voted bill keeps
+    # the label and the source of the first roll call on it, as before.
+    first_vote = {}
     for snap in snapshots:
-        if not snap.get("instruments"):
-            g["gaps"].append(f"snapshot {snap.get('meta', {}).get('congress')}/{snap.get('meta', {}).get('session')} "
-                             f"has no bill records (no bills-<congress>.json on disk); no `sponsored` edges from it")
+        for v in snap.get("votes", []):
+            inst = _parse_instrument(v["chamber"], v)
+            if inst and (v["congress"], *inst) not in first_vote:
+                first_vote[(v["congress"], *inst)] = v
+    by_congress = {}
+    for snap in snapshots:
+        congress = (snap.get("meta") or {}).get("congress") or \
+            next((v["congress"] for v in snap.get("votes", [])), None)
+        by_congress[congress] = by_congress.get(congress, False) or bool(snap.get("instruments"))
+        fetched = (snap.get("meta") or {}).get("instruments_fetched")
+        for label, rec in (snap.get("instruments") or {}).items():
+            itype, number = label.split("/")
+            iid = f"instrument/us/{congress}/{itype}/{number}"
+            if iid in g["nodes"]:
+                continue
+            v = first_vote.get((congress, itype, number))
+            if v:
+                _instrument(g, iid, itype, number, congress, rec, fetched,
+                            v.get("legis_num") or v.get("document_name") or f"{itype} {number}",
+                            v.get("description"), v["source_id"], v["vote_id"], lookup_bioguide)
+            else:
+                _instrument(g, iid, itype, number, congress, rec, fetched,
+                            f"{BILL_LABEL.get(itype, itype.upper())} {number}", None,
+                            "govinfo", f"us/{congress}/{itype}/{number}", lookup_bioguide)
+    for congress, has in by_congress.items():
+        if not has:
+            g["gaps"].append(f"the {congress}th Congress has no bill records (no bills-{congress}.json on disk); "
+                             f"no `sponsored` edges from it")
+
+    for snap in snapshots:
         for v in snap.get("votes", []):
             chamber = v["chamber"]
             inst = _parse_instrument(chamber, v)
@@ -741,44 +814,12 @@ def build_congress(legislators, snapshots, states=None, today=None, cert_index=N
                 continue
             itype, number = inst
             iid = f"instrument/us/{v['congress']}/{itype}/{number}"
-            label = v.get("legis_num") or v.get("document_name") or f"{itype} {number}"
-            rec = (snap.get("instruments") or {}).get(f"{itype}/{number}") or {}
             if iid not in g["nodes"]:
-                props = {"instrument_type": itype, "congress": v["congress"], "number": number,
-                         "jurisdiction": US}
-                if rec.get("policy_area"):
-                    # Congress.gov's own subject, not a model's reading.
-                    props["topic"] = rec["policy_area"]
-                    props["topic_derived_by"] = "congress.gov policyArea"
-                if rec.get("introduced"):
-                    props["introduced"] = rec["introduced"]
-                if "related" in rec:
-                    props["related_fetched"] = (snap.get("meta") or {}).get("instruments_fetched")
-                if "committees" in rec:
-                    props["committees_fetched"] = (snap.get("meta") or {}).get("instruments_fetched")
-                if "actions" in rec:
-                    # The date the presidential actions were read: "no law on
-                    # record" is only true as of then.
-                    props["actions_fetched"] = (snap.get("meta") or {}).get("instruments_fetched")
-                name = f"{label}: {rec.get('title') or v.get('description') or ''}".strip(": ")
-                _node(g, iid, "instrument", name, props, v["source_id"], v["vote_id"])
-                # Who wrote it. Instantaneous edges on the date each name
-                # went on the bill; a withdrawn cosponsor keeps the edge and
-                # the withdrawal date, because they did sign it once.
-                ref = f"us/{v['congress']}/{itype}/{number}/sponsors"
-                for who in rec.get("sponsors", []):
-                    pid = lookup_bioguide(who)
-                    if pid:
-                        _edge(g, pid, "sponsored", iid, rec.get("introduced"), rec.get("introduced"),
-                              "ingested", "congress.gov", ref, g["nodes"][pid]["props"]["jurisdiction"],
-                              {"role": "sponsor"})
-                for co in rec.get("cosponsors", []):
-                    pid = lookup_bioguide(co["id"])
-                    if pid:
-                        _edge(g, pid, "sponsored", iid, co.get("date"), co.get("date"),
-                              "ingested", "congress.gov", ref, g["nodes"][pid]["props"]["jurisdiction"],
-                              {"role": "original cosponsor" if co.get("original") else "cosponsor",
-                               "withdrawn": co.get("withdrawn")})
+                # No record for it (a nomination, or a bill GovInfo lacks):
+                # the roll call's own words name it.
+                label = v.get("legis_num") or v.get("document_name") or f"{itype} {number}"
+                _instrument(g, iid, itype, number, v["congress"], {}, None, label, v.get("description"),
+                            v["source_id"], v["vote_id"], lookup_bioguide)
             _edge(g, body_of[chamber], "considered", iid, v["date"], v["date"], "ingested",
                   v["source_id"], v["vote_id"], US,
                   {"question": v.get("question"), "result": v.get("result"),
@@ -1560,14 +1601,14 @@ def build_source(source, states=None):
         bills_path = DATA_DIR / f"bills-{congress}.json"
         if bills_path.exists():
             bills = json.loads(bills_path.read_text())
-            # Only the bills a session voted on, as the Congress.gov fetch
-            # gave: the builders take every record they are handed as a
-            # bill in the graph. Every bill becomes a node in Phase 4.
+            # Every bill of the Congress is a node, voted on or not. The
+            # records ride in one snapshot without votes, so each builder
+            # reads each record once; the roll-call files' own copies (from
+            # the old Congress.gov fetch) are dropped.
             for snap in snaps:
-                voted = {"/".join(inst) for inst in (_parse_instrument(v["chamber"], v)
-                                                     for v in snap.get("votes", [])) if inst}
-                snap["instruments"] = {k: r for k, r in bills["instruments"].items() if k in voted}
-                snap["meta"]["instruments_fetched"] = bills["meta"]["fetched"]
+                snap.pop("instruments", None)
+            snaps.insert(0, {"meta": {"congress": congress, "instruments_fetched": bills["meta"]["fetched"]},
+                             "votes": [], "instruments": bills["instruments"]})
         else:
             merge_gaps.append(f"no bills-{congress}.json: bill records come from the snapshots' own copy, "
                         f"if any (run `python -m sources.govinfo billstatus {congress}`)")
@@ -2619,8 +2660,7 @@ def answer(parsed, backend, limit=200):
         out = shape_answer(rows, [{"name": "anyone"}], topic, topic, None, truncated, predicate="sponsored")
         out.update({"ask": ask, "persons": sorted({r["person"] for r in rows}), "place_ignored": place})
         if not rows:
-            out["empty_reason"] = (f"no sponsor on disk for anything matching {topic!r} "
-                                   f"(sponsors are loaded only for the delegation and for bills with a recorded vote)")
+            out["empty_reason"] = f"no sponsor on disk for anything matching {topic!r}"
         return out
     if ask == "votes":
         persons = backend["persons"](parsed["person"])
