@@ -30,6 +30,7 @@ import json
 import pathlib
 import re
 import sys
+import threading
 import time
 import xml.etree.ElementTree as ET
 import zipfile
@@ -488,6 +489,183 @@ def sync_bill_text(congress, session_=None, errors=None, pause=0.1):
             errors.append(_error(_TEXT.format(pkg=pkg), e))
         time.sleep(pause)
     return fetched
+
+
+# ------------------------------------------------------- bill pages, local
+
+def _i(v):
+    """A count or number as Congress.gov types it: an int, when it is one."""
+    return int(v) if v and v.isdigit() else v
+
+
+def _person(el):
+    """A sponsor or cosponsor in the Congress.gov API's keys and types."""
+    p = {k: _t(el, k) for k in ("bioguideId", "fullName", "firstName", "middleName", "lastName",
+                                "party", "state")}
+    if _t(el, "district") is not None:
+        p["district"] = _i(_t(el, "district"))
+    return {k: v for k, v in p.items() if v is not None}
+
+
+def _action(a):
+    act = {k: _t(a, k) for k in ("actionDate", "actionTime", "text", "type", "actionCode")}
+    act = {k: v for k, v in act.items() if v is not None}
+    if a.find("sourceSystem") is not None:
+        src = {"code": _i(_t(a, "sourceSystem/code")), "name": _t(a, "sourceSystem/name")}
+        act["sourceSystem"] = {k: v for k, v in src.items() if v is not None}
+    committees = [{"systemCode": _t(c, "systemCode"), "name": _t(c, "name")} for c in a.findall("committees/item")]
+    if committees:
+        act["committees"] = committees
+    votes = [{"rollNumber": _i(_t(v, "rollNumber")), "url": _t(v, "url"), "chamber": _t(v, "chamber"),
+              "congress": _i(_t(v, "congress")), "date": _t(v, "date"), "sessionNumber": _i(_t(v, "sessionNumber"))}
+             for v in a.findall("recordedVotes/recordedVote")]
+    if votes:
+        act["recordedVotes"] = votes
+    return act
+
+
+def _latest(el):
+    la = {"actionDate": _t(el, "latestAction/actionDate"), "text": _t(el, "latestAction/text")}
+    return la if la["actionDate"] or la["text"] else None
+
+
+def bill_json(xml_bytes):
+    """One BILLSTATUS XML → what the bill page used to ask Congress.gov
+    for, in the API's keys and types: {"bill", "actions", "cosponsors",
+    "relatedBills", "amendments", "textVersions", "committees"}. The XML
+    wraps its lists three ways (item, recordedVote, amendment), so each is
+    read by name: a generic walk would drop the roll-call votes. Actions
+    are newest first, as the API gave them. Pure."""
+    b = ET.fromstring(xml_bytes).find("bill")
+    itype, number = _bill_id(b)
+    bill = {"congress": _i(_t(b, "congress")), "type": itype.upper(), "number": number,
+            "title": _t(b, "title"), "introducedDate": _t(b, "introducedDate"),
+            "originChamber": _t(b, "originChamber"), "originChamberCode": _t(b, "originChamberCode"),
+            "updateDate": _t(b, "updateDate"), "updateDateIncludingText": _t(b, "updateDateIncludingText"),
+            "latestAction": _latest(b),
+            "laws": [{"type": _t(x, "type"), "number": _t(x, "number")} for x in b.findall("laws/item")],
+            "sponsors": [{**_person(x), "isByRequest": _t(x, "isByRequest") or "N"}
+                         for x in b.findall("sponsors/item")],
+            "committeeReports": [{"citation": _t(x, "citation")}
+                                 for x in b.findall("committeeReports/committeeReport") if _t(x, "citation")]}
+    if _t(b, "policyArea/name"):
+        bill["policyArea"] = {"name": _t(b, "policyArea/name")}
+    bill = {k: v for k, v in bill.items() if v is not None}
+    actions = [_action(a) for a in b.findall("actions/item")]
+    actions.sort(key=lambda a: a.get("actionDate") or "", reverse=True)     # stable: XML order within a day
+    cosponsors = [{**_person(c), "sponsorshipDate": _t(c, "sponsorshipDate"),
+                   "isOriginalCosponsor": _t(c, "isOriginalCosponsor") == "True",
+                   **({"sponsorshipWithdrawnDate": _t(c, "sponsorshipWithdrawnDate")}
+                      if _t(c, "sponsorshipWithdrawnDate") else {})}
+                  for c in b.findall("cosponsors/item")]
+    related = [{"congress": _i(_t(r, "congress")), "type": (_t(r, "type") or "").upper(),
+                "number": _i(_t(r, "number")), "title": _t(r, "title"), "latestAction": _latest(r),
+                "relationshipDetails": [{"type": _t(d, "type"), "identifiedBy": _t(d, "identifiedBy")}
+                                        for d in r.findall("relationshipDetails/item")]}
+               for r in b.findall("relatedBills/item")]
+    amendments = []
+    for a in b.findall("amendments/amendment"):
+        acts = [x for x in a.findall("actions/actions/item") if _t(x, "text")]
+        amendments.append({"congress": _i(_t(a, "congress")), "type": _t(a, "type"), "number": _t(a, "number"),
+                           "description": _t(a, "description"), "purpose": _t(a, "purpose"),
+                           "chamber": _t(a, "chamber"), "updateDate": _t(a, "updateDate"),
+                           "latestAction": {"actionDate": _t(acts[0], "actionDate"), "text": _t(acts[0], "text")}
+                           if acts else None})
+    versions = [{"type": _t(v, "type"), "date": _t(v, "date"),
+                 "formats": [{"url": _t(f, "url")} for f in v.findall("formats/item")]}
+                for v in b.findall("textVersions/item")]
+    committees = []
+    for c in _all(b, "committees/item", "committees/billCommittees/item"):
+        for unit in [c] + c.findall("subcommittees/item"):
+            committees.append({"systemCode": (_t(unit, "systemCode") or "").lower(), "name": _t(unit, "name"),
+                               "chamber": _t(c, "chamber")})
+    return {"bill": bill, "actions": actions, "cosponsors": cosponsors, "relatedBills": related,
+            "amendments": amendments, "textVersions": versions, "committees": committees}
+
+
+_STATUS_CACHE, _STATUS_MAX = {}, 64
+_status_lock = threading.Lock()
+
+
+def billstatus_zip(congress, bill_type):
+    return graph.DATA_DIR / "raw" / "govinfo" / "BILLSTATUS" / str(congress) / \
+        f"BILLSTATUS-{congress}-{bill_type.lower()}.zip"
+
+
+def bill_status(congress, bill_type, number):
+    """The bill's record from the BILLSTATUS zip on disk (bill_json), or
+    None when the zip or the bill is not there. One bill page runs six
+    lookups at once, so a parsed record is kept per zip version: the first
+    opens the zip (about 30 ms for the House's), the rest copy it."""
+    import copy
+    path = billstatus_zip(congress, bill_type)
+    try:
+        mtime = path.stat().st_mtime_ns
+    except FileNotFoundError:
+        return None
+    key = (int(congress), bill_type.lower(), str(number))
+    with _status_lock:
+        hit = _STATUS_CACHE.get(key)
+        if hit and hit[0] == mtime:
+            return copy.deepcopy(hit[1])
+        try:
+            with zipfile.ZipFile(path) as z:
+                raw = z.read(f"BILLSTATUS-{congress}{bill_type.lower()}{number}.xml")
+        except KeyError:
+            return None
+        rec = bill_json(raw)
+        if len(_STATUS_CACHE) >= _STATUS_MAX:
+            _STATUS_CACHE.pop(next(iter(_STATUS_CACHE)))
+        _STATUS_CACHE[key] = (mtime, rec)
+        return copy.deepcopy(rec)
+
+
+def billstatus_date(congress, bill_type):
+    """GovInfo's date on the bill-status zip on disk for one Congress and
+    bill type ("26-Sep-2026 12:16"), or None: what a bill page names when
+    a bill is not in it."""
+    m = billstatus_zip(congress, bill_type).parent / "manifest.json"
+    if not m.exists():
+        return None
+    entry = json.loads(m.read_text()).get(f"BILLSTATUS-{congress}-{bill_type.lower()}.zip") or {}
+    return entry.get("modified")
+
+
+def bill_text_file(congress, bill_type, number, stages):
+    """The stored typescript of the furthest version, in the order `stages`
+    names (enrolled first), else the last other version on disk, else
+    None."""
+    d = graph.DATA_DIR / "raw" / "govinfo" / "BILLS-htm" / str(congress)
+    base = f"BILLS-{congress}{bill_type.lower()}{number}"
+    for stage in stages:
+        p = d / f"{base}{stage}.htm.gz"
+        if p.exists():
+            return p
+    # [a-z]: "hr1" must not match "hr10".
+    others = sorted(d.glob(f"{base}[a-z]*.htm.gz"))
+    return others[-1] if others else None
+
+
+_LAWS_CACHE = {}
+
+
+def bill_for_law(congress, law_number):
+    """(type, number) of the bill that became Public Law <congress>-<n>,
+    from the bills file, or None."""
+    path = graph.data_path("bills", congress=congress)
+    try:
+        mtime = path.stat().st_mtime_ns
+    except FileNotFoundError:
+        return None
+    with _status_lock:
+        hit = _LAWS_CACHE.get(int(congress))
+        if not hit or hit[0] != mtime:
+            index = {}
+            for key, rec in json.loads(path.read_text())["instruments"].items():
+                for law in rec.get("laws") or []:
+                    index[str(law.get("number") or "").split("-")[-1]] = tuple(key.split("/"))
+            hit = _LAWS_CACHE[int(congress)] = (mtime, index)
+    return hit[1].get(str(law_number))
 
 
 def sync(congresses=None):

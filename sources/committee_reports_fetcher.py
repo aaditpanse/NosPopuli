@@ -113,6 +113,46 @@ def _parse_citation_to_endpoint(citation: str, url_hint: str | None = None) -> t
     return int(m.group(2)), rpt_type, int(m.group(3))
 
 
+_CHAMBER = {"HRPT": "House", "SRPT": "Senate", "ERPT": "Senate"}
+
+
+def _local_reports(bill, embedded):
+    """The reports from disk: each citation's date and committee from its
+    CRPT package metadata (sources/govinfo.py keeps one file per report),
+    the committee's name from the bill's own committee list. A report whose
+    metadata the sync has not read yet is listed without a date or
+    committee, never dropped."""
+    from sources import govinfo
+    import graph
+    import json
+    rec = govinfo.bill_status(bill.get("congress"), bill.get("type") or "", bill.get("number")) or {}
+    names = {c["systemCode"]: c["name"] for c in rec.get("committees") or [] if c.get("systemCode")}
+    out = []
+    for entry in embedded:
+        triplet = _parse_citation_to_endpoint(entry.get("citation", ""))
+        if not triplet:
+            continue
+        c, t, n = triplet
+        path = graph.DATA_DIR / "raw" / "govinfo" / "CRPT" / str(c) / f"{t.lower()}{n}.json"
+        meta = json.loads(path.read_text()) if path.exists() else {}
+        part = govinfo.report_meta(entry["citation"], meta) if meta.get("v") == 2 else {"date": "", "committees": []}
+        code = (part["committees"] or [None])[0]
+        out.append({
+            "citation":             entry["citation"],
+            "title":                None,
+            "committee":            names.get(code) or (code.upper() if code else None),
+            "chamber":              _CHAMBER.get(t),
+            "issue_date":           part["date"],
+            "is_conference_report": None,
+            "report_type":          t,
+            "number":               n,
+            "part":                 int(m.group(1)) if (m := govinfo._PART.search(entry["citation"])) else 1,
+            "full_url":             _build_full_url(c, t, n),
+        })
+    out.sort(key=lambda r: r.get("issue_date") or "", reverse=True)
+    return out
+
+
 def fetch_committee_reports_for_bill(bill_data: dict) -> list[dict]:
     """
     Given the raw `bill` dict returned by `bill_fetcher.fetch_bill`, enrich each
@@ -122,6 +162,10 @@ def fetch_committee_reports_for_bill(bill_data: dict) -> list[dict]:
     embedded = (bill_data or {}).get("committeeReports") or []
     if not embedded:
         return []
+    from sources import govinfo
+    if int(bill_data.get("congress") or 0) >= govinfo.FIRST_CONGRESS:
+        return _local_reports(bill_data, embedded)
+    # Kept live: before the 108th Congress there is no BILLSTATUS or CRPT copy.
 
     triplets = []
     for entry in embedded:

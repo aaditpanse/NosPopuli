@@ -1952,6 +1952,23 @@ def _bill_detail_stream(bill_data, meta_extra, user_context, *, log_kind, noun="
     return stream
 
 
+def _not_synced(congress, bill_type, number):
+    """Why a bill page is empty. From the 108th Congress on, bills come
+    from GovInfo's bill-status files synced daily, so a missing bill is
+    either newer than the last sync or not a bill: say which file was read,
+    and never ask Congress.gov instead."""
+    import graph
+    from sources import govinfo
+    if int(congress) < govinfo.FIRST_CONGRESS:
+        return "Bill not found or unavailable."
+    label = f"{bill_type.upper()} {number} of the {graph._ordinal(int(congress))} Congress"
+    dated = govinfo.billstatus_date(congress, bill_type)
+    if not dated:
+        return f"{label} is not in the bill data on this server."
+    return (f"{label} is not in GovInfo's bill status file dated {dated}. "
+            f"A bill introduced since appears after the next daily sync.")
+
+
 @app.post("/bill")
 @limiter.limit("30/minute")
 async def get_bill(request: Request, body: BillRequest):
@@ -1964,7 +1981,7 @@ async def get_bill(request: Request, body: BillRequest):
         None, fetch_bill, body.congress, body.bill_type, body.number
     )
     if not bill_data:
-        raise HTTPException(status_code=404, detail="Bill not found or unavailable.")
+        raise HTTPException(status_code=404, detail=_not_synced(body.congress, body.bill_type, body.number))
 
     meta_extra = {"congress": body.congress, "type": body.bill_type, "number": body.number}
     stream = _bill_detail_stream(bill_data, meta_extra, body.user_context, log_kind="bill", noun="bill")

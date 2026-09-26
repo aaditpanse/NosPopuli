@@ -13,6 +13,7 @@ _text_cache_lock       = RLock()
 _cosponsors_cache_lock = RLock()
 from agents.documentor_agent import log_action
 from sources.congress_breaker import congress_get, CongressOutageError
+from sources import govinfo
 
 load_dotenv()
 
@@ -29,7 +30,26 @@ _related_cache      = TTLCache(maxsize=256, ttl=3600)
 _amendments_cache   = TTLCache(maxsize=256, ttl=3600)
 _cosponsors_cache   = TTLCache(maxsize=256, ttl=3600)
 
+def _local(congress):
+    """Whether a Congress's bills are read from the bulk files on disk.
+    BILLSTATUS starts at the 108th (2003); an older bill is still asked of
+    Congress.gov, and each such call below says so."""
+    return int(congress) >= govinfo.FIRST_CONGRESS
+
+
 def fetch_bill(congress_number, bill_type, bill_number):
+    """{"bill": record} in Congress.gov's shape, or None. From the 108th
+    Congress on it comes from BILLSTATUS on disk, and None means the bill
+    is not in the last sync: there is no live fallback, so a page never
+    mixes a live record with synced votes and text."""
+    if _local(congress_number):
+        rec = govinfo.bill_status(congress_number, bill_type, bill_number)
+        return {"bill": rec["bill"]} if rec else None
+    return _fetch_bill_live(congress_number, bill_type, bill_number)
+
+
+def _fetch_bill_live(congress_number, bill_type, bill_number):
+    """Kept live: a bill before the 108th Congress has no BILLSTATUS."""
     # Manual cache so transient None returns (network blip, 5xx, rate limit)
     # don't poison the TTL window. Only successful responses are stored.
     key = (congress_number, bill_type, bill_number)
@@ -103,8 +123,13 @@ def fetch_bill(congress_number, bill_type, bill_number):
 
 def fetch_law(congress, law_number):
     """
-    Fetches bill data by public law number.
+    Fetches bill data by public law number: the bills file names the bill
+    behind each law from the 108th Congress on.
     """
+    if _local(congress):
+        found = govinfo.bill_for_law(congress, law_number)
+        return fetch_bill(congress, found[0], int(found[1])) if found else None
+    # Kept live: before the 108th Congress there is no bills file.
     url = f"https://api.congress.gov/v3/law/{congress}/pub/{law_number}"
     
     params = {
@@ -187,23 +212,28 @@ def fetch_related_bills(congress, bill_type, bill_number, max_results=5):
     if hit is not None:
         return hit
 
-    url = f"https://api.congress.gov/v3/bill/{congress}/{bill_type}/{bill_number}/relatedbills"
-    params = {"api_key": CONGRESS_API_KEY, "format": "json", "limit": 50}
+    if _local(congress):
+        rec = govinfo.bill_status(congress, bill_type, bill_number)
+        raw = rec["relatedBills"] if rec else []
+    else:
+        # Kept live: before the 108th Congress there is no BILLSTATUS.
+        url = f"https://api.congress.gov/v3/bill/{congress}/{bill_type}/{bill_number}/relatedbills"
+        params = {"api_key": CONGRESS_API_KEY, "format": "json", "limit": 50}
 
-    try:
-        r = _session.get(url, params=params, timeout=10)
-    except Exception as e:
-        print(f"[BILL FETCHER] Related bills error: {e}")
-        return {"identical": [], "related": [], "superseded": []}
+        try:
+            r = _session.get(url, params=params, timeout=10)
+        except Exception as e:
+            print(f"[BILL FETCHER] Related bills error: {e}")
+            return {"identical": [], "related": [], "superseded": []}
 
-    if r.status_code != 200:
-        print(f"[BILL FETCHER] Related bills: HTTP {r.status_code}")
-        return {"identical": [], "related": [], "superseded": []}
+        if r.status_code != 200:
+            print(f"[BILL FETCHER] Related bills: HTTP {r.status_code}")
+            return {"identical": [], "related": [], "superseded": []}
 
-    try:
-        raw = r.json().get("relatedBills", [])
-    except Exception:
-        return {"identical": [], "related": [], "superseded": []}
+        try:
+            raw = r.json().get("relatedBills", [])
+        except Exception:
+            return {"identical": [], "related": [], "superseded": []}
 
     identical = []
     related = []
@@ -264,25 +294,30 @@ def fetch_amendments(congress, bill_type, bill_number, max_results=50):
     if hit is not None:
         return hit
 
-    url = f"https://api.congress.gov/v3/bill/{congress}/{bill_type}/{bill_number}/amendments"
-    params = {"api_key": CONGRESS_API_KEY, "format": "json", "limit": max_results}
+    if _local(congress):
+        rec = govinfo.bill_status(congress, bill_type, bill_number)
+        raw = (rec["amendments"] if rec else [])[:max_results]
+    else:
+        # Kept live: before the 108th Congress there is no BILLSTATUS.
+        url = f"https://api.congress.gov/v3/bill/{congress}/{bill_type}/{bill_number}/amendments"
+        params = {"api_key": CONGRESS_API_KEY, "format": "json", "limit": max_results}
 
-    try:
-        r = _session.get(url, params=params, timeout=10)
-    except Exception as e:
-        print(f"[BILL FETCHER] Amendments error: {e}")
-        return []
+        try:
+            r = _session.get(url, params=params, timeout=10)
+        except Exception as e:
+            print(f"[BILL FETCHER] Amendments error: {e}")
+            return []
 
-    if r.status_code == 404:
-        return []
-    if r.status_code != 200:
-        print(f"[BILL FETCHER] Amendments: HTTP {r.status_code}")
-        return []
+        if r.status_code == 404:
+            return []
+        if r.status_code != 200:
+            print(f"[BILL FETCHER] Amendments: HTTP {r.status_code}")
+            return []
 
-    try:
-        raw = r.json().get("amendments", [])
-    except Exception:
-        return []
+        try:
+            raw = r.json().get("amendments", [])
+        except Exception:
+            return []
 
     results = []
     for a in raw:
@@ -424,6 +459,16 @@ def _cacheable_size(obj):
 
 
 def _fetch_bill_text_uncached(congress, bill_type, bill_number, max_chars=8000):
+    if _local(congress):
+        # Every version GovInfo published is on disk (sources/govinfo.py
+        # text); the furthest along is shown. None is honest: no version
+        # was in the last sync.
+        import gzip
+        path = govinfo.bill_text_file(congress, bill_type, bill_number, _GOVINFO_STAGE_PRIORITY)
+        if not path:
+            return None
+        return _strip_html_to_text(gzip.decompress(path.read_bytes()).decode("utf-8", "replace"), max_chars)
+    # Kept live: before the 108th Congress there is no stored text.
     url = f"https://api.congress.gov/v3/bill/{congress}/{bill_type}/{bill_number}/text"
     params = {"api_key": CONGRESS_API_KEY, "format": "json"}
 
@@ -506,23 +551,28 @@ def fetch_cosponsors(congress, bill_type, bill_number, limit=250):
     if hit is not None:
         return hit
 
-    url = f"https://api.congress.gov/v3/bill/{congress}/{bill_type}/{bill_number}/cosponsors"
-    params = {"api_key": CONGRESS_API_KEY, "format": "json", "limit": limit}
+    if _local(congress):
+        rec = govinfo.bill_status(congress, bill_type, bill_number)
+        raw = (rec["cosponsors"] if rec else [])[:limit]
+    else:
+        # Kept live: before the 108th Congress there is no BILLSTATUS.
+        url = f"https://api.congress.gov/v3/bill/{congress}/{bill_type}/{bill_number}/cosponsors"
+        params = {"api_key": CONGRESS_API_KEY, "format": "json", "limit": limit}
 
-    try:
-        r = _session.get(url, params=params, timeout=10)
-    except Exception as e:
-        print(f"[BILL FETCHER] Cosponsors error: {e}")
-        return []
+        try:
+            r = _session.get(url, params=params, timeout=10)
+        except Exception as e:
+            print(f"[BILL FETCHER] Cosponsors error: {e}")
+            return []
 
-    if r.status_code != 200:
-        print(f"[BILL FETCHER] Cosponsors: HTTP {r.status_code}")
-        return []
+        if r.status_code != 200:
+            print(f"[BILL FETCHER] Cosponsors: HTTP {r.status_code}")
+            return []
 
-    try:
-        raw = r.json().get("cosponsors", [])
-    except Exception:
-        return []
+        try:
+            raw = r.json().get("cosponsors", [])
+        except Exception:
+            return []
 
     result = []
     for c in raw:

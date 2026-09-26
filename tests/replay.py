@@ -706,7 +706,11 @@ CASES = (
     ("GET", "/api/member/B001230", None, None, None, "member detail"),
     ("GET", "/member/finance", None, {"name": "Tammy Baldwin", "state": "WI",
                                       "chamber": "senate"}, None, "FEC"),
-    ("GET", "/api/bill/119/hr/1234/text", None, None, None, "bill text fetch"),
+    ("GET", "/api/bill/119/hr/1234/text", None, None, None, "bill text, from the stored typescript"),
+    ("GET", "/api/bill/119/hr/99999/text", None, None, None,
+     "a bill not in the last sync: no text, and no live call"),
+    ("GET", "/bill/110/hr/2/text", None, None, None,
+     "an older bill's reader page from the stored typescript and BILLSTATUS title"),
     ("GET", "/lobbying/search", None, {"q": "Lockheed"}, None,
      "LDA — no key configured here, so this records the degraded path"),
 

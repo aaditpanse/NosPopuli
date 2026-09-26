@@ -1076,6 +1076,86 @@ class VoteviewTest(unittest.TestCase):
         self.assertIn("29911 (G000286 vs X999999)", gaps[0])
 
 
+VOTED_ACTION = b"""<item><actionDate>2024-04-23</actionDate><text>Passed Senate. Record Vote Number: 154.</text>
+<type>Floor</type><sourceSystem><name>Senate</name></sourceSystem>
+<recordedVotes><recordedVote><rollNumber>154</rollNumber><url>https://www.senate.gov/v.xml</url><chamber>Senate</chamber>
+<congress>118</congress><date>2024-04-24T01:44:19Z</date><sessionNumber>2</sessionNumber></recordedVote></recordedVotes></item>"""
+AMENDMENTS = b"""<amendments><amendment><number>1906</number><congress>118</congress><type>SAMDT</type>
+<actions><count>2</count><actions><item><actionDate>2024-04-23</actionDate><type>IntroReferral</type></item>
+<item><actionDate>2024-04-22</actionDate><text>Senate amendment submitted</text></item></actions></actions></amendment></amendments>"""
+
+
+class LocalBillPageTest(unittest.TestCase):
+    """The bill page from files (Phase 6): BILLSTATUS in the Congress.gov
+    API's shape, and roll calls from the vote files. Parity checked
+    2026-09-26 on 118 HR 815 against the live API: every bill field, the 20
+    newest actions and all cosponsors equal."""
+
+    def test_the_bill_record_keeps_the_api_keys_and_types(self):
+        from sources import govinfo
+        xml = BILLSTATUS_XML.replace(b"</actions>", VOTED_ACTION + b"</actions>").replace(
+            b"</bill>", AMENDMENTS + b"</bill>")
+        r = govinfo.bill_json(xml)
+        b = r["bill"]
+        self.assertEqual((b["congress"], b["type"], b["number"]), (119, "HR", "3633"))
+        self.assertEqual(b["policyArea"], {"name": "Finance and Financial Sector"})
+        self.assertEqual(b["committeeReports"], [{"citation": "H. Rept. 119-168,Part 1"},
+                                                 {"citation": "H. Rept. 119-168,Part 2"}])
+        # Newest first, as the API gives them.
+        self.assertEqual([a["actionDate"] for a in r["actions"]], ["2025-07-20", "2025-07-17", "2024-04-23"])
+        # recordedVote is not an <item>: a generic walk loses it, and with it the seat map.
+        self.assertEqual(r["actions"][2]["recordedVotes"], [{
+            "rollNumber": 154, "url": "https://www.senate.gov/v.xml", "chamber": "Senate", "congress": 118,
+            "date": "2024-04-24T01:44:19Z", "sessionNumber": 2}])
+        self.assertEqual(r["actions"][2]["sourceSystem"], {"name": "Senate"})
+        self.assertEqual([c["isOriginalCosponsor"] for c in r["cosponsors"]], [True, False])
+        self.assertEqual(r["cosponsors"][1]["sponsorshipWithdrawnDate"], "2025-06-20")
+        self.assertEqual((r["relatedBills"][0]["type"], r["relatedBills"][0]["number"]), ("HR", 4763))
+        self.assertEqual(r["amendments"][0]["latestAction"],
+                         {"actionDate": "2024-04-22", "text": "Senate amendment submitted"})
+        self.assertEqual([c["systemCode"] for c in r["committees"]], ["hsag00", "hsag22"])
+
+    def test_a_voteview_roll_call_is_found_by_the_clerks_number(self):
+        from agents.vote_fetcher_agent import find_roll_call
+        votes = [{"chamber": "house", "roll": 1, "clerk_roll": 2, "source_id": "voteview"},
+                 {"chamber": "house", "roll": 7, "source_id": "voteview"},          # written before clerk_roll
+                 {"chamber": "senate", "roll": 2, "source_id": "senate.gov"}]
+        self.assertIs(find_roll_call(votes, "house", 2), votes[0])
+        self.assertIsNone(find_roll_call(votes, "house", 1))
+        self.assertIsNone(find_roll_call(votes, "house", 7))
+        self.assertIs(find_roll_call(votes, "senate", 2), votes[2])
+
+    def test_members_take_the_party_and_state_of_the_day(self):
+        from agents.vote_fetcher_agent import member_votes
+        switcher = {"id": {"bioguide": "S000001"}, "name": {"first": "Ann", "last": "Switch"},
+                    "terms": [{"type": "rep", "start": "2007-01-04", "end": "2009-01-03", "state": "PA",
+                               "party": "Republican"},
+                              {"type": "rep", "start": "2009-01-06", "end": "2011-01-03", "state": "PA",
+                               "party": "Democrat"}]}
+        vote = {"chamber": "house", "date": "2008-05-01", "id_kind": "bioguide",
+                "positions": {"aye": ["S000001"], "absent": ["Z999999"]}}
+        self.assertEqual(member_votes(vote, {("bioguide", "S000001"): switcher}), [
+            {"name": "Ann Switch", "party": "R", "state": "PA", "vote": "Yea"},
+            # Unknown to the legislators files: counted, never dropped.
+            {"name": "Z999999", "party": "", "state": "", "vote": "Not Voting"}])
+
+    def test_the_text_file_of_hr_1_is_not_hr_10s(self):
+        import tempfile
+        from sources import govinfo
+        with tempfile.TemporaryDirectory() as d:
+            root = pathlib.Path(d) / "raw" / "govinfo" / "BILLS-htm" / "110"
+            root.mkdir(parents=True)
+            for name in ("BILLS-110hr10ih", "BILLS-110hr1ih", "BILLS-110hr1rfs"):
+                (root / f"{name}.htm.gz").write_bytes(b"")
+            old, graph.DATA_DIR = graph.DATA_DIR, pathlib.Path(d)
+            try:
+                self.assertEqual(govinfo.bill_text_file(110, "hr", 1, ["enr", "ih"]).name, "BILLS-110hr1ih.htm.gz")
+                self.assertEqual(govinfo.bill_text_file(110, "hr", 1, ["enr"]).name, "BILLS-110hr1rfs.htm.gz")
+                self.assertIsNone(govinfo.bill_text_file(110, "hr", 2, ["ih"]))
+            finally:
+                graph.DATA_DIR = old
+
+
 OLDER_BILLS = {"meta": {"congress": 118, "fetched": "2026-09-26"}, "instruments": {
     "hr/99": {**bill_rec([acted("2024-03-01", "Signed by President."),
                           acted("2024-03-01", "Became Public Law No: 118-5.", "BecameLaw")],

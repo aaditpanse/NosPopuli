@@ -1,0 +1,18 @@
+{
+ "meta": {
+  "app_sha": "70f8089",
+  "captured": "2026-09-26T19:02:49",
+  "notes": "a bill not in the last sync: no text, and no live call",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "path": "/api/bill/119/hr/99999/text"
+ },
+ "response": {
+  "json": {
+   "text": null
+  },
+  "status": 200
+ }
+}

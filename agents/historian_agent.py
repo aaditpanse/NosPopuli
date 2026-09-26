@@ -30,8 +30,15 @@ _actions_cache = TTLCache(maxsize=256, ttl=1800)
 
 @cached(cache=_actions_cache, lock=RLock())
 def fetch_bill_actions(congress_number, bill_type, bill_number):
-    """Gets the full action history of a bill - every step it took through Congress"""
+    """Gets the full action history of a bill - every step it took through Congress.
+    From the 108th Congress on it is read from BILLSTATUS on disk: the 20
+    newest actions, as the live call returned them."""
+    from sources import govinfo
+    if int(congress_number) >= govinfo.FIRST_CONGRESS:
+        rec = govinfo.bill_status(congress_number, bill_type, bill_number)
+        return rec["actions"][:20] if rec else None
 
+    # Kept live: before the 108th Congress there is no BILLSTATUS.
     url = f"https://api.congress.gov/v3/bill/{congress_number}/{bill_type}/{bill_number}/actions"
     params = {"api_key": CONGRESS_API_KEY, "format": "json", "limit": 20}
 
