@@ -104,3 +104,24 @@ class FusionTest(unittest.TestCase):
         self.assertIsNone(as_result({"congress": 119, "bill_type": "s", "number": "5",
                                      "title": None, "law_numbers": None})["law_number"])
 
+
+
+class EvaluationTest(unittest.TestCase):
+    def test_the_pool_order_is_blind_and_stable(self):
+        from scripts.search_smoketest import blind_order
+        a = blind_order("ai regulation", ["119-s-1", "118-hr-2", "119-s-1"])
+        self.assertEqual(sorted(a), ["118-hr-2", "119-s-1"])
+        self.assertEqual(a, blind_order("ai regulation", ["118-hr-2", "119-s-1"]))
+
+    def test_recall_counts_only_yes_and_skips_half_judged_queries(self):
+        from scripts.search_smoketest import score
+        pool = [{"query": "q1", "old": ["a", "b"], "new": ["b", "c"], "pool": ["a", "b", "c"]},
+                {"query": "q2", "old": ["x"], "new": ["y"], "pool": ["x", "y"]},
+                {"query": "q3", "old": ["m"], "new": [], "pool": ["m"]}]
+        judged = {"q1": {"a": "no", "b": "yes", "c": "yes"},
+                  "q2": {"x": "partly"},                       # y unjudged
+                  "q3": {"m": "no"}}                           # nothing relevant
+        s = score(pool, judged)
+        self.assertEqual((s["queries"], s["unjudged"], s["partly"]), (1, 1, 0))
+        self.assertEqual((s["old"], s["new"]), (0.5, 1.0))
+        self.assertIsNone(s["per_query"][1]["old"])
