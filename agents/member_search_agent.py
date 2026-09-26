@@ -28,7 +28,7 @@ NICKNAMES = {
 
 # Words a person types around a name that are not part of it.
 _TITLES = {"sen", "senator", "rep", "representative", "congressman", "congresswoman", "congressperson",
-           "mr", "mrs", "ms", "dr", "hon", "the", "jr", "sr", "ii", "iii"}
+           "mr", "mrs", "ms", "dr", "hon", "the", "jr", "sr", "ii", "iii", "of", "from", "for"}
 _PARTY_NAME = {"Democrat": "Democratic"}
 _CHAMBER = {"sen": "Senate", "rep": "House of Representatives"}
 
@@ -45,19 +45,29 @@ def match_members(name, legislators):
     must match the member's first, middle or nickname (Joe → Joseph).
     Among the best matches a sitting member wins alone; otherwise two or
     more are candidates and member is None, never a guess. Pure."""
+    import graph
     asked = [w for w in _words(name) if w not in _TITLES]
     if not asked:
         return None, []
+    # A state named beside the name narrows, never disqualifies ("Vance Ohio").
+    states = {code.upper() for code, full in graph.DIVISION_NAMES.items()
+              if len(code) == 2 and (code in asked or all(w in asked for w in _words(full)))}
+    place_words = {w for code in states for w in _words(graph.DIVISION_NAMES[code.lower()]) + [code.lower()]}
     scored = []
     for leg in legislators:
         n = leg.get("name") or {}
         last = _words(n.get("last"))
         if not last or not all(w in asked for w in last):
             continue
-        given = set(_words(n.get("first")) + _words(n.get("middle")) + _words(n.get("nickname")))
-        rest = [w for w in asked if w not in last]
+        firsts = [_words(n.get(k)) for k in ("first", "middle", "nickname")]
+        given = {w for f in firsts for w in f}
+        # "J.D." is typed "JD": initials run together count as one word.
+        given |= {"".join(f) for f in firsts if f and all(len(w) == 1 for w in f)}
+        rest = [w for w in asked if w not in last and w not in place_words]
         hits = sum(1 for w in rest if w in given or NICKNAMES.get(w) in given)
         if rest and not hits:
+            continue
+        if states and not any(t.get("state") in states for t in leg.get("terms", [])):
             continue
         scored.append((hits, leg))
     if not scored:

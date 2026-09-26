@@ -1845,6 +1845,14 @@ class FecLocalFinanceTest(unittest.TestCase):
           "CAND_OFFICE": "S", "CAND_OFFICE_ST": "WI", "CAND_OFFICE_DISTRICT": "00", "CAND_ICI": "I",
           "CAND_STATUS": "C", "CAND_ELECTION_YR": "2030"}
 
+    def test_a_ballot_name_picks_one_candidate_or_none(self):
+        from sources.fec_client import pick_local_candidate
+        rows = [{"candidate_id": "H1", "name": "JOHNSON, ROBERT", "office": "H", "election_years": [2026]},
+                {"candidate_id": "H2", "name": "JOHNSON, MARY", "office": "H", "election_years": [2026]}]
+        self.assertEqual(pick_local_candidate(rows, "Bob Johnson", "H")["candidate_id"], "H1")
+        # Two equal Johnsons and no first name to tell them apart: no answer.
+        self.assertIsNone(pick_local_candidate(rows, "Johnson", "H"))
+
     def test_a_candidate_with_a_filed_summary_in_the_api_shape(self):
         from sources import fec_client as f
         comp = f.bulk_composition([self.SUMMARY])
@@ -2006,6 +2014,20 @@ class MemberLookupTest(unittest.TestCase):
 
     def test_a_wrong_first_name_matches_nobody(self):
         self.assertEqual(self.match("Adam Warner"), (None, []))
+
+    def test_initials_run_together_and_a_named_state_narrows(self):
+        from agents.member_search_agent import match_members
+        people = self.PEOPLE + [
+            {**_leg("V000137", "J.D.", "Vance"), "_source": "legislators-historical",
+             "terms": [{"type": "sen", "start": "2023-01-03", "end": "2025-01-10", "state": "OH"}]},
+            {**_leg("V000099", "John", "Vance"), "_source": "legislators-historical",
+             "terms": [{"type": "rep", "start": "1875-03-04", "end": "1877-03-03", "state": "OH"}]}]
+        pick = lambda q: [x["id"]["bioguide"] for x in filter(None, [match_members(q, people)[0]])]
+        self.assertEqual(pick("JD Vance"), ["V000137"])
+        self.assertEqual(pick("Senator Warner of Virginia"), ["W000805"])
+        # Two former Vances of Ohio, none sitting: a question, not a guess.
+        self.assertEqual(sorted(c["id"]["bioguide"] for c in match_members("Vance Ohio", people)[1]),
+                         ["V000099", "V000137"])
 
     def test_sponsorships_count_what_they_say(self):
         from agents.member_search_agent import sponsorship_summary

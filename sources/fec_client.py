@@ -229,10 +229,32 @@ def candidate_finance(name, state=None, office=None, cycle=None):
                     "election_years": [r["election_year"]]}
                    for cid, r in data["candidates"].items()
                    if (not office or r["office"] == office) and (not usps or office == "P" or r["state"] == usps)]
-        cand = _pick_candidate(results, query, office)
+        cand = pick_local_candidate(results, query, office)
         if cand:
             return finance_row(cand["candidate_id"], data["candidates"][cand["candidate_id"]], cy)
     return None
+
+
+def pick_local_candidate(results, name, office):
+    """_pick_candidate over a whole cycle's file, which the API's full-name
+    search used to narrow first: a typed first name must agree when any
+    same-surname candidate's does (Bob → Robert), and two candidates still
+    equal on office and year are no answer, never a guess. Pure."""
+    from agents.member_search_agent import NICKNAMES
+    surname = _last_name(name)
+    given = [w for w in re.findall(r"[a-z]+", (name or "").lower()) if w != surname]
+    rows = [r for r in results if surname and surname in (r.get("name") or "").lower()]
+    if given:
+        def first_names(r):
+            return set(re.findall(r"[a-z]+", (r.get("name") or "").lower().split(",", 1)[-1]))
+        agree = [r for r in rows if any(w in first_names(r) or NICKNAMES.get(w) in first_names(r) for w in given)]
+        rows = agree or rows
+    if not rows:
+        return None
+    key = lambda r: (r.get("office") == office, max(r.get("election_years") or [0]))
+    top = max(key(r) for r in rows)
+    best = [r for r in rows if key(r) == top]
+    return best[0] if len({r["candidate_id"] for r in best}) == 1 else None
 
 
 def _member(name, state, office):
@@ -686,8 +708,12 @@ def bulk_top_pacs(pas2_rows, committee_id, candidate_name, cm_names, limit=None)
     return graph.top_pacs(receipts, candidate_name, **({"limit": limit} if limit else {}))
 
 
-_PARTY_FULL = {"DEM": "DEMOCRATIC PARTY", "REP": "REPUBLICAN PARTY", "IND": "INDEPENDENT",
-               "LIB": "LIBERTARIAN PARTY", "GRE": "GREEN PARTY", "NNE": "NONE", "UNK": "UNKNOWN"}
+# FEC party codes as the API spelled them. A primary roster filters on the
+# word "democratic" or "republican", so Minnesota's DFL must carry it.
+_PARTY_FULL = {"DEM": "DEMOCRATIC PARTY", "REP": "REPUBLICAN PARTY", "DFL": "DEMOCRATIC-FARMER-LABOR",
+               "IND": "INDEPENDENT", "LIB": "LIBERTARIAN PARTY", "GRE": "GREEN PARTY",
+               "CON": "CONSTITUTION PARTY", "REF": "REFORM PARTY", "NPA": "NO PARTY AFFILIATION",
+               "UN": "UNAFFILIATED", "OTH": "OTHER", "W": "WRITE-IN", "NNE": "NONE", "UNK": "UNKNOWN"}
 _OFFICE_FULL = {"H": "House", "S": "Senate", "P": "President"}
 _ICI_FULL = {"I": "Incumbent", "C": "Challenger", "O": "Open seat"}
 

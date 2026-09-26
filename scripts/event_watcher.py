@@ -186,7 +186,12 @@ def _fetch_actions(congress, bill_type, bill_number):
     furthest any action reached."""
     from sources import govinfo
     if int(congress) >= govinfo.FIRST_CONGRESS:
-        rec = govinfo.bill_status(congress, bill_type, bill_number)
+        try:
+            rec = govinfo.bill_status(congress, bill_type, bill_number)
+        except Exception as e:
+            # One unreadable bill file must not stop the other bills' mail.
+            print(f"[WATCHER] bill data unreadable {bill_type}{bill_number}: {type(e).__name__}: {e}")
+            return []
         return rec["actions"] if rec else []
     # Kept live: before the 108th Congress there is no BILLSTATUS.
     url = (f"https://api.congress.gov/v3/bill"
