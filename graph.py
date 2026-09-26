@@ -168,7 +168,8 @@ def data_glob(kind, **fields):
 PREDICATES = ("contains", "has_body", "has_seat", "holds", "represents",
               "sponsored", "voted_on", "considered", "elected_in", "for_seat",
               "signed", "vetoed", "enacted_as", "member_of", "referred_to", "reported",
-              "related_to", "campaign_committee", "nominated")
+              "related_to", "campaign_committee", "nominated", "lobbied_on", "lobbied_for",
+              "connected_committee")
 
 # Ordered weakest → strongest. An answer reports the weakest hop it crossed.
 CERTIFICATION_RANK = {"advisory": 0, "ingested": 1, "certified": 2}
@@ -1390,6 +1391,139 @@ def load_geometry(cur, scope, geoms):
     cur.execute("DROP TABLE stage_geom")
 
 
+LOBBYING_SOURCE = "lda"
+# Bump when lobby_key or the lobbying builders change what they emit.
+NORMALIZER_VERSION = 1
+
+
+def lobbying_org_id(key):
+    return node_id("organization", f"lda/org/{key}")
+
+
+def latest_reports(filings):
+    """One report per (registrant, client, period): the latest posted. An
+    amendment replaces its original, so summing both would count the
+    income twice. Every report type counts (Q1–Q4, amendments 1A–4A,
+    terminations 1T–4T, their no-activity …Y forms); registrations (RR, RA)
+    describe no period of activity and do not. Pure."""
+    latest = {}
+    for f in filings:
+        if (f.get("type") or "R").startswith("R"):
+            continue
+        k = ((f.get("registrant") or {}).get("id"), (f.get("client") or {}).get("id"), f.get("period"))
+        if k not in latest or (f.get("posted") or "") > (latest[k].get("posted") or ""):
+            latest[k] = f
+    return list(latest.values())
+
+
+def build_lobbying_orgs(year_filings, cm_rows=()):
+    """Every organization the filings name, across all years at once so a
+    name is chosen the same way whichever year loads first: one node per
+    exact lobby_key, named by its most frequent spelling (alphabetically
+    first on a tie), with every LDA id and spelling kept on it. A committee
+    whose connected organization's name has exactly that key gets a
+    `connected_committee` edge, advisory: a shared name is evidence, not a
+    filing that says so. year_filings: iterable of filing lists, read one
+    year at a time. Returns (nodes, edges, gaps). Pure."""
+    spellings, client_ids, registrant_ids = {}, {}, {}
+    for filings in year_filings:
+        for f in filings:
+            for side, ids in (("client", client_ids), ("registrant", registrant_ids)):
+                e = f.get(side) or {}
+                name = (e.get("name") or "").strip()
+                key = lobby_key(name)
+                if not key:
+                    continue
+                spellings.setdefault(key, {})
+                spellings[key][name] = spellings[key].get(name, 0) + 1
+                if e.get("id") is not None:
+                    ids.setdefault(key, set()).add(e["id"])
+    g = _graph()
+    for key, names in spellings.items():
+        name = sorted(names.items(), key=lambda kv: (-kv[1], kv[0]))[0][0]
+        _node(g, lobbying_org_id(key), "organization", name,
+              {"natural_key": f"lda/org/{key}", "lobby_key": key,
+               "lda_client_ids": sorted(client_ids.get(key, ())),
+               "lda_registrant_ids": sorted(registrant_ids.get(key, ())),
+               "name_variants": sorted(names)[:25], "identity": "exact normalized LDA name",
+               "jurisdiction": US}, LOBBYING_SOURCE, key)
+    linked = 0
+    for row in cm_rows:
+        if row.get("CMTE_TP") not in ("Q", "N") or not row.get("CONNECTED_ORG_NM"):
+            continue
+        key = lobby_key(row["CONNECTED_ORG_NM"])
+        if key not in spellings:
+            continue
+        cid = node_id("organization", f"fec/committee/{row['CMTE_ID']}")
+        # The same node shape build_money gives a committee, so the two
+        # never overwrite each other with different names or props.
+        _node(g, cid, "organization", row.get("CMTE_NM") or row["CMTE_ID"],
+              {"natural_key": f"fec/committee/{row['CMTE_ID']}", "fec_id": row["CMTE_ID"], "jurisdiction": US},
+              "fec", row["CMTE_ID"])
+        _edge(g, lobbying_org_id(key), "connected_committee", cid, None, None, "advisory", "fec",
+              f"fec/connected/{row['CMTE_ID']}", US,
+              {"connected_org_name": row["CONNECTED_ORG_NM"],
+               "derived_by": "the committee's connected-organization name equals the LDA name's key"})
+        linked += 1
+    if linked:
+        g["gaps"].append(f"{linked} FEC committee(s) linked to a lobbying organization by name alone (advisory)")
+    return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
+
+
+def build_lobbying_year(year, filings, org_ids, bill_ids):
+    """One year's reports → (edges, gaps). `lobbied_for` (firm → client,
+    ingested: the firm's own filing says so) with the income summed;
+    `lobbied_on` (client → bill, advisory: the bill number is read from the
+    activity's free text and its Congress inferred from the filing year),
+    only for a bill that is a node, never with an amount (a report's money
+    is not per bill). A self-filer lobbies for itself: no lobbied_for.
+    Pure."""
+    g = _graph()
+    congress = congress_of(f"{year}-06-01")
+    hired, on, missing_bill, missing_org = {}, {}, set(), 0
+    for f in latest_reports(filings):
+        reg, cli = lobby_key((f.get("registrant") or {}).get("name")), lobby_key((f.get("client") or {}).get("name"))
+        rid, cid = lobbying_org_id(reg), lobbying_org_id(cli)
+        if rid not in org_ids or cid not in org_ids:
+            missing_org += 1
+            continue
+        if rid != cid:
+            h = hired.setdefault((rid, cid), {"income": 0.0, "reports": 0, "periods": set()})
+            h["income"] += float(f.get("income") or 0)
+            h["reports"] += 1
+            h["periods"].add(f.get("period"))
+        for a in f.get("activities") or []:
+            for b in a.get("bills") or []:
+                bid = f"instrument/us/{congress}/{b}"
+                if bid not in bill_ids:
+                    missing_bill.add(bid)
+                    continue
+                o = on.setdefault((cid, bid), {"registrants": set(), "issues": set(), "reports": 0, "filings": []})
+                o["registrants"].add((f.get("registrant") or {}).get("name"))
+                o["issues"].add(a.get("issue"))
+                o["reports"] += 1
+                if len(o["filings"]) < 20 and f["uuid"] not in o["filings"]:
+                    o["filings"].append(f["uuid"])
+    first, last = f"{year}-01-01", f"{year}-12-31"
+    for (rid, cid), h in hired.items():
+        _edge(g, rid, "lobbied_for", cid, first, last, "ingested", LOBBYING_SOURCE,
+              f"lda/{year}/{rid}/{cid}", US,
+              {"year": year, "income": round(h["income"], 2), "reports": h["reports"],
+               "periods": sorted(p for p in h["periods"] if p)})
+    for (cid, bid), o in on.items():
+        _edge(g, cid, "lobbied_on", bid, first, last, "advisory", LOBBYING_SOURCE,
+              f"lda/{year}/{cid}/{bid}", US,
+              {"year": year, "registrants": sorted(r for r in o["registrants"] if r)[:10],
+               "issues": sorted(i for i in o["issues"] if i), "reports": o["reports"], "filings": o["filings"],
+               "derived_by": "bill number read from the filing's activity text; Congress from the filing year"})
+    if missing_bill:
+        g["gaps"].append(f"{len(missing_bill)} bill number(s) in {year}'s filings name no bill of the "
+                         f"{_ordinal(congress)} Congress on disk (a typo, or a bill of another Congress); no edge")
+    if missing_org:
+        g["gaps"].append(f"{missing_org} report(s) of {year} with an unnamed registrant or client; skipped")
+    return list(g["edges"].values()), g["gaps"]
+
+
 def committee_id(code):
     """Congress.gov's systemCode ('hsju00', 'hsju10') is the thomas id
     lowercased plus the subcommittee id, '00' for the full committee."""
@@ -2239,10 +2373,59 @@ def load_us(cur, only_current=False, force=False):
             out[scope] = (_summary(nn, ne), ng)
     load_scope(cur, CURRENT, cur_n, cur_e, orphan_kinds=["instrument"])
     out[CURRENT] = (_summary(cur_n, cur_e), gaps)
+    if not only_current:
+        # Last: a report's bill may be one the current Congress introduced today.
+        out.update(_load_lobbying(cur, loaded, force))
     return out
 
 
 DISTRICTS = "us/districts"
+LOBBYING_ORGS = "us/lobbying/orgs"
+
+
+def _load_lobbying(cur, loaded, force):
+    """The organizations (all years at once) and then each year's edges,
+    each only when its inputs changed. A year scope's fingerprint carries
+    the organizations' too: new organizations can change its endpoints."""
+    from sources.fec_client import _CM_COLS, _bulk_rows
+    files = data_glob("lobbying")
+    if not files:
+        return {}
+    years = [int(p.stem.split("-")[1]) for p in files]
+    cm_zips = [z for c in sorted({y + y % 2 for y in years})
+               for z in [DATA_DIR / "raw" / "fec" / str(c) / "cm.zip"] if z.exists()]
+    metas = []
+    for p in files:
+        m = json.loads(p.read_text())["meta"]
+        metas.append([p.name, m.get("newest_posted"), (m.get("counts") or {}).get("filings")])
+    orgs_fp = json.dumps({"v": NORMALIZER_VERSION, "years": metas,
+                          "cm": [z.stat().st_mtime_ns for z in cm_zips]}, sort_keys=True)
+    out = {}
+    org_ids = None
+    if force or loaded.get(LOBBYING_ORGS) != orgs_fp:
+        cm_rows = [r for z in cm_zips for r in _bulk_rows(z, _CM_COLS)]
+        nodes, edges, gaps = build_lobbying_orgs(
+            (json.loads(p.read_text())["filings"].values() for p in files), cm_rows)
+        load_scope(cur, LOBBYING_ORGS, nodes, edges, orgs_fp, orphan_kinds=["organization"])
+        out[LOBBYING_ORGS] = (_summary(nodes, edges), gaps)
+        org_ids = {n["id"] for n in nodes}
+    bills_fp = [(p.name, p.stat().st_mtime_ns) for p in data_glob("bills")]
+    bill_ids = None
+    for p, year, meta in zip(files, years, metas):
+        scope = f"us/lobbying/{year}"
+        fp = json.dumps({"v": NORMALIZER_VERSION, "year": meta, "orgs": orgs_fp, "bills": bills_fp},
+                        sort_keys=True)
+        if not force and loaded.get(scope) == fp:
+            continue
+        if org_ids is None:
+            cur.execute("SELECT id FROM graph_node WHERE scope = %s", (LOBBYING_ORGS,))
+            org_ids = {r[0] for r in cur.fetchall()}
+        if bill_ids is None:
+            bill_ids = _bill_ids_on_disk()
+        edges, gaps = build_lobbying_year(year, json.loads(p.read_text())["filings"].values(), org_ids, bill_ids)
+        load_scope(cur, scope, [], edges, fp)
+        out[scope] = (_summary([], edges), gaps)
+    return out
 
 
 def _load_districts(cur, loaded, post_ids, force):

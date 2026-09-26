@@ -1257,6 +1257,64 @@ class DistrictTest(unittest.TestCase):
         self.assertEqual(graph.congress_of("1935-01-03"), 74)
 
 
+def filing(uuid, typ, period, registrant, client, income=None, bills=(), posted="2025-04-20"):
+    return {"uuid": uuid, "type": typ, "year": 2025, "period": period, "posted": posted,
+            # An amendment keeps its registration's ids, whatever the spelling.
+            "registrant": {"id": graph.lobby_key(registrant), "name": registrant},
+            "client": {"id": graph.lobby_key(client), "name": client}, "income": income,
+            "activities": [{"issue": "TRA", "description": "", "bills": list(bills)}]}
+
+
+class LobbyingTest(unittest.TestCase):
+    FILINGS = [
+        filing("a", "Q1", "first_quarter", "Akin Gump LLP", "Boeing Co", 50000, ["hr/1", "s/9"]),
+        # An amendment replaces its original: 60,000, not 110,000.
+        filing("b", "1A", "first_quarter", "Akin Gump, L.L.P.", "The Boeing Company", 60000, ["hr/1"],
+               posted="2025-05-01"),
+        filing("c", "Q2", "second_quarter", "Boeing Co", "BOEING CO", None, ["hr/1"]),   # in-house
+        filing("d", "RR", "first_quarter", "Akin Gump LLP", "Acme", None, ["hr/1"]),      # registration
+        filing("e", "Q1", "first_quarter", "Akin Gump LLP", "Acme Inc", 1000, ["hr/99999"]),
+    ]
+
+    def setUp(self):
+        self.nodes, self.oedges, _ = graph.build_lobbying_orgs(
+            [self.FILINGS], [{"CMTE_ID": "C00142711", "CMTE_NM": "BOEING CO PAC", "CMTE_TP": "Q",
+                              "CONNECTED_ORG_NM": "THE BOEING COMPANY"},
+                             {"CMTE_ID": "C00000001", "CMTE_NM": "X", "CMTE_TP": "H",
+                              "CONNECTED_ORG_NM": "BOEING CO"}])
+        self.ids = {n["id"] for n in self.nodes}
+        self.edges, self.gaps = graph.build_lobbying_year(
+            2025, self.FILINGS, self.ids, {"instrument/us/119/hr/1", "instrument/us/119/s/9"})
+
+    def test_one_organization_per_key_with_every_spelling(self):
+        boeing = graph.lobbying_org_id("BOEING")
+        (b,) = [n for n in self.nodes if n["id"] == boeing]
+        self.assertEqual(b["name"], "Boeing Co")        # the most frequent spelling (twice)
+        self.assertEqual(b["props"]["name_variants"], ["BOEING CO", "Boeing Co", "The Boeing Company"])
+        self.assertEqual(len({n["id"] for n in self.nodes if n["props"].get("lobby_key") == "AKIN GUMP"}), 1)
+
+    def test_lobbied_for_counts_the_amendment_not_both(self):
+        (h,) = [e for e in by_pred(self.edges, "lobbied_for")
+                if e["dst"] == graph.lobbying_org_id("BOEING")]
+        self.assertEqual((h["props"]["income"], h["props"]["reports"], h["certification"]), (60000.0, 1, "ingested"))
+        # The in-house filer lobbies for itself: no firm edge to itself.
+        self.assertFalse(any(e["src"] == e["dst"] for e in by_pred(self.edges, "lobbied_for")))
+
+    def test_lobbied_on_is_advisory_and_only_for_bills_on_disk(self):
+        on = {(e["src"], e["dst"]): e for e in by_pred(self.edges, "lobbied_on")}
+        e = on[(graph.lobbying_org_id("BOEING"), "instrument/us/119/hr/1")]
+        self.assertEqual(e["certification"], "advisory")
+        self.assertNotIn("income", e["props"])            # a report's money is not per bill
+        self.assertNotIn((graph.lobbying_org_id("BOEING"), "instrument/us/119/s/9"), on)   # superseded
+        self.assertFalse(any(d.endswith("/hr/99999") for _, d in on))
+        self.assertTrue(any("no bill of the 119th Congress" in g for g in self.gaps))
+
+    def test_a_pac_links_by_name_only_when_a_pac(self):
+        (c,) = by_pred(self.oedges, "connected_committee")
+        self.assertEqual((c["src"], c["certification"]), (graph.lobbying_org_id("BOEING"), "advisory"))
+        self.assertEqual(c["dst"], graph.node_id("organization", "fec/committee/C00142711"))
+
+
 class DataLayoutTest(unittest.TestCase):
     def test_every_dataset_has_one_path_and_the_repo_mirrors_it(self):
         with mock.patch.object(graph, "DATA_DIR", pathlib.Path("/srv/bulk")):
@@ -1317,7 +1375,8 @@ class VocabularyTest(unittest.TestCase):
         self.assertEqual(set(graph.PREDICATES), {
             "contains", "has_body", "has_seat", "holds", "represents", "sponsored", "voted_on",
             "considered", "elected_in", "for_seat", "signed", "vetoed", "enacted_as", "member_of",
-            "referred_to", "reported", "related_to", "campaign_committee", "nominated"})
+            "referred_to", "reported", "related_to", "campaign_committee", "nominated", "lobbied_on",
+            "lobbied_for", "connected_committee"})
 
 
 class ParseInstrumentTest(unittest.TestCase):
