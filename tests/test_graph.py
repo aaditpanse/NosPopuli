@@ -981,6 +981,59 @@ class BillStatusTest(unittest.TestCase):
         self.assertEqual(errors, ["CRPT 119/HRPT/168: no package metadata"])
 
 
+VV_MEMBERS = """congress,chamber,icpsr,state_icpsr,district_code,state_abbrev,party_code,occupancy,last_means,bioname,bioguide_id,born,died
+110,President,99910,99,0,USA,200,,,"BUSH, George Walker",,1946,
+110,House,20750,40,9,VA,200,,,"BOUCHER, Frederick",B000657,1946,
+110,House,29911,40,5,VA,200,,,"GOODE, Virgil",G000286,1946,
+110,House,11111,40,1,VA,100,,,"NOBODY, Known",,1900,
+"""
+VV_ROLLCALLS = """congress,chamber,rollnumber,date,session,clerk_rollnumber,majority_requirement,yea_count,nay_count,nominate_mid_1,nominate_mid_2,nominate_spread_1,nominate_spread_2,nominate_log_likelihood,bill_number,vote_result,vote_desc,vote_question,dtl_desc
+110,House,1,2007-01-04,,2,,,,,,,,,HRES5,Passed,,On Ordering the Previous Question,
+110,House,2,2008-03-01,,3,,,,,,,,,,Passed,,Call of the House,
+"""
+VV_VOTES = """congress,chamber,rollnumber,icpsr,cast_code,prob
+110,House,1,20750,1,99
+110,House,1,29911,9,50
+110,House,1,11111,6,50
+110,House,2,20750,0,0
+110,House,2,29911,5,50
+"""
+
+
+class VoteviewTest(unittest.TestCase):
+    """sources/voteview.py. Checked 2026-09-26 against the clerks' 118th
+    House files: every position agreed on 1,215 roll calls; the 12 that
+    differed were Speaker elections, which the clerk records by name."""
+
+    def setUp(self):
+        from sources import voteview
+        self.v = voteview
+
+    def test_positions_ids_and_years(self):
+        gaps = []
+        by_year = self.v.convert(110, "H", VV_VOTES, VV_ROLLCALLS, VV_MEMBERS,
+                                 {"20750": "B000657", "29911": "G000286"}, gaps)
+        self.assertEqual(sorted(by_year), ["2007", "2008"])
+        v = by_year["2007"][0]
+        self.assertEqual((v["vote_id"], v["legis_num"], v["source_id"], v["id_kind"]),
+                         ("us/110/voteview/house/1", "HRES 5", "voteview", "bioguide"))
+        # 9 is "not voting", the clerk's absent — never present.
+        self.assertEqual(v["positions"], {"aye": ["B000657"], "absent": ["G000286"]})
+        self.assertEqual(graph._parse_instrument("house", v), ("hres", "5"))
+        # 0 is "not a member then": no position at all.
+        self.assertEqual(by_year["2008"][0]["positions"], {"no": ["G000286"]})
+        self.assertIsNone(graph._parse_instrument("house", by_year["2008"][0]))
+        self.assertEqual(gaps, ["110 house: 1 member(s) with no bioguide id in Voteview; "
+                                "their positions are not recorded"])
+
+    def test_an_id_the_legislators_file_contradicts_is_dropped(self):
+        gaps = []
+        by_year = self.v.convert(110, "H", VV_VOTES, VV_ROLLCALLS, VV_MEMBERS,
+                                 {"20750": "B000657", "29911": "X999999"}, gaps)
+        self.assertEqual(by_year["2007"][0]["positions"], {"aye": ["B000657"]})
+        self.assertIn("29911 (G000286 vs X999999)", gaps[0])
+
+
 class VocabularyTest(unittest.TestCase):
     def test_the_predicate_set_is_pinned(self):
         # A new relation type is a schema change: it lands here on purpose.
