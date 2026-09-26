@@ -25,6 +25,7 @@ seeds for a county are hand-written per source in SOURCES.
 """
 
 import datetime
+import hashlib
 import json
 import os
 import pathlib
@@ -1290,6 +1291,105 @@ def build_nominations(congress, noms, exec_holds, senate_votes=()):
     return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
 
 
+def _ordinal(n):
+    return f"{n}{'th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')}"
+
+
+_STATE_CODE_CI = {name.lower(): code for name, code in STATE_CODE.items()}
+DISTRICTS_SOURCE = "lewis-ucla"
+
+
+def district_features(path):
+    """One Lewis et al. GeoJSON file → its features with the geometry as
+    GeoJSON text: 9,445 features parsed into Python objects at once would
+    take several GB, their text about 1.5 GB. The geometry goes to the
+    loader, never into a node."""
+    data = json.loads(pathlib.Path(path).read_text())
+    feats = data.get("features") or []
+    out = []
+    for f in feats:
+        p = f.get("properties") or {}
+        st = _STATE_CODE_CI.get((p.get("statename") or "").lower())
+        start, end = int(p.get("startcong") or 0), int(p.get("endcong") or 0)
+        n = int(p.get("district") or 0)
+        out.append({"state": st, "district": n, "start": start, "end": end, "lewis_id": p.get("id"),
+                    "sole": len(feats) == 1, "file": pathlib.Path(path).name,
+                    "geometry": json.dumps(f["geometry"], separators=(",", ":")) if f.get("geometry") else None})
+    return out
+
+
+def build_districts(features, house_post_ids):
+    """District shapes → (nodes, edges, gaps, geometry rows). One jurisdiction
+    node per shape and span of Congresses; the state `contains` it for that
+    span; the House post `represents` it once per Congress, dated by
+    congress_span. A district 0 is the at-large seat (cd:1, as post_for
+    keys it) only when it is the state's sole shape in that span: a state
+    with an at-large seat beside numbered ones would give cd:1 two shapes.
+    Pure."""
+    g = _graph()
+    geoms, unmatched, mixed_at_large, no_post = [], 0, 0, 0
+    for f in features:
+        st, n = f["state"], f["district"]
+        if st is None or not f["start"] or not f["end"] or not f["geometry"]:
+            unmatched += 1
+            continue
+        if n == 0:
+            if not f["sole"]:
+                mixed_at_large += 1
+                continue
+            n = 1
+        div = f"{US}/state:{st}"
+        sid = f"{div}/cd:{n}/shape:{f['start']}-{f['end']}"
+        first, _ = congress_span(f["start"])
+        _, last = congress_span(f["end"])
+        span = _ordinal(f["start"]) + (f"–{_ordinal(f['end'])}" if f["end"] != f["start"] else "")
+        _node(g, sid, "jurisdiction", f"{st.upper()}-{n} ({span} Congress)",
+              {"level": "district", "state": st, "district": n, "congress_from": f["start"],
+               "congress_to": f["end"], "lewis_id": f["lewis_id"], "jurisdiction": div},
+              DISTRICTS_SOURCE, f["file"])
+        if div not in g["nodes"]:
+            _node(g, div, "jurisdiction", DIVISION_NAMES.get(st, st.upper()),
+                  {"level": "state", "jurisdiction": div}, DISTRICTS_SOURCE)
+        _edge(g, div, "contains", sid, first, last, "ingested", DISTRICTS_SOURCE, f"lewis/{f['lewis_id']}",
+              div, {"congress_from": f["start"], "congress_to": f["end"]})
+        post = node_id("post", f"us/house/{st}/cd:{n}")
+        if post in house_post_ids:
+            for c in range(f["start"], f["end"] + 1):
+                a, b = congress_span(c)
+                _edge(g, post, "represents", sid, a, b, "ingested", DISTRICTS_SOURCE,
+                      f"lewis/{f['lewis_id']}/{c}", div, {"congress": c})
+        else:
+            no_post += 1
+        geoms.append((sid, f["geometry"]))
+    if unmatched:
+        g["gaps"].append(f"{unmatched} district shape(s) with no state, Congress or geometry; skipped")
+    if mixed_at_large:
+        g["gaps"].append(f"{mixed_at_large} at-large shape(s) beside numbered districts in the same Congresses; "
+                         f"not loaded (the seat keys at-large as cd:1, which a numbered district also is)")
+    if no_post:
+        g["gaps"].append(f"{no_post} district shape(s) with no House seat on record (no member held it in the "
+                         f"legislators files); the shape is loaded without `represents`")
+    return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"], geoms
+
+
+def load_geometry(cur, scope, geoms):
+    """District geometry for nodes already in this transaction's scope. The
+    shapes are NAD83 (EPSG:4269) as published; stored as WGS84 multipolygons,
+    with invalid rings repaired rather than the load refused."""
+    cur.execute("DELETE FROM graph_geometry WHERE scope = %s", (scope,))
+    cur.execute("CREATE TEMP TABLE stage_geom (node_id TEXT, geojson TEXT) ON COMMIT DROP")
+    with cur.copy("COPY stage_geom FROM STDIN") as cp:
+        for nid, geom in geoms:
+            cp.write_row((nid, geom))
+    cur.execute("""
+        INSERT INTO graph_geometry (node_id, geom, scope)
+        SELECT node_id, ST_Multi(ST_CollectionExtract(ST_MakeValid(
+                   ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON(geojson), 4269), 4326)), 3)), %s
+        FROM stage_geom
+        ON CONFLICT (node_id) DO UPDATE SET geom = excluded.geom, scope = excluded.scope""", (scope,))
+    cur.execute("DROP TABLE stage_geom")
+
+
 def committee_id(code):
     """Congress.gov's systemCode ('hsju00', 'hsju10') is the thomas id
     lowercased plus the subcommittee id, '00' for the full committee."""
@@ -2108,6 +2208,7 @@ def load_us(cur, only_current=False, force=False):
         cur.execute("SELECT scope, fingerprint FROM graph_scope")
         loaded = dict(cur.fetchall())
         this = current_session()[0]
+        out.update(_load_districts(cur, loaded, {n["id"] for n in skel_n if n["kind"] == "post"}, force))
         for p in data_glob("bills"):
             c = int(p.stem.split("-")[1])
             if c >= this:
@@ -2139,6 +2240,34 @@ def load_us(cur, only_current=False, force=False):
     load_scope(cur, CURRENT, cur_n, cur_e, orphan_kinds=["instrument"])
     out[CURRENT] = (_summary(cur_n, cur_e), gaps)
     return out
+
+
+DISTRICTS = "us/districts"
+
+
+def _load_districts(cur, loaded, post_ids, force):
+    """The district shapes scope, when PostGIS is there and the shapes or
+    the legislators files changed. Without PostGIS it is skipped and says
+    so: the rest of the federal load does not depend on it."""
+    cur.execute("SELECT 1 FROM pg_extension WHERE extname = 'postgis'")
+    if cur.fetchone() is None:
+        return {DISTRICTS: ({"nodes": 0, "edges": 0, "by_kind": {}, "by_predicate": {}},
+                            ["PostGIS is not installed: district shapes are not loaded"])}
+    raw = DATA_DIR / "raw" / "districts"
+    files = sorted(raw.glob("*.geojson"))
+    manifest = raw / "manifest.json"
+    fetched = json.loads(_fetched_path().read_text()) if _fetched_path().exists() else {}
+    fp = json.dumps({"v": SCOPE_VERSION, "files": len(files),
+                     "manifest": hashlib.sha1(manifest.read_bytes()).hexdigest() if manifest.exists() else None,
+                     "legislators": [fetched.get(LEGISLATORS_SOURCE), fetched.get(HISTORICAL_SOURCE)]},
+                    sort_keys=True)
+    if not files or (not force and loaded.get(DISTRICTS) == fp):
+        return {}
+    features = [f for p in files for f in district_features(p)]
+    nodes, edges, gaps, geoms = build_districts(features, post_ids)
+    load_scope(cur, DISTRICTS, nodes, edges, fp, orphan_kinds=["jurisdiction"])
+    load_geometry(cur, DISTRICTS, geoms)
+    return {DISTRICTS: (_summary(nodes, edges), gaps)}
 
 
 def load(source, states=None):
@@ -2409,6 +2538,52 @@ def votes(person_query, topic=None, limit=200):
                 return shape_answer([], [], person_query, topic)
             rows, total, truncated = _pg_votes(cur, [p["id"] for p in persons], topic, limit)
     return shape_answer(rows, persons, person_query, topic, total, truncated)
+
+
+def congress_of(on_date):
+    """The Congress sitting on a date (ISO), March starts included. Pure."""
+    d = str(on_date)[:10]
+    c = (int(d[:4]) - 1789) // 2 + 1
+    return c - 1 if d < congress_span(c)[0] else c
+
+
+def districts_at(lon, lat, as_of):
+    """Who represented a point in the House on a date: the district shape
+    of that date's Congress that covers the point, the seat that represents
+    it in that Congress, and the seat's holder that day. No shape is said
+    as such; two shapes (overlapping plans on disk) return a question, never
+    a pick. Needs PostGIS; raises if the database is not there, and the
+    caller fails open."""
+    from psycopg.rows import dict_row
+    from correspondence.db import _get_pool
+    congress = congress_of(as_of)
+    with _get_pool().connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute("""
+                SELECT n.id, n.name, n.props FROM graph_geometry gg JOIN graph_node n ON n.id = gg.node_id
+                WHERE ST_Covers(gg.geom, ST_SetSRID(ST_Point(%s, %s), 4326))
+                  AND (n.props->>'congress_from')::int <= %s AND (n.props->>'congress_to')::int >= %s""",
+                        (lon, lat, congress, congress))
+            shapes = cur.fetchall()
+            if len(shapes) == 1:
+                cur.execute("""SELECT src FROM graph_edge WHERE predicate = 'represents' AND dst = %s
+                               AND (props->>'congress')::int = %s""", (shapes[0]["id"], congress))
+                post = cur.fetchone()
+    out = {"congress": congress, "as_of": str(as_of)[:10], "method": "district shapes (Lewis et al., UCLA)"}
+    if not shapes:
+        return out | {"error": f"no district shape on disk covers this point for the {_ordinal(congress)} Congress"}
+    if len(shapes) > 1:
+        return out | {"ambiguous": True, "candidates": [s["name"] for s in shapes],
+                      "question": "this point falls inside more than one district shape on disk; which one?"}
+    shape = shapes[0]
+    out |= {"district": shape["name"], "shape_id": shape["id"]}
+    if post is None:
+        return out | {"holders": [], "empty_reason": "no House seat on record represents this shape"}
+    holders = seat_holder(post["src"], str(as_of)[:10])
+    return out | {"post_id": post["src"],
+                  "holders": [{"name": h["name"], "valid_from": str(h["valid_from"]) if h["valid_from"] else None,
+                               "valid_to": str(h["valid_to"]) if h["valid_to"] else None,
+                               "certification": h["certification"]} for h in holders]}
 
 
 def seat_holder(post_id, as_of):

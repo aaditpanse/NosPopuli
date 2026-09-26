@@ -672,6 +672,8 @@ CASES = (
     ("POST", "/resolve-address", {"address": "3701 Pender Dr, Fairfax VA"}, None, None,
      "Census geocoder via urllib"),
     ("POST", "/resolve-point", {"lat": 38.85, "lon": -77.30}, None, None, "reverse geocode"),
+    ("POST", "/resolve-point", {"lat": 38.85, "lon": -77.30, "date": "1995-06-01"}, None, None,
+     "contract: a past date reads district shapes; the harness has no database, so it fails open"),
     ("POST", "/resolve-district", {"geoid": "5111"}, None, None, "district lookup"),
     ("GET", "/geo/guess", None, None, None, "ip-api.com via httpx"),
     ("GET", "/api/member/B001230", None, None, None, "member detail"),
@@ -730,7 +732,7 @@ def _slug(method, path, body, params=None):
     stem = f"{method}{path}".translate(_SLUG).strip("_").lower()
     hint = ""
     if isinstance(body, dict):
-        q = str(body.get("question") or body.get("name") or "")
+        q = str(body.get("question") or body.get("name") or body.get("date") or "")
         hint = "__" + "_".join(q.lower().split()[:3]) if q else ""
     if params:
         hint += "__" + "_".join(f"{k}-{v}" for k, v in sorted(params.items()))

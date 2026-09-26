@@ -1,0 +1,23 @@
+{
+ "meta": {
+  "app_sha": "40219ae",
+  "captured": "2026-09-26T14:28:44",
+  "notes": "contract: a past date reads district shapes; the harness has no database, so it fails open",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "date": "1995-06-01",
+   "lat": 38.85,
+   "lon": -77.3
+  },
+  "method": "POST",
+  "path": "/resolve-point"
+ },
+ "response": {
+  "json": {
+   "detail": "district shapes are not available right now"
+  },
+  "status": 404
+ }
+}

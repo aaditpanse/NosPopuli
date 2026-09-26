@@ -247,6 +247,7 @@ class AddressRequest(BaseModel):
 class PointRequest(BaseModel):
     lat: float
     lon: float
+    date: Optional[str] = None   # ISO; before the current Congress, answered from district shapes
 
 
 class GeoidRequest(BaseModel):
@@ -1201,6 +1202,19 @@ async def resolve_point_endpoint(request: Request, body: PointRequest):
     """Resolve a lat/lon (browser geolocation or a click on the district map)
     to its congressional district + representatives."""
     loop = asyncio.get_event_loop()
+    if body.date:
+        import graph
+        if graph.congress_of(body.date) < graph.current_session()[0]:
+            # A past date: the district of that Congress, from the shapes.
+            # Fail-open: without the database or PostGIS the answer says so.
+            try:
+                result = await loop.run_in_executor(None, graph.districts_at, body.lon, body.lat, body.date)
+            except Exception as e:
+                print(f"[API] districts_at failed: {type(e).__name__}: {e}")
+                result = {"error": "district shapes are not available right now", "as_of": body.date}
+            if result.get("error"):
+                raise HTTPException(status_code=404, detail=result["error"])
+            return result
     result = await loop.run_in_executor(None, resolve_point, body.lat, body.lon)
     if result.get("error"):
         raise HTTPException(status_code=404, detail=result["error"])

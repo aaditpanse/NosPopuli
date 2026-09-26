@@ -1212,6 +1212,51 @@ class NominationTest(unittest.TestCase):
         self.assertEqual(b["items"]("PN1020", 10), [])
 
 
+def district_feature(st, n, start, end, sole):
+    return {"state": st, "district": n, "start": start, "end": end, "lewis_id": f"{st}{start}{n}",
+            "sole": sole, "file": f"{st}.geojson", "geometry": '{"type":"MultiPolygon","coordinates":[]}'}
+
+
+class DistrictTest(unittest.TestCase):
+    def setUp(self):
+        self.posts = {graph.node_id("post", "us/house/va/cd:1"), graph.node_id("post", "us/house/va/cd:11")}
+
+    def test_a_shape_per_span_and_a_dated_represents_per_congress(self):
+        nodes, edges, gaps, geoms = graph.build_districts(
+            [district_feature("va", 11, 103, 107, False)], self.posts)
+        (shape,) = [n for n in nodes if n["props"].get("level") == "district"]
+        self.assertEqual(shape["id"], f"{graph.US}/state:va/cd:11/shape:103-107")
+        self.assertEqual(shape["name"], "VA-11 (103rd–107th Congress)")
+        reps = sorted(by_pred(edges, "represents"), key=lambda e: e["valid_from"])
+        self.assertEqual([(e["props"]["congress"], e["valid_from"], e["valid_to"]) for e in reps][:2],
+                         [(103, "1993-01-03", "1995-01-03"), (104, "1995-01-03", "1997-01-03")])
+        self.assertEqual(len(reps), 5)
+        (c,) = by_pred(edges, "contains")
+        self.assertEqual((c["valid_from"], c["valid_to"]), ("1993-01-03", "2003-01-03"))
+        self.assertEqual([g[0] for g in geoms], [shape["id"]])
+
+    def test_at_large_is_cd_1_only_when_it_is_the_states_sole_shape(self):
+        sole, _, _, _ = graph.build_districts([district_feature("va", 0, 5, 5, True)], self.posts)
+        self.assertIn(f"{graph.US}/state:va/cd:1/shape:5-5", {n["id"] for n in sole})
+        # March starts before the 74th Congress.
+        mixed_n, _, gaps, _ = graph.build_districts(
+            [district_feature("va", 0, 30, 30, False), district_feature("va", 1, 30, 30, False)], self.posts)
+        self.assertEqual({n["id"] for n in mixed_n if n["props"].get("level") == "district"},
+                         {f"{graph.US}/state:va/cd:1/shape:30-30"})
+        self.assertTrue(any("at-large" in g for g in gaps))
+
+    def test_a_shape_no_seat_ever_held_has_no_represents(self):
+        _, edges, gaps, _ = graph.build_districts([district_feature("va", 12, 50, 50, False)], self.posts)
+        self.assertEqual(by_pred(edges, "represents"), [])
+        self.assertTrue(any("no House seat on record" in g for g in gaps))
+
+    def test_the_congress_of_a_date_follows_march_starts(self):
+        self.assertEqual(graph.congress_of("1995-06-01"), 104)
+        self.assertEqual(graph.congress_of("1850-02-01"), 31)    # the 31st began 4 March 1849
+        self.assertEqual(graph.congress_of("1935-01-02"), 73)
+        self.assertEqual(graph.congress_of("1935-01-03"), 74)
+
+
 class DataLayoutTest(unittest.TestCase):
     def test_every_dataset_has_one_path_and_the_repo_mirrors_it(self):
         with mock.patch.object(graph, "DATA_DIR", pathlib.Path("/srv/bulk")):

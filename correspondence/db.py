@@ -252,6 +252,19 @@ def init_db():
                 congress        TEXT
             );
         """)
+        # District shapes (graph_geometry) need PostGIS, which only a
+        # superuser can install. Fail-open: without it the table is not made,
+        # the app starts, and the districts scope says why it is missing.
+        cur.execute("SELECT 1 FROM pg_extension WHERE extname = 'postgis'")
+        if cur.fetchone():
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS graph_geometry (
+                    node_id TEXT PRIMARY KEY REFERENCES graph_node(id) ON DELETE CASCADE,
+                    geom    geometry(MultiPolygon, 4326) NOT NULL,
+                    scope   TEXT
+                );
+                CREATE INDEX IF NOT EXISTS idx_graph_geometry_geom ON graph_geometry USING gist (geom);
+            """)
     _bootstrap_known_elections_from_file()
 
 
