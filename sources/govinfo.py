@@ -392,6 +392,15 @@ def sync(congresses=None):
     for c in congresses:
         errors = []
         fetched = sync_billstatus_zips(c, s, errors)
+        raw = _raw("govinfo", "BILLSTATUS", str(c))
+        missing = [t for t in BILL_TYPES if not (raw / f"BILLSTATUS-{c}-{t}.zip").exists()]
+        if errors and missing:
+            # A type whose listing failed and whose zip was never saved would
+            # be silently absent: a Congress without its Senate bills reads
+            # as one. Keep the old file and retry tomorrow.
+            out[c] = {"congress": c, "unchanged": True, "download_errors": errors
+                      + [f"not rebuilt: no zip on disk for {', '.join(missing)}"]}
+            continue
         if fetched or not (graph.DATA_DIR / f"bills-{c}.json").exists():
             meta = build_bills(c, s)
             meta["download_errors"] = errors
