@@ -1060,6 +1060,8 @@ class VoteviewTest(unittest.TestCase):
         # 9 is "not voting", the clerk's absent — never present.
         self.assertEqual(v["positions"], {"aye": ["B000657"], "absent": ["G000286"]})
         self.assertEqual(graph._parse_instrument("house", v), ("hres", "5"))
+        # Voteview's roll 1 is the clerk's roll 2: a bill's actions cite the clerk's.
+        self.assertEqual((v["roll"], v["clerk_roll"]), (1, 2))
         # 0 is "not a member then": no position at all.
         self.assertEqual(by_year["2008"][0]["positions"], {"no": ["G000286"]})
         self.assertIsNone(graph._parse_instrument("house", by_year["2008"][0]))

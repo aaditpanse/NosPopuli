@@ -123,8 +123,14 @@ def convert(congress, chamber_code, votes_csv, rollcalls_csv, members_csv, by_ic
         if rc["chamber"] == "President":
             continue
         roll = int(rc["rollnumber"])
+        # Voteview numbers a Congress's roll calls straight through and skips
+        # the House's quorum calls, so its number is not the clerk's: House
+        # roll 2 of the 110th is Voteview's 1. A bill's actions cite the
+        # clerk's number, so it is kept to find the vote from the bill.
+        clerk = (rc.get("clerk_rollnumber") or "").strip()
         vote = {"vote_id": f"us/{congress}/voteview/{chamber}/{roll}", "chamber": chamber,
-                "congress": congress, "roll": roll, "date": rc["date"],
+                "congress": congress, "roll": roll, "clerk_roll": int(clerk) if clerk.isdigit() else None,
+                "date": rc["date"],
                 "question": rc.get("vote_question") or None, "result": rc.get("vote_result") or None,
                 "description": rc.get("vote_desc") or rc.get("dtl_desc") or "",
                 "id_kind": "bioguide", "positions": positions.get(rc["rollnumber"], {}),
