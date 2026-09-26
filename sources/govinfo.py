@@ -15,6 +15,10 @@ does not change once published, so each is fetched once and kept.
 Run on the server, not in a request:
     python -m sources.govinfo billstatus            # 108th → current
     python -m sources.govinfo billstatus 119 118    # some Congresses
+    python -m sources.govinfo text                  # bill typescript, 118th and 119th
+
+The CRS summaries are in BILLSTATUS too, back to the 108th; the separate
+BILLSUM collection starts at the 113th, so it is not downloaded.
 """
 
 import datetime
@@ -296,6 +300,54 @@ def build_bills(congress, session_=None):
     return out["meta"]
 
 
+TEXT_CONGRESSES = (118, 119)
+_TEXT = "https://www.govinfo.gov/content/pkg/{pkg}/html/{pkg}.htm"
+
+
+def sync_bill_text(congress, session_=None, errors=None, pause=0.1):
+    """The typescript of every published version of every bill in one
+    Congress: GPO's 70-column text, which render/bill_text_format.py parses
+    and the BILLS XML cannot reproduce. A version never changes once
+    published, so each is fetched once and kept gzipped; the BILLS bulk
+    listing names the versions. Fail-open per version: a failure is
+    recorded and retried on the next run. Returns the number fetched."""
+    import gzip
+    s = session_ or _session()
+    errors = [] if errors is None else errors
+    out_dir = _raw("govinfo", "BILLS-htm", str(congress))
+    have = {p.name[:-len(".htm.gz")] for p in out_dir.glob("*.htm.gz")}
+    fetched = 0
+    for sess in (1, 2):
+        for itype in BILL_TYPES:
+            url = f"{LISTING}/BILLS/{congress}/{sess}/{itype}"
+            try:
+                r = s.get(url, headers={"Accept": "application/json"}, timeout=60)
+                if r.status_code == 404:
+                    continue    # a session not begun yet, or a type with no bills
+                r.raise_for_status()
+                names = [f["name"] for f in r.json().get("files", [])]
+            except Exception as e:
+                errors.append(_error(url, e))
+                continue
+            for name in names:
+                m = re.match(r"^(BILLS-\d+[a-z]+\d+[a-z]+)\.xml$", name)
+                if not m or m.group(1) in have:
+                    continue
+                pkg = m.group(1)
+                try:
+                    t = s.get(_TEXT.format(pkg=pkg), timeout=120, allow_redirects=False)
+                    t.raise_for_status()
+                    if not t.content.lstrip().startswith(b"<html"):   # an error page is not a bill
+                        raise ValueError("not a typescript page")
+                    _write_atomic(out_dir / f"{pkg}.htm.gz", gzip.compress(t.content))
+                    have.add(pkg)
+                    fetched += 1
+                except Exception as e:
+                    errors.append(_error(_TEXT.format(pkg=pkg), e))
+                time.sleep(pause)
+    return fetched
+
+
 def sync(congresses=None):
     """Download what changed, then rebuild the bills file of each Congress
     whose zips changed (or that has no file yet). Returns {congress: meta}."""
@@ -320,7 +372,15 @@ if __name__ == "__main__":
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("billstatus", help="sync BILLSTATUS zips and write bills-<c>.json")
     p.add_argument("congress", type=int, nargs="*")
+    p = sub.add_parser("text", help="fetch the typescript of each new bill version (118th, 119th)")
+    p.add_argument("congress", type=int, nargs="*")
     a = ap.parse_args()
+    if a.cmd == "text":
+        for c in a.congress or TEXT_CONGRESSES:
+            errs = []
+            print(c, f"{sync_bill_text(c, errors=errs)} version(s) fetched", f"{len(errs)} error(s)")
+            for e in errs[:10]:
+                print("  -", e)
     if a.cmd == "billstatus":
         for c, meta in sync(a.congress or None).items():
             errs = meta.get("errors", []) + meta.get("download_errors", [])
