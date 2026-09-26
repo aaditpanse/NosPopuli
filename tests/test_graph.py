@@ -1090,6 +1090,14 @@ class BillScopeTest(unittest.TestCase):
         self.assertIn("member_of", {e["predicate"] for e in skel_e})
         self.assertEqual(len(nodes + cn), len(skel_n) + len(bill_n))
 
+    def test_completeness_is_checked_against_congress_gov_not_govinfo_itself(self):
+        meta = {"files": {"hr": 10, "s": 5}, "congress_gov_counts": {"hr": 10, "s": 6},
+                "congress_gov_checked": "2026-09-26"}
+        self.assertEqual(graph.completeness_gap(118, meta, 15),
+                         'the 118th Congress: 15 of 16 bills on Congress.gov (checked 2026-09-26); '
+                         'differs by type: {"s": 1}')
+        self.assertIn("not checked against Congress.gov", graph.completeness_gap(118, {"files": {"hr": 1}}, 1))
+
     def test_a_bare_bill_number_is_the_most_recent_congress_with_it(self):
         # Every Congress has an H.R. 5184; merging them would answer about
         # several bills at once, as merging every Warner would.

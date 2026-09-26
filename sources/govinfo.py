@@ -272,6 +272,41 @@ def attach_reports(rec, meta_for, errors):
     return rec
 
 
+def congress_gov_counts(congress, session_=None):
+    """Congress.gov's own count of bills per type in one Congress: the
+    independent check that GovInfo's files are all of them (8 list calls,
+    limit 1). None without CONGRESS_API_KEY or on any failure — a partial
+    count would read as a shortfall."""
+    import os
+    key = os.getenv("CONGRESS_API_KEY")
+    if not key:
+        return None
+    s = session_ or _session()
+    out = {}
+    for itype in BILL_TYPES:
+        try:
+            r = s.get(f"https://api.congress.gov/v3/bill/{congress}/{itype}",
+                      params={"api_key": key, "format": "json", "limit": 1}, timeout=60)
+            r.raise_for_status()
+            out[itype] = (r.json().get("pagination") or {}).get("count")
+        except Exception:
+            return None
+    return out
+
+
+def add_counts(congress):
+    """Put Congress.gov's counts into an existing bills-<c>.json."""
+    path = graph.DATA_DIR / f"bills-{congress}.json"
+    data = json.loads(path.read_text())
+    counts = congress_gov_counts(congress)
+    if counts is None:
+        return None
+    data["meta"]["congress_gov_counts"] = counts
+    data["meta"]["congress_gov_checked"] = datetime.date.today().isoformat()
+    _write_atomic(path, json.dumps(data, separators=(",", ":"), sort_keys=True).encode())
+    return counts
+
+
 def build_bills(congress, session_=None):
     """Every bill of one Congress from the zips on disk → bills-<c>.json.
     Fail-closed: a zip that cannot be read stops the Congress and the old
@@ -296,6 +331,9 @@ def build_bills(congress, session_=None):
     out = {"meta": {"congress": congress, "fetched": today, "source": "govinfo BILLSTATUS + CRPT MODS",
                     "files": files, "counts": {"instruments": len(instruments)}, "errors": errors},
            "instruments": instruments}
+    cg = congress_gov_counts(congress, s)
+    if cg is not None:
+        out["meta"].update(congress_gov_counts=cg, congress_gov_checked=today)
     _write_atomic(graph.DATA_DIR / f"bills-{congress}.json",
                   json.dumps(out, separators=(",", ":"), sort_keys=True).encode())
     return out["meta"]
@@ -418,7 +456,12 @@ if __name__ == "__main__":
     p.add_argument("congress", type=int, nargs="*")
     p = sub.add_parser("text", help="bill typescript: every version (118th, 119th), enacted text before")
     p.add_argument("congress", type=int, nargs="*")
+    p = sub.add_parser("counts", help="add Congress.gov's bill counts to existing bills-<c>.json")
+    p.add_argument("congress", type=int, nargs="*")
     a = ap.parse_args()
+    if a.cmd == "counts":
+        for c in a.congress or range(FIRST_CONGRESS, graph.current_session()[0] + 1):
+            print(c, add_counts(c))
     if a.cmd == "text":
         # Every version for the recent Congresses; only the enacted text before them.
         for c in a.congress or range(FIRST_CONGRESS, graph.current_session()[0] + 1):

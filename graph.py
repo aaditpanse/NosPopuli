@@ -1040,6 +1040,21 @@ def partition(nodes, edges):
             [n for n in nodes if is_bill(n)], [e for e in edges if e["predicate"] in BILL_PREDICATES])
 
 
+def completeness_gap(congress, meta, nodes):
+    """"N of M bills": the bills that are nodes against Congress.gov's own
+    count, the independent check on GovInfo's files. Pure."""
+    cg = meta.get("congress_gov_counts")
+    if not cg:
+        return (f"the {congress}th Congress: {nodes:,} bills from GovInfo's {sum(meta.get('files', {}).values()):,} "
+                f"files; not checked against Congress.gov's count")
+    total = sum(v or 0 for v in cg.values())
+    short = {t: cg[t] - meta.get("files", {}).get(t, 0) for t in cg
+             if (cg[t] or 0) != meta.get("files", {}).get(t, 0)}
+    return (f"the {congress}th Congress: {nodes:,} of {total:,} bills on Congress.gov "
+            f"(checked {meta.get('congress_gov_checked')})"
+            + (f"; differs by type: {json.dumps(short, sort_keys=True)}" if short else ""))
+
+
 def build_bills_scope(congress, bills, legislators, executive, committees, observed, today=None):
     """One older Congress's bills → (nodes, edges, gaps) for its scope
     us/bills/<congress>: every bill, who sponsored and cosponsored it,
@@ -1076,7 +1091,7 @@ def build_bills_scope(congress, bills, legislators, executive, committees, obser
     _, _, bn, be = partition(cn + en, ce + ee)
     nodes = list(g["nodes"].values()) + bn
     edges = list(g["edges"].values()) + be
-    gaps = g["gaps"] + cg + eg
+    gaps = g["gaps"] + cg + eg + [completeness_gap(congress, bills["meta"], len(bills["instruments"]))]
     if unknown:
         gaps.append(f"{sum(unknown.values())} sponsor(s) of the {congress}th Congress's bills not in the "
                     f"legislators files ({', '.join(sorted(unknown)[:5])}); no edge for them")
@@ -1683,6 +1698,7 @@ def build_source(source, states=None):
                 snap.pop("instruments", None)
             snaps.insert(0, {"meta": {"congress": congress, "instruments_fetched": bills["meta"]["fetched"]},
                              "votes": [], "instruments": bills["instruments"]})
+            merge_gaps.append(completeness_gap(congress, bills["meta"], len(bills["instruments"])))
         else:
             merge_gaps.append(f"no bills-{congress}.json: bill records come from the snapshots' own copy, "
                         f"if any (run `python -m sources.govinfo billstatus {congress}`)")
