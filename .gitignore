@@ -41,6 +41,7 @@ foundry/extractors/*/*.findings.json
 foundry/golden/*/http_cache.json
 !foundry/golden/pittsburgh/http_cache.json
 
-# Bulk sync output (sources/govinfo.py): large, rebuilt on the server in /srv/bulk.
+# Bulk sync output: large or rebuilt daily on the server in /srv/bulk.
 data/raw/
 data/bills-*.json
+data/member-congress.json
