@@ -1985,9 +1985,14 @@ async def get_bill(request: Request, body: BillRequest):
 
     # Base fetch is awaited up front so a genuinely missing bill still 404s
     # (once the stream body starts, the status code is already committed).
-    bill_data = await loop.run_in_executor(
-        None, fetch_bill, body.congress, body.bill_type, body.number
-    )
+    try:
+        bill_data = await loop.run_in_executor(
+            None, fetch_bill, body.congress, body.bill_type, body.number
+        )
+    except Exception as e:
+        # A bill file on disk that does not parse: say so, never a bare 500.
+        print(f"[API] bill data unreadable {body.bill_type}{body.number}: {type(e).__name__}: {e}")
+        raise HTTPException(status_code=503, detail="The bill data on this server could not be read for this bill.")
     if not bill_data:
         raise HTTPException(status_code=404, detail=_not_synced(body.congress, body.bill_type, body.number))
 
@@ -2006,9 +2011,13 @@ async def get_law(request: Request, body: LawRequest):
     """
     loop = asyncio.get_event_loop()
 
-    bill_data = await loop.run_in_executor(
-        None, fetch_law, body.congress, body.law_number
-    )
+    try:
+        bill_data = await loop.run_in_executor(
+            None, fetch_law, body.congress, body.law_number
+        )
+    except Exception as e:
+        print(f"[API] law data unreadable {body.congress}-{body.law_number}: {type(e).__name__}: {e}")
+        raise HTTPException(status_code=503, detail="The bill data on this server could not be read for this law.")
 
     if not bill_data:
         # Recently enacted laws may not be indexed on Congress.gov yet. Stream a

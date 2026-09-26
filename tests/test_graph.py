@@ -1109,6 +1109,8 @@ class LocalBillPageTest(unittest.TestCase):
             "date": "2024-04-24T01:44:19Z", "sessionNumber": 2}])
         self.assertEqual(r["actions"][2]["sourceSystem"], {"name": "Senate"})
         self.assertEqual([c["isOriginalCosponsor"] for c in r["cosponsors"]], [True, False])
+        # The ledger's story cards read the count off the bill, as the API gave it.
+        self.assertEqual(b["cosponsors"], {"count": 1, "countIncludingWithdrawnCosponsors": 2})
         self.assertEqual(r["cosponsors"][1]["sponsorshipWithdrawnDate"], "2025-06-20")
         self.assertEqual((r["relatedBills"][0]["type"], r["relatedBills"][0]["number"]), ("HR", 4763))
         self.assertEqual(r["amendments"][0]["latestAction"],

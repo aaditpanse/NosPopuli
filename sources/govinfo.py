@@ -553,11 +553,16 @@ def bill_json(xml_bytes):
     bill = {k: v for k, v in bill.items() if v is not None}
     actions = [_action(a) for a in b.findall("actions/item")]
     actions.sort(key=lambda a: a.get("actionDate") or "", reverse=True)     # stable: XML order within a day
+    cosponsor_items = b.findall("cosponsors/item")
+    # The API's bill record carries the counts, not the list; the ledger's
+    # story cards read bill.cosponsors.count.
+    bill["cosponsors"] = {"count": sum(1 for c in cosponsor_items if not _t(c, "sponsorshipWithdrawnDate")),
+                          "countIncludingWithdrawnCosponsors": len(cosponsor_items)}
     cosponsors = [{**_person(c), "sponsorshipDate": _t(c, "sponsorshipDate"),
                    "isOriginalCosponsor": _t(c, "isOriginalCosponsor") == "True",
                    **({"sponsorshipWithdrawnDate": _t(c, "sponsorshipWithdrawnDate")}
                       if _t(c, "sponsorshipWithdrawnDate") else {})}
-                  for c in b.findall("cosponsors/item")]
+                  for c in cosponsor_items]
     related = [{"congress": _i(_t(r, "congress")), "type": (_t(r, "type") or "").upper(),
                 "number": _i(_t(r, "number")), "title": _t(r, "title"), "latestAction": _latest(r),
                 "relationshipDetails": [{"type": _t(d, "type"), "identifiedBy": _t(d, "identifiedBy")}
