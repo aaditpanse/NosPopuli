@@ -2306,6 +2306,360 @@ def _summary(nodes, edges):
 
 # Bump when the build changes what a scope contains, so every older
 # Congress reloads once instead of keeping rows the new code would not emit.
+# ------------------------------------------------------ state legislatures
+#
+# A state legislature from files (plan of 2026-09-27): the Open States people
+# repo is the roster, its monthly dump the bills and roll calls
+# (sources/openstates.py), and — where the legislature publishes its own —
+# the state's files check them (sources/lis.py). Same predicates as Congress.
+# Open States scrapes the legislature, so what it says is `ingested`; a term
+# is `certified` only by the legislature's own roll call, and an Open States
+# vote the legislature's record contradicts is `advisory`.
+
+STATE_SOURCE = "openstates"
+STATE_CHAMBERS = {"upper": "Senate", "lower": "House"}
+# Open States' vote options → the one position vocabulary.
+_STATE_POSITION = {"yes": "aye", "no": "no", "not voting": "absent", "abstain": "present", "other": "other"}
+
+
+def state_div(st):
+    return f"{US}/state:{st.lower()}"
+
+
+def state_person_key(st, person_id):
+    """The natural key of a state roster person: `openstates/<uuid>`, or the
+    federal key the sidecar's `identities` bridges it to (a delegate who
+    went to Congress is one node). An asserted record keeps its own id."""
+    if person_id.startswith("asserted/"):
+        return person_id
+    key = f"openstates/{person_id.removeprefix('ocd-person/')}"
+    return IDENTITIES.get(key, key)
+
+
+def _state_post(st, chamber, district):
+    district_kind = "sldu" if chamber == "upper" else "sldl"
+    return f"{st}/{chamber}/{district_kind}:{district}", f"{state_div(st)}/{district_kind}:{district}"
+
+
+def _lis_vote_days(lis_sessions):
+    """{member id: [(date, vote id, source)]} from the legislature's own
+    roll calls (lis-<session>.json records). Pure."""
+    out = {}
+    for rec in lis_sessions:
+        src = (rec.get("meta") or {}).get("source") or "LIS"
+        for v in rec.get("votes") or []:
+            for mid in v["positions"]:
+                out.setdefault(mid, []).append((v["date"], v["id"], src))
+    return out
+
+
+def build_state_skeleton(st, people, lis_sessions=(), today=None):
+    """people.json → the legislature's chambers, districts, seats, the
+    Governor's post, every person and every term. A term is certified when
+    the legislature's own roll call (lis_sessions) has the member voting
+    inside it; an Open States term alone is ingested. Pure. Returns (nodes,
+    edges, gaps)."""
+    today = today or datetime.date.today().isoformat()
+    conf = LEGISLATURES.get(st) or {}
+    g = _graph()
+    sdiv = state_div(st)
+    # The country node too: a fresh load runs the states before Congress,
+    # and an edge may not point at a node that is not there yet.
+    _node(g, US, "jurisdiction", "United States", {"level": "country"}, STATE_SOURCE)
+    _node(g, sdiv, "jurisdiction", DIVISION_NAMES.get(st, st.upper()),
+          {"level": "state", "jurisdiction": sdiv}, STATE_SOURCE)
+    _edge(g, US, "contains", sdiv, None, None, "ingested", STATE_SOURCE, "seed", sdiv, {"derived": "seed"})
+    body = {}
+    for chamber in ("upper", "lower"):
+        bid = node_id("organization", f"{st}/{chamber}")
+        body[chamber] = bid
+        _node(g, bid, "organization", conf.get(chamber) or f"{DIVISION_NAMES.get(st, st)} {STATE_CHAMBERS[chamber]}",
+              {"natural_key": f"{st}/{chamber}", "chamber": chamber, "level": "state", "jurisdiction": sdiv},
+              STATE_SOURCE)
+        _edge(g, sdiv, "has_body", bid, None, None, "ingested", STATE_SOURCE, "seed", sdiv, {"derived": "seed"})
+    gov = node_id("post", f"{st}/governor")
+    _node(g, gov, "post", f"Governor of {DIVISION_NAMES.get(st, st.upper())}",
+          {"natural_key": f"{st}/governor", "role": "Governor", "jurisdiction": sdiv}, STATE_SOURCE)
+    _edge(g, gov, "represents", sdiv, None, None, "ingested", STATE_SOURCE, "seed", sdiv, {"derived": "seed"})
+
+    def post_for(chamber, district):
+        key, division = _state_post(st, chamber, district)
+        pid = node_id("post", key)
+        if pid not in g["nodes"]:
+            label = f"{STATE_CHAMBERS[chamber]} District {district}"
+            if division not in g["nodes"]:
+                _node(g, division, "jurisdiction", f"{st.upper()} {label}",
+                      {"level": "district", "jurisdiction": sdiv}, STATE_SOURCE)
+                _edge(g, sdiv, "contains", division, None, None, "ingested", STATE_SOURCE, "seed", sdiv,
+                      {"derived": "seed"})
+            _node(g, pid, "post", f"{label}, {g['nodes'][body[chamber]]['name']}",
+                  {"natural_key": key, "role": label, "chamber": chamber, "level": "state", "jurisdiction": sdiv},
+                  STATE_SOURCE)
+            _edge(g, body[chamber], "has_seat", pid, None, None, "ingested", STATE_SOURCE, "seed", sdiv,
+                  {"derived": "seed"})
+            _edge(g, pid, "represents", division, None, None, "ingested", STATE_SOURCE, "seed", sdiv,
+                  {"derived": "seed"})
+        return pid
+
+    holds, post_label, lis_of = {}, {}, {}
+    skipped_roles = 0
+    for p in people:
+        roles = [r for r in p["roles"] if r["type"] in ("upper", "lower", "governor")]
+        if not roles:
+            continue
+        nk = state_person_key(st, p["id"])
+        pid = node_id("person", nk)
+        props = {"natural_key": nk, "aliases": p.get("other_names") or [], "party": p.get("party"),
+                 "openstates_id": p["id"], "jurisdiction": sdiv}
+        if p.get("ids", {}).get("lis"):
+            props["lis_member"] = p["ids"]["lis"]
+            lis_of[pid] = p["ids"]["lis"]
+        if p.get("asserted_by"):
+            props["asserted_by"] = p["asserted_by"]
+        if nk != f"openstates/{p['id'].removeprefix('ocd-person/')}" and not nk.startswith("asserted/"):
+            props["identity"], props["identity_asserted_by"] = nk, "the sidecar's identities"
+        _node(g, pid, "person", p["name"], props, STATE_SOURCE, p["id"])
+        for r in roles:
+            if not r["start"]:
+                skipped_roles += 1
+                continue
+            if r["type"] == "governor":
+                post = gov
+                post_label[post] = "Governor"
+            else:
+                if not r["district"]:
+                    skipped_roles += 1
+                    continue
+                post = post_for(r["type"], r["district"])
+                post_label[post] = g["nodes"][post]["props"]["role"]
+            expired = r["end"] and r["end"] <= today
+            hp = {"bound_from": "exact", "bounds_source": "open states people repo", "party": p.get("party")}
+            if expired:
+                hp["bound_to"] = "exact"
+            elif r["end"]:
+                hp["term_expires"] = r["end"]
+            if p.get("asserted_by"):
+                hp["asserted_by"] = p["asserted_by"]
+            row = _edge(g, pid, "holds", post, r["start"], r["end"] if expired else None, "ingested",
+                        STATE_SOURCE, f"{p['id']}/{r['type']}/{r['start']}", sdiv, hp)
+            holds.setdefault(post, []).append(row)
+    _close_double_holds(g, holds, post_label)
+
+    days = _lis_vote_days(lis_sessions)
+    certified = uncertified = 0
+    for rows in holds.values():
+        for h in rows:
+            mid = lis_of.get(h["src"])
+            end = h["valid_to"] or "9999"
+            hits = sorted(d for d in days.get(mid, []) if d[0] and h["valid_from"] <= d[0] <= end) if mid else []
+            if hits:
+                h["certification"] = "certified"
+                h["props"]["certified_by"] = (f"cross-source: the legislature's roll call {hits[0][1]} on "
+                                              f"{hits[0][0]} ({hits[0][2]}) has this member voting inside the "
+                                              f"term")
+                certified += 1
+            elif h["dst"] != gov:
+                uncertified += 1
+    first_lis = conf.get("lis_from")
+    g["gaps"].append(f"{certified} {st.upper()} legislative term(s) certified by the legislature's own roll calls; "
+                     f"{uncertified} are not" + (f" (its files begin with the {first_lis} session, so earlier terms "
+                                                  f"cannot be)" if first_lis else " (it publishes no roll-call files)"))
+    if skipped_roles:
+        g["gaps"].append(f"{skipped_roles} role(s) with no start date or district skipped")
+    return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
+
+
+def state_instrument_id(st, session, key):
+    return f"instrument/{st}/{session}/{key}"
+
+
+_CHAPTER = re.compile(r"Chapter (\d+)", re.I)
+
+
+def build_state_bills(st, session, rec, person_ids, governor_holds, known_ids=frozenset()):
+    """One session's bills file → instruments, who sponsored them, what the
+    Governor did, the Acts of Assembly chapter, and related bills already on
+    file. person_ids maps an Open States person id to our node id; a sponsor
+    Open States names without an id is counted, never matched by name here.
+    Pure. Returns (nodes, edges, gaps)."""
+    g = _graph()
+    sdiv = state_div(st)
+    year = (session_key(session) or (None,))[0]
+    name_only = unknown = no_governor = 0
+    ids = {state_instrument_id(st, session, k) for k in rec["bills"]} | set(known_ids)
+    for key, b in rec["bills"].items():
+        iid = state_instrument_id(st, session, key)
+        itype, number = key.split("/")
+        props = {"instrument_type": itype, "session": session, "number": number, "identifier": b["identifier"],
+                 "openstates_id": b["openstates_id"], "chamber": b.get("chamber"), "jurisdiction": sdiv,
+                 "introduced": b.get("first_action_date"), "latest_action": b.get("latest_action"),
+                 "latest_action_date": b.get("latest_action_date")}
+        if b.get("subjects"):
+            props["topic"], props["topic_derived_by"] = b["subjects"][0], "open states subject"
+        _node(g, iid, "instrument", f"{b['identifier']}: {b['title']}", props, STATE_SOURCE, b["openstates_id"])
+        ref = f"{st}/{session}/{key}/sponsors"
+        for sp in b["sponsors"]:
+            if not sp["person"]:
+                name_only += 1
+                continue
+            pid = person_ids.get(sp["person"])
+            if pid is None:
+                unknown += 1
+                continue
+            _edge(g, pid, "sponsored", iid, b.get("first_action_date"), b.get("first_action_date"), "ingested",
+                  STATE_SOURCE, ref, sdiv, {"role": "sponsor" if sp["primary"] else "cosponsor",
+                                            "date_inferred": "the bill's first action; Open States gives no "
+                                                             "sponsorship dates"})
+        aref = f"{st}/{session}/{key}/actions"
+        seen = set()
+        for a in b["actions"]:
+            pred = "signed" if "executive-signature" in a["classification"] else \
+                "vetoed" if "executive-veto" in a["classification"] else None
+            if pred and (pred, a["date"]) in seen:
+                pred = None     # one act, recorded twice (the chapter line and the approval line)
+            if pred:
+                seen.add((pred, a["date"]))
+                who = holders_as_of(governor_holds, a["date"])
+                if len(who) == 1:
+                    _edge(g, who[0]["src"], pred, iid, a["date"], a["date"], "ingested", STATE_SOURCE, aref, sdiv,
+                          {"role": pred, "text": a["description"]})
+                else:
+                    no_governor += 1    # the chapter below does not depend on who signed
+            m = _CHAPTER.search(a["description"] or "")
+            if m and ("became-law" in a["classification"] or "executive-signature" in a["classification"]) and year:
+                lid = f"instrument/{st}/acts/{year}/chap/{m.group(1)}"
+                _node(g, lid, "instrument", f"Acts of Assembly {year}, Chapter {m.group(1)}",
+                      {"instrument_type": "chapter", "number": m.group(1), "year": year, "jurisdiction": sdiv},
+                      STATE_SOURCE, aref)
+                _edge(g, iid, "enacted_as", lid, a["date"], None, "ingested", STATE_SOURCE, aref, sdiv,
+                      {"law_type": "Acts of Assembly chapter"})
+        for r in b.get("related") or []:
+            rkey = bill_key_of(r["identifier"])
+            rsid = r["session"] or session
+            did = state_instrument_id(st, rsid, rkey) if rkey else None
+            # Only to this session or an earlier one: sessions load oldest
+            # first, and a later session's bill is not a node yet.
+            if did and did in ids and did != iid and (session_key(rsid) or (0,)) <= (session_key(session) or (0,)):
+                _edge(g, iid, "related_to", did, None, None, "ingested", STATE_SOURCE, f"{st}/{session}/{key}/related",
+                      sdiv, {"relationship": r["relation"]})
+    if name_only or unknown:
+        g["gaps"].append(f"{st.upper()} {session}: {name_only} sponsorship(s) named without a person id and "
+                         f"{unknown} by a person not in the roster; no edge")
+    if no_governor:
+        g["gaps"].append(f"{st.upper()} {session}: {no_governor} Governor action(s) on a day with no single "
+                         f"Governor on file; no edge")
+    return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
+
+
+def bill_key_of(identifier):
+    """'HB 1' → 'hb/1' (sources.openstates.bill_key, repeated so the graph
+    does not import a downloader). Pure."""
+    m = re.fullmatch(r"([A-Za-z]+)\s*0*(\d+)", (identifier or "").strip())
+    return f"{m.group(1).lower()}/{m.group(2)}" if m else None
+
+
+def _lis_match(v, lis_by_key):
+    """The legislature's roll call that is this Open States vote: same bill,
+    chamber and day, and the same yes and no counts (a bill can have
+    several roll calls a day). None when it is not one. Pure."""
+    for lv in lis_by_key.get((v["bill"], v["chamber"], v["date"]), []):
+        yes = sum(1 for x in lv["positions"].values() if x == "yes")
+        no = sum(1 for x in lv["positions"].values() if x == "no")
+        if yes == v["counts"].get("yes", -1) and no == v["counts"].get("no", -1):
+            return lv
+    return None
+
+
+def build_state_votes(st, session, votes, person_ids, roster, lis_rec=None):
+    """The current session's roll calls → `considered` (the chamber) and
+    `voted_on` (each member). A voter Open States names without an id is
+    matched by name among that chamber's members on the day; none or two is
+    a counted gap, never a guess. When the legislature's own roll call
+    (lis_rec) is the same vote and records a member differently, that
+    member's edge is advisory, with both positions on it. Pure. roster: {chamber:
+    [(person node id, [names], valid_from, valid_to, lis member id)]}."""
+    g = _graph()
+    sdiv = state_div(st)
+    lis_by_key = {}
+    for lv in (lis_rec or {}).get("votes") or []:
+        lis_by_key.setdefault((lv["bill"], lv["chamber"], lv["date"]), []).append(lv)
+    matched = unmatched = disagree = by_name = unresolved = no_bill = 0
+    for v in votes:
+        if not v["bill"] or v["chamber"] not in ("upper", "lower"):
+            no_bill += 1
+            continue
+        iid = state_instrument_id(st, session, v["bill"])
+        committee = v["motion"][len("Reported from "):].strip() if (v["motion"] or "").startswith("Reported from") else None
+        _edge(g, node_id("organization", f"{st}/{v['chamber']}"), "considered", iid, v["date"], v["date"], "ingested",
+              STATE_SOURCE, v["id"], sdiv, {"question": v["motion"], "result": v["result"], "counts": v["counts"],
+                                            "chamber": v["chamber"], "committee": committee,
+                                            "dedupe_key": v.get("dedupe_key")})
+        lv = _lis_match(v, lis_by_key) if lis_by_key else None
+        if lis_by_key:
+            matched += bool(lv)
+            unmatched += not lv
+        members = [m for m in roster.get(v["chamber"], []) if m[2] <= v["date"] <= (m[3] or "9999")]
+        for voter, name, option in v["positions"]:
+            pid = person_ids.get(voter) if voter else None
+            if pid is None:
+                key = state_name_key(name)
+                hits = {m[0] for m in members if key and key in {state_name_key(n) for n in m[1]}}
+                if len(hits) != 1:
+                    unresolved += 1
+                    continue
+                pid = hits.pop()
+                by_name += 1
+            position = _STATE_POSITION.get(option, option)
+            props = {"position": position, "vote_id": v["id"], "chamber": v["chamber"], "question": v["motion"]}
+            if voter is None:
+                props["voter_matched_by"] = "name within the chamber on the day"
+            cert = "ingested"
+            lis_member = next((m[4] for m in members if m[0] == pid), None)
+            if lv and lis_member and lis_member in lv["positions"]:
+                lis_pos = _STATE_POSITION.get(lv["positions"][lis_member], lv["positions"][lis_member])
+                if lis_pos != position:
+                    cert = "advisory"
+                    props.update(lis_position=lis_pos, lis_vote=lv["id"],
+                                 conflict="the legislature's own roll call records this member differently")
+                    disagree += 1
+            _edge(g, pid, "voted_on", iid, v["date"], v["date"], cert, STATE_SOURCE, v["id"], sdiv, props)
+    if lis_by_key:
+        g["gaps"].append(f"{st.upper()} {session}: {matched} roll call(s) matched to the legislature's own record, "
+                         f"{unmatched} not; {disagree} member position(s) it contradicts are advisory")
+    if by_name or unresolved:
+        g["gaps"].append(f"{st.upper()} {session}: {by_name} voter(s) matched by name; {unresolved} could not be "
+                         f"matched to exactly one member and were dropped")
+    if no_bill:
+        g["gaps"].append(f"{st.upper()} {session}: {no_bill} roll call(s) on no bill or no chamber not loaded")
+    return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
+
+
+_NAME_SUFFIX = {"jr", "sr", "ii", "iii", "iv"}
+
+
+def state_name_key(name):
+    """(surname, first initial) of a name as roll calls and rosters write
+    it: "Michael J. Jones", "Mike Jones" and "Jones, Michael, J." are one
+    key; a suffix, middle names and a quoted nickname drop out. Two members
+    sharing it in one chamber on one day are a tie the caller refuses.
+    None for a name with no surname. Pure."""
+    text = re.sub(r'"[^"]*"', " ", name or "")
+    parts = [p.strip() for p in text.split(",") if p.strip()]
+    parts = [p for p in parts if p.lower().strip(".") not in _NAME_SUFFIX]
+    if len(parts) > 1:
+        # "Last, First …" — the surname leads.
+        last_part, first_part = parts[0], " ".join(parts[1:])
+    else:
+        words = parts[0].split() if parts else []
+        words = [w for w in words if w.lower().strip(".") not in _NAME_SUFFIX]
+        if len(words) < 2:
+            return None
+        last_part, first_part = words[-1], words[0]
+    last = re.sub(r"[^a-z'-]", "", last_part.split()[-1].lower())
+    first = re.sub(r"[^a-z]", "", first_part.lower())
+    return (last, first[0]) if last and first else None
+
+
 SCOPE_VERSION = 1
 SKELETON, CURRENT = "us/skeleton", "us/current"
 
@@ -2447,6 +2801,125 @@ def load_us(cur, only_current=False, force=False):
     if not only_current:
         # Last: a report's bill may be one the current Congress introduced today.
         out.update(_load_lobbying(cur, loaded, force))
+    return out
+
+
+def _stat(path):
+    st = path.stat()
+    return [st.st_size, st.st_mtime_ns]
+
+
+def state_sessions(st):
+    """The Open States sessions on disk for a state, oldest first."""
+    return sorted({p.stem.removeprefix("bills-") for p in data_glob("state_bills", state=st)
+                   if session_key(p.stem.removeprefix("bills-"))}, key=session_key)
+
+
+def current_state_sessions(sessions, votes_count):
+    """The sessions whose roll calls are graph edges: every session of the
+    latest year that has any roll call (a regular session and its specials).
+    Older sessions' votes stay in their files, as the events rule says.
+    Pure."""
+    years = [session_key(s)[0] for s in sessions if votes_count.get(s)]
+    return [s for s in sessions if years and session_key(s)[0] == max(years)]
+
+
+def state_scopes(st, today=None):
+    """Every scope of one state from the files on disk, in load order — the
+    skeleton, each session's bills, then the current session's roll calls —
+    as {scope: (fingerprint, orphan_kinds, build)}. `build()` returns
+    (nodes, edges, gaps); nothing but the small skeleton is built until it
+    is called, so an unchanged scope costs a stat, not a build. The
+    fingerprints are the inputs' size and mtime and the build's version."""
+    people_path = data_path("state_people", state=st)
+    if not people_path.exists():
+        raise RuntimeError(f"no people file for {st}; run `python -m sources.openstates people {st}`")
+    people = json.loads(people_path.read_text())["people"]
+    lis_paths = {p.stem.removeprefix("lis-"): p for p in data_glob("state_lis", state=st)}
+    lis = {sid: json.loads(p.read_text()) for sid, p in lis_paths.items()}
+    base = {"v": SCOPE_VERSION, "people": _stat(people_path), "conf": LEGISLATURES.get(st),
+            "identities": {k: v for k, v in IDENTITIES.items() if k.startswith("openstates/")}}
+    skeleton = build_state_skeleton(st, people, list(lis.values()), today)
+    sn, se, _ = skeleton
+    out = {f"{st}/skeleton": (json.dumps({**base, "lis": {k: _stat(p) for k, p in lis_paths.items()}},
+                                         sort_keys=True), None, lambda: skeleton)}
+    person_ids = {p["id"]: node_id("person", state_person_key(st, p["id"])) for p in people}
+    gov = node_id("post", f"{st}/governor")
+    gov_holds = [e for e in se if e["predicate"] == "holds" and e["dst"] == gov]
+    names = {n["id"]: [n["name"], *n["props"].get("aliases", [])] for n in sn if n["kind"] == "person"}
+    lis_member = {n["id"]: n["props"].get("lis_member") for n in sn if n["kind"] == "person"}
+    chamber_of = {n["id"]: n["props"].get("chamber") for n in sn if n["kind"] == "post"}
+    roster = {}
+    for e in se:
+        if e["predicate"] == "holds" and chamber_of.get(e["dst"]):
+            roster.setdefault(chamber_of[e["dst"]], []).append(
+                (e["src"], names.get(e["src"], []), e["valid_from"], e["valid_to"], lis_member.get(e["src"])))
+    sessions = state_sessions(st)
+    votes_count, known = {}, set()
+    for sid in sessions:
+        vp = data_path("state_votes", state=st, session=sid)
+        votes_count[sid] = json.loads(vp.read_text())["meta"].get("votes", 0) if vp.exists() else 0
+    bills_paths = {sid: data_path("state_bills", state=st, session=sid) for sid in sessions}
+
+    def known_ids():
+        # Every session's bill ids, read once and only when a scope builds.
+        if not known:
+            for sid, path in bills_paths.items():
+                known.update(state_instrument_id(st, sid, k) for k in json.loads(path.read_text())["bills"])
+        return known
+
+    for sid, path in bills_paths.items():
+        out[f"{st}/bills/{sid}"] = (
+            json.dumps({**base, "bills": _stat(path)}, sort_keys=True), ["instrument"],
+            lambda sid=sid, path=path: build_state_bills(st, sid, json.loads(path.read_text()), person_ids,
+                                                         gov_holds, known_ids()))
+    current = current_state_sessions(sessions, votes_count)
+    inputs = {sid: [_stat(data_path("state_votes", state=st, session=sid)),
+                    _stat(lis_paths[sid]) if sid in lis_paths else None] for sid in current}
+
+    def build_current():
+        cn, ce, cg = [], [], []
+        for sid in current:
+            vp = data_path("state_votes", state=st, session=sid)
+            n, e, gaps = build_state_votes(st, sid, json.loads(vp.read_text())["votes"], person_ids, roster,
+                                           lis.get(sid))
+            cn += n
+            ce += e
+            cg += gaps
+        cg.append(f"{st.upper()} roll calls before the current session ({', '.join(current) or 'none'}) stay in "
+                  f"their files and are read at the leaf, not loaded as edges")
+        return cn, ce, cg
+
+    out[f"{st}/current"] = (json.dumps({**base, "votes": inputs}, sort_keys=True), [], build_current)
+    return out
+
+
+def build_state(st, today=None):
+    """Every scope of one state, built: {scope: (nodes, edges, gaps)}. For
+    a dry run; the loader builds only what changed."""
+    return {scope: build() for scope, (_, _, build) in state_scopes(st, today).items()}
+
+
+def load_state(cur, st, force=False):
+    """One state's scopes, each only when its inputs changed. The skeleton
+    first (people before anything points at them). Returns {scope:
+    (summary, gaps)}."""
+    if not data_path("state_people", state=st).exists():
+        # Fail-open: the rest of the daily load goes on, and says why.
+        return {f"{st}/skeleton": ({}, [f"{st.upper()} not loaded: no people file on disk "
+                                        f"(python -m sources.openstates people {st})"])}
+    cur.execute("SELECT scope, fingerprint FROM graph_scope")
+    loaded = dict(cur.fetchall())
+    out = {}
+    for scope, (fp, orphan_kinds, build) in state_scopes(st).items():
+        if not force and loaded.get(scope) == fp:
+            continue
+        nodes, edges, gaps = build()
+        load_scope(cur, scope, nodes, edges, fp, orphan_kinds=orphan_kinds)
+        if scope.endswith("/skeleton"):
+            closed = _close_holds_in_db(sorted({n["id"] for n in nodes if n["kind"] == "person"}), cur)
+            gaps = gaps + [f"{c['name']}'s hold on {c['post']} closed at {c['valid_to']}: {c['why']}" for c in closed]
+        out[scope] = (_summary(nodes, edges), gaps)
     return out
 
 
@@ -2603,6 +3076,8 @@ def load_all(fresh=False, force=False):
                 cur.execute("DELETE FROM graph_scope")
                 for source in sorted(SOURCES):
                     out[f"local/{source}"] = _load_local(cur, source)
+                for st in sorted(LEGISLATURES):
+                    out.update(load_state(cur, st, force=True))
                 out.update(load_us(cur, force=True))
             return out
         with conn.cursor() as cur:
@@ -2611,6 +3086,9 @@ def load_all(fresh=False, force=False):
         for source in sorted(SOURCES):
             with conn.transaction(), conn.cursor() as cur:
                 out[f"local/{source}"] = _load_local(cur, source)
+        for st in sorted(LEGISLATURES):
+            with conn.transaction(), conn.cursor() as cur:
+                out.update(load_state(cur, st, force=force))
         with conn.transaction(), conn.cursor() as cur:
             out.update(load_us(cur, force=force))
     return out

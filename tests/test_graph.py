@@ -2172,3 +2172,116 @@ class LisTest(unittest.TestCase):
         self.assertEqual(lis.pick_link(links)["url"], "a.HTML")
         self.assertEqual(lis.pick_link(links[:1])["url"], "a.PDF")
         self.assertIsNone(lis.pick_link([]))
+
+
+def _os_person(pid, name, roles, lis=None, others=()):
+    return {"id": f"ocd-person/{pid}", "name": name, "other_names": list(others), "party": "Democratic",
+            "roles": [{"type": t, "district": d, "start": s, "end": e} for t, d, s, e in roles],
+            "ids": {"lis": lis} if lis else {}}
+
+
+class StateLayerTest(unittest.TestCase):
+    """graph.build_state_*: the General Assembly from Open States, checked by
+    Virginia's own roll calls. Dry run 2026-09-27 on the server: 22 scopes,
+    43,634 nodes, 603,000 edges; 163 terms certified by LIS roll calls;
+    every 2026 voter matched (33,129 by name)."""
+
+    PEOPLE = [
+        _os_person("a", "Jeion A. Ward", [("lower", "87", "2024-01-10", None)], lis="H0173"),
+        _os_person("b", "Old Delegate", [("lower", "5", "2018-01-10", "2020-01-08")], lis="H0099"),
+        _os_person("c", "Mike Jones", [("lower", "77", "2024-01-10", None)], lis="H0056",
+                   others=["Jones, Michael, J."]),
+        _os_person("g", "Glenn Youngkin", [("governor", None, "2022-01-15", "2026-01-17")]),
+    ]
+    LIS = [{"meta": {"source": "lis/20261"}, "votes": [
+        {"id": "HV1", "bill": "hb/1", "chamber": "lower", "date": "2026-02-03",
+         "positions": {"H0173": "yes", "H0056": "no"}}]}]
+
+    def skeleton(self):
+        return graph.build_state_skeleton("va", self.PEOPLE, self.LIS, today="2026-09-27")
+
+    def test_ids_seats_and_certification_by_the_legislatures_own_roll_call(self):
+        nodes, edges, gaps = self.skeleton()
+        ids = {n["id"] for n in nodes}
+        self.assertIn("ocd-division/country:us/state:va/sldl:87", ids)
+        self.assertIn(graph.node_id("post", "va/lower/sldl:87"), ids)
+        self.assertIn(graph.node_id("person", "openstates/a"), ids)
+        self.assertIn(graph.US, ids)          # a fresh load runs states before Congress
+        holds = {e["src"]: e for e in edges if e["predicate"] == "holds"}
+        self.assertEqual(holds[graph.node_id("person", "openstates/a")]["certification"], "certified")
+        # A 2018 term: the legislature's files start in 2024, so it cannot be.
+        self.assertEqual(holds[graph.node_id("person", "openstates/b")]["certification"], "ingested")
+        self.assertIn("its files begin with the 2024 session", gaps[0])
+
+    def test_names_as_roll_calls_and_rosters_write_them(self):
+        k = graph.state_name_key
+        self.assertEqual({k("Michael J. Jones"), k("Mike Jones"), k("Jones, Michael, J.")}, {("jones", "m")})
+        self.assertEqual(k("Luther Cifers, III"), ("cifers", "l"))
+        self.assertIsNone(k("Jones"))
+
+    def bills(self):
+        return {"bills": {"hb/1": {
+            "identifier": "HB 1", "openstates_id": "ocd-bill/1", "title": "Minimum wage", "chamber": "lower",
+            "subjects": [], "first_action_date": "2025-11-17", "latest_action": "Approved", "latest_action_date": "2026-04-08",
+            "sponsors": [{"name": "Jeion A. Ward", "person": "ocd-person/a", "primary": True},
+                         {"name": "Someone", "person": None, "primary": False}],
+            "actions": [{"date": "2026-04-08", "description": "Approved by Governor-Chapter 350",
+                         "classification": ["executive-signature", "became-law"]},
+                        {"date": "2026-04-08", "description": "Acts of Assembly Chapter text (CHAP0350)",
+                         "classification": ["executive-signature"]}],
+            "related": [{"identifier": "SB 5", "session": "2027", "relation": "companion"}]}}}
+
+    def test_bills_sponsors_signature_and_chapter(self):
+        _, skel, _ = self.skeleton()
+        gov = [e for e in skel if e["predicate"] == "holds" and e["dst"] == graph.node_id("post", "va/governor")]
+        # 2026-04-08: Youngkin's term ended in January; Spanberger is not on this roster, so no single Governor.
+        nodes, edges, gaps = graph.build_state_bills("va", "2026", self.bills(),
+                                                     {"ocd-person/a": graph.node_id("person", "openstates/a")},
+                                                     gov, {"instrument/va/2027/sb/5"})
+        preds = sorted(e["predicate"] for e in edges)
+        # The chapter is recorded even when no single Governor is on file that day.
+        self.assertEqual(preds, ["enacted_as", "sponsored"])
+        self.assertIn("instrument/va/acts/2026/chap/350", {n["id"] for n in nodes})
+        self.assertIn("1 sponsorship(s) named without a person id", gaps[0])
+        self.assertIn("1 Governor action(s) on a day with no single Governor", gaps[1])
+        # A related bill in a later session is not linked: it is not a node yet when this session loads.
+        self.assertNotIn("related_to", preds)
+
+    def test_one_signature_a_day_and_the_governor_of_that_day(self):
+        _, skel, _ = self.skeleton()
+        gov = [e for e in skel if e["predicate"] == "holds" and e["dst"] == graph.node_id("post", "va/governor")]
+        rec = self.bills()
+        for a in rec["bills"]["hb/1"]["actions"]:
+            a["date"] = "2025-03-24"
+        _, edges, gaps = graph.build_state_bills("va", "2025", rec, {}, gov)
+        signed = [e for e in edges if e["predicate"] == "signed"]
+        self.assertEqual([e["src"] for e in signed], [graph.node_id("person", "openstates/g")])
+        self.assertFalse([g for g in gaps if "conflicting" in g])
+
+    def test_votes_by_name_and_the_legislature_disagreeing(self):
+        a, c = graph.node_id("person", "openstates/a"), graph.node_id("person", "openstates/c")
+        roster = {"lower": [(a, ["Jeion A. Ward"], "2024-01-10", None, "H0173"),
+                            (c, ["Mike Jones", "Jones, Michael, J."], "2024-01-10", None, "H0056")]}
+        votes = [{"id": "ocd-vote/1", "bill": "hb/1", "date": "2026-02-03", "motion": "H VOTE:", "result": "pass",
+                  "chamber": "lower", "counts": {"yes": 1, "no": 1},
+                  "positions": [["ocd-person/a", "Jeion A. Ward", "yes"], [None, "Michael J. Jones", "yes"]]}]
+        # The LIS roll call has Jones voting no: yes/no counts 1/1 match, so it is the same vote.
+        lis = {"votes": [{"id": "HV1", "bill": "hb/1", "chamber": "lower", "date": "2026-02-03",
+                          "positions": {"H0173": "yes", "H0056": "no"}}]}
+        lis["votes"][0]["positions"]["H0056"] = "no"
+        votes[0]["counts"] = {"yes": 1, "no": 1}
+        _, edges, gaps = graph.build_state_votes("va", "2026", votes, {"ocd-person/a": a}, roster, lis)
+        on = {e["src"]: e for e in edges if e["predicate"] == "voted_on"}
+        self.assertEqual(on[a]["certification"], "ingested")
+        self.assertEqual((on[c]["certification"], on[c]["props"]["lis_position"]), ("advisory", "no"))
+        self.assertEqual(on[c]["props"]["voter_matched_by"], "name within the chamber on the day")
+        # Two members sharing a name key are refused, not guessed.
+        roster["lower"].append((graph.node_id("person", "openstates/d"), ["Mary Jones"], "2024-01-10", None, None))
+        _, edges, gaps = graph.build_state_votes("va", "2026", votes, {"ocd-person/a": a}, roster, None)
+        self.assertNotIn(c, {e["src"] for e in edges if e["predicate"] == "voted_on"})
+        self.assertIn("1 could not be matched to exactly one member", gaps[0])
+
+    def test_the_current_session_is_the_latest_year_with_votes(self):
+        sessions = ["2025", "2026", "2026S1", "2027"]
+        self.assertEqual(graph.current_state_sessions(sessions, {"2025": 9, "2026": 11, "2026S1": 3, "2027": 0}),
+                         ["2026", "2026S1"])
