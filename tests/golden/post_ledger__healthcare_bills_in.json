@@ -1,8 +1,8 @@
 {
  "meta": {
-  "app_sha": "3ec8869",
-  "captured": "2026-09-27T10:14:13",
-  "notes": "forced federal at api.py:1618",
+  "app_sha": "cadd4dc",
+  "captured": "2026-09-27T10:29:45",
+  "notes": "a state question on /ledger: Virginia's bills (it was forced federal until 2026-09-27)",
   "volatile": []
  },
  "request": {

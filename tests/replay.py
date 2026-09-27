@@ -691,7 +691,7 @@ CASES = (
                          "max_results": 5}, None, None, "state query via /search"),
     ("POST", "/ledger", {"question": "HR 1234"}, None, None, "bill-id plate"),
     ("POST", "/ledger", {"question": "Healthcare bills in Virginia"}, None, None,
-     "forced federal at api.py:1618"),
+     "a state question on /ledger: Virginia's bills (it was forced federal until 2026-09-27)"),
     ("POST", "/ledger", {"question": "LA County"}, None, None, "uncharted plate"),
     ("POST", "/member/search", {"name": "Ted Cruz"}, None, None, "member lookup"),
     # Auth-gated: contract only. A fabricated 200 would be worse than nothing.

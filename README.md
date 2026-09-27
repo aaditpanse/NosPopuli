@@ -31,11 +31,12 @@ those files and the graph, not Congress.gov: a bill page's data is ready in 160�
 `/search` still asks GovInfo until the local search passes its evaluation (below).
 Railway and Supabase are paused, and are deleted after 2026-10-03.
 
-**What's half-built.** State legislation is fully implemented for all 50 states
-through LegiScan — and the home page cannot reach it. `/ledger` forces every query to
-federal (the federal override in `ledger_ask` (`api.py:1633`)), so "Virginia housing bills" is classified as a
-state question and then searched in Congress. The only
-door to state search is the Federal/State picker on the orphaned `/newspaper`.
+**The state layer is Virginia's General Assembly, from Open States.** Every session
+since 2017: bills, sponsors, actions, roll calls and every text version, with the
+legislature's own daily files (Virginia LIS) as the independent check. `/ledger` sends a
+state question there, and a state bill or legislator has its own page. The other 49
+states come from the same code by a config entry; until then they answer "not loaded on
+this server". LegiScan is gone: it never issued a key.
 
 Money, lobbying and stock trades are the same story: implemented, live endpoints, and
 unreachable by typing a question. Member finance and stocks at least open if you click
@@ -173,9 +174,11 @@ dispatcher, so extracting or tuning them spends effort on a dead end. What the
 classifier keeps is a smaller job — finding the node a graph walk starts from (a bill
 ID, a named act, a place).
 
-**2. Give the ask SPA a state plate.** Stop `/ledger` forcing federal, and add a state
-bill view to `ledger.js`. This is the biggest live capability gap: the state layer is
-built and paid for and most users can't reach it.
+**2. Give the ask SPA a state plate.** *Done 2026-09-27, for Virginia.* `/ledger` sends
+a state question to the state layer; `ledger.js` has a state bill page and a state
+legislator page. The data is Open States (monthly dump and people repo) checked by
+Virginia LIS, loaded into the graph like Congress. Next: more states, one sidecar entry
+each, and a state-shaped map under a state answer.
 
 **3. Index the local corpus.** Postgres FTS over instrument titles and the 4,384 item
 summaries, scoped by jurisdiction. This is what makes "zoning in Fairfax" stop
@@ -339,7 +342,7 @@ unitedstates/images. Parity was checked against the live APIs: 118 HR 815's reco
 Tammy Baldwin's 2026 totals to the cent, and the NDAA and HR 1 roll calls.
 
 Still live, on purpose: anything before the 108th Congress, donor industries (they need
-FEC's multi-GB `indiv` file), LegiScan, geocoding, Google Civic, market prices, and the
+FEC's multi-GB `indiv` file), geocoding, Google Civic, market prices, and the
 models.
 
 *Search.* Every bill since 2003 has a search document (`bill_doc`: titles, subjects,
@@ -379,9 +382,9 @@ if I ever want to look.
 
 | # | Capability | Endpoints | Notes |
 |---|---|---|---|
-| 1 | **State legislation search** | `POST /search` with `state_code` | Needs the Federal/State toggle and 50-state picker, and `/ledger` must stop forcing federal (the federal override in `ledger_ask` (`api.py:1633`)). Biggest gap — the whole state layer is behind this. |
-| 2 | **State bill detail** | `POST /state/bill` | Streams like `/bill`. Needs a state variant of `billView`. |
-| 3 | **State member lookup** | `POST /state/member/search` | `memberView` already exists; needs the state branch. |
+| 1 | **State legislation search** | `POST /state/search`, `/ledger` | *Rebuilt 2026-09-27.* `/ledger` routes a state question here; no Federal/State picker, the router decides. |
+| 2 | **State bill detail** | `POST /state/bill` | *Rebuilt 2026-09-27:* `stateBillView`, at `/state/<st>/<session>/<type>/<n>`. |
+| 3 | **State member lookup** | `POST /state/member/search` | *Rebuilt 2026-09-27:* `stateMemberView`, at `/state/<st>/member/<id>`. |
 | 4 | **Public law detail** | `POST /law` + `/law/{congress}/{number}` routes | Same generator as `/bill`; the old app just picked the endpoint off `is_law`. Small. |
 | 5 | **Lobbying directory** | `GET /lobbying/search`, `GET /lobbying/entity` | Type-ahead over ~14k entities → entity profile: spend, issues, lobbyists, bills pushed. Per-bill lobbying already renders inside `billView`; this is the standalone directory. |
 | 6 | **Stock explorer** | `GET /stocks/notable`, `/stocks/all`, `/api/stocks/traded`, `/api/stock/{ticker}/timeline` | Member finance and per-member trades already exist in `memberView`. This is the cross-member browse and the ticker timeline. |
@@ -393,7 +396,7 @@ if I ever want to look.
 
 ### Order I'd do them in
 
-1 → 2 → 3 (the state layer, together — it's one coherent chunk and the largest loss)
+1 → 2 → 3 (the state layer — done 2026-09-27)
 7 → 8 (feed and flags — both cheap, both restore signal I use)
 4 (public law — small)
 5 → 6 (lobbying and stocks — the money layer)
@@ -493,7 +496,8 @@ Search        Voyage 4 — voyage-4-large for documents (API), voyage-4-nano for
 Federal       GovInfo bulk (BILLSTATUS, bill text, CRPT) · Voteview · clerk.house.gov +
               senate.gov XML · FEC bulk · lda.gov · Congress.gov (nominations; bills
               before 2003) · GovInfo search (/search, until it switches)
-State         LegiScan  (all 50 states)
+State         Open States (monthly Postgres dump, people repo) · Virginia LIS daily
+              files and bill text (Virginia only, for now)
 Local         Foundry — my own synthesized extractors, 9 sources
 Civic         Google Civic (elections) · Census geocoder (districts) · FEC · Senate LDA
 Storage       Postgres 17 on the server (psycopg3 pool, pgvector, PostGIS) — the graph,
@@ -522,6 +526,14 @@ derived/fec/              fec-<cycle>.json             FEC bulk (the graph's mem
                                                        and each member's PACs (untracked)
 derived/nominations/      nominations-<congress>.json  Congress.gov
 derived/lobbying/         lobbying-<year>.json         lda.gov
+derived/states/<st>/      people.json                  Open States people repo
+                          bills-<session>.json         Open States dump: bills, actions,
+                          votes-<session>.json         sponsors, versions; roll calls
+                          lis-<session>.json           Virginia LIS: history, roll calls
+                          member-session.json          certification from LIS roll calls
+raw/openstates/           the monthly dump (one kept, ~11 GB) and its manifest
+raw/openstates-people/    a sparse clone of the people repo
+raw/lis/<session>/        LIS CSVs; raw/lis/text/<session>/ each text version, gzipped
 derived/certification/    member-congress.json         from the older roll calls
 public/                   the unitedstates project's legislators, executive, committees
 raw/unitedstates-images/  member photos (a sparse git clone, pulled Mondays)
@@ -548,7 +560,7 @@ Required in `.env`:
 
 ```
 ANTHROPIC_API_KEY       CONGRESS_API_KEY        GovInfo_API_KEY
-LEGISCAN_API_KEY        GOOGLE_CIVIC_API_KEY    DATABASE_URL
+GOOGLE_CIVIC_API_KEY    DATABASE_URL
 ```
 
 Optional, per feature: `FEC_API_KEY` and `LDA_API_KEY` (money and lobbying),
@@ -574,9 +586,14 @@ virtualenv with `requirements.txt` and `requirements-embed.txt`, `/srv/bulk` the
 as the app: `sudo -u nospopuli` from the checkout, with that env file loaded. Caddy
 terminates TLS for Cloudflare, which is the only source the firewall lets in on 80/443.
 
-The scripts are `/usr/local/sbin/nospopuli-{deploy,sync,backup,restore-check}`. The
-sync stops the deploy timer while it runs, so a deploy cannot reset the checkout between
-the Foundry refresh and its commit. The units, verbatim:
+The scripts are `/usr/local/sbin/nospopuli-{deploy,sync,openstates,backup,restore-check}`.
+The sync stops the deploy timer while it runs, so a deploy cannot reset the checkout between
+the Foundry refresh and its commit. The daily sync pulls the state legislators, the LIS
+files and the latest sessions' bill text before the graph load. `nospopuli-openstates`
+runs on the first Sunday of each month at 04:00 UTC: the dump, a restore into a scratch
+database as `postgres`, the extract, the drop, then the graph load and search documents;
+it stops early when every loaded state is already extracted from the current dump. The
+units, verbatim:
 
 ```ini
 # nospopuli.service
@@ -637,6 +654,29 @@ Description=Daily NosPopuli sync at 11:30 UTC
 
 [Timer]
 OnCalendar=*-*-* 11:30:00 UTC
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+
+# nospopuli-openstates.service
+[Unit]
+Description=NosPopuli monthly: Open States dump, state files, graph load
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/nospopuli/env
+ExecStart=/usr/local/sbin/nospopuli-openstates
+TimeoutStartSec=4h
+
+# nospopuli-openstates.timer
+[Unit]
+Description=Monthly Open States dump, the first Sunday at 04:00 UTC
+
+[Timer]
+OnCalendar=Sun *-*-01..07 04:00:00 UTC
 Persistent=true
 
 [Install]
@@ -863,6 +903,22 @@ Live problems I know about and haven't fixed. Listed so nobody has to rediscover
 - The watchlist regex is anchored, so "show me what I'm watching" misses and falls
   through to federal bill search.
 - Local search discards the topic (above).
+- **The Virginia record is up to a month old.** Open States publishes its dump monthly.
+  During a session (January to March) the legislature's newer actions show on the bill
+  page as advisory rows from LIS, and move the funnel stage, but they are not the record.
+- **Virginia's 2023 redistricting is one post per district number.** A delegate's
+  District 87 before and after 2024 is the same post node, told apart only by the dated
+  holds. Per-plan post keys would fix it.
+- **Some sessions have thin sponsor records in Open States.** 2020 Special Session I has
+  no sponsors at all (488 bills); 2023, 2021S2, 2022S1, 2023S1 and 2024S1 list only the
+  primary patron. The graph says so in its gap lines; nothing is filled in.
+- **A carried-over bill appears in two sessions.** Open States lists a bill continued to
+  the next session in both (2024 and 2025 HB 1122), so a topic search can show it twice.
+- **The current session moves in January.** Only the latest year with roll calls is
+  loaded as `voted_on` edges; when 2027 starts voting, the 2026 votes leave the graph and
+  are answered from their file. The answers stay the same; the edges do not.
+- **The ledger map under a state answer shows congressional districts.** It is the
+  federal map; a state answer should draw the state's legislative districts.
 - Braddock District resolves to nobody from 2025-09-10 to 2026-01-12. Walkinshaw's hold
   now closes the day before his federal term (right), but Sizemore Heizer's begins at
   her first observed meeting because the special election that seated her is not on
