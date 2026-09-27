@@ -430,10 +430,13 @@ def extract(st, dsn=None):
                        WHERE s.jurisdiction_id = %s GROUP BY 1""", (jid,))
         votes_n = {r["identifier"]: r["n"] for r in cur.fetchall()}
         index = session_index(every, first_actions, votes_n, types)
-        first = index[conf["first_session"]]["key"]
+        # first_session names one; first_year takes every session whose
+        # first year is that or later (the index's year, not the id's).
+        first = index[conf["first_session"]]["key"] if conf.get("first_session") else [conf["first_year"], 0]
         index = {sid: rec for sid, rec in index.items() if rec["key"] >= first}
         _write_if_changed(graph.data_path("state_sessions", state=st),
-                          {"meta": {"state": st, "dump_month": month, "first_session": conf["first_session"],
+                          {"meta": {"state": st, "dump_month": month, "first_session": conf.get("first_session"),
+                                    "first_year": conf.get("first_year"),
                                     "source": "Open States monthly Postgres dump (data.openstates.org)"},
                            "sessions": index})
         sessions = [r for r in every if r["identifier"] in index]
@@ -577,8 +580,8 @@ def sync_text(st, sid, session_=None, gap=1.0, limit=None):
     root.mkdir(parents=True, exist_ok=True)
     manifest_path = root / "manifest.json"
     manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
-    fetched = failed = kept = none = 0
-    last = {}
+    fetched = failed = kept = none = skipped = 0
+    last, failing = {}, {}
     try:
         for key, b in sorted(bills.items()):
             for v in b["versions"]:
@@ -593,6 +596,11 @@ def sync_text(st, sid, session_=None, gap=1.0, limit=None):
                 if limit is not None and fetched + failed >= limit:
                     raise StopIteration
                 host = urlsplit(link["url"]).netloc
+                if failing.get(host, 0) >= 10:
+                    # Ten failures in a row: the host refuses us or is down.
+                    # The rest of its links wait for the next run.
+                    skipped += 1
+                    continue
                 wait = last.get(host, 0) + gap - time.monotonic()
                 if wait > 0:
                     time.sleep(wait)
@@ -613,12 +621,14 @@ def sync_text(st, sid, session_=None, gap=1.0, limit=None):
                             (root / (name + ".txt.gz")).write_bytes(gzip.compress(text.encode()))
                         entry["text"] = bool(text)
                     fetched += 1
+                    failing[host] = 0
                 except Exception as e:
                     entry = {"status": "error", "url": link["url"], "bill": key, "version": v["name"],
                              "error": type(e).__name__, "detail": str(e)[:200],
                              "http": getattr(getattr(e, "response", None), "status_code", None),
                              "tried": datetime.date.today().isoformat()}
                     failed += 1
+                    failing[host] = failing.get(host, 0) + 1
                 last[host] = time.monotonic()
                 manifest[name] = entry
                 if (fetched + failed) % 200 == 0:
@@ -627,7 +637,8 @@ def sync_text(st, sid, session_=None, gap=1.0, limit=None):
         pass
     finally:
         manifest_path.write_text(json.dumps(manifest, sort_keys=True))
-    return {"state": st, "session": sid, "fetched": fetched, "failed": failed, "kept": kept, "no_link": none}
+    return {"state": st, "session": sid, "fetched": fetched, "failed": failed, "kept": kept, "no_link": none,
+            "host_skipped": skipped, "hosts_down": sorted(h for h, n in failing.items() if n >= 10)}
 
 
 def text_sessions(st, latest=False):

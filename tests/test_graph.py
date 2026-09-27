@@ -2187,6 +2187,24 @@ class OpenStatesTest(unittest.TestCase):
         bad = next(e for e in manifest.values() if e["status"] == "error")
         self.assertIn("not a PDF", bad["detail"])
 
+    def test_a_host_that_fails_ten_times_is_left_for_the_next_run(self):
+        class Session:
+            calls = 0
+
+            def get(self, url, timeout):
+                Session.calls += 1
+                raise ConnectionError("no answer")
+
+        versions = [{"name": f"v{i}", "links": [{"media_type": "text/html", "url": f"https://down.example/{i}"}]}
+                    for i in range(25)]
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)):
+            path = graph.data_path("state_bills", state="ne", session="109")
+            path.parent.mkdir(parents=True)
+            path.write_text(json.dumps({"bills": {"lb/1": {"versions": versions}}}))
+            got = self.o.sync_text("ne", "109", session_=Session(), gap=0)
+        self.assertEqual((Session.calls, got["failed"], got["host_skipped"], got["hosts_down"]),
+                         (10, 10, 15, ["down.example"]))
+
     def test_a_bill_record_does_not_depend_on_row_order(self):
         bill = {"id": "ocd-bill/1", "identifier": "HB 1", "extras": '{"VA_LEG_ID": 98525}', "title": "Minimum wage",
                 "classification": "{bill}", "subject": "{}", "from_organization_id": "org-h",
@@ -2501,7 +2519,7 @@ class OtherStatesTest(unittest.TestCase):
         self.assertIsNone(graph.state_bill_page("va", "/../../../etc/x", "hb/1"))
 
     def test_a_loaded_state_by_name_scopes_a_question(self):
-        with mock.patch.dict(graph.LEGISLATURES, {"ne": self.NE, "nh": self.NH}):
+        with mock.patch.dict(graph.LEGISLATURES, {"va": {}, "ne": self.NE, "nh": self.NH}, clear=True):
             self.assertEqual(graph.strip_place("LB 1001A in Nebraska"), ("LB 1001A", "Nebraska"))
             topic, place = graph.strip_place("HB 1 in New Hampshire")
             self.assertEqual((topic, graph._state_scope(place)), ("HB 1", "nh"))

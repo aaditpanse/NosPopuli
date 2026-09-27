@@ -74,40 +74,378 @@
     "openstates/e1257f92-4694-4db0-8c21-3f04e6317e61": "openstates/815f7b31-d344-481a-9922-ad77d16b808a"
   },
   "legislatures": {
-    "_comment": "A state legislature enters the graph by an entry here (sources/openstates.py, graph.load_state). first_session: the earliest Open States session with bills on disk (Virginia's dump rows start in 2017; 2010-2016 are empty sessions). lis_from: the first session Virginia's LIS publishes CSVs for; a regular session is LIS code YYYY1 and special session N is YYYY(N+1). governors: holders the Open States people data lacks, asserted by a person. Keys for other states (plan of 2026-09-27): unicameral (Nebraska: one chamber, `legislature`, named by `name`); <chamber>_short, the chamber's word on a district and a seat map when it is not House or Senate (California's Assembly); multi_member, the chambers whose districts seat several members (New Hampshire's House); session_laws, what the state calls its numbered session laws (Virginia's Acts of Assembly). first_session is the first session of 2017 or later, as Virginia.",
+    "_comment": "A state legislature enters the graph by an entry here (sources/openstates.py, graph.load_state). first_session: the earliest Open States session with bills on disk (Virginia's dump rows start in 2017; 2010-2016 are empty sessions). lis_from: the first session Virginia's LIS publishes CSVs for; a regular session is LIS code YYYY1 and special session N is YYYY(N+1). governors: holders the Open States people data lacks, asserted by a person. Keys for other states (plan of 2026-09-27): unicameral (Nebraska: one chamber, `legislature`, named by `name`); <chamber>_short, the chamber's word on a district and a seat map when it is not House or Senate (California's Assembly); multi_member, the chambers whose districts seat several members (New Hampshire's House); session_laws, what the state calls its numbered session laws (Virginia's Acts of Assembly). first_year (instead of first_session): every session whose first year, by the session index, is that or later.",
+    "ak": {
+      "name": "Alaska Legislature",
+      "upper": "Alaska Senate",
+      "lower": "Alaska House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Session Laws of Alaska",
+      "text": true
+    },
+    "al": {
+      "name": "Alabama Legislature",
+      "upper": "Alabama Senate",
+      "lower": "Alabama House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Acts of Alabama",
+      "text": true
+    },
+    "ar": {
+      "name": "Arkansas General Assembly",
+      "upper": "Arkansas Senate",
+      "lower": "Arkansas House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Acts of Arkansas",
+      "text": true
+    },
+    "az": {
+      "name": "Arizona State Legislature",
+      "upper": "Arizona State Senate",
+      "lower": "Arizona House of Representatives",
+      "first_year": 2017,
+      "multi_member": [
+        "lower"
+      ],
+      "session_laws": "Laws of Arizona",
+      "text": true
+    },
     "ca": {
       "name": "California State Legislature",
       "upper": "California State Senate",
       "lower": "California State Assembly",
       "lower_short": "Assembly",
-      "first_session": "20172018",
       "session_laws": "Statutes of California",
+      "text": true,
+      "first_year": 2017
+    },
+    "co": {
+      "name": "Colorado General Assembly",
+      "upper": "Colorado Senate",
+      "lower": "Colorado House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Session Laws of Colorado",
+      "text": true
+    },
+    "ct": {
+      "name": "Connecticut General Assembly",
+      "upper": "Connecticut State Senate",
+      "lower": "Connecticut House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Public Acts of Connecticut",
+      "text": true
+    },
+    "de": {
+      "name": "Delaware General Assembly",
+      "upper": "Delaware State Senate",
+      "lower": "Delaware House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Laws of Delaware",
+      "text": true
+    },
+    "fl": {
+      "name": "Florida Legislature",
+      "upper": "Florida Senate",
+      "lower": "Florida House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Laws of Florida",
+      "text": true
+    },
+    "ga": {
+      "name": "Georgia General Assembly",
+      "upper": "Georgia State Senate",
+      "lower": "Georgia House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Georgia Laws",
+      "text": true
+    },
+    "hi": {
+      "name": "Hawaii State Legislature",
+      "upper": "Hawaii State Senate",
+      "lower": "Hawaii House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Session Laws of Hawaii",
+      "text": true
+    },
+    "ia": {
+      "name": "Iowa General Assembly",
+      "upper": "Iowa Senate",
+      "lower": "Iowa House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Acts of Iowa",
+      "text": true
+    },
+    "id": {
+      "name": "Idaho Legislature",
+      "upper": "Idaho Senate",
+      "lower": "Idaho House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Idaho Session Laws",
+      "text": true
+    },
+    "il": {
+      "name": "Illinois General Assembly",
+      "upper": "Illinois Senate",
+      "lower": "Illinois House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Public Acts of Illinois",
+      "text": true
+    },
+    "in": {
+      "name": "Indiana General Assembly",
+      "upper": "Indiana Senate",
+      "lower": "Indiana House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Acts of Indiana",
+      "text": true
+    },
+    "ks": {
+      "name": "Kansas Legislature",
+      "upper": "Kansas Senate",
+      "lower": "Kansas House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Session Laws of Kansas",
+      "text": true
+    },
+    "ky": {
+      "name": "Kentucky General Assembly",
+      "upper": "Kentucky Senate",
+      "lower": "Kentucky House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Kentucky Acts",
+      "text": true
+    },
+    "la": {
+      "name": "Louisiana Legislature",
+      "upper": "Louisiana State Senate",
+      "lower": "Louisiana House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Acts of Louisiana",
+      "text": true
+    },
+    "ma": {
+      "name": "Massachusetts General Court",
+      "upper": "Massachusetts Senate",
+      "lower": "Massachusetts House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Acts of Massachusetts",
+      "text": true
+    },
+    "md": {
+      "name": "Maryland General Assembly",
+      "upper": "Maryland Senate",
+      "lower": "Maryland House of Delegates",
+      "first_year": 2017,
+      "multi_member": [
+        "lower"
+      ],
+      "session_laws": "Laws of Maryland",
+      "text": true
+    },
+    "me": {
+      "name": "Maine Legislature",
+      "upper": "Maine Senate",
+      "lower": "Maine House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Laws of Maine",
+      "text": true
+    },
+    "mi": {
+      "name": "Michigan Legislature",
+      "upper": "Michigan Senate",
+      "lower": "Michigan House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Public Acts of Michigan",
+      "text": true
+    },
+    "mn": {
+      "name": "Minnesota Legislature",
+      "upper": "Minnesota Senate",
+      "lower": "Minnesota House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Laws of Minnesota",
+      "text": true
+    },
+    "mo": {
+      "name": "Missouri General Assembly",
+      "upper": "Missouri Senate",
+      "lower": "Missouri House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Laws of Missouri",
+      "text": true
+    },
+    "ms": {
+      "name": "Mississippi Legislature",
+      "upper": "Mississippi State Senate",
+      "lower": "Mississippi House of Representatives",
+      "first_year": 2017,
+      "session_laws": "General Laws of Mississippi",
+      "text": true
+    },
+    "mt": {
+      "name": "Montana Legislature",
+      "upper": "Montana Senate",
+      "lower": "Montana House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Laws of Montana",
+      "text": true
+    },
+    "nc": {
+      "name": "North Carolina General Assembly",
+      "upper": "North Carolina Senate",
+      "lower": "North Carolina House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Session Laws of North Carolina",
+      "text": true
+    },
+    "nd": {
+      "name": "North Dakota Legislative Assembly",
+      "upper": "North Dakota Senate",
+      "lower": "North Dakota House of Representatives",
+      "first_year": 2017,
+      "multi_member": [
+        "lower"
+      ],
+      "session_laws": "Laws of North Dakota",
       "text": true
     },
     "ne": {
       "name": "Nebraska Legislature",
       "unicameral": true,
-      "first_session": "105",
       "session_laws": "Laws of Nebraska",
-      "text": true
+      "text": true,
+      "first_year": 2017
     },
     "nh": {
       "name": "New Hampshire General Court",
       "upper": "New Hampshire Senate",
       "lower": "New Hampshire House of Representatives",
-      "first_session": "2017",
       "multi_member": [
         "lower"
       ],
       "session_laws": "Laws of New Hampshire",
+      "text": true,
+      "first_year": 2017
+    },
+    "nj": {
+      "name": "New Jersey Legislature",
+      "upper": "New Jersey Senate",
+      "lower": "New Jersey General Assembly",
+      "lower_short": "Assembly",
+      "first_year": 2017,
+      "multi_member": [
+        "lower"
+      ],
+      "session_laws": "Laws of New Jersey",
+      "text": true
+    },
+    "nm": {
+      "name": "New Mexico Legislature",
+      "upper": "New Mexico Senate",
+      "lower": "New Mexico House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Laws of New Mexico",
+      "text": true
+    },
+    "nv": {
+      "name": "Nevada Legislature",
+      "upper": "Nevada Senate",
+      "lower": "Nevada Assembly",
+      "lower_short": "Assembly",
+      "first_year": 2017,
+      "session_laws": "Statutes of Nevada",
+      "text": true
+    },
+    "ny": {
+      "name": "New York State Legislature",
+      "upper": "New York State Senate",
+      "lower": "New York State Assembly",
+      "lower_short": "Assembly",
+      "first_year": 2017,
+      "session_laws": "Laws of New York",
+      "text": true
+    },
+    "oh": {
+      "name": "Ohio General Assembly",
+      "upper": "Ohio Senate",
+      "lower": "Ohio House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Laws of Ohio",
+      "text": true
+    },
+    "ok": {
+      "name": "Oklahoma Legislature",
+      "upper": "Oklahoma Senate",
+      "lower": "Oklahoma House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Oklahoma Session Laws",
+      "text": true
+    },
+    "or": {
+      "name": "Oregon Legislative Assembly",
+      "upper": "Oregon State Senate",
+      "lower": "Oregon House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Oregon Laws",
+      "text": true
+    },
+    "pa": {
+      "name": "Pennsylvania General Assembly",
+      "upper": "Pennsylvania State Senate",
+      "lower": "Pennsylvania House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Laws of Pennsylvania",
+      "text": true
+    },
+    "ri": {
+      "name": "Rhode Island General Assembly",
+      "upper": "Rhode Island Senate",
+      "lower": "Rhode Island House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Public Laws of Rhode Island",
+      "text": true
+    },
+    "sc": {
+      "name": "South Carolina General Assembly",
+      "upper": "South Carolina Senate",
+      "lower": "South Carolina House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Acts of South Carolina",
+      "text": true
+    },
+    "sd": {
+      "name": "South Dakota Legislature",
+      "upper": "South Dakota Senate",
+      "lower": "South Dakota House of Representatives",
+      "first_year": 2017,
+      "multi_member": [
+        "lower"
+      ],
+      "session_laws": "Session Laws of South Dakota",
+      "text": true
+    },
+    "tn": {
+      "name": "Tennessee General Assembly",
+      "upper": "Tennessee Senate",
+      "lower": "Tennessee House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Public Acts of Tennessee",
       "text": true
     },
     "tx": {
       "name": "Texas Legislature",
       "upper": "Texas Senate",
       "lower": "Texas House of Representatives",
-      "first_session": "851",
       "session_laws": "General and Special Laws of Texas",
+      "text": true,
+      "first_year": 2017
+    },
+    "ut": {
+      "name": "Utah State Legislature",
+      "upper": "Utah State Senate",
+      "lower": "Utah House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Laws of Utah",
       "text": true
     },
     "va": {
@@ -126,6 +464,58 @@
         }
       ],
       "session_laws": "Acts of Assembly"
+    },
+    "vt": {
+      "name": "Vermont General Assembly",
+      "upper": "Vermont Senate",
+      "lower": "Vermont House of Representatives",
+      "first_year": 2017,
+      "multi_member": [
+        "upper",
+        "lower"
+      ],
+      "session_laws": "Acts and Resolves of Vermont",
+      "text": true
+    },
+    "wa": {
+      "name": "Washington State Legislature",
+      "upper": "Washington State Senate",
+      "lower": "Washington House of Representatives",
+      "first_year": 2017,
+      "multi_member": [
+        "lower"
+      ],
+      "session_laws": "Session Laws of Washington",
+      "text": true
+    },
+    "wi": {
+      "name": "Wisconsin Legislature",
+      "upper": "Wisconsin State Senate",
+      "lower": "Wisconsin State Assembly",
+      "lower_short": "Assembly",
+      "first_year": 2017,
+      "session_laws": "Wisconsin Acts",
+      "text": true
+    },
+    "wv": {
+      "name": "West Virginia Legislature",
+      "upper": "West Virginia Senate",
+      "lower": "West Virginia House of Delegates",
+      "first_year": 2017,
+      "multi_member": [
+        "upper",
+        "lower"
+      ],
+      "session_laws": "Acts of the Legislature of West Virginia",
+      "text": true
+    },
+    "wy": {
+      "name": "Wyoming Legislature",
+      "upper": "Wyoming Senate",
+      "lower": "Wyoming House of Representatives",
+      "first_year": 2017,
+      "session_laws": "Session Laws of Wyoming",
+      "text": true
     }
   }
 }
