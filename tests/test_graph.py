@@ -2581,6 +2581,41 @@ class OtherStatesTest(unittest.TestCase):
         # A later year's special session before an older regular one.
         self.assertEqual(voted(backend([("89R", "2025-00"), ("901", "2027-01")])), ["instrument/tx/901/hb/2"])
 
+    def test_a_roll_call_filed_under_the_wrong_chamber(self):
+        s1, s2 = graph.node_id("person", "openstates/s1"), graph.node_id("person", "openstates/s2")
+        h1 = graph.node_id("person", "openstates/h1")
+        roster = {"upper": [(s1, ["Chris Kipp"], "2025-01-08", None, None), (s2, ["Mark Baisley"], "2025-01-08", None, None)],
+                  "lower": [(h1, ["Judy Amabile"], "2023-01-09", None, None)]}
+        votes = [{"id": "v1", "bill": "sb/1", "date": "2026-02-04", "motion": "Third Reading", "result": "pass",
+                  "chamber": "lower", "counts": {"yes": 2}, "positions": [[None, "Kipp", "yes"], [None, "Baisley", "yes"]]}]
+        _, edges, gaps = graph.build_state_votes("co", "2026A", votes, {}, roster)
+        considered = next(e for e in edges if e["predicate"] == "considered")
+        self.assertEqual(considered["props"]["chamber"], "upper")
+        self.assertEqual({e["src"] for e in edges if e["predicate"] == "voted_on"}, {s1, s2})
+        self.assertIn("1 roll call(s) filed under one chamber whose voters sit in the other", "\n".join(gaps))
+
+    def test_names_as_records_mangle_them(self):
+        self.assertEqual(graph.clean_person_name("b'Elliott, Josh'"), "Elliott, Josh")
+        self.assertEqual(graph.clean_person_name("ARCHER of Saco"), "ARCHER")
+        self.assertEqual(graph.clean_person_name("          Brandes"), "Brandes")
+
+    def test_a_term_with_no_start_begins_two_years_before_its_end(self):
+        people = [_os_person("b", "Curt Bramble", [("upper", "16", None, "2023-01-01"),
+                                                    ("upper", "24", "2023-01-01", "2025-01-02")])]
+        with mock.patch.dict(graph.LEGISLATURES, {"ut": {"name": "Utah State Legislature"}}):
+            _, edges, gaps = graph.build_state_skeleton("ut", people, [], today="2026-09-27")
+        held = sorted((e["valid_from"], e["props"]["bound_from"]) for e in edges if e["predicate"] == "holds")
+        self.assertEqual(held, [("2021-01-01", "inferred"), ("2023-01-01", "exact")])
+        self.assertIn("1 role(s) with an end and no start date begin two years before their end, by inference", gaps)
+
+    def test_the_current_sessions_span_the_latest_year(self):
+        index = {"2025_26": {"key": [2025, 0], "years": [2025, 2026]}, "2026_ss": {"key": [2026, 0], "years": [2026, 2026]},
+                 "2023_24": {"key": [2023, 0], "years": [2023, 2024]}}
+        with mock.patch.object(graph, "state_session_index", return_value=index):
+            self.assertEqual(graph.current_state_sessions(["2023_24", "2025_26", "2026_ss"],
+                                                          {"2023_24": 9, "2025_26": 2517, "2026_ss": 280}, "ga"),
+                             ["2025_26", "2026_ss"])
+
     def test_a_bill_number_may_carry_a_letter(self):
         self.assertEqual((graph.bill_number("34"), graph.bill_number("34a")), (34, "34a"))
         self.assertEqual(sorted(["35", "34a", "34", "a"], key=graph._number_order), ["a", "34", "34a", "35"])
@@ -2834,7 +2869,9 @@ class StateSponsorNameTest(unittest.TestCase):
         self.assertEqual(set(spon), {a, c})
         self.assertEqual(spon[c]["props"]["role"], "cosponsor")
         self.assertIn("surname and first initial", spon[a]["props"]["sponsor_matched_by"])
-        self.assertIn("2 of them by name; 1 named without a person id that matched no single legislator", gaps[0])
+        # A committee patron is not a person, and not a miss either: counted apart.
+        self.assertIn("2 of them by name; 0 named without a person id that matched no single legislator", gaps[0])
+        self.assertIn("1 sponsorship(s) by a committee, not a person", gaps[1])
 
     def test_a_prefiled_bill_a_bare_surname_and_a_resignation_note(self):
         a, c = graph.node_id("person", "openstates/a"), graph.node_id("person", "openstates/c")
