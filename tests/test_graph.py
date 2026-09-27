@@ -2100,6 +2100,68 @@ class OpenStatesTest(unittest.TestCase):
                          ["id", "option", "value", "vote_event_id"])
         self.assertEqual(self.o.dump_months(datetime.date(2026, 1, 3)), ["2026-01", "2025-12"])
 
+    def test_bill_keys_of_every_state_shape(self):
+        # Probe of 2026-09-27: dotted types (UT, VT), Colorado's year prefix,
+        # suffix letters that are separate bills (NE, FL, GA), lettered
+        # joint resolutions (MI), Illinois' constitutional amendments.
+        for ident, want in (("H.B. 1", "hb/1"), ("H. 1", "h/1"), ("HB 17-1001", "hb/1001"),
+                            ("LB 1001A", "lb/1001a"), ("HB 1A", "hb/1a"), ("HB 1EX", "hb/1ex"),
+                            ("HJR A", "hjr/a"), ("HJR CA0001", "hjrca/1"), ("HJR CA1", "hjrca/1"),
+                            ("AB 5", "ab/5"), ("LD 12", "ld/12"), ("A 5", "a/5"),
+                            ("1024DP", None), ("SS# 2 SB 1233", None), ("AB 160-82", None)):
+            self.assertEqual(self.o.bill_key(ident), want, ident)
+        # LB 1001 and its appropriation bill LB 1001A are two bills.
+        self.assertNotEqual(self.o.bill_key("LB 1001"), self.o.bill_key("LB 1001A"))
+
+    def test_session_index_orders_every_id_shape(self):
+        row = lambda sid, cls, start, end="": {"identifier": sid, "name": sid, "classification": cls,
+                                                "start_date": start, "end_date": end}
+        # Texas: no year in the id, and Open States starts the 87th in 2019.
+        tx = self.o.session_index([row("86", "primary", "2019-01-08"), row("87", "primary", "2019-01-12"),
+                                   row("871", "special", "2021-07-08"), row("89R", "", "2025-01-14")],
+                                  {"86": ["2018-11-12", "2019-02-01", "2019-03-01"],
+                                   "87": ["2020-11-09", "2021-02-01", "2021-03-01"],
+                                   "871": ["2021-07-08"], "89R": ["2024-11-12", "2025-03-01", "2025-03-02"]})
+        self.assertEqual({k: v["key"] for k, v in tx.items()},
+                         {"86": [2019, 0], "87": [2021, 0], "871": [2021, 1], "89R": [2025, 0]})
+        # California: the id's years win over a December start, and a
+        # special session numbers after the regular one.
+        ca = self.o.session_index([row("20232024", "primary", "2022-12-05"),
+                                   row("20232024 Special Session 1", "special", "2022-12-05")],
+                                  {"20232024": ["2023-01-01"] * 3 + ["2024-02-01"], "20232024 Special Session 1": ["2023-01-01"]})
+        self.assertEqual((ca["20232024"]["key"], ca["20232024"]["years"]), ([2023, 0], [2023, 2024]))
+        self.assertEqual(ca["20232024 Special Session 1"]["key"], [2023, 1])
+        # Georgia's "2021_22" is two years; its small special is special by size.
+        ga = self.o.session_index([row("2021_22", "", "2021-01-11"), row("2021_ss", "", "2021-11-03")],
+                                  {"2021_22": ["2021-02-01"] * 9, "2021_ss": ["2021-11-03"]})
+        self.assertEqual((ga["2021_22"]["key"], ga["2021_22"]["years"], ga["2021_ss"]["key"]),
+                         ([2021, 0], [2021, 2022], [2021, 1]))
+        # North Carolina's "2025" sits into 2026: nine bills in ten by then.
+        nc = self.o.session_index([row("2025", "primary", "2025-01-08")],
+                                  {"2025": ["2025-02-01"] * 5 + ["2026-05-01"] * 5})
+        self.assertEqual(nc["2025"]["years"], [2025, 2026])
+
+    def test_text_file_names_and_link_choice(self):
+        o = self.o
+        self.assertEqual(o.text_name("https://lis.blob.core.windows.net/files/1217587.HTML"), "1217587.HTML")
+        self.assertEqual(o.text_name("https://lis.virginia.gov/cgi-bin/legp604.exe?201+ful+HB907ER"),
+                         "legp604-201-HB907ER.html")
+        self.assertRegex(o.text_name("https://capitol.texas.gov/x/HB00001I.htm", "text/html"), r"^[0-9a-f]{16}\.html$")
+        links = [{"media_type": "application/pdf", "url": "a.PDF"}, {"media_type": "text/html", "url": "a.HTML"}]
+        self.assertEqual(o.pick_link(links)["url"], "a.HTML")
+        self.assertEqual(o.pick_link(links[:1])["url"], "a.PDF")
+        self.assertIsNone(o.pick_link([]))
+        # Minnesota's typo and North Dakota's bare "pdf" are PDFs; a Word
+        # file alone is not a link we store.
+        self.assertEqual(o.pick_link([{"media_type": "applcation/pdf", "url": "m"}])["media_type"], "application/pdf")
+        self.assertEqual(o.pick_link([{"media_type": "pdf", "url": "n"}])["media_type"], "application/pdf")
+        self.assertIsNone(o.pick_link([{"media_type": "application/msword", "url": "w"}]))
+        # Virginia's first fetch named 514 files "<hash>.bin": kept, not refetched.
+        link = {"url": "https://lis.virginia.gov/other", "media_type": "application/pdf"}
+        legacy = o.text_name(link["url"]).rsplit(".", 1)[0] + ".bin"
+        self.assertEqual(o.stored_name({legacy: {"status": "ok"}}, link), legacy)
+        self.assertTrue(o.stored_name({}, link).endswith(".pdf"))
+
     def test_a_bill_record_does_not_depend_on_row_order(self):
         bill = {"id": "ocd-bill/1", "identifier": "HB 1", "extras": '{"VA_LEG_ID": 98525}', "title": "Minimum wage",
                 "classification": "{bill}", "subject": "{}", "from_organization_id": "org-h",
@@ -2164,16 +2226,6 @@ class LisTest(unittest.TestCase):
         self.assertEqual((r["unlinked_votes"], r["empty_votes"]), (1, 0))
         # A row with no chamber letter keeps its words and no chamber.
         self.assertEqual(r["history"]["hb/1"][2]["chamber"], None)
-
-    def test_text_file_names_and_link_choice(self):
-        from sources import lis
-        self.assertEqual(lis.text_name("https://lis.blob.core.windows.net/files/1217587.HTML"), "1217587.HTML")
-        self.assertEqual(lis.text_name("https://lis.virginia.gov/cgi-bin/legp604.exe?201+ful+HB907ER"),
-                         "legp604-201-HB907ER.html")
-        links = [{"media_type": "application/pdf", "url": "a.PDF"}, {"media_type": "text/html", "url": "a.HTML"}]
-        self.assertEqual(lis.pick_link(links)["url"], "a.HTML")
-        self.assertEqual(lis.pick_link(links[:1])["url"], "a.PDF")
-        self.assertIsNone(lis.pick_link([]))
 
 
 def _os_person(pid, name, roles, lis=None, others=()):
@@ -2287,6 +2339,94 @@ class StateLayerTest(unittest.TestCase):
         sessions = ["2025", "2026", "2026S1", "2027"]
         self.assertEqual(graph.current_state_sessions(sessions, {"2025": 9, "2026": 11, "2026S1": 3, "2027": 0}),
                          ["2026", "2026S1"])
+
+
+
+class OtherStatesTest(unittest.TestCase):
+    """The shapes the probe of 2026-09-27 found beyond Virginia: Nebraska's
+    one chamber, New Hampshire's multi-member districts, session ids with
+    no year (Texas), two-year sessions (California)."""
+
+    NH = {"name": "New Hampshire General Court", "multi_member": ["lower"], "first_session": "2017"}
+    NE = {"name": "Nebraska Legislature", "unicameral": True, "first_session": "105"}
+
+    def test_a_multi_member_district_keeps_every_sitting_member(self):
+        people = [_os_person("a", "Ann Alpha", [("lower", "Rockingham 30", "2022-12-07", "2024-12-04")]),
+                  _os_person("b", "Bob Beta", [("lower", "Rockingham 30", "2022-12-07", "2024-12-04")]),
+                  _os_person("c", "Cy Gamma", [("lower", "Rockingham 30", "2024-12-04", None)]),
+                  _os_person("d", "Di Delta", [("lower", "Rockingham 30", "2024-12-04", None)])]
+        with mock.patch.dict(graph.LEGISLATURES, {"nh": self.NH}):
+            nodes, edges, _ = graph.build_state_skeleton("nh", people, [], today="2026-09-27")
+            post = graph.node_id("post", "nh/lower/sldl:rockingham_30")
+            self.assertEqual(next(n for n in nodes if n["id"] == post)["props"]["seats"], 2)
+            open_ = {e["src"] for e in edges if e["predicate"] == "holds" and e["dst"] == post and not e["valid_to"]}
+            self.assertEqual(open_, {graph.node_id("person", f"openstates/{x}") for x in "cd"})
+            # A retired record with a term left open, and a sitting member who
+            # replaced them: three open in a two-seat district. The earliest
+            # open one is closed, and says so.
+            people[2]["retired"] = True
+            people.append(_os_person("e", "Ed Epsilon", [("lower", "Rockingham 30", "2025-06-01", None)]))
+            nodes, edges, gaps = graph.build_state_skeleton("nh", people, [], today="2026-09-27")
+            self.assertIn("Cy Gamma's hold on House District Rockingham 30 closed at 2025-05-31", "\n".join(gaps))
+        # A chamber not listed as multi-member seats one: two open holders close.
+        self.assertEqual(graph.district_seats([{"valid_from": "2024-01-01", "valid_to": None}] * 2, "2026-01-01", False), 1)
+
+    def test_nebraska_has_one_chamber(self):
+        people = [_os_person("n", "Tom Brewer", [("legislature", "43", "2023-01-04", None)])]
+        with mock.patch.dict(graph.LEGISLATURES, {"ne": self.NE}):
+            self.assertEqual(graph.state_chambers("ne"), ("legislature",))
+            nodes, edges, gaps = graph.build_state_skeleton("ne", people, [], today="2026-09-27")
+            by_id = {n["id"]: n for n in nodes}
+            self.assertEqual(by_id[graph.node_id("organization", "ne/legislature")]["name"], "Nebraska Legislature")
+            self.assertEqual(by_id[graph.node_id("post", "ne/legislature/sldu:43")]["props"]["role"],
+                             "Legislative District 43")
+            self.assertNotIn(graph.node_id("organization", "ne/upper"), by_id)
+            # No independent source: every term ingested, and the gap says why.
+            self.assertIn("no independent source for this legislature is loaded", gaps[0])
+            pid = graph.node_id("person", "openstates/n")
+            votes = [{"id": "v1", "bill": "lb/5", "date": "2026-02-03", "motion": "Final Reading", "result": "pass",
+                      "chamber": "legislature", "counts": {"yes": 1}, "positions": [["ocd-person/n", "Tom Brewer", "yes"]]}]
+            _, vedges, _ = graph.build_state_votes("ne", "109", votes, {"ocd-person/n": pid},
+                                                   {"legislature": [(pid, ["Tom Brewer"], "2023-01-04", None, None)]})
+            self.assertEqual(sorted(e["predicate"] for e in vedges), ["considered", "voted_on"])
+
+    def test_the_session_index_orders_and_dates_sessions(self):
+        index = {"86": {"key": [2019, 0], "years": [2019, 2019], "types": ["hb", "sb"]},
+                 "88": {"key": [2023, 0], "years": [2023, 2023], "types": ["hb", "sb", "hcr"]},
+                 "882": {"key": [2023, 2], "years": [2023, 2023], "types": ["hb"]},
+                 "20232024": {"key": [2023, 0], "years": [2023, 2024], "types": ["ab"]}}
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)):
+            path = graph.data_path("state_sessions", state="tx")
+            path.parent.mkdir(parents=True)
+            path.write_text(json.dumps({"meta": {}, "sessions": index}))
+            for sid in ("86", "88", "882"):
+                graph.data_path("state_bills", state="tx", session=sid).write_text('{"meta": {}, "bills": {}}')
+            self.assertEqual(graph.state_sessions("tx"), ["86", "88", "882"])
+            self.assertIsNone(graph.session_key("88"))       # no state, no index: not a known shape
+            self.assertEqual(graph.session_key("882", "tx"), (2023, 2))
+            self.assertTrue(graph.in_session_year("20232024", "tx", 2024))
+            self.assertFalse(graph.in_session_year("88", "tx", 2024))
+            self.assertEqual(graph.state_bill_ref("tx:HCR 5 in 2023"), ("tx", "hcr", "5", 2023))
+            # A type the state's files do not use is not a bill number there.
+            self.assertIsNone(graph.state_bill_ref("tx:LB 5"))
+            self.assertEqual(graph.find_state_bill("tx", "what happened to H.C.R. 12?").group(1), "H.C.R. 12")
+
+    def test_a_chapter_is_named_by_the_states_session_laws(self):
+        rec = {"bills": {"ab/5": {"identifier": "AB 5", "openstates_id": "ocd-bill/5", "title": "Workers",
+                                  "first_action_date": "2018-12-03", "latest_action_date": "2019-09-18",
+                                  "sponsors": [], "related": [],
+                                  "actions": [{"date": "2019-09-18", "classification": ["became-law"],
+                                               "description": "Chaptered by Secretary of State - Chapter 296, Statutes of 2019."}]}}}
+        conf = {"name": "California State Legislature", "session_laws": "Statutes of California"}
+        with mock.patch.dict(graph.LEGISLATURES, {"ca": conf}):
+            nodes, edges, _ = graph.build_state_bills("ca", "20192020", rec, {}, [])
+        law = next(n for n in nodes if n["id"] == "instrument/ca/acts/2019/chap/296")
+        self.assertEqual(law["name"], "Statutes of California 2019, Chapter 296")
+
+    def test_district_names_are_ocd_slugs(self):
+        self.assertEqual(graph._state_post("nh", "lower", "Rockingham 30"),
+                         ("nh/lower/sldl:rockingham_30", "ocd-division/country:us/state:nh/sldl:rockingham_30"))
+        self.assertEqual(graph._state_post("va", "upper", "22")[0], "va/upper/sldu:22")
 
 
 class StateAnswerTest(unittest.TestCase):

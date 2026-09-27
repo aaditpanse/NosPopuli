@@ -939,12 +939,13 @@ async def handle_state_search(structured, question, loop):
     specific_bill = structured.get("specific_bill") or {}
     identifier = specific_bill.get("identifier") if structured.get("_fast_path") == "state_bill_id" else None
     if not identifier:
-        m = re.search(r"\b([HS][BJCR]?\s*\d+)\b", question, re.IGNORECASE)
+        m = graph.find_state_bill(st, question)
         identifier = re.sub(r"\s+", " ", m.group(1).upper()) if m else None
     if identifier:
         # The language model's route carries no session; the question's own year does.
+        m = graph.find_state_bill(st, question)
         year = structured.get("requested_session") or _extract_state_session(
-            re.sub(r"\b[HS]\.?\s*[BJR]\.?\s*(?:R\.?\s*)?\d+\b", " ", question, flags=re.I))  # not the bill number
+            question[:m.start()] + " " + question[m.end():] if m else question)  # not the bill number
         year = year if year and len(year) == 4 else None
         hits = await loop.run_in_executor(None, graph.state_bill_lookup, st, identifier, year)
         note = None
@@ -955,7 +956,7 @@ async def handle_state_search(structured, question, loop):
         if hits:
             if not year and not note and len(hits) > 1:
                 note = (f"{identifier} is a different bill each session; newest first. "
-                        f"Add a year (e.g. \"{identifier} from {graph.session_key(hits[-1][0])[0]}\") to pin one.")
+                        f"Add a year (e.g. \"{identifier} from {graph.session_years(hits[-1][0], st)[0]}\") to pin one.")
             return reply([graph.state_bill_row(st, s, k, b, graph._newer_actions(st, s, k, b))
                           for s, k, b in hits[:10]], note)
         if structured.get("_fast_path") == "state_bill_id":
@@ -2006,7 +2007,7 @@ def _state_bill_stream(page, st, session, key, user_context=None):
 
     async def stream():
         chosen = graph.default_version(versions)
-        text_task = asyncio.ensure_future(ex(graph.state_version_text, session, chosen))
+        text_task = asyncio.ensure_future(ex(graph.state_version_text, st, session, chosen))
 
         async def sec_meta():
             return {"section": "meta", "identifier": bill["identifier"], "title": bill["title"], "state_code": st.upper(),
@@ -2024,11 +2025,20 @@ def _state_bill_stream(page, st, session, key, user_context=None):
 
         async def sec_votes():
             people_map = {pid: {"name": p.get("name"), "party": (p.get("party") or "")[:1]} for pid, p in people.items()}
-            out = {}
-            for chamber, label in (("lower", "house"), ("upper", "senate")):
+            out, names = {}, {}
+            conf = graph.LEGISLATURES.get(st) or {}
+            # The page has two seat maps, "house" and "senate"; Nebraska's one
+            # chamber takes the first. Names: California's lower is the Assembly.
+            for chamber in graph.state_chambers(st):
+                label = "senate" if chamber == "upper" else "house"
                 sel = select_floor_roll_call(page["votes"], chamber, st.upper())
                 out[label] = map_roll_call(sel, st.upper(), chamber, people_map) if sel else None
-            return {"section": "votes", "votes": out, "roll_calls": len(page["votes"])}
+                names[label] = conf.get(chamber + "_short") or ("Legislature" if chamber == "legislature" else
+                                                              graph.STATE_CHAMBERS[chamber])
+            # Only names the page does not already use (House, Senate).
+            names = {k: v for k, v in names.items() if v != {"house": "House", "senate": "Senate"}[k]}
+            return {"section": "votes", "votes": out, "roll_calls": len(page["votes"]),
+                    **({"chamber_names": names} if names else {})}
 
         async def sec_timeline():
             events = [{"date": a["date"], "text": a["description"], "chamber": a.get("chamber"),
@@ -2096,7 +2106,7 @@ async def state_bill_text(request: Request, st: str, session: str, bill_type: st
         raise HTTPException(status_code=404, detail=_state_not_synced(st.lower(), session, bill_type, number))
     versions = graph.state_versions(st.lower(), session, page["bill"])
     chosen = next((v for v in versions if v["name"] == version), None) if version else graph.default_version(versions)
-    text = await asyncio.to_thread(graph.state_version_text, session, chosen)
+    text = await asyncio.to_thread(graph.state_version_text, st.lower(), session, chosen)
     return {"text": text or None, "version": chosen and chosen["name"],
             "versions": [{k: v[k] for k in ("name", "date", "url", "text")} for v in versions],
             "empty_reason": None if text else "this version's text is not on this server yet"}

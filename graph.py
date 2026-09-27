@@ -81,6 +81,9 @@ DATASETS = {
     "state_votes": {"path": "derived/states/{state}/votes-{session}.json", "by": "sources/openstates.py extract",
                     "source": "Open States monthly Postgres dump (data.openstates.org)",
                     "licence": "public record, as scraped by Open States"},
+    "state_sessions": {"path": "derived/states/{state}/sessions.json", "by": "sources/openstates.py extract",
+                       "source": "Open States monthly Postgres dump (data.openstates.org), legislativesession",
+                       "licence": "public record, as scraped by Open States"},
     "state_certification": {"path": "derived/states/{state}/member-session.json",
                             "by": "graph.py write_state_cert_index",
                             "source": "derived from the older sessions' roll calls", "licence": "derived"},
@@ -90,9 +93,10 @@ DATASETS = {
     "lis": {"path": "raw/lis/{session}/{name}", "by": "sources/lis.py sync",
             "source": "Virginia LIS daily files (lis.blob.core.windows.net/lisfiles)",
             "licence": "public record (Virginia General Assembly)"},
-    "state_text": {"path": "raw/lis/text/{session}/{name}", "by": "sources/lis.py text",
-                   "source": "bill text versions as published by Virginia LIS",
-                   "licence": "public record (Virginia General Assembly)"},
+    "state_text": {"path": "raw/states/{state}/text/{session}/{name}", "by": "sources/openstates.py text",
+                   "source": "bill text versions from each version's link in the Open States record, as the "
+                             "legislature publishes them",
+                   "licence": "public record (each state legislature)"},
     "public": {"path": "public/{name}.json", "by": "graph.py fetch",
                "source": "unitedstates/congress-legislators", "licence": "CC0"},
     "images": {"path": "raw/unitedstates-images/congress/225x275/{bioguide}.jpg",
@@ -174,14 +178,56 @@ def write_manifest():
 _ROMAN = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5}
 
 
-def session_key(session):
-    """(year, special number) of an Open States session id — "2026" is
-    (2026, 0), "2026S1" (2026, 1), "2020specialI" (2020, 1) — for newest-
-    first order and the LIS code. None for a shape it does not know. Pure."""
+def _session_id_key(session):
+    """(year, special number) read off a Virginia-shaped id — "2026" is
+    (2026, 0), "2026S1" (2026, 1), "2020specialI" (2020, 1) — or None. Pure."""
     m = re.fullmatch(r"(\d{4})(?:S(\d+)|special([IV]+))?", session or "")
     if not m:
         return None
     return int(m.group(1)), int(m.group(2)) if m.group(2) else _ROMAN.get(m.group(3), 0) if m.group(3) else 0
+
+
+_SESSION_INDEX = {}
+
+
+def state_session_index(st):
+    """{session id: {years, key, name, classification, start, end, bills,
+    votes, types}} from derived/states/<st>/sessions.json, cached per
+    mtime; {} when the state has none on disk."""
+    path = data_path("state_sessions", state=st)
+    try:
+        mtime = path.stat().st_mtime_ns
+    except FileNotFoundError:
+        return {}
+    hit = _SESSION_INDEX.get(str(path))
+    if not hit or hit[0] != mtime:
+        hit = _SESSION_INDEX[str(path)] = (mtime, json.loads(path.read_text())["sessions"])
+    return hit[1]
+
+
+def session_key(session, st=None):
+    """(first year, special number) of a state's session, for newest-first
+    order: the session index `extract` writes (Open States ids come in ~60
+    shapes, many with no year: "88", "103rd", "57th-2nd-regular"), else a
+    Virginia-shaped id. None for a session neither knows. Pure but for the
+    index file."""
+    rec = state_session_index(st).get(session) if st else None
+    return tuple(rec["key"]) if rec else _session_id_key(session)
+
+
+def session_years(session, st=None):
+    """(first, last) calendar year a session sat in: "20232024" is (2023,
+    2024), a Virginia session one year. None when unknown."""
+    rec = state_session_index(st).get(session) if st else None
+    if rec:
+        return tuple(rec["years"])
+    key = _session_id_key(session)
+    return (key[0], key[0]) if key else None
+
+
+def in_session_year(session, st, year):
+    years = session_years(session, st)
+    return bool(years) and years[0] <= int(year) <= years[1]
 
 
 def lis_session(st, session):
@@ -189,7 +235,7 @@ def lis_session(st, session):
     "2026S1" → "20262"), or None when LIS publishes no files for it (before
     the legislature's `lis_from`, or a state without LIS). Pure."""
     conf = LEGISLATURES.get(st) or {}
-    key = session_key(session)
+    key = _session_id_key(session)
     if not conf.get("lis_from") or not key or key[0] < int(conf["lis_from"]):
         return None
     return f"{key[0]}{key[1] + 1}"
@@ -384,15 +430,18 @@ def _edge(g, src, predicate, dst, valid_from, valid_to, certification,
     return row
 
 
-def _close_double_holds(g, holds_by_post, post_label):
-    """Two open holders of one seat is a contradiction the resolver cannot
-    answer. Close the earlier one the day before the later one begins, and
-    say that the bound is inferred. Leaving both open would be the silent
-    kind of wrong."""
+def _close_double_holds(g, holds_by_post, post_label, seats=None):
+    """More open holders than a post has seats is a contradiction the
+    resolver cannot answer. Close the earliest open one the day before the
+    newcomer begins, and say that the bound is inferred. Leaving both open
+    would be the silent kind of wrong. seats: {post: n}, 1 when absent; a
+    multi-member district (New Hampshire's) seats several at once."""
     for post, rows in holds_by_post.items():
         rows.sort(key=lambda r: r["valid_from"])
-        for earlier, later in zip(rows, rows[1:]):
-            if earlier["valid_to"] is None:
+        n = (seats or {}).get(post, 1)
+        for i, later in enumerate(rows[1:], 1):
+            open_ = [r for r in rows[:i] if r["valid_to"] is None]
+            for earlier in open_[:max(0, len(open_) - n + 1)]:
                 day_before = (datetime.date.fromisoformat(later["valid_from"])
                               - datetime.timedelta(days=1)).isoformat()
                 earlier["valid_to"] = day_before
@@ -2077,7 +2126,7 @@ def state_bill_lookup(st, identifier, year=None):
         return []
     out = []
     for sid in reversed(state_sessions(st)):
-        if year and (session_key(sid) or (0,))[0] != int(year):
+        if year and not in_session_year(sid, st, year):
             continue
         bills = _state_file("state_bills", st, sid)
         if bills and key in bills["bills"]:
@@ -2090,9 +2139,9 @@ def state_recent_bills(st, n):
     two years on disk: the newest file alone can be next year's prefiles
     while a special session is the one sitting."""
     sessions = state_sessions(st)
-    last = max((session_key(x)[0] for x in sessions), default=0)
+    last = max((session_key(x, st)[0] for x in sessions), default=0)
     rows = []
-    for sid in [x for x in sessions if session_key(x)[0] >= last - 1]:
+    for sid in [x for x in sessions if session_key(x, st)[0] >= last - 1]:
         bills = _state_file("state_bills", st, sid) or {"bills": {}}
         rows += [(b.get("latest_action_date") or "", sid, k, b) for k, b in bills["bills"].items()]
     rows.sort(key=lambda r: (r[0], r[1], r[2]), reverse=True)
@@ -2109,8 +2158,8 @@ def state_member_lookup(st, name):
     the roster lists) wins; then a surname, current members first. A
     guess between two people is never made."""
     people = [p for p in (_state_file("state_people", st, None) or {"people": []})["people"]
-              if any(r.get("type") in ("upper", "lower") for r in p.get("roles") or [])]
-    q = re.sub(r"^(?:del(?:egate)?|sen(?:ator)?|rep(?:resentative)?)\.?\s+", "", (name or "").strip(), flags=re.I).lower()
+              if any(r.get("type") in state_chambers(st) for r in p.get("roles") or [])]
+    q = re.sub(r"^(?:del(?:egate)?|sen(?:ator)?|rep(?:resentative)?|assembly(?:man|woman|member)|asm)\.?\s+", "", (name or "").strip(), flags=re.I).lower()
     if not q:
         return {}
     # A deep link names the person by id (/state/va/member/<uuid>).
@@ -2129,7 +2178,7 @@ def state_member_lookup(st, name):
 
 def state_member_card(st, p):
     """A roster person in the shape the state member view reads. Pure."""
-    roles = sorted((r for r in p.get("roles") or [] if r.get("type") in ("upper", "lower")),
+    roles = sorted((r for r in p.get("roles") or [] if r.get("type") in state_chambers(st.lower())),
                    key=lambda r: r.get("start") or "", reverse=True)
     top = roles[0] if roles else {}
     conf = LEGISLATURES.get(st.lower()) or {}
@@ -2154,7 +2203,7 @@ def state_member_bills(st, person_id, n):
     alone is not the member's record), so a count covers those sessions only."""
     rows, read = [], []
     sessions = state_sessions(st)
-    current = set(current_state_sessions(sessions, state_vote_counts(st)))
+    current = set(current_state_sessions(sessions, state_vote_counts(st), st))
     for sid in reversed(sessions):
         bills = _state_file("state_bills", st, sid)
         if not bills:
@@ -2184,13 +2233,13 @@ def state_versions(st, session, bill):
     """The bill's text versions with whether each is on disk: [{name, date,
     url, media_type, file, text}] in the record's order. Pure but for
     reading the text manifest."""
-    manifest_path = DATA_DIR / "raw" / "lis" / "text" / session / "manifest.json"
+    manifest_path = data_path("state_text", state=st, session=session, name="manifest.json")
     manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
-    from sources.lis import pick_link, text_name
+    from sources.openstates import pick_link, stored_name
     out = []
     for v in bill.get("versions") or []:
         link = pick_link(v["links"])
-        name = text_name(link["url"]) if link else None
+        name = stored_name(manifest, link) if link else None
         entry = manifest.get(name) or {}
         out.append({"name": v["name"], "date": v.get("date"), "url": link["url"] if link else None,
                     "media_type": link["media_type"] if link else None, "file": name,
@@ -2209,14 +2258,14 @@ def default_version(versions):
 
 
 def html_text(raw):
-    """A stored LIS page's text: the legacy pages wrap the bill in their
-    site's frame (<div id="mainC">) and are cp1252; the newer ones are the
-    bill alone. Pure."""
+    """A stored bill page's text. Virginia's legacy pages wrap the bill in
+    their site's frame (<div id="mainC">) and are cp1252; other pages are
+    read from the body, less scripts, styles and navigation. Pure."""
     from bs4 import BeautifulSoup
     html = raw.decode("utf-8") if raw[:3] == b"\xef\xbb\xbf" or _is_utf8(raw) else raw.decode("cp1252", "replace")
     soup = BeautifulSoup(html, "html.parser")
     main = soup.find(id="mainC") or soup.body or soup
-    for tag in main(["script", "style", "nav"]):
+    for tag in main(["script", "style", "nav", "header", "footer"]):
         tag.decompose()
     # Lines break at blocks, not at every tag: "§ <b>40.1-28.10</b> of the
     # Code" is one line of the bill.
@@ -2236,12 +2285,12 @@ def _is_utf8(raw):
         return False
 
 
-def state_version_text(session, version):
+def state_version_text(st, session, version):
     """The text of one version as stored, or None when it is not on disk."""
     import gzip
     if not version or not version.get("file"):
         return None
-    root = DATA_DIR / "raw" / "lis" / "text" / session
+    root = data_path("state_text", state=st, session=session, name="manifest.json").parent
     if version["media_type"] == "application/pdf":
         p = root / (version["file"] + ".txt.gz")
         return gzip.decompress(p.read_bytes()).decode("utf-8", "replace") if p.exists() else None
@@ -2264,8 +2313,8 @@ def state_snapshot_votes(st, persons, year, topic, limit):
     votes files of that year's sessions — the ones not loaded as edges.
     None when the year's sessions are loaded (the graph answers). Same row
     shape as the graph's. Returns (rows, total, truncated, files read)."""
-    sessions = [sid for sid in state_sessions(st) if (session_key(sid) or (0,))[0] == year]
-    if not sessions or set(sessions) & set(current_state_sessions(state_sessions(st), state_vote_counts(st))):
+    sessions = [sid for sid in state_sessions(st) if in_session_year(sid, st, year)]
+    if not sessions or set(sessions) & set(current_state_sessions(state_sessions(st), state_vote_counts(st), st)):
         return None
     ids = {p["openstates_id"]: p for p in persons if p.get("openstates_id")}
     rows, files = [], []
@@ -2276,7 +2325,8 @@ def state_snapshot_votes(st, persons, year, topic, limit):
         files.append(vp.name)
         bills = json.loads(data_path("state_bills", state=st, session=sid).read_text())["bills"]
         for v in json.loads(vp.read_text())["votes"]:
-            if not v["bill"]:
+            # A two-year session's file holds both years' roll calls.
+            if not v["bill"] or not (v["date"] or "").startswith(str(year)):
                 continue
             iid = state_instrument_id(st, sid, v["bill"])
             b = bills.get(v["bill"]) or {}
@@ -2674,8 +2724,10 @@ STATE_SOURCE = "openstates"
 # Bumped when the state builders change what a scope holds, so the next
 # load rebuilds the state scopes without touching the federal ones.
 # 2: an ambiguous LIS match is no match; quoted nicknames match voters.
-STATE_SCOPE_VERSION = 3
-STATE_CHAMBERS = {"upper": "Senate", "lower": "House"}
+# 4: every state's shapes — one chamber, multi-member seats, a chapter's
+# year from its action, the sidecar's name for the session laws.
+STATE_SCOPE_VERSION = 4
+STATE_CHAMBERS = {"upper": "Senate", "lower": "House", "legislature": "Legislative"}
 # Open States' vote options → the one position vocabulary.
 _STATE_POSITION = {"yes": "aye", "no": "no", "not voting": "absent", "abstain": "present", "other": "other"}
 
@@ -2694,9 +2746,31 @@ def state_person_key(st, person_id):
     return IDENTITIES.get(key, key)
 
 
+def state_chambers(st):
+    """The legislature's chambers: Nebraska's one, else upper and lower."""
+    return ("legislature",) if (LEGISLATURES.get(st) or {}).get("unicameral") else ("upper", "lower")
+
+
 def _state_post(st, chamber, district):
-    district_kind = "sldu" if chamber == "upper" else "sldl"
-    return f"{st}/{chamber}/{district_kind}:{district}", f"{state_div(st)}/{district_kind}:{district}"
+    # OCD's form: New Hampshire's "Rockingham 30" is sldl:rockingham_30.
+    # Nebraska's one chamber has upper-house districts in OCD.
+    district_kind = "sldl" if chamber == "lower" else "sldu"
+    slug = re.sub(r"\s+", "_", str(district).strip().lower())
+    return f"{st}/{chamber}/{district_kind}:{slug}", f"{state_div(st)}/{district_kind}:{slug}"
+
+
+def district_seats(rows, today, multi, retired=frozenset()):
+    """How many members one district seats. 1 unless its chamber is listed
+    under the legislature's `multi_member` (New Hampshire's House seats up
+    to ten per district); then the most holders it had at once, from terms
+    with both ends and the open terms of sitting legislators. A retired
+    person's open term is the contradiction to close, never a seat. Pure."""
+    if not multi:
+        return 1
+    bounded = [(h["valid_from"], h["valid_to"]) for h in rows if h["valid_to"]]
+    most = max((sum(1 for f, t in bounded if f <= day <= t) for day, _ in bounded), default=0)
+    now = sum(1 for h in rows if not h["valid_to"] and h["valid_from"] <= today and h["src"] not in retired)
+    return max(1, most, now)
 
 
 def _lis_vote_days(lis_sessions):
@@ -2728,10 +2802,12 @@ def build_state_skeleton(st, people, lis_sessions=(), today=None):
           {"level": "state", "jurisdiction": sdiv}, STATE_SOURCE)
     _edge(g, US, "contains", sdiv, None, None, "ingested", STATE_SOURCE, "seed", sdiv, {"derived": "seed"})
     body = {}
-    for chamber in ("upper", "lower"):
+    for chamber in state_chambers(st):
         bid = node_id("organization", f"{st}/{chamber}")
         body[chamber] = bid
-        _node(g, bid, "organization", conf.get(chamber) or f"{DIVISION_NAMES.get(st, st)} {STATE_CHAMBERS[chamber]}",
+        name = conf.get(chamber) or (conf.get("name") if chamber == "legislature" else
+                                     f"{DIVISION_NAMES.get(st, st)} {STATE_CHAMBERS[chamber]}")
+        _node(g, bid, "organization", name,
               {"natural_key": f"{st}/{chamber}", "chamber": chamber, "level": "state", "jurisdiction": sdiv},
               STATE_SOURCE)
         _edge(g, sdiv, "has_body", bid, None, None, "ingested", STATE_SOURCE, "seed", sdiv, {"derived": "seed"})
@@ -2744,7 +2820,7 @@ def build_state_skeleton(st, people, lis_sessions=(), today=None):
         key, division = _state_post(st, chamber, district)
         pid = node_id("post", key)
         if pid not in g["nodes"]:
-            label = f"{STATE_CHAMBERS[chamber]} District {district}"
+            label = f"{conf.get(chamber + '_short') or STATE_CHAMBERS[chamber]} District {district}"
             if division not in g["nodes"]:
                 _node(g, division, "jurisdiction", f"{st.upper()} {label}",
                       {"level": "district", "jurisdiction": sdiv}, STATE_SOURCE)
@@ -2759,14 +2835,16 @@ def build_state_skeleton(st, people, lis_sessions=(), today=None):
                   {"derived": "seed"})
         return pid
 
-    holds, post_label, lis_of = {}, {}, {}
+    holds, post_label, lis_of, retired = {}, {}, {}, set()
     skipped_roles = 0
     for p in people:
-        roles = [r for r in p["roles"] if r["type"] in ("upper", "lower", "governor")]
+        roles = [r for r in p["roles"] if r["type"] in (*state_chambers(st), "governor")]
         if not roles:
             continue
         nk = state_person_key(st, p["id"])
         pid = node_id("person", nk)
+        if p.get("retired"):
+            retired.add(pid)
         props = {"natural_key": nk, "aliases": p.get("other_names") or [], "party": p.get("party"),
                  "openstates_id": p["id"], "jurisdiction": sdiv}
         if p.get("ids", {}).get("lis"):
@@ -2782,7 +2860,7 @@ def build_state_skeleton(st, people, lis_sessions=(), today=None):
         else:
             # Two Open States records of one legislator (the sidecar joined
             # them): keep every name, and the serving record's name and ids.
-            serving = any(r["type"] in ("upper", "lower") and not r.get("end") for r in roles)
+            serving = any(r["type"] in state_chambers(st) and not r.get("end") for r in roles)
             every = {prior["name"], p["name"], *prior["props"]["aliases"], *props["aliases"]}
             if serving:
                 _node(g, pid, "person", p["name"], {**prior["props"], **props}, STATE_SOURCE, p["id"])
@@ -2811,7 +2889,13 @@ def build_state_skeleton(st, people, lis_sessions=(), today=None):
             row = _edge(g, pid, "holds", post, r["start"], r["end"] if expired else None, "ingested",
                         STATE_SOURCE, f"{p['id']}/{r['type']}/{r['start']}", sdiv, hp)
             holds.setdefault(post, []).append(row)
-    _close_double_holds(g, holds, post_label)
+    multi = set(conf.get("multi_member") or ())
+    seats = {post: district_seats(rows, today, g["nodes"][post]["props"].get("chamber") in multi, retired)
+             for post, rows in holds.items() if post != gov}
+    for post, n in seats.items():
+        if n > 1:
+            g["nodes"][post]["props"]["seats"] = n
+    _close_double_holds(g, holds, post_label, seats)
 
     days = _lis_vote_days(lis_sessions)
     certified = uncertified = 0
@@ -2831,7 +2915,9 @@ def build_state_skeleton(st, people, lis_sessions=(), today=None):
     first_lis = conf.get("lis_from")
     g["gaps"].append(f"{certified} {st.upper()} legislative term(s) certified by the legislature's own roll calls; "
                      f"{uncertified} are not" + (f" (its files begin with the {first_lis} session, so earlier terms "
-                                                  f"cannot be)" if first_lis else " (it publishes no roll-call files)"))
+                                                  f"cannot be)" if first_lis else
+                                                  " (no independent source for this legislature is loaded on this "
+                                                  "server, so every term is ingested from Open States alone)"))
     if skipped_roles:
         g["gaps"].append(f"{skipped_roles} role(s) with no start date or district skipped")
     return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
@@ -2884,14 +2970,18 @@ def build_state_bills(st, session, rec, person_ids, governor_holds, known_ids=fr
     edges, gaps)."""
     g = _graph()
     sdiv = state_div(st)
-    year = (session_key(session) or (None,))[0]
+    laws = (LEGISLATURES.get(st) or {}).get("session_laws") or "Session Laws"
     name_only = unknown = no_governor = by_name = 0
     ids = {state_instrument_id(st, session, k) for k in rec["bills"]} | set(known_ids)
     members = [m for ms in (roster or {}).values() for m in ms]
+    skey, years = session_key(session, st) or (0, 0), session_years(session, st) or (None, None)
     for key, b in rec["bills"].items():
         iid = state_instrument_id(st, session, key)
         itype, number = key.split("/")
+        # Session ids do not sort or carry a year ("88", "103rd"): the order
+        # and the years a lookup filters on are their own props.
         props = {"instrument_type": itype, "session": session, "number": number, "identifier": b["identifier"],
+                 "session_sort": f"{skey[0]:04d}-{skey[1]:02d}", "first_year": years[0], "last_year": years[1],
                  "openstates_id": b["openstates_id"], "chamber": b.get("chamber"), "jurisdiction": sdiv,
                  "introduced": b.get("first_action_date"), "latest_action": b.get("latest_action"),
                  "latest_action_date": b.get("latest_action_date")}
@@ -2935,20 +3025,23 @@ def build_state_bills(st, session, rec, person_ids, governor_holds, known_ids=fr
                 else:
                     no_governor += 1    # the chapter below does not depend on who signed
             m = _CHAPTER.search(a["description"] or "")
+            # The chapter's year is the year it became law: a two-year
+            # session's laws are numbered each year.
+            year = (a["date"] or "")[:4]
             if m and ("became-law" in a["classification"] or "executive-signature" in a["classification"]) and year:
                 lid = f"instrument/{st}/acts/{year}/chap/{m.group(1)}"
-                _node(g, lid, "instrument", f"Acts of Assembly {year}, Chapter {m.group(1)}",
+                _node(g, lid, "instrument", f"{laws} {year}, Chapter {m.group(1)}",
                       {"instrument_type": "chapter", "number": m.group(1), "year": year, "jurisdiction": sdiv},
                       STATE_SOURCE, aref)
                 _edge(g, iid, "enacted_as", lid, a["date"], None, "ingested", STATE_SOURCE, aref, sdiv,
-                      {"law_type": "Acts of Assembly chapter"})
+                      {"law_type": f"{laws} chapter"})
         for r in b.get("related") or []:
             rkey = bill_key_of(r["identifier"])
             rsid = r["session"] or session
             did = state_instrument_id(st, rsid, rkey) if rkey else None
             # Only to this session or an earlier one: sessions load oldest
             # first, and a later session's bill is not a node yet.
-            if did and did in ids and did != iid and (session_key(rsid) or (0,)) <= (session_key(session) or (0,)):
+            if did and did in ids and did != iid and (session_key(rsid, st) or (0,)) <= (session_key(session, st) or (0,)):
                 _edge(g, iid, "related_to", did, None, None, "ingested", STATE_SOURCE, f"{st}/{session}/{key}/related",
                       sdiv, {"relationship": r["relation"]})
     linked = sum(1 for e in g["edges"].values() if e["predicate"] == "sponsored")
@@ -2964,11 +3057,22 @@ def build_state_bills(st, session, rec, person_ids, governor_holds, known_ids=fr
     return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
 
 
+# Letters, then the number. The type may carry dots and spaces ("H.B. 1",
+# Illinois' "HJR CA1"); Colorado prefixes the year ("HB 17-1001"); a letter
+# after the number is a separate bill (Nebraska's "LB 1001A" funds LB 1001,
+# Florida's "HB 1A" is a special session's); Michigan numbers joint
+# resolutions with letters ("HJR A"). Iowa's bare "1024DP", Missouri's
+# substitutes and Nevada's "AB 160-82" stay unkeyed.
+_BILL_ID = re.compile(r"([A-Za-z][A-Za-z. ]*?)\.?(?:\s*(?:\d{2}-)?0*(\d+[A-Za-z]{0,2})|\s+([A-Za-z]{1,2}))")
+
+
 def bill_key_of(identifier):
-    """'HB 1' → 'hb/1' (sources.openstates.bill_key, repeated so the graph
-    does not import a downloader). Pure."""
-    m = re.fullmatch(r"([A-Za-z]+)\s*0*(\d+)", (identifier or "").strip())
-    return f"{m.group(1).lower()}/{m.group(2)}" if m else None
+    """'HB 1' → 'hb/1', 'H.B. 1' → 'hb/1', 'LB 1001A' → 'lb/1001a', 'HJR A'
+    → 'hjr/a'; None for anything else. Pure."""
+    m = _BILL_ID.fullmatch((identifier or "").strip())
+    if not m:
+        return None
+    return f"{re.sub(r'[^a-z]', '', m.group(1).lower())}/{(m.group(2) or m.group(3)).lower()}"
 
 
 def _lis_match(v, lis_by_key):
@@ -3001,7 +3105,7 @@ def build_state_votes(st, session, votes, person_ids, roster, lis_rec=None):
         lis_by_key.setdefault((lv["bill"], lv["chamber"], lv["date"]), []).append(lv)
     matched = unmatched = disagree = by_name = unresolved = no_bill = 0
     for v in votes:
-        if not v["bill"] or v["chamber"] not in ("upper", "lower"):
+        if not v["bill"] or v["chamber"] not in state_chambers(st):
             no_bill += 1
             continue
         iid = state_instrument_id(st, session, v["bill"])
@@ -3243,16 +3347,16 @@ def _stat(path):
 def state_sessions(st):
     """The Open States sessions on disk for a state, oldest first."""
     return sorted({p.stem.removeprefix("bills-") for p in data_glob("state_bills", state=st)
-                   if session_key(p.stem.removeprefix("bills-"))}, key=session_key)
+                   if session_key(p.stem.removeprefix("bills-"), st)}, key=lambda sid: session_key(sid, st))
 
 
-def current_state_sessions(sessions, votes_count):
+def current_state_sessions(sessions, votes_count, st=None):
     """The sessions whose roll calls are graph edges: every session of the
     latest year that has any roll call (a regular session and its specials).
     Older sessions' votes stay in their files, as the events rule says.
     Pure."""
-    years = [session_key(s)[0] for s in sessions if votes_count.get(s)]
-    return [s for s in sessions if years and session_key(s)[0] == max(years)]
+    years = [session_key(s, st)[0] for s in sessions if votes_count.get(s)]
+    return [s for s in sessions if years and session_key(s, st)[0] == max(years)]
 
 
 def state_scopes(st, today=None):
@@ -3301,7 +3405,7 @@ def state_scopes(st, today=None):
             json.dumps({**base, "bills": _stat(path)}, sort_keys=True), ["instrument"],
             lambda sid=sid, path=path: build_state_bills(st, sid, json.loads(path.read_text()), person_ids,
                                                          gov_holds, known_ids(), roster))
-    current = current_state_sessions(sessions, votes_count)
+    current = current_state_sessions(sessions, votes_count, st)
     inputs = {sid: [_stat(data_path("state_votes", state=st, session=sid)),
                     _stat(lis_paths[sid]) if sid in lis_paths else None] for sid in current}
 
@@ -3655,24 +3759,43 @@ _BILL_REF = re.compile(r"^\s*(h\.?\s*r|s|h\.?\s*res|s\.?\s*res|h\.?\s*j\.?\s*res
                        r"(?:\s*,?\s*(?:in|of|from)\s+the\s+(\d+)(?:st|nd|rd|th)(?:\s+congress)?)?\s*$", re.I)
 
 
-# A state bill number. "HR"/"SR" are also federal (H.R.), so they are read
-# as state bills only with a state scope ("va:HR 5", from "HR 5 in Virginia").
-_STATE_REF = re.compile(r"^\s*(?:([a-z]{2}):)?\s*(h\.?\s*j\.?\s*r|s\.?\s*j\.?\s*r|h\.?\s*b|s\.?\s*b|h\.?\s*r|s\.?\s*r)"
-                        r"\.?\s*0*(\d+)(?:\s*,?\s*(?:in|of|from)\s+(?:the\s+)?(\d{4})(?:\s+session)?)?\s*$", re.I)
-_STATE_ONLY_TYPES = {"hb", "sb", "hjr", "sjr"}
+# A state bill number. "HR"/"SR" are also federal (H.R.), so without a
+# state scope only types no Congress uses are state bills; with one ("va:HR
+# 5", from "HR 5 in Virginia") every type that state's files use is.
+_STATE_REF = re.compile(r"^\s*(?:([a-z]{2}):)?\s*([a-z][a-z.\s]{0,9}?\s*\d[\w-]*)"
+                        r"(?:\s*,?\s*(?:in|of|from)\s+(?:the\s+)?(\d{4})(?:\s+session)?)?\s*$", re.I)
+_STATE_ONLY_TYPES = {"hb", "sb", "hjr", "sjr", "ab", "lb", "ld", "hf", "sf"}
+_DEFAULT_STATE_TYPES = {"hb", "sb", "hr", "sr", "hjr", "sjr", "hj", "sj"}
+
+
+def state_bill_types(st):
+    """The bill types a state's files use (the session index's), or the
+    common ones when it has none on disk. Pure but for the index."""
+    return {t for rec in state_session_index(st).values() for t in rec.get("types") or ()} or _DEFAULT_STATE_TYPES
+
+
+def find_state_bill(st, text):
+    """The first bill number in free text, as a match whose group 1 is
+    the identifier ("LB 1001A", "H.B. 5"), from the types the state's files
+    use; None when there is none. Pure but for the index."""
+    types = sorted(state_bill_types(st), key=len, reverse=True)
+    alt = "|".join(r"\.?\s*".join(map(re.escape, t)) for t in types)
+    return re.search(rf"\b((?:{alt})\.?\s*\d+[a-z]{{0,2}})\b", text or "", re.I)
 
 
 def state_bill_ref(topic):
     """(state or None, type, number, year or None) for "HB 1", "SB 5 in
-    2022" or "va:HR 5"; None for anything else, and for "HR 5" with no
-    state scope (that is H.R. 5). Pure."""
+    2022", "va:HR 5" or "ne:LB 1001A"; None for anything else, and for "HR
+    5" with no state scope (that is H.R. 5). Pure but for the index."""
     m = _STATE_REF.match(topic or "")
-    if not m:
+    key = bill_key_of(m.group(2)) if m else None
+    if not key:
         return None
-    st, typ = (m.group(1) or "").lower() or None, re.sub(r"[^a-z]", "", m.group(2).lower())
-    if typ not in _STATE_ONLY_TYPES and not st:
+    st = (m.group(1) or "").lower() or None
+    typ, number = key.split("/")
+    if typ not in (state_bill_types(st) if st else _STATE_ONLY_TYPES):
         return None
-    return st, typ, m.group(3), int(m.group(4)) if m.group(4) else None
+    return st, typ, number, int(m.group(3)) if m.group(3) else None
 
 
 def split_scope(topic):
@@ -3697,9 +3820,12 @@ def _topic_sql(topic):
         # Every session has an HB 1: the newest one on record (in the year
         # asked, if one was), in the scoped state or any loaded one.
         st, typ, number, year = sref
-        pattern = f"instrument/{st or '%'}/{f'{year}%' if year else '%'}/{typ}/{number}"
+        pattern = f"instrument/{st or '%'}/%/{typ}/{number}"
+        in_year = (" AND (n.props->>'first_year')::int <= %s AND (n.props->>'last_year')::int >= %s"
+                   if year else "")
         return (" i.id = (SELECT n.id FROM graph_node n WHERE n.kind = 'instrument' AND n.id LIKE %s"
-                " AND n.id NOT LIKE 'instrument/us/%%' ORDER BY n.props->>'session' DESC LIMIT 1)", [pattern])
+                f" AND n.id NOT LIKE 'instrument/us/%%'{in_year} ORDER BY n.props->>'session_sort' DESC LIMIT 1)",
+                [pattern, *([year, year] if year else [])])
     st, topic = split_scope(topic)
     if st:
         return (f" i.props->>'jurisdiction' = %s AND{_TOPIC_SQL}", [state_div(st), f"{topic}%", f"%{topic}%"])
@@ -4088,8 +4214,9 @@ def memory_backend(nodes, edges):
         if sref:
             st, typ, number, year = sref
             hits = [n for n in nodes if n["kind"] == "instrument" and not n["id"].startswith("instrument/us/")
-                    and re.fullmatch(rf"instrument/{st or '[a-z]{2}'}/{year or ''}[^/]*/{typ}/{number}", n["id"])]
-            return bool(hits) and i["id"] == max(hits, key=lambda n: n["props"].get("session") or "")["id"]
+                    and re.fullmatch(rf"instrument/{st or '[a-z]{2}'}/[^/]+/{typ}/{number}", n["id"])
+                    and (not year or (n["props"].get("first_year") or 0) <= year <= (n["props"].get("last_year") or 0))]
+            return bool(hits) and i["id"] == max(hits, key=lambda n: n["props"].get("session_sort") or "")["id"]
         st, topic = split_scope(topic)
         if st and i["props"].get("jurisdiction") != state_div(st):
             return False

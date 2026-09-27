@@ -444,7 +444,7 @@
         if (msg.section === "translation") { B.translation = msg.translation || ""; B.pending = false; }
         // The record lists actions oldest first; the page reads newest first.
         if (msg.section === "timeline") B.timeline_events = (msg.timeline_events || []).slice().sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
-        if (msg.section === "votes") { B.votes = msg.votes || {}; B.roll_calls = msg.roll_calls || 0; }
+        if (msg.section === "votes") { B.votes = msg.votes || {}; B.roll_calls = msg.roll_calls || 0; B.chamber_names = msg.chamber_names || {}; }
         if (msg.section === "bill_text") {
           B.bill_text = msg.bill_text || "";
           B.text_truncated = !!msg.truncated;
@@ -1932,11 +1932,13 @@
       ${advisory ? note(`${advisory} newer action${advisory === 1 ? "" : "s"} come from the legislature's own daily file and are shown as advisory until the next monthly record includes them.`) : ""}`) : "";
 
     const v = b.votes || {};
+    // A state's own chamber names: California's Assembly, Nebraska's Legislature.
+    const H = (b.chamber_names || {}).house || "House", S = (b.chamber_names || {}).senate || "Senate";
     const tally = (d) => d && d.summary ? `${d.summary.yea}–${d.summary.nay}` : "";
-    const voteFact = [v.house ? "House " + tally(v.house) : "", v.senate ? "Senate " + tally(v.senate) : ""].filter(Boolean).join(" · ");
+    const voteFact = [v.house ? H + " " + tally(v.house) : "", v.senate ? S + " " + tally(v.senate) : ""].filter(Boolean).join(" · ");
     const votes = (v.house || v.senate)
       ? fold("votes", "How they voted", voteFact, `
-         <div class="vote-grid">${v.house ? seatMap("House" + (v.house.date ? " · " + fmtDate(v.house.date) : ""), v.house, v.house.svgW || 300, v.house.svgH || 160) : ""}${v.senate ? seatMap("Senate" + (v.senate.date ? " · " + fmtDate(v.senate.date) : ""), v.senate, v.senate.svgW || 260, v.senate.svgH || 150) : ""}</div>
+         <div class="vote-grid">${v.house ? seatMap(H + (v.house.date ? " · " + fmtDate(v.house.date) : ""), v.house, v.house.svgW || 300, v.house.svgH || 160) : ""}${v.senate ? seatMap(S + (v.senate.date ? " · " + fmtDate(v.senate.date) : ""), v.senate, v.senate.svgW || 260, v.senate.svgH || 150) : ""}</div>
          ${note(`Each dot is one legislator, seated by party: the final floor vote in each chamber${b.roll_calls > 1 ? ", of " + b.roll_calls + " roll calls on this bill" : ""}. Green voted yes, red voted no, grey did not vote.`)}`)
       : (b.votes ? fold("votes", "How they voted", "No floor roll call recorded", note("A bill that dies in committee, or passes by voice vote, leaves no individual record.")) : "");
 
@@ -1958,7 +1960,7 @@
     const glance = `<div class="stats" style="margin:18px 0 0">
       <div class="stat"><div class="stat-n" style="font-size:22px">${esc(STAGE_WORDS[stage])}</div><div class="lbl">Where it is</div></div>
       <div class="stat"><div class="stat-n">${nCo}</div><div class="lbl">Co-patrons${nCo ? ` · ${dCount}D ${rCount}R` : ""}</div></div>
-      <div class="stat"><div class="stat-n" style="font-size:${v.house || v.senate ? 26 : 16}px">${esc(v.house ? tally(v.house) : v.senate ? tally(v.senate) : (b.votes ? "No roll call" : "…"))}</div><div class="lbl">${v.house ? "House vote" + (v.senate ? " · Senate " + tally(v.senate) : "") : v.senate ? "Senate vote" : "Recorded vote"}</div></div>
+      <div class="stat"><div class="stat-n" style="font-size:${v.house || v.senate ? 26 : 16}px">${esc(v.house ? tally(v.house) : v.senate ? tally(v.senate) : (b.votes ? "No roll call" : "…"))}</div><div class="lbl">${v.house ? H + " vote" + (v.senate ? " · " + S + " " + tally(v.senate) : "") : v.senate ? S + " vote" : "Recorded vote"}</div></div>
       <div class="stat"><div class="stat-n">${vers.length}</div><div class="lbl">Text version${vers.length === 1 ? "" : "s"}</div></div>
     </div>`;
 

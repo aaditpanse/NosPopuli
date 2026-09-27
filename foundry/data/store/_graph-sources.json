@@ -74,7 +74,42 @@
     "openstates/e1257f92-4694-4db0-8c21-3f04e6317e61": "openstates/815f7b31-d344-481a-9922-ad77d16b808a"
   },
   "legislatures": {
-    "_comment": "A state legislature enters the graph by an entry here (sources/openstates.py, graph.load_state). first_session: the earliest Open States session with bills on disk (Virginia's dump rows start in 2017; 2010-2016 are empty sessions). lis_from: the first session Virginia's LIS publishes CSVs for; a regular session is LIS code YYYY1 and special session N is YYYY(N+1). governors: holders the Open States people data lacks, asserted by a person.",
+    "_comment": "A state legislature enters the graph by an entry here (sources/openstates.py, graph.load_state). first_session: the earliest Open States session with bills on disk (Virginia's dump rows start in 2017; 2010-2016 are empty sessions). lis_from: the first session Virginia's LIS publishes CSVs for; a regular session is LIS code YYYY1 and special session N is YYYY(N+1). governors: holders the Open States people data lacks, asserted by a person. Keys for other states (plan of 2026-09-27): unicameral (Nebraska: one chamber, `legislature`, named by `name`); <chamber>_short, the chamber's word on a district and a seat map when it is not House or Senate (California's Assembly); multi_member, the chambers whose districts seat several members (New Hampshire's House); session_laws, what the state calls its numbered session laws (Virginia's Acts of Assembly). first_session is the first session of 2017 or later, as Virginia.",
+    "ca": {
+      "name": "California State Legislature",
+      "upper": "California State Senate",
+      "lower": "California State Assembly",
+      "lower_short": "Assembly",
+      "first_session": "20172018",
+      "session_laws": "Statutes of California",
+      "text": true
+    },
+    "ne": {
+      "name": "Nebraska Legislature",
+      "unicameral": true,
+      "first_session": "105",
+      "session_laws": "Laws of Nebraska",
+      "text": true
+    },
+    "nh": {
+      "name": "New Hampshire General Court",
+      "upper": "New Hampshire Senate",
+      "lower": "New Hampshire House of Representatives",
+      "first_session": "2017",
+      "multi_member": [
+        "lower"
+      ],
+      "session_laws": "Laws of New Hampshire",
+      "text": true
+    },
+    "tx": {
+      "name": "Texas Legislature",
+      "upper": "Texas Senate",
+      "lower": "Texas House of Representatives",
+      "first_session": "851",
+      "session_laws": "General and Special Laws of Texas",
+      "text": true
+    },
     "va": {
       "name": "General Assembly of Virginia",
       "upper": "Senate of Virginia",
@@ -89,7 +124,8 @@
           "end": "2018-01-13",
           "asserted_by": "owner, 2026-09-27: missing from the Open States people data; the 2017 session's signings need him"
         }
-      ]
+      ],
+      "session_laws": "Acts of Assembly"
     }
   }
 }

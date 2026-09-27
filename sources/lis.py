@@ -17,26 +17,20 @@ VOTE.CSV names no bill. HISTORY.CSV does: a row whose refid is a vote id
 ties that vote to a bill, a date and a chamber (the description's first
 letter). A vote no history row names is counted and left out of the check.
 
-Bill text for every version Open States lists is fetched once, stored as
-published (gzipped), and a PDF-only version also gets its text extracted.
+Bill text is fetched for every state by sources/openstates.py.
 
 Run on the server, not in a request:
     python -m sources.lis sync va          # CSVs for each LIS session -> derived/states/va/lis-<session>.json
-    python -m sources.lis text va 2026     # text for one session's versions (all sessions if none named)
-    python -m sources.lis text --latest    # every text state's last two years of sessions (daily sync)
 """
 
 import csv
 import datetime
-import gzip
-import hashlib
 import io
 import json
 import os
 import pathlib
 import re
 import sys
-import time
 
 _HERE = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_HERE))
@@ -164,7 +158,7 @@ def sync(st, today=None):
     s = _session()
     out = {}
     sessions = sorted({p.stem.removeprefix("bills-") for p in graph.data_glob("state_bills", state=st)},
-                      key=graph.session_key)
+                      key=lambda sid: graph.session_key(sid, st))
     for sid in sessions:
         code = graph.lis_session(st, sid)
         if not code:
@@ -193,92 +187,6 @@ def sync(st, today=None):
     return out
 
 
-# -------------------------------------------------------------------- text
-
-def text_name(url):
-    """The file a version link is stored as: the blob's own name, or a
-    readable name for a legacy CGI link. Pure."""
-    m = re.search(r"/files/(\d+\.(?:HTML|PDF))$", url or "", re.I)
-    if m:
-        return m.group(1)
-    m = re.search(r"legp604\.exe\?(\w+)\+ful\+(\w+)(?:\+(\w+))?", url or "")
-    if m:
-        return f"legp604-{m.group(1)}-{m.group(2)}{'-' + m.group(3) if m.group(3) else ''}.html"
-    return hashlib.sha1((url or "").encode()).hexdigest()[:16] + ".bin"
-
-
-def pick_link(links):
-    """The one link to store for a version: HTML, else PDF, else none."""
-    for kind in ("text/html", "application/pdf"):
-        for ln in links:
-            if ln.get("media_type") == kind:
-                return ln
-    return None
-
-
-def pdf_text(data):
-    """A PDF's text, page by page, with the existing pypdf. None when it
-    has none (a scan)."""
-    from pypdf import PdfReader
-    try:
-        text = "\n".join((p.extract_text() or "") for p in PdfReader(io.BytesIO(data)).pages).strip()
-    except Exception:
-        return None
-    return text or None
-
-
-def sync_text(st, sid, session_=None, pause=0.2, limit=None):
-    """Fetch the text of every version of one session once. Stored gzipped
-    under raw/lis/text/<session>/ with a manifest; a PDF also gets a
-    .txt.gz of its extracted text. A failure is recorded and retried on the
-    next run; a stored file is never fetched again. Returns counts."""
-    s = session_ or _session()
-    bills = json.loads(graph.data_path("state_bills", state=st, session=sid).read_text())["bills"]
-    root = graph.DATA_DIR / "raw" / "lis" / "text" / sid
-    root.mkdir(parents=True, exist_ok=True)
-    manifest_path = root / "manifest.json"
-    manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
-    fetched = failed = kept = 0
-    try:
-        for key, b in sorted(bills.items()):
-            for v in b["versions"]:
-                link = pick_link(v["links"])
-                if not link:
-                    continue
-                name = text_name(link["url"])
-                if manifest.get(name, {}).get("status") == "ok" and (root / (name + ".gz")).exists():
-                    kept += 1
-                    continue
-                if limit is not None and fetched + failed >= limit:
-                    raise StopIteration
-                try:
-                    r = s.get(link["url"], timeout=60)
-                    r.raise_for_status()
-                    (root / (name + ".gz")).write_bytes(gzip.compress(r.content))
-                    entry = {"status": "ok", "url": link["url"], "bill": key, "version": v["name"],
-                             "media_type": link["media_type"], "bytes": len(r.content),
-                             "fetched": datetime.date.today().isoformat()}
-                    if link["media_type"] == "application/pdf":
-                        text = pdf_text(r.content)
-                        if text:
-                            (root / (name + ".txt.gz")).write_bytes(gzip.compress(text.encode()))
-                        entry["text"] = bool(text)
-                    fetched += 1
-                except Exception as e:
-                    entry = {"status": "error", "url": link["url"], "bill": key, "version": v["name"],
-                             "error": type(e).__name__, "tried": datetime.date.today().isoformat()}
-                    failed += 1
-                manifest[name] = entry
-                if (fetched + failed) % 200 == 0:
-                    manifest_path.write_text(json.dumps(manifest, sort_keys=True))
-                time.sleep(pause)
-    except StopIteration:
-        pass
-    finally:
-        manifest_path.write_text(json.dumps(manifest, sort_keys=True))
-    return {"session": sid, "fetched": fetched, "failed": failed, "kept": kept}
-
-
 if __name__ == "__main__":
     cmd, args = (sys.argv[1] if len(sys.argv) > 1 else ""), sys.argv[2:]
     if cmd == "sync":
@@ -287,18 +195,11 @@ if __name__ == "__main__":
                 print(st, sid, json.dumps({k: m[k] for k in ("code", "bills", "votes", "unlinked_votes", "empty_votes", "unchanged",
                                                                "errors") if k in m}))
     elif cmd == "text":
-        # text <st> [session ...]: those sessions, or every one on disk.
-        # text --latest: each text state's sessions of its last two years (the
-        # sitting one and the prefiles for the next), for the daily sync.
-        if args[:1] == ["--latest"]:
-            for st in [k for k, v in graph.LEGISLATURES.items() if v.get("text")]:
-                sessions = graph.state_sessions(st)
-                last = max((graph.session_key(x)[0] for x in sessions), default=0)
-                for sid in [x for x in sessions if graph.session_key(x)[0] >= last - 1]:
-                    print(st, json.dumps(sync_text(st, sid)))
-        else:
-            st, sessions = args[0], args[1:]
-            for sid in sessions or graph.state_sessions(st):
-                print(json.dumps(sync_text(st, sid)))
+        # Moved to sources/openstates.py (text for every state). Kept while the
+        # server's nospopuli-sync still runs `sources.lis text --latest`
+        # (2026-09-27); remove when that script calls sources.openstates.
+        import runpy
+        sys.argv = ["sources.openstates", "text", *args]
+        runpy.run_module("sources.openstates", run_name="__main__")
     else:
         print(__doc__)

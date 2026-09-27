@@ -24,9 +24,12 @@ Run on the server, not in a request:
     python -m sources.openstates restore         # as postgres: scratch database from the dump
     python -m sources.openstates extract va      # scratch database -> bills-/votes-<session>.json
     python -m sources.openstates drop            # as postgres: drop the scratch database
+    python -m sources.openstates text va 2026    # text of one session's versions (all, newest first, if none named)
+    python -m sources.openstates text --latest   # every text state's last two years of sessions (daily sync)
 """
 
 import datetime
+import gzip
 import hashlib
 import json
 import os
@@ -34,6 +37,7 @@ import pathlib
 import re
 import subprocess
 import sys
+import time
 
 _HERE = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_HERE))
@@ -149,7 +153,9 @@ def people(st, sync=True):
     records, files = [], 0
     for folder in ("legislature", "retired", "executive"):
         for f in sorted((base / folder).glob("*.yml")):
-            records.append(parse_person(yaml.safe_load(f.read_text()), st))
+            # The repo keeps sitting legislators apart from retired ones; a
+            # multi-member district's seats are counted from the sitting.
+            records.append({**parse_person(yaml.safe_load(f.read_text()), st), "retired": folder == "retired"})
             files += 1
     records.extend(asserted_governors(st))
     records.sort(key=lambda p: p["id"])
@@ -286,10 +292,8 @@ def pg_array(text):
 
 
 def bill_key(identifier):
-    """'HB 1' → 'hb/1', 'HJR 5' → 'hjr/5'; None for an identifier that is
-    not letters then a number. Pure."""
-    m = re.fullmatch(r"([A-Za-z]+)\s*0*(\d+)", (identifier or "").strip())
-    return f"{m.group(1).lower()}/{m.group(2)}" if m else None
+    """'HB 1' → 'hb/1'; the one rule is graph.bill_key_of. Pure."""
+    return graph.bill_key_of(identifier)
 
 
 def bill_record(bill, chambers, actions, sponsors, versions, abstracts, titles, identifiers, sources, related):
@@ -344,6 +348,47 @@ def vote_record(vote, chambers, bill_keys, counts, positions, sources):
     }
 
 
+def _year(date):
+    return int(date[:4]) if date and date[:4].isdigit() else None
+
+
+def session_index(sessions, first_actions, votes=None, types=None):
+    """The legislature's sessions → {id: {years, key, name, classification,
+    start, end, bills, votes, types}}. Pure.
+
+    Open States ids come in ~60 shapes and many carry no year ("88",
+    "103rd"), and its session dates are sometimes wrong (Texas's 87th
+    starts "2019"). The first year is the id's own leading year when it has
+    one ("20232024" is 2023, though it convenes 2022-12-05), else the year
+    the median bill was filed, else the start date's. The last year is the
+    id's second year ("2023-2024", "2023_24"), else the year by which nine
+    bills in ten were filed (North Carolina's "2025" sits in 2026 too).
+    The key is (first year, n): n 0 for the regular session (the primary or
+    regular one, else the one with the most bills), specials 1, 2... by start
+    date. `first_actions`: {id: [first action dates]}."""
+    out, groups = {}, {}
+    for s in sessions:
+        sid, dates = s["identifier"], sorted(d for d in first_actions.get(s["identifier"], []) if d)
+        m = re.match(r"(?:\D*?)((?:19|20)\d{2})(?:[-_]?((?:19|20)\d{2})|_(\d{2}))?", sid)
+        first = int(m.group(1)) if m else _year(dates[len(dates) // 2]) if dates else _year(s["start_date"])
+        if first is None:
+            continue
+        last = int(m.group(2)) if m and m.group(2) else 2000 + int(m.group(3)) if m and m.group(3) else first
+        if dates:
+            last = max(last, _year(dates[min(len(dates) - 1, len(dates) * 9 // 10)]) or last)
+        out[sid] = {"years": [first, last], "name": s.get("name"), "classification": s.get("classification") or None,
+                    "start": s.get("start_date") or None, "end": s.get("end_date") or None,
+                    "bills": len(first_actions.get(sid, [])), "votes": (votes or {}).get(sid, 0), "types": sorted((types or {}).get(sid, ()))}
+        groups.setdefault(first, []).append(sid)
+    for first, sids in groups.items():
+        regular = max(sids, key=lambda x: (out[x]["classification"] in ("primary", "regular"),
+                                           out[x]["classification"] != "special", out[x]["bills"], x))
+        rest = sorted((x for x in sids if x != regular), key=lambda x: (out[x]["start"] or "", x))
+        for n, sid in enumerate([regular, *rest]):
+            out[sid]["key"] = [first, n]
+    return out
+
+
 def _group(rows, key):
     out = {}
     for r in rows:
@@ -360,7 +405,6 @@ def extract(st, dsn=None):
     from psycopg.rows import dict_row
     conf = graph.LEGISLATURES[st]
     jid = f"ocd-jurisdiction/country:us/state:{st}/government"
-    first = graph.session_key(conf["first_session"])
     month = json.loads((_raw("openstates") / "manifest.json").read_text()).get("month") \
         if (_raw("openstates") / "manifest.json").exists() else None
     out = {}
@@ -368,15 +412,35 @@ def extract(st, dsn=None):
         cur.execute("SELECT id, classification, name FROM opencivicdata_organization WHERE jurisdiction_id = %s", (jid,))
         chambers = {r["id"]: r["classification"] if r["classification"] in ("upper", "lower", "legislature")
                     else f"committee:{r['name']}" for r in cur.fetchall()}
-        cur.execute("SELECT id, identifier FROM opencivicdata_legislativesession WHERE jurisdiction_id = %s", (jid,))
-        sessions = [r for r in cur.fetchall() if graph.session_key(r["identifier"]) and
-                    graph.session_key(r["identifier"]) >= first]
+        cur.execute("SELECT * FROM opencivicdata_legislativesession WHERE jurisdiction_id = %s", (jid,))
+        every = cur.fetchall()
+        cur.execute("""SELECT s.identifier, b.first_action_date, b.identifier AS bill
+                       FROM opencivicdata_bill b JOIN opencivicdata_legislativesession s ON s.id = b.legislative_session_id
+                       WHERE s.jurisdiction_id = %s""", (jid,))
+        first_actions, types = {}, {}
+        for r in cur.fetchall():
+            first_actions.setdefault(r["identifier"], []).append(r["first_action_date"])
+            k = bill_key(r["bill"])
+            if k:
+                types.setdefault(r["identifier"], set()).add(k.split("/")[0])
+        cur.execute("""SELECT s.identifier, count(*) AS n FROM opencivicdata_voteevent v
+                       JOIN opencivicdata_legislativesession s ON s.id = v.legislative_session_id
+                       WHERE s.jurisdiction_id = %s GROUP BY 1""", (jid,))
+        votes_n = {r["identifier"]: r["n"] for r in cur.fetchall()}
+        index = session_index(every, first_actions, votes_n, types)
+        first = index[conf["first_session"]]["key"]
+        index = {sid: rec for sid, rec in index.items() if rec["key"] >= first}
+        _write_if_changed(graph.data_path("state_sessions", state=st),
+                          {"meta": {"state": st, "dump_month": month, "first_session": conf["first_session"],
+                                    "source": "Open States monthly Postgres dump (data.openstates.org)"},
+                           "sessions": index})
+        sessions = [r for r in every if r["identifier"] in index]
 
         def by_bill(table, ids, order=""):
             cur.execute(f"SELECT * FROM opencivicdata_{table} WHERE bill_id = ANY(%s){order}", (ids,))
             return _group(cur.fetchall(), "bill_id")
 
-        for s in sorted(sessions, key=lambda r: graph.session_key(r["identifier"])):
+        for s in sorted(sessions, key=lambda r: index[r["identifier"]]["key"]):
             sid = s["identifier"]
             cur.execute("SELECT * FROM opencivicdata_bill WHERE legislative_session_id = %s", (s["id"],))
             bills = cur.fetchall()
@@ -391,11 +455,16 @@ def extract(st, dsn=None):
                            WHERE v.bill_id = ANY(%s) GROUP BY v.id, v.note, v.date, v.bill_id, v.extras, v.classification""",
                         (ids,))
             versions = _group(cur.fetchall(), "bill_id")
-            records, keys, skipped = {}, {}, 0
-            for b in bills:
+            records, keys, skipped, twins = {}, {}, 0, 0
+            for b in sorted(bills, key=lambda b: b["id"]):
                 k = bill_key(b["identifier"])
                 if not k:
                     skipped += 1
+                    continue
+                if k in records:
+                    # Two identifiers one key ("H.B. 1" and "HB 1"): the
+                    # first by Open States id is kept, the other counted.
+                    twins += 1
                     continue
                 keys[b["id"]] = k
                 records[k] = bill_record(b, chambers, actions.get(b["id"], []), sponsors.get(b["id"], []),
@@ -418,12 +487,151 @@ def extract(st, dsn=None):
                     "source": "Open States monthly Postgres dump (data.openstates.org)",
                     "extracted": datetime.date.today().isoformat()}
             wrote_b = _write_if_changed(graph.data_path("state_bills", state=st, session=sid),
-                                        {"meta": {**meta, "bills": len(records), "skipped": skipped}, "bills": records})
+                                        {"meta": {**meta, "bills": len(records), "skipped": skipped, "twins": twins},
+                                         "bills": records})
             wrote_v = _write_if_changed(graph.data_path("state_votes", state=st, session=sid),
                                         {"meta": {**meta, "votes": len(votes)}, "votes": votes})
-            out[sid] = {"bills": len(records), "votes": len(votes), "skipped": skipped,
+            out[sid] = {"bills": len(records), "votes": len(votes), "skipped": skipped, "twins": twins,
                         "written": [n for n, w in (("bills", wrote_b), ("votes", wrote_v)) if w]}
     return out
+
+
+
+# -------------------------------------------------------------------- text
+
+_EXT = {"text/html": ".html", "application/pdf": ".pdf"}
+
+
+def link_kind(media_type):
+    """text/html, application/pdf or None. Open States' media types carry
+    typos (Minnesota's "applcation/pdf", North Dakota's bare "pdf"). Pure."""
+    m = (media_type or "").lower()
+    return "text/html" if "html" in m else "application/pdf" if "pdf" in m else None
+
+
+def text_name(url, media_type=None):
+    """The file a version link is stored as: Virginia's blob name or a
+    readable name for its legacy CGI link, else a hash of the URL with the
+    kind's extension. Pure."""
+    m = re.search(r"/files/(\d+\.(?:HTML|PDF))$", url or "", re.I)
+    if m:
+        return m.group(1)
+    m = re.search(r"legp604\.exe\?(\w+)\+ful\+(\w+)(?:\+(\w+))?", url or "")
+    if m:
+        return f"legp604-{m.group(1)}-{m.group(2)}{'-' + m.group(3) if m.group(3) else ''}.html"
+    return hashlib.sha1((url or "").encode()).hexdigest()[:16] + _EXT.get(link_kind(media_type), ".bin")
+
+
+def stored_name(manifest, link):
+    """The name a version is kept under: text_name, or the hash name with
+    ".bin" that Virginia's first fetch gave 514 files, when the manifest
+    has that one. Pure."""
+    name = text_name(link["url"], link["media_type"])
+    legacy = name.rsplit(".", 1)[0] + ".bin"
+    return legacy if name not in manifest and legacy in manifest else name
+
+
+def pick_link(links):
+    """The one link to store for a version: HTML, else PDF, else none (a
+    Word or RTF file only). The link keeps its URL; its media type is the
+    clean kind."""
+    for kind in ("text/html", "application/pdf"):
+        for ln in links:
+            if link_kind(ln.get("media_type")) == kind:
+                return {**ln, "media_type": kind}
+    return None
+
+
+def pdf_text(data):
+    """A PDF's text, page by page, with pypdf. None when it has none (a
+    scan)."""
+    import io
+    from pypdf import PdfReader
+    try:
+        text = "\n".join((p.extract_text() or "") for p in PdfReader(io.BytesIO(data)).pages).strip()
+    except Exception:
+        return None
+    return text or None
+
+
+def text_root(st, sid):
+    return graph.data_path("state_text", state=st, session=sid, name="manifest.json").parent
+
+
+def sync_text(st, sid, session_=None, gap=1.0, limit=None):
+    """Fetch the text of every version of one session once, from the links
+    the Open States record gives. Stored gzipped under
+    raw/states/<st>/text/<session>/ with a manifest; a PDF also gets a
+    .txt.gz of its extracted text. At most one request a second to each
+    host (`gap`). A failure is recorded and retried on the next run; a
+    stored file is never fetched again. Returns counts."""
+    import requests
+    from urllib.parse import urlsplit
+    if session_ is None:
+        session_ = requests.Session()
+        session_.headers["User-Agent"] = _UA
+    bills = json.loads(graph.data_path("state_bills", state=st, session=sid).read_text())["bills"]
+    root = text_root(st, sid)
+    root.mkdir(parents=True, exist_ok=True)
+    manifest_path = root / "manifest.json"
+    manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
+    fetched = failed = kept = none = 0
+    last = {}
+    try:
+        for key, b in sorted(bills.items()):
+            for v in b["versions"]:
+                link = pick_link(v["links"])
+                if not link:
+                    none += 1
+                    continue
+                name = stored_name(manifest, link)
+                if manifest.get(name, {}).get("status") == "ok" and (root / (name + ".gz")).exists():
+                    kept += 1
+                    continue
+                if limit is not None and fetched + failed >= limit:
+                    raise StopIteration
+                host = urlsplit(link["url"]).netloc
+                wait = last.get(host, 0) + gap - time.monotonic()
+                if wait > 0:
+                    time.sleep(wait)
+                try:
+                    r = session_.get(link["url"], timeout=60)
+                    r.raise_for_status()
+                    (root / (name + ".gz")).write_bytes(gzip.compress(r.content))
+                    entry = {"status": "ok", "url": link["url"], "bill": key, "version": v["name"],
+                             "media_type": link["media_type"], "bytes": len(r.content),
+                             "fetched": datetime.date.today().isoformat()}
+                    if link["media_type"] == "application/pdf":
+                        text = pdf_text(r.content)
+                        if text:
+                            (root / (name + ".txt.gz")).write_bytes(gzip.compress(text.encode()))
+                        entry["text"] = bool(text)
+                    fetched += 1
+                except Exception as e:
+                    entry = {"status": "error", "url": link["url"], "bill": key, "version": v["name"],
+                             "error": type(e).__name__, "http": getattr(getattr(e, "response", None), "status_code", None),
+                             "tried": datetime.date.today().isoformat()}
+                    failed += 1
+                last[host] = time.monotonic()
+                manifest[name] = entry
+                if (fetched + failed) % 200 == 0:
+                    manifest_path.write_text(json.dumps(manifest, sort_keys=True))
+    except StopIteration:
+        pass
+    finally:
+        manifest_path.write_text(json.dumps(manifest, sort_keys=True))
+    return {"state": st, "session": sid, "fetched": fetched, "failed": failed, "kept": kept, "no_link": none}
+
+
+def text_sessions(st, latest=False):
+    """The sessions to fetch text for, newest first: every one on disk, or
+    with `latest` those of the last two years (the sitting session and the
+    prefiles for the next), for the daily sync."""
+    sessions = graph.state_sessions(st)
+    if latest:
+        last = max((graph.session_key(x, st)[0] for x in sessions), default=0)
+        sessions = [x for x in sessions if graph.session_key(x, st)[0] >= last - 1]
+    return list(reversed(sessions))
 
 
 if __name__ == "__main__":
@@ -441,5 +649,16 @@ if __name__ == "__main__":
                 print(st, sid, json.dumps(c))
     elif cmd == "drop":
         drop_scratch()
+    elif cmd == "text":
+        # text <st> [session ...]: those sessions, or every one on disk,
+        # newest first. text --latest: each text state's last two years.
+        if args[:1] == ["--latest"]:
+            for st in [k for k, v in graph.LEGISLATURES.items() if v.get("text")]:
+                for sid in text_sessions(st, latest=True):
+                    print(json.dumps(sync_text(st, sid)), flush=True)
+        else:
+            st, sessions = args[0], args[1:]
+            for sid in sessions or text_sessions(st):
+                print(json.dumps(sync_text(st, sid)), flush=True)
     else:
         print(__doc__)
