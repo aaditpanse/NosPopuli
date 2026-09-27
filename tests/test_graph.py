@@ -2619,6 +2619,20 @@ class OtherStatesTest(unittest.TestCase):
         self.assertEqual([(e["valid_from"], e["valid_to"]) for e in held], [("2020-01-13", None)])
         self.assertFalse([g for g in gaps if "closed at" in g or g.startswith("conflicting")])
 
+    def test_a_signature_recorded_on_two_days_is_one_act(self):
+        rec = {"bills": {"hb/1": {"identifier": "HB 1", "openstates_id": "ocd-bill/1", "title": "T",
+                                  "first_action_date": "2024-01-10", "latest_action_date": "2024-03-30",
+                                  "sponsors": [], "related": [],
+                                  "actions": [{"date": "2024-03-28", "classification": ["executive-signature"],
+                                               "description": "Approved by Governor 3/28/2024"},
+                                              {"date": "2024-03-30", "classification": ["executive-signature"],
+                                               "description": "Approved by Governor 3/28/2024 - Senate Journal"}]}}}
+        gov = [{"src": "gov", "dst": "post", "valid_from": "2017-01-16", "valid_to": None, "props": {}}]
+        with mock.patch.dict(graph.LEGISLATURES, {"wv": {"name": "West Virginia Legislature"}}):
+            _, edges, gaps = graph.build_state_bills("wv", "2024", rec, {}, gov)
+        self.assertEqual([(e["predicate"], e["valid_from"]) for e in edges], [("signed", "2024-03-28")])
+        self.assertFalse([g for g in gaps if g.startswith("conflicting")])
+
     def test_a_sitting_namesake_is_the_one_asked_about(self):
         people = {"people": [dict(_os_person("x", "Keith Murphy", [("lower", "Hillsborough 7", None, "2018-12-31")]),
                                   retired=True),

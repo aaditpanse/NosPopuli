@@ -2747,7 +2747,8 @@ STATE_SOURCE = "openstates"
 # names, committee sponsors apart. 6: a one-day duplicate term is skipped,
 # no one succeeds themself, an inferred start closes no one.
 # 7: a sitting member with no dates begins with the chamber's term.
-STATE_SCOPE_VERSION = 7
+# 8: one signed and one vetoed edge a bill.
+STATE_SCOPE_VERSION = 8
 STATE_CHAMBERS = {"upper": "Senate", "lower": "House", "legislature": "Legislative"}
 # Open States' vote options → the one position vocabulary.
 _STATE_POSITION = {"yes": "aye", "no": "no", "not voting": "absent", "abstain": "present", "other": "other"}
@@ -3117,10 +3118,13 @@ def build_state_bills(st, session, rec, person_ids, governor_holds, known_ids=fr
         seen = set()
         for a in b["actions"]:
             pred = executive_act(a)
-            if pred and (pred, a["date"]) in seen:
-                pred = None     # one act, recorded twice (the chapter line and the approval line)
+            if pred and pred in seen:
+                # One act recorded twice: Virginia's chapter and approval
+                # lines on one day, West Virginia's on two (1,142 bills).
+                # The first stands.
+                pred = None
             if pred:
-                seen.add((pred, a["date"]))
+                seen.add(pred)
                 who = holders_as_of(governor_holds, a["date"])
                 if len(who) == 1:
                     _edge(g, who[0]["src"], pred, iid, a["date"], a["date"], "ingested", STATE_SOURCE, aref, sdiv,
