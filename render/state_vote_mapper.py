@@ -1,17 +1,19 @@
-"""Map LegiScan roll-call votes to the semicircle seat format.
+"""Map a state roll call (the Open States votes file) to the semicircle seats.
 
-Two-step, mirroring how api.py drives it:
-  1. `select_floor_roll_call(summaries, chamber_class)` picks the floor vote for
-     a chamber from the lightweight `getBill.votes` summaries (no query).
-  2. api.py fetches that roll call's detail via `getRollCall` and passes it to
-     `map_roll_call(roll_call, state_code, chamber_class, people_map)`.
+Two steps, as api.py drives them:
+  1. `select_floor_roll_call(votes, chamber_class, state_code)` picks the
+     chamber's floor vote on a bill from its roll calls, never a committee's.
+  2. `map_roll_call(vote, state_code, chamber_class, people_map)` lays out the
+     seats; people_map ({Open States person id: {name, party}}, from
+     people.json) names them, and a name-only voter keeps the name the roll
+     call gives.
 
-LegiScan's roll call gives per-legislator `people_id` + `vote_text` but no names,
-so callers pass a `people_map` (from `getSessionPeople`, cached) to label seats.
+A vote is a record of derived/states/<st>/votes-<session>.json:
+{id, bill, date, motion, result, chamber, counts {yes, no, abstain, not
+voting, other}, positions [[person id or None, name, option]]}.
 """
 
 import math
-from agents.documentor_agent import log_action
 
 # Seat counts per state chamber (lower = House equivalent, upper = Senate equivalent)
 STATE_CHAMBERS = {
@@ -47,18 +49,6 @@ STATE_VOTE_COLORS = {
 # Sort order: yes far-left, no far-right, abstentions in between
 _VOTE_SORT = {"yes": 0, "abstain": 1, "other": 2, "not voting": 2,
               "excused": 3, "absent": 3, "no": 4}
-
-# LegiScan vote_text → our seat option vocabulary
-_VOTE_TEXT_MAP = {
-    "yea": "yes", "yes": "yes", "aye": "yes",
-    "nay": "no", "no": "no",
-    "nv": "not voting", "not voting": "not voting",
-    "absent": "absent", "excused": "excused",
-}
-
-# H/S body codes → our chamber classification
-_BODY_TO_CLASS = {"H": "lower", "S": "upper"}
-
 
 def _compute_row_distribution(n_seats, n_rows):
     """Inner rows shorter, outer rows longer (mirrors a real chamber's arc geometry)."""
@@ -108,149 +98,95 @@ def _semicircle_positions(row_counts, cx, cy, r_start, r_step, angle_padding=0.0
     return positions
 
 
-def _is_committee_vote(desc: str) -> bool:
-    d = (desc or "").lower()
-    return any(m in d for m in ("committee", "subcommittee"))
+# Virginia's committee and subcommittee votes, by how their motion begins.
+# A floor motion can name a committee ("Adopt Conference Committee Report"),
+# so the word alone is not enough.
+_COMMITTEE_MOTIONS = ("reported from", "subcommittee", "continued to next session in", "passed by indefinitely in",
+                      "failed to report", "incorporated into", "stricken at request", "committee")
+_FLOOR_MARKERS = ("passage", "h vote", "third reading", "final", "concur", "conference report", "accede",
+                  "governor's recommendation")
 
 
-def _has_floor_marker(desc: str) -> bool:
-    d = (desc or "").lower()
-    return any(p in d for p in (
-        "floor", "third reading", "final passage", "final reading", "passage",
-    ))
+def _is_committee_vote(motion: str) -> bool:
+    """Virginia's committee motions begin with a phrase; other states name
+    the committee ("Assembly Revenue and Taxation Committee - Do pass"). A
+    conference committee's report is voted on the floor."""
+    m = (motion or "").strip().lower()
+    return m.startswith(_COMMITTEE_MOTIONS) or ("committee" in m and "conference" not in m)
+
+
+def _has_floor_marker(motion: str) -> bool:
+    m = (motion or "").lower()
+    return any(p in m for p in _FLOOR_MARKERS)
 
 
 def _participation(v) -> int:
-    return v.get("total") or (v.get("yea", 0) + v.get("nay", 0)
-                              + v.get("nv", 0) + v.get("absent", 0))
+    return sum(v.get("counts", {}).values())
 
 
-def select_floor_roll_call(summaries, chamber_class, state_code=None):
-    """Pick the chamber's floor roll-call summary from getBill.votes, or None.
+def select_floor_roll_call(votes, chamber_class, state_code=None):
+    """The chamber's floor roll call on a bill, or None.
 
-    Excludes committee/subcommittee votes (by desc), then ranks the rest in the
-    target chamber by (floor-marker present, participation, date). Guards against
-    promoting a low-turnout non-floor vote to 'the chamber's verdict': if the pick
-    has no explicit floor marker and participation is under 50% of the chamber's
-    seats (when known), returns None.
+    Committee votes are excluded by their motion; the rest in the chamber
+    rank by (floor marker, participation, date). A pick with no floor
+    marker and under half the chamber's seats voting is not the chamber's
+    verdict: None, and the page shows no seat map rather than a committee
+    tally as the House's.
     """
-    if not summaries:
-        return None
-
-    body = "H" if chamber_class == "lower" else "S" if chamber_class == "upper" else None
-
-    candidates = [
-        v for v in summaries
-        if (not body or (v.get("chamber") or "").upper() == body)
-        and not _is_committee_vote(v.get("desc"))
-    ]
+    candidates = [v for v in votes or [] if v.get("chamber") == chamber_class
+                  and not _is_committee_vote(v.get("motion"))]
     if not candidates:
         return None
-
-    def _score(v):
-        marker = 1 if _has_floor_marker(v.get("desc")) else 0
-        return (marker, _participation(v), v.get("date", ""))
-
-    target = max(candidates, key=_score)
-
-    if not _has_floor_marker(target.get("desc")):
+    target = max(candidates, key=lambda v: (_has_floor_marker(v.get("motion")), _participation(v),
+                                            v.get("date") or ""))
+    if not _has_floor_marker(target.get("motion")):
         seats = STATE_CHAMBERS.get((state_code or "").upper(), {}).get(chamber_class, 0)
         if seats and _participation(target) < seats * 0.5:
             return None
-
     return target
 
 
-def map_roll_call(roll_call, state_code, chamber_class, people_map=None):
-    """
-    Build a semicircle seat map from a LegiScan getRollCall payload.
-
-    roll_call: {yea, nay, nv, absent, total, desc, passed, votes:[{people_id, vote_text}]}
-    people_map: {people_id: {name, party, ...}} for labeling seats (optional).
-
-    Returns {seats, summary, svgW, svgH, dot_r, motion, result} or None.
-    """
-    if not roll_call:
+def map_roll_call(vote, state_code, chamber_class, people_map=None):
+    """A roll call → {seats, summary, svgW, svgH, dot_r, motion, result}, or
+    None for no vote."""
+    if not vote:
         return None
-
     people_map = people_map or {}
+    counts = vote.get("counts") or {}
+    summary = {"yea": counts.get("yes", 0), "nay": counts.get("no", 0),
+               "present": counts.get("abstain", 0),
+               "not_voting": counts.get("not voting", 0) + counts.get("other", 0)}
 
-    yea    = roll_call.get("yea", 0)
-    nay    = roll_call.get("nay", 0)
-    nv     = roll_call.get("nv", 0)
-    absent = roll_call.get("absent", 0)
-    summary = {"yea": yea, "nay": nay, "present": 0, "not_voting": nv + absent}
-
-    # Seat count — state lookup, fall back to this vote's total participation.
     state_data = STATE_CHAMBERS.get((state_code or "").upper(), {})
-    n_seats = state_data.get(chamber_class, 0)
-    if not n_seats:
-        n_seats = roll_call.get("total") or (yea + nay + nv + absent) or 40
-
+    n_seats = state_data.get(chamber_class, 0) or _participation(vote) or 40
     n_rows, svgW, svgH, r_start, r_step, cx, cy, dot_r = _get_layout(n_seats)
-    row_counts = _compute_row_distribution(n_seats, n_rows)
-    positions = _semicircle_positions(row_counts, cx, cy, r_start, r_step)
+    positions = _semicircle_positions(_compute_row_distribution(n_seats, n_rows), cx, cy, r_start, r_step)
 
-    individual = roll_call.get("votes") or []
-
+    individual = vote.get("positions") or []
     if individual:
-        def _option(v):
-            return _VOTE_TEXT_MAP.get((v.get("vote_text") or "").strip().lower(), "other")
-
-        sorted_votes = sorted(individual, key=lambda v: _VOTE_SORT.get(_option(v), 2))
+        ordered = sorted(individual, key=lambda p: (_VOTE_SORT.get(p[2], 2), p[1] or ""))
         seats = []
         for i, (x, y) in enumerate(positions):
-            if i < len(sorted_votes):
-                v = sorted_votes[i]
-                option = _option(v)
-                person = people_map.get(v.get("people_id"), {})
-                name = person.get("name", "")
-                party = person.get("party", "")
-                color = STATE_VOTE_COLORS.get(option, "#c8bfaa")
+            if i < len(ordered):
+                pid, name, option = ordered[i]
+                person = people_map.get(pid) or {}
+                seats.append({"x": x, "y": y, "name": person.get("name") or name or "",
+                              "party": person.get("party") or "", "state": state_code, "vote": option,
+                              "color": STATE_VOTE_COLORS.get(option, "#c8bfaa"), "source": "state"})
             else:
-                option, name, party, color = "absent", "", "", "#c8bfaa"
-            seats.append({
-                "x": x, "y": y,
-                "name": name,
-                "party": party,
-                "state": state_code,
-                "vote": option,
-                "color": color,
-                "source": "state",
-            })
+                seats.append({"x": x, "y": y, "name": "", "party": "", "state": state_code, "vote": "absent",
+                              "color": "#c8bfaa", "source": "state"})
     else:
-        # No per-legislator detail — fill proportionally from the counts.
-        buckets = (
-            [("yes",        STATE_VOTE_COLORS["yes"])]        * yea    +
-            [("not voting", STATE_VOTE_COLORS["not voting"])] * nv     +
-            [("absent",     STATE_VOTE_COLORS["absent"])]     * absent +
-            [("no",         STATE_VOTE_COLORS["no"])]         * nay
-        )
-        seats = []
-        for i, (x, y) in enumerate(positions):
-            if i < len(buckets):
-                option, color = buckets[i]
-            else:
-                option, color = "absent", "#c8bfaa"
-            seats.append({
-                "x": x, "y": y,
-                "name": "", "party": "", "state": state_code,
-                "vote": option, "color": color, "source": "state",
-            })
+        # No per-member record: fill proportionally from the counts.
+        buckets = ([("yes", STATE_VOTE_COLORS["yes"])] * summary["yea"] +
+                   [("not voting", STATE_VOTE_COLORS["not voting"])] * summary["not_voting"] +
+                   [("abstain", STATE_VOTE_COLORS["abstain"])] * summary["present"] +
+                   [("no", STATE_VOTE_COLORS["no"])] * summary["nay"])
+        seats = [{"x": x, "y": y, "name": "", "party": "", "state": state_code,
+                  "vote": buckets[i][0] if i < len(buckets) else "absent",
+                  "color": buckets[i][1] if i < len(buckets) else "#c8bfaa", "source": "state"}
+                 for i, (x, y) in enumerate(positions)]
 
-    log_action(
-        agent_name="state_vote_mapper",
-        action="map_roll_call",
-        input_data={"state": state_code, "chamber": chamber_class, "n_seats": n_seats},
-        output_data=summary,
-    )
-
-    return {
-        "seats":   seats,
-        "summary": summary,
-        "svgW":    svgW,
-        "svgH":    svgH,
-        "dot_r":   dot_r,
-        "motion":  roll_call.get("desc", ""),
-        "result":  "Passed" if roll_call.get("passed") == 1 else "Failed",
-    }
+    return {"seats": seats, "summary": summary, "svgW": svgW, "svgH": svgH, "dot_r": dot_r,
+            "motion": vote.get("motion") or "", "result": "Passed" if vote.get("result") == "pass" else "Failed",
+            "date": vote.get("date"), "vote_id": vote.get("id")}
