@@ -271,6 +271,12 @@ def init_db():
             ALTER TABLE bill_doc ADD COLUMN IF NOT EXISTS sponsor_bioguide TEXT;
             ALTER TABLE bill_doc ADD COLUMN IF NOT EXISTS sponsor_name TEXT;
             CREATE INDEX IF NOT EXISTS idx_bill_doc_latest ON bill_doc (congress, latest_action_date);
+            -- State bills share the index (plan of 2026-09-27): a row says
+            -- whose it is, and every search filters on it, federal by default.
+            ALTER TABLE bill_doc ADD COLUMN IF NOT EXISTS jurisdiction TEXT NOT NULL DEFAULT 'ocd-division/country:us';
+            ALTER TABLE bill_doc ADD COLUMN IF NOT EXISTS session TEXT;
+            ALTER TABLE bill_doc ALTER COLUMN congress DROP NOT NULL;
+            CREATE INDEX IF NOT EXISTS idx_bill_doc_jurisdiction ON bill_doc (jurisdiction, session);
         """)
         # One vector per bill and embedding space. Needs pgvector; without
         # it the table is not made and search keeps its full-text path.

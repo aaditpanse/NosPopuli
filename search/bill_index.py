@@ -18,9 +18,11 @@ same space.
     python -m search.bill_index latency                # query embedding time here
 """
 
+import hashlib
 import json
 import os
 import pathlib
+import re
 import sys
 import time
 
@@ -61,6 +63,67 @@ def batches(docs, max_inputs=_BATCH_INPUTS, max_chars=_BATCH_CHARS):
 # ---------------------------------------------------------------- documents
 
 DOCS_VERSION = 2       # 2: latest action and sponsor columns, for the feed
+US_DIV = "ocd-division/country:us"
+
+
+def state_doc(st, session, key, b, people_names=None):
+    """One state bill (a bills-<session>.json record) → its search
+    document: identifier and title, other titles, subjects, and the
+    legislature's own summary (Open States abstracts, the title one left
+    out). Pure."""
+    import graph
+    itype, number = key.split("/")
+    summaries = [a["abstract"] for a in b.get("abstracts") or [] if (a.get("note") or "") != "title"]
+    summary = " ".join(summaries)[:12000]
+    chapter = next((m.group(1) for a in b.get("actions") or []
+                    for m in [re.search(r"Chapter (\d+)", a.get("description") or "", re.I)]
+                    if m and ("became-law" in a["classification"] or "executive-signature" in a["classification"])), None)
+    primary = next((s for s in b.get("sponsors") or [] if s["primary"]), None)
+    parts = [f"{b['identifier']}: {b['title']}"]
+    others = [t for t in b.get("other_titles") or [] if t != b["title"]][:8]
+    if others:
+        parts.append("Also known as: " + "; ".join(others))
+    if b.get("subjects"):
+        parts.append("Subjects: " + "; ".join(b["subjects"][:40]))
+    if summary:
+        parts.append(f"Summary: {summary}")
+    doc = "\n".join(parts)
+    return {"instrument_id": graph.state_instrument_id(st, session, key), "congress": None,
+            "bill_type": itype, "number": number, "title": b["title"], "introduced": b.get("first_action_date"),
+            "policy_area": (b.get("subjects") or [None])[0], "subjects": b.get("subjects") or [],
+            "is_law": bool(chapter), "law_numbers": [chapter] if chapter else [], "summary": summary, "doc": doc,
+            "doc_sha": hashlib.sha1(doc.encode()).hexdigest(), "latest_action": b.get("latest_action"),
+            "latest_action_date": b.get("latest_action_date"), "sponsor_bioguide": None,
+            "sponsor_name": primary["name"] if primary else None,
+            "jurisdiction": graph.state_div(st), "session": session}
+
+
+def load_state_docs(st, force=False):
+    """The search documents of each of a state's sessions whose bills file
+    changed since the last load (graph_scope row docs/<st>/<session>).
+    Returns {session: rows written}."""
+    import graph
+    from correspondence.db import _get_pool, init_db
+    init_db()
+    out = {}
+    with _get_pool().connection() as conn:
+        for sid in graph.state_sessions(st):
+            path = graph.data_path("state_bills", state=st, session=sid)
+            st_ = path.stat()
+            fp = f"{DOCS_VERSION}\n{st_.st_size} {st_.st_mtime_ns}"
+            scope = f"docs/{st}/{sid}"
+            with conn.transaction(), conn.cursor() as cur:
+                cur.execute("SELECT fingerprint FROM graph_scope WHERE scope = %s", (scope,))
+                row = cur.fetchone()
+                if row and row[0] == fp and not force:
+                    continue
+                bills = json.loads(path.read_text())["bills"]
+                out[sid] = _write_docs(cur, (state_doc(st, sid, k, b) for k, b in bills.items()))
+                cur.execute("""INSERT INTO graph_scope (scope, fingerprint, loaded_at, nodes, edges)
+                               VALUES (%s, %s, NOW(), %s, 0)
+                               ON CONFLICT (scope) DO UPDATE SET fingerprint = excluded.fingerprint,
+                                   loaded_at = NOW(), nodes = excluded.nodes""", (scope, fp, out[sid]))
+    return out
 
 
 def load_docs(congresses=None, force=False):
@@ -99,35 +162,39 @@ def _write_docs(cur, docs):
     cur.execute("""CREATE TEMP TABLE stage_doc (instrument_id TEXT, congress INT, bill_type TEXT, number TEXT,
                    title TEXT, introduced DATE, policy_area TEXT, subjects TEXT[], is_law BOOLEAN,
                    law_numbers TEXT[], summary TEXT, doc TEXT, doc_sha TEXT, latest_action TEXT,
-                   latest_action_date DATE, sponsor_bioguide TEXT, sponsor_name TEXT) ON COMMIT DROP""")
+                   latest_action_date DATE, sponsor_bioguide TEXT, sponsor_name TEXT,
+                   jurisdiction TEXT, session TEXT) ON COMMIT DROP""")
     n = 0
     with cur.copy("COPY stage_doc FROM STDIN") as cp:
         for d in docs:
             cp.write_row((d["instrument_id"], d["congress"], d["bill_type"], d["number"], d["title"],
                           d["introduced"], d["policy_area"], d["subjects"], d["is_law"], d["law_numbers"],
                           d["summary"], d["doc"], d["doc_sha"], d["latest_action"], d["latest_action_date"],
-                          d["sponsor_bioguide"], d["sponsor_name"]))
+                          d["sponsor_bioguide"], d["sponsor_name"], d.get("jurisdiction") or US_DIV,
+                          d.get("session")))
             n += 1
     # A new action changes a row without changing its document, so the
     # embedding (keyed on doc_sha) stays and only the columns move.
     cur.execute("""
         INSERT INTO bill_doc (instrument_id, congress, bill_type, number, title, introduced, policy_area,
                               subjects, is_law, law_numbers, summary, doc, doc_sha, latest_action,
-                              latest_action_date, sponsor_bioguide, sponsor_name, updated_at)
+                              latest_action_date, sponsor_bioguide, sponsor_name, jurisdiction, session, updated_at)
         SELECT DISTINCT ON (instrument_id) instrument_id, congress, bill_type, number, title, introduced,
                policy_area, subjects, is_law, law_numbers, summary, doc, doc_sha, latest_action,
-               latest_action_date, sponsor_bioguide, sponsor_name, NOW()
+               latest_action_date, sponsor_bioguide, sponsor_name, jurisdiction, session, NOW()
         FROM stage_doc
         ON CONFLICT (instrument_id) DO UPDATE SET
             title = excluded.title, introduced = excluded.introduced, policy_area = excluded.policy_area,
             subjects = excluded.subjects, is_law = excluded.is_law, law_numbers = excluded.law_numbers,
             summary = excluded.summary, doc = excluded.doc, doc_sha = excluded.doc_sha,
             latest_action = excluded.latest_action, latest_action_date = excluded.latest_action_date,
-            sponsor_bioguide = excluded.sponsor_bioguide, sponsor_name = excluded.sponsor_name, updated_at = NOW()
+            sponsor_bioguide = excluded.sponsor_bioguide, sponsor_name = excluded.sponsor_name,
+            jurisdiction = excluded.jurisdiction, session = excluded.session, updated_at = NOW()
         WHERE (bill_doc.doc_sha, bill_doc.latest_action, bill_doc.latest_action_date, bill_doc.sponsor_bioguide,
-               bill_doc.sponsor_name)
+               bill_doc.sponsor_name, bill_doc.jurisdiction, bill_doc.session)
               IS DISTINCT FROM (excluded.doc_sha, excluded.latest_action, excluded.latest_action_date,
-                                excluded.sponsor_bioguide, excluded.sponsor_name)""")
+                                excluded.sponsor_bioguide, excluded.sponsor_name, excluded.jurisdiction,
+                                excluded.session)""")
     cur.execute("DROP TABLE stage_doc")
     return n
 
@@ -255,6 +322,19 @@ def as_result(row):
     """A bill_doc row in the shape search_bills has always returned, so the
     ranker and validator downstream need no change. Pure."""
     laws = row.get("law_numbers") or []
+    jurisdiction = row.get("jurisdiction") or US_DIV
+    if jurisdiction != US_DIV:
+        # A state bill: its own id, session and chapter; no GovInfo package.
+        st = jurisdiction.rsplit(":", 1)[-1]
+        return {
+            "state": st, "session": row.get("session"), "jurisdiction": jurisdiction,
+            "identifier": f"{row['bill_type'].upper()} {row['number']}",
+            "title": row.get("title") or f"{row['bill_type'].upper()} {row['number']}",
+            "date_issued": row["introduced"].isoformat() if row.get("introduced") else "",
+            "type": row["bill_type"], "number": int(row["number"]),
+            "is_law": bool(row.get("is_law")), "chapter": laws[0] if laws else None,
+            "policy_area": row.get("policy_area"), "is_state_bill": True,
+        }
     return {
         "package_id": f"BILLS-{row['congress']}{row['bill_type']}{row['number']}",
         "title": row.get("title") or f"{row['bill_type'].upper()} {row['number']}",
@@ -283,7 +363,7 @@ def _tsquery_sql(terms, op):
     return f" {op} ".join(one(t) for t in terms), [a for t in terms for a in t]
 
 
-def search(question, congresses=None, limit=10, laws_only=False):
+def search(question, congresses=None, limit=10, laws_only=False, jurisdiction=US_DIV, sessions=None):
     """Bills for a question: full-text and nearest-vector lists over
     bill_doc, fused by rank. Local only; nothing leaves the server.
 
@@ -291,13 +371,18 @@ def search(question, congresses=None, limit=10, laws_only=False):
     tops up with bills that have any of them: a plain AND drops every bill
     that lacks one incidental word of a spoken question, and a plain OR lets
     a long summary that repeats one common word ("regulation") outrank the
-    bills about the whole question. Fail-closed: a database or model error
-    raises, and the caller decides what the user sees."""
+    bills about the whole question. Every search is one jurisdiction's
+    (federal by default), so a state bill never answers a federal question
+    or the reverse. Fail-closed: a database or model error raises, and the
+    caller decides what the user sees."""
     from psycopg.rows import dict_row
     from correspondence.db import _get_pool
     terms = fts_terms(question)
     vec = json.dumps(embed_query([question])[0])
-    where, args = "", []
+    where, args = " AND d.jurisdiction = %s", [jurisdiction]
+    if sessions:
+        where += " AND d.session = ANY(%s)"
+        args.append(list(sessions))
     if congresses:
         where += " AND d.congress = ANY(%s)"
         args.append(list(congresses))
@@ -326,7 +411,7 @@ def search(question, congresses=None, limit=10, laws_only=False):
         near = [r["instrument_id"] for r in cur.fetchall()]
         ids = rrf(fts, near)[:limit]
         cur.execute("""SELECT instrument_id, congress, bill_type, number, title, introduced,
-                              policy_area, is_law, law_numbers
+                              policy_area, is_law, law_numbers, jurisdiction, session
                        FROM bill_doc WHERE instrument_id = ANY(%s)""", (ids,))
         rows = {r["instrument_id"]: r for r in cur.fetchall()}
     return [as_result(rows[i]) for i in ids if i in rows]
@@ -336,6 +421,9 @@ if __name__ == "__main__":
     cmd, args = (sys.argv[1] if len(sys.argv) > 1 else ""), sys.argv[2:]
     if cmd == "docs":
         print(json.dumps(load_docs([int(a) for a in args] or None)))
+        import graph
+        for st in ([] if args else sorted(graph.LEGISLATURES)):
+            print(st, json.dumps(load_state_docs(st)))
     elif cmd == "embed":
         n, t = embed_missing(int(args[0]) if args else None)
         print(f"{n} document(s) embedded, {t:,} token(s)")

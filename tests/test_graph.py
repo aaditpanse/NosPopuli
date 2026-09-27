@@ -2064,7 +2064,7 @@ class StateSessionTest(unittest.TestCase):
 class OpenStatesTest(unittest.TestCase):
     """sources/openstates.py: the people repo and the monthly dump, parsed.
     Checked 2026-09-27 on the server: Virginia 2017-2027, 20 sessions,
-    36,799 bills and 100,420 roll calls in 51 s; a second run writes
+    35,361 bills and 100,441 roll calls in 51 s; a second run writes
     nothing."""
 
     def setUp(self):

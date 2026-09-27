@@ -125,3 +125,34 @@ class EvaluationTest(unittest.TestCase):
         self.assertEqual((s["queries"], s["unjudged"], s["partly"]), (1, 1, 0))
         self.assertEqual((s["old"], s["new"]), (0.5, 1.0))
         self.assertIsNone(s["per_query"][1]["old"])
+
+
+class StateSearchDocTest(unittest.TestCase):
+    """State bills in bill_doc (plan step 11): a jurisdiction on every row,
+    and a result that is not a GovInfo package."""
+
+    def test_a_state_bill_document(self):
+        from search.bill_index import state_doc
+        b = {"identifier": "HB 1", "title": "Minimum wage; increases incrementally.",
+             "other_titles": [], "subjects": ["Labor"], "first_action_date": "2025-11-17",
+             "latest_action": "Approved", "latest_action_date": "2026-04-08",
+             "abstracts": [{"abstract": "An Act to amend and reenact § 40.1-28.10", "note": "title"},
+                           {"abstract": "Minimum wage. Increases the minimum wage to $15.00.", "note": None}],
+             "sponsors": [{"name": "Jeion A. Ward", "person": "ocd-person/a", "primary": True}],
+             "actions": [{"description": "Approved by Governor-Chapter 350", "classification": ["executive-signature"]}]}
+        d = state_doc("va", "2026", "hb/1", b)
+        self.assertEqual((d["instrument_id"], d["jurisdiction"], d["session"], d["congress"]),
+                         ("instrument/va/2026/hb/1", "ocd-division/country:us/state:va", "2026", None))
+        self.assertEqual((d["is_law"], d["law_numbers"], d["sponsor_name"]), (True, ["350"], "Jeion A. Ward"))
+        # The title abstract repeats the enacting clause; only the summary is kept.
+        self.assertEqual(d["summary"], "Minimum wage. Increases the minimum wage to $15.00.")
+        self.assertTrue(d["doc"].startswith("HB 1: Minimum wage"))
+
+    def test_a_state_row_has_no_govinfo_package(self):
+        import datetime
+        from search.bill_index import as_result
+        r = as_result({"jurisdiction": "ocd-division/country:us/state:va", "session": "2026", "congress": None,
+                       "bill_type": "hb", "number": "1", "title": "Minimum wage", "is_law": True,
+                       "law_numbers": ["350"], "introduced": datetime.date(2025, 11, 17)})
+        self.assertNotIn("package_id", r)
+        self.assertEqual((r["state"], r["identifier"], r["chapter"], r["is_state_bill"]), ("va", "HB 1", "350", True))
