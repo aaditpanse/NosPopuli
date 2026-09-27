@@ -2335,3 +2335,32 @@ class StateAnswerTest(unittest.TestCase):
         backend = graph.memory_backend(sn + bn + vn, se + be + ve)
         a = graph.answer(graph.parse_question("how did Jeion Ward vote on HR 9"), backend)
         self.assertEqual([r["item_id"] for r in a["rows"]], ["instrument/va/2026/hr/9"])
+
+
+class StateReviewFixesTest(unittest.TestCase):
+    """Review findings on the state layer, 2026-09-27."""
+
+    def test_two_equal_roll_calls_are_no_match(self):
+        v = {"bill": "hb/1", "chamber": "lower", "date": "2026-02-03", "counts": {"yes": 2, "no": 0}}
+        lv = lambda i: {"id": i, "positions": {"H1": "yes", "H2": "yes"}}
+        self.assertIsNone(graph._lis_match(v, {("hb/1", "lower", "2026-02-03"): [lv("A"), lv("B")]}))
+        self.assertEqual(graph._lis_match(v, {("hb/1", "lower", "2026-02-03"): [lv("A")]})["id"], "A")
+
+    def test_a_quoted_nickname_is_a_first_name(self):
+        self.assertIn(("smith", "b"), graph.state_name_keys(['Robert "Bob" Smith']))
+        self.assertIn(("smith", "r"), graph.state_name_keys(['Robert "Bob" Smith']))
+
+    def test_a_session_that_has_not_sat_is_not_current(self):
+        with tempfile.TemporaryDirectory() as d:
+            old, graph.DATA_DIR = graph.DATA_DIR, pathlib.Path(d)
+            try:
+                for sid, n in (("2026", 5), ("2027", 0)):
+                    for kind in ("state_bills", "state_votes"):
+                        p = graph.data_path(kind, state="va", session=sid)
+                        p.parent.mkdir(parents=True, exist_ok=True)
+                        p.write_text(json.dumps({"meta": {"votes": n}, "bills": {}, "votes": []}))
+                # 2026 is the current session (2027 has no roll call yet): the graph answers, not the file.
+                self.assertIsNone(graph.state_snapshot_votes("va", [{"openstates_id": "x", "id": "p", "name": "X"}],
+                                                             2026, None, 10))
+            finally:
+                graph.DATA_DIR = old

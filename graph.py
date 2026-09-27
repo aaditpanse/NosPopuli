@@ -1950,14 +1950,23 @@ def snapshot_votes(persons, year, topic, limit, loaded_congress):
     return rows[:limit], len(rows), len(rows) > limit, files
 
 
+def state_vote_counts(st):
+    """{session: roll calls on disk}, from each votes file's meta. A session
+    that has not sat has a file with none: it is not the current one."""
+    out = {}
+    for sid in state_sessions(st):
+        vp = data_path("state_votes", state=st, session=sid)
+        out[sid] = json.loads(vp.read_text())["meta"].get("votes", 0) if vp.exists() else 0
+    return out
+
+
 def state_snapshot_votes(st, persons, year, topic, limit):
     """A state legislator's votes in one year, read from the Open States
     votes files of that year's sessions — the ones not loaded as edges.
     None when the year's sessions are loaded (the graph answers). Same row
     shape as the graph's. Returns (rows, total, truncated, files read)."""
     sessions = [sid for sid in state_sessions(st) if (session_key(sid) or (0,))[0] == year]
-    counts = {sid: 1 for sid in state_sessions(st) if data_path("state_votes", state=st, session=sid).exists()}
-    if not sessions or set(sessions) & set(current_state_sessions(state_sessions(st), counts)):
+    if not sessions or set(sessions) & set(current_state_sessions(state_sessions(st), state_vote_counts(st))):
         return None
     ids = {p["openstates_id"]: p for p in persons if p.get("openstates_id")}
     rows, files = [], []
@@ -2363,6 +2372,10 @@ def _summary(nodes, edges):
 # vote the legislature's record contradicts is `advisory`.
 
 STATE_SOURCE = "openstates"
+# Bumped when the state builders change what a scope holds, so the next
+# load rebuilds the state scopes without touching the federal ones.
+# 2: an ambiguous LIS match is no match; quoted nicknames match voters.
+STATE_SCOPE_VERSION = 2
 STATE_CHAMBERS = {"upper": "Senate", "lower": "House"}
 # Open States' vote options → the one position vocabulary.
 _STATE_POSITION = {"yes": "aye", "no": "no", "not voting": "absent", "abstain": "present", "other": "other"}
@@ -2611,13 +2624,16 @@ def bill_key_of(identifier):
 def _lis_match(v, lis_by_key):
     """The legislature's roll call that is this Open States vote: same bill,
     chamber and day, and the same yes and no counts (a bill can have
-    several roll calls a day). None when it is not one. Pure."""
+    several roll calls a day). None when none matches, and when two do (two
+    unanimous votes on one bill in a day): a guess would flag the wrong
+    members. Pure."""
+    hits = []
     for lv in lis_by_key.get((v["bill"], v["chamber"], v["date"]), []):
         yes = sum(1 for x in lv["positions"].values() if x == "yes")
         no = sum(1 for x in lv["positions"].values() if x == "no")
         if yes == v["counts"].get("yes", -1) and no == v["counts"].get("no", -1):
-            return lv
-    return None
+            hits.append(lv)
+    return hits[0] if len(hits) == 1 else None
 
 
 def build_state_votes(st, session, votes, person_ids, roster, lis_rec=None):
@@ -2653,7 +2669,7 @@ def build_state_votes(st, session, votes, person_ids, roster, lis_rec=None):
             pid = person_ids.get(voter) if voter else None
             if pid is None:
                 key = state_name_key(name)
-                hits = {m[0] for m in members if key and key in {state_name_key(n) for n in m[1]}}
+                hits = {m[0] for m in members if key and key in state_name_keys(m[1])}
                 if len(hits) != 1:
                     unresolved += 1
                     continue
@@ -2685,6 +2701,21 @@ def build_state_votes(st, session, votes, person_ids, roster, lis_rec=None):
 
 
 _NAME_SUFFIX = {"jr", "sr", "ii", "iii", "iv"}
+
+
+def state_name_keys(names):
+    """Every key a roster member answers to: each of their names, and a
+    quoted nickname used as the first name ('Robert "Bob" Smith' is also
+    Bob Smith). Pure."""
+    keys = set()
+    for n in names:
+        keys.add(state_name_key(n))
+        for nick in re.findall(r'"([^"]+)"', n or ""):
+            rest = re.sub(r'"[^"]*"', " ", n).split()
+            if rest:
+                keys.add(state_name_key(f"{nick} {rest[-1]}"))
+    keys.discard(None)
+    return keys
 
 
 def state_name_key(name):
@@ -2887,7 +2918,7 @@ def state_scopes(st, today=None):
     people = json.loads(people_path.read_text())["people"]
     lis_paths = {p.stem.removeprefix("lis-"): p for p in data_glob("state_lis", state=st)}
     lis = {sid: json.loads(p.read_text()) for sid, p in lis_paths.items()}
-    base = {"v": SCOPE_VERSION, "people": _stat(people_path), "conf": LEGISLATURES.get(st),
+    base = {"v": SCOPE_VERSION, "state_v": STATE_SCOPE_VERSION, "people": _stat(people_path), "conf": LEGISLATURES.get(st),
             "identities": {k: v for k, v in IDENTITIES.items() if k.startswith("openstates/")}}
     skeleton = build_state_skeleton(st, people, list(lis.values()), today)
     sn, se, _ = skeleton
@@ -2905,10 +2936,7 @@ def state_scopes(st, today=None):
             roster.setdefault(chamber_of[e["dst"]], []).append(
                 (e["src"], names.get(e["src"], []), e["valid_from"], e["valid_to"], lis_member.get(e["src"])))
     sessions = state_sessions(st)
-    votes_count, known = {}, set()
-    for sid in sessions:
-        vp = data_path("state_votes", state=st, session=sid)
-        votes_count[sid] = json.loads(vp.read_text())["meta"].get("votes", 0) if vp.exists() else 0
+    votes_count, known = state_vote_counts(st), set()
     bills_paths = {sid: data_path("state_bills", state=st, session=sid) for sid in sessions}
 
     def known_ids():
