@@ -146,7 +146,7 @@
     const call = s.is_state_bill
       ? `openStateBill(${JSON.stringify(s.state)},${JSON.stringify(s.session)},${JSON.stringify((s.type || "").toLowerCase())},${Number(s.number)},${JSON.stringify(title || "")})`
       : `openBill(${Number(s.congress)},${JSON.stringify(s.type)},${Number(s.number)},${JSON.stringify(title || "")})`;
-    return call.replace(/'/g, "&#39;");
+    return esc(call);
   }
 
   function go(view) {

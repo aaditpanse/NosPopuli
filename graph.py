@@ -2041,8 +2041,19 @@ def state_stage(actions, newer=()):
     return _STAGES[best]
 
 
-def state_bill_row(st, session, key, b):
-    """A bills-file record as one state search result. Pure."""
+def _newer_actions(st, session, key, b):
+    """The legislature's history rows for a bill dated after its Open States
+    record: advisory, as on the bill page."""
+    lis = _state_file("state_lis", st, session) or {}
+    last = b.get("latest_action_date") or ""
+    return [h for h in lis.get("history", {}).get(key, []) if (h.get("date") or "") > last]
+
+
+def state_bill_row(st, session, key, b, newer=()):
+    """A bills-file record as one state search result; `newer` is the
+    legislature's newer rows, which move its stage as they do on the bill
+    page and in the search index. Pure."""
+    stage = state_stage(b.get("actions"), newer)
     itype, number = key.split("/")
     primary = next((s for s in b.get("sponsors") or [] if s.get("primary")), None)
     return {"ocd_id": b.get("openstates_id"), "identifier": b["identifier"], "title": b["title"],
@@ -2051,9 +2062,8 @@ def state_bill_row(st, session, key, b):
             "latest_action": b.get("latest_action"), "latest_action_date": b.get("latest_action_date"),
             "date_issued": b.get("first_action_date") or "",
             "sponsor": primary["name"] if primary else None,
-            "is_law": any("became-law" in a["classification"] or "executive-signature" in a["classification"]
-                          for a in b.get("actions") or []),
-            "stage": state_stage(b.get("actions")),
+            "is_law": stage == "law",
+            "stage": stage,
             "path": f"/state/{st.lower()}/{session}/{itype}/{number}", "is_state_bill": True,
             "source": "open states"}
 
@@ -2076,12 +2086,17 @@ def state_bill_lookup(st, identifier, year=None):
 
 
 def state_recent_bills(st, n):
-    """The n bills with the latest action in the newest session on disk."""
+    """The n bills with the latest action across the sessions of the last
+    two years on disk: the newest file alone can be next year's prefiles
+    while a special session is the one sitting."""
     sessions = state_sessions(st)
-    bills = (_state_file("state_bills", st, sessions[-1]) if sessions else None) or {"bills": {}}
-    rows = sorted(bills["bills"].items(), key=lambda kv: (kv[1].get("latest_action_date") or "", kv[0]),
-                  reverse=True)[:n]
-    return [state_bill_row(st, sessions[-1], k, b) for k, b in rows]
+    last = max((session_key(x)[0] for x in sessions), default=0)
+    rows = []
+    for sid in [x for x in sessions if session_key(x)[0] >= last - 1]:
+        bills = _state_file("state_bills", st, sid) or {"bills": {}}
+        rows += [(b.get("latest_action_date") or "", sid, k, b) for k, b in bills["bills"].items()]
+    rows.sort(key=lambda r: (r[0], r[1], r[2]), reverse=True)
+    return [state_bill_row(st, sid, k, b, _newer_actions(st, sid, k, b)) for _, sid, k, b in rows[:n]]
 
 
 def _roster_names(p):
@@ -2151,7 +2166,8 @@ def state_member_bills(st, person_id, n):
                 if s.get("person") == person_id:
                     mine[k] = (min(mine.get(k, (True,))[0], not s["primary"]), k, b)
         mine = mine.values()
-        rows += [dict(state_bill_row(st, sid, k, b), sponsorship="primary" if not co else "cosponsor")
+        rows += [dict(state_bill_row(st, sid, k, b, _newer_actions(st, sid, k, b)),
+                      sponsorship="primary" if not co else "cosponsor")
                  for co, k, b in sorted(mine, key=lambda t: (t[0], t[1].split("/")[0] in _SIMPLE_RESOLUTIONS,
                                                              -int(t[1].split("/")[1])))]
         if len(rows) >= n and current <= set(read):
@@ -2658,7 +2674,7 @@ STATE_SOURCE = "openstates"
 # Bumped when the state builders change what a scope holds, so the next
 # load rebuilds the state scopes without touching the federal ones.
 # 2: an ambiguous LIS match is no match; quoted nicknames match voters.
-STATE_SCOPE_VERSION = 2
+STATE_SCOPE_VERSION = 3
 STATE_CHAMBERS = {"upper": "Senate", "lower": "House"}
 # Open States' vote options → the one position vocabulary.
 _STATE_POSITION = {"yes": "aye", "no": "no", "not voting": "absent", "abstain": "present", "other": "other"}
@@ -2818,17 +2834,50 @@ def state_instrument_id(st, session, key):
 _CHAPTER = re.compile(r"Chapter (\d+)", re.I)
 
 
-def build_state_bills(st, session, rec, person_ids, governor_holds, known_ids=frozenset()):
+def _sponsor_by_name(name, day, last, members):
+    """(node id, how) for a sponsor Open States names without an id, or None.
+    Legislators serving on the bill's first action date first, then any
+    serving during its life (a delegate elected in November prefiles before
+    the January swearing-in); the surname and first initial first, then a
+    surname alone that only one of them has ("Bell", "Mundon King"). Two
+    candidates at any step are refused, never guessed. Pure."""
+    name = re.sub(r"\s+-\s+resigned\b.*$", "", name or "", flags=re.I).strip()
+    if not name or "committee" in name.lower() or not day:
+        return None     # a committee patron is not a person
+    key = state_name_key(name)
+    surname = (name.split(",")[0] if "," in name else name.split()[-1]).strip().lower()
+    on_day = [m for m in members if m[2] <= day <= (m[3] or "9999")]
+    in_life = [m for m in members if m[2] <= (last or day) and (m[3] or "9999") >= day]
+    for pool, when in ((on_day, "on the bill's first action date"), (in_life, "during the bill's life")):
+        hits = {m[0] for m in pool if key and key in state_name_keys(m[1])}
+        if not hits:
+            hits = {m[0] for m in pool if surname in {k[0] for k in state_name_keys(m[1])}}
+            how = f"surname alone, the only legislator serving {when} with it"
+        else:
+            how = f"surname and first initial, among the legislators serving {when}"
+        if len(hits) == 1:
+            return hits.pop(), how
+        if len(hits) > 1:
+            return None
+    return None
+
+
+def build_state_bills(st, session, rec, person_ids, governor_holds, known_ids=frozenset(), roster=None):
     """One session's bills file → instruments, who sponsored them, what the
     Governor did, the Acts of Assembly chapter, and related bills already on
-    file. person_ids maps an Open States person id to our node id; a sponsor
-    Open States names without an id is counted, never matched by name here.
-    Pure. Returns (nodes, edges, gaps)."""
+    file. person_ids maps an Open States person id to our node id. A sponsor
+    Open States names without an id is matched by name (surname and first
+    initial) among the legislators of either chamber serving on the bill's
+    first action date, since a co-patron can sit in the other chamber; none
+    or two is counted, never guessed. roster: {chamber: [(node id, names,
+    from, to, lis id)]}, as build_state_votes takes. Pure. Returns (nodes,
+    edges, gaps)."""
     g = _graph()
     sdiv = state_div(st)
     year = (session_key(session) or (None,))[0]
-    name_only = unknown = no_governor = 0
+    name_only = unknown = no_governor = by_name = 0
     ids = {state_instrument_id(st, session, k) for k in rec["bills"]} | set(known_ids)
+    members = [m for ms in (roster or {}).values() for m in ms]
     for key, b in rec["bills"].items():
         iid = state_instrument_id(st, session, key)
         itype, number = key.split("/")
@@ -2840,18 +2889,26 @@ def build_state_bills(st, session, rec, person_ids, governor_holds, known_ids=fr
             props["topic"], props["topic_derived_by"] = b["subjects"][0], "open states subject"
         _node(g, iid, "instrument", f"{b['identifier']}: {b['title']}", props, STATE_SOURCE, b["openstates_id"])
         ref = f"{st}/{session}/{key}/sponsors"
+        day, last = b.get("first_action_date") or "", b.get("latest_action_date") or b.get("first_action_date") or ""
         for sp in b["sponsors"]:
+            extra = {}
             if not sp["person"]:
-                name_only += 1
-                continue
-            pid = person_ids.get(sp["person"])
-            if pid is None:
-                unknown += 1
-                continue
+                hit = _sponsor_by_name(sp["name"], day, last, members)
+                if hit is None:
+                    name_only += 1
+                    continue
+                pid, how = hit
+                by_name += 1
+                extra["sponsor_matched_by"] = how
+            else:
+                pid = person_ids.get(sp["person"])
+                if pid is None:
+                    unknown += 1
+                    continue
             _edge(g, pid, "sponsored", iid, b.get("first_action_date"), b.get("first_action_date"), "ingested",
                   STATE_SOURCE, ref, sdiv, {"role": "sponsor" if sp["primary"] else "cosponsor",
                                             "date_inferred": "the bill's first action; Open States gives no "
-                                                             "sponsorship dates"})
+                                                             "sponsorship dates", **extra})
         aref = f"{st}/{session}/{key}/actions"
         seen = set()
         for a in b["actions"]:
@@ -2885,12 +2942,12 @@ def build_state_bills(st, session, rec, person_ids, governor_holds, known_ids=fr
                 _edge(g, iid, "related_to", did, None, None, "ingested", STATE_SOURCE, f"{st}/{session}/{key}/related",
                       sdiv, {"relationship": r["relation"]})
     linked = sum(1 for e in g["edges"].values() if e["predicate"] == "sponsored")
-    if name_only or unknown:
-        # Some sessions' Open States rows carry no person id for most
-        # sponsors (2023: 2,571 links for 3,840 bills); say how thin it is.
-        g["gaps"].append(f"{st.upper()} {session}: {linked} sponsorship(s) linked for {len(rec['bills'])} bill(s); "
-                         f"{name_only} named without a person id and {unknown} by a person not in the roster, "
-                         f"no edge")
+    if name_only or unknown or by_name:
+        # Some sessions' Open States rows carry no person id for many
+        # sponsors; say how many were matched by name and how many were not.
+        g["gaps"].append(f"{st.upper()} {session}: {linked} sponsorship(s) linked for {len(rec['bills'])} bill(s), "
+                         f"{by_name} of them by name; {name_only} named without a person id that matched no "
+                         f"single legislator and {unknown} by a person not in the roster, no edge")
     if no_governor:
         g["gaps"].append(f"{st.upper()} {session}: {no_governor} Governor action(s) on a day with no single "
                          f"Governor on file; no edge")
@@ -3233,7 +3290,7 @@ def state_scopes(st, today=None):
         out[f"{st}/bills/{sid}"] = (
             json.dumps({**base, "bills": _stat(path)}, sort_keys=True), ["instrument"],
             lambda sid=sid, path=path: build_state_bills(st, sid, json.loads(path.read_text()), person_ids,
-                                                         gov_holds, known_ids()))
+                                                         gov_holds, known_ids(), roster))
     current = current_state_sessions(sessions, votes_count)
     inputs = {sid: [_stat(data_path("state_votes", state=st, session=sid)),
                     _stat(lis_paths[sid]) if sid in lis_paths else None] for sid in current}
@@ -4639,17 +4696,26 @@ def answer(parsed, backend, limit=200):
         year = parsed.get("year")
         loaded = current_session()[0]
         state_people = [p for p in persons if p.get("openstates_id")]
+        legislature = lambda ps: next((code for code in LEGISLATURES for p in ps  # noqa: E731
+                                       if p.get("jurisdiction") == state_div(code)), None)
         # A state legislator's own legislature, from their node, when the
         # question named none: "HR 2179" for a delegate is the House of
-        # Delegates' resolution, not H.R. 2179.
-        home = scope or next((code for code in LEGISLATURES for p in state_people
-                              if p.get("jurisdiction") == state_div(code)), None)
+        # Delegates' resolution, not H.R. 2179. A person who also sat in
+        # Congress (bridged by the sidecar's identities) has no single home:
+        # HR is Congress's, and only a state-only type (HB, SJ) or a named
+        # state sends the ask to the legislature.
+        bridged = any(p.get("bioguide") for p in state_people)
+        home = scope or legislature([p for p in state_people if not p.get("bioguide")])
+        if not home and bridged and topic and state_bill_ref(topic) and not _bill_ref(topic):
+            home = legislature(state_people)
         if home and topic and state_people:
             topic, place = f"{home}:{topic}", None
         if year and state_people:
-            st = home
+            st = home or legislature(state_people)
             files_rows = state_snapshot_votes(st, state_people, year, topic, limit) if st else None
-            if files_rows is not None:
+            # A bridged person's year may be a year in Congress: an empty
+            # state file falls through to the federal roll calls.
+            if files_rows is not None and (files_rows[0] or not bridged):
                 rows, total, truncated, files = files_rows
                 out = shape_answer(rows, persons, parsed["person"], topic, total, truncated) | {
                     "ask": ask, "place_ignored": place, "year": year, "from_snapshot": files}

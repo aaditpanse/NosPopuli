@@ -355,7 +355,9 @@ def fast_route_state(user_question: str, state_code: str | None = None):
     if number < 1 or number > 99999:
         return None
 
-    requested_session = _extract_state_session(user_question)
+    # Only the words around the bill number can name a year: HB 2019 is a
+    # bill number, not the 2019 session.
+    requested_session = _extract_state_session(user_question[:m.start("num")] + " " + user_question[m.end("num"):])
     identifier = f"{bill_type} {number}"
 
     return {

@@ -119,6 +119,9 @@ class StateFastRoute(unittest.TestCase):
     def test_senate_bill(self):           self.assertHit("SB 1", "SB 1")
     def test_house_bill_lowercase(self):  self.assertHit("hb 100", "HB 100")
     def test_house_bill_punctuated(self): self.assertHit("H.B. 99", "HB 99")
+    # A bill numbered like a year is a number, not a session (review 2026-09-27).
+    def test_number_is_not_a_year(self):  self.assertHit("HB 2019", "HB 2019")
+    def test_number_and_a_year(self):     self.assertHit("HB 2019 from 2024", "HB 2019", "2024")
 
     # NY/CA assembly conventions
     def test_california_ab(self):         self.assertHit("AB 414", "AB 414")

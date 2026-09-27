@@ -911,7 +911,10 @@ Live problems I know about and haven't fixed. Listed so nobody has to rediscover
   holds. Per-plan post keys would fix it.
 - **Some sessions have thin sponsor records in Open States.** 2020 Special Session I has
   no sponsors at all (488 bills); 2023, 2021S2, 2022S1, 2023S1 and 2024S1 list only the
-  primary patron. The graph says so in its gap lines; nothing is filled in.
+  primary patron. A sponsor named without a person id is matched by name among the
+  legislators serving then (3,716 links; ties refused, and the edge says how it was
+  matched). About 440 stay unmatched, mostly 2017–2020 legislators missing from the
+  roster; each session's gap line counts them.
 - **A carried-over bill appears in two sessions.** Open States lists a bill continued to
   the next session in both (2024 and 2025 HB 1122), so a topic search can show it twice.
 - **The current session moves in January.** Only the latest year with roll calls is

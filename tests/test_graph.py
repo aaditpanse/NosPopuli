@@ -2244,7 +2244,7 @@ class StateLayerTest(unittest.TestCase):
         # The chapter is recorded even when no single Governor is on file that day.
         self.assertEqual(preds, ["enacted_as", "sponsored"])
         self.assertIn("instrument/va/acts/2026/chap/350", {n["id"] for n in nodes})
-        self.assertIn("1 sponsorship(s) linked for 1 bill(s); 1 named without a person id", gaps[0])
+        self.assertIn("1 sponsorship(s) linked for 1 bill(s), 0 of them by name; 1 named without a person id", gaps[0])
         self.assertIn("1 Governor action(s) on a day with no single Governor", gaps[1])
         # A related bill in a later session is not linked: it is not a node yet when this session loads.
         self.assertNotIn("related_to", preds)
@@ -2418,6 +2418,25 @@ class StateSearchReadersTest(unittest.TestCase):
         self.assertEqual({c["ocd_person_id"] for c in found["candidates"]}, {"ocd-person/b", "ocd-person/c"})
         self.assertEqual(graph.state_member_lookup("va", "Anne Smith")["person"]["ocd_person_id"], "ocd-person/b")
 
+    def test_recent_bills_span_the_sitting_session_and_the_prefiles(self):
+        # 2027 is only prefiles; 2026S1 is sitting. Both are read, newest action first.
+        self._write("state_bills", "2026S1", {"meta": {}, "bills": {
+            "hb/5": {"identifier": "HB 5", "title": "Budget", "sponsors": [], "latest_action_date": "2026-05-01",
+                     "actions": []}}})
+        self._write("state_bills", "2027", {"meta": {}, "bills": {
+            "hb/9": {"identifier": "HB 9", "title": "Prefiled", "sponsors": [], "latest_action_date": "2026-04-01",
+                     "actions": []}}})
+        self.assertEqual([(r["session"], r["identifier"]) for r in graph.state_recent_bills("va", 3)],
+                         [("2026S1", "HB 5"), ("2026", "HB 1"), ("2027", "HB 9")])
+
+    def test_a_newer_legislature_row_moves_a_listed_bill(self):
+        # Signed after the monthly record: the list says law, as the bill page does.
+        self._write("state_lis", "2026", {"history": {"hb/7": [
+            {"date": "2026-04-02", "description": "Approved by Governor-Chapter 12"}]}})
+        rows = {r["identifier"]: r for r in graph.state_member_bills("va", "ocd-person/a", 10)[0]}
+        self.assertEqual((rows["HB 7"]["stage"], rows["HB 7"]["is_law"]), ("law", True))
+        self.assertEqual(rows["HB 1"]["stage"], "introduced")
+
     def test_a_governor_is_not_a_legislator(self):
         self.assertEqual(graph.state_member_lookup("va", "A Governor"), {})
 
@@ -2488,3 +2507,77 @@ class StateBesideFederalTest(unittest.TestCase):
                 self.assertIsNone(graph.state_snapshot_votes("va", ward, 2026, None, 10))
             finally:
                 graph.DATA_DIR = old
+
+
+class StateSponsorNameTest(unittest.TestCase):
+    """A sponsor Open States names without a person id is matched by name
+    among the legislators serving that day, either chamber; a tie and a
+    committee are refused (the owner's decision, 2026-09-27)."""
+
+    def build(self, sponsors, roster):
+        rec = StateLayerTest().bills()
+        rec["bills"]["hb/1"]["sponsors"] = sponsors
+        return graph.build_state_bills("va", "2026", rec, {}, [], roster=roster)
+
+    def test_a_name_matches_one_serving_legislator_in_either_chamber(self):
+        a, c = graph.node_id("person", "openstates/a"), graph.node_id("person", "openstates/c")
+        roster = {"lower": [(a, ["Jeion A. Ward"], "2024-01-10", None, "H0173")],
+                  "upper": [(c, ["Mike Jones"], "2024-01-10", None, "S0056")],
+                  # Served, but not on 2025-11-17: never a candidate.
+                  "_old": [(graph.node_id("person", "openstates/z"), ["Mary Jones"], "2018-01-10", "2020-01-08", None)]}
+        _, edges, gaps = self.build([{"name": "Jeion A. Ward", "person": None, "primary": True},
+                                     {"name": "Michael J. Jones", "person": None, "primary": False},
+                                     {"name": "Committee on Rules", "person": None, "primary": False}], roster)
+        spon = {e["src"]: e for e in edges if e["predicate"] == "sponsored"}
+        self.assertEqual(set(spon), {a, c})
+        self.assertEqual(spon[c]["props"]["role"], "cosponsor")
+        self.assertIn("surname and first initial", spon[a]["props"]["sponsor_matched_by"])
+        self.assertIn("2 of them by name; 1 named without a person id that matched no single legislator", gaps[0])
+
+    def test_a_prefiled_bill_a_bare_surname_and_a_resignation_note(self):
+        a, c = graph.node_id("person", "openstates/a"), graph.node_id("person", "openstates/c")
+        # Sworn in 2026-01-14; the bill was prefiled 2025-11-17 and moved until April.
+        roster = {"lower": [(a, ["Jessica Anderson"], "2026-01-14", None, None),
+                            (c, ["Wren Williams"], "2024-01-10", None, None)]}
+        _, edges, _ = self.build([{"name": "Jessica L. Anderson", "person": None, "primary": True},
+                                  {"name": "Williams", "person": None, "primary": False},
+                                  {"name": "Wren Williams - Resigned 5/19", "person": None, "primary": False}], roster)
+        spon = {e["src"]: e["props"]["sponsor_matched_by"] for e in edges if e["predicate"] == "sponsored"}
+        self.assertIn("during the bill's life", spon[a])
+        self.assertIn(c, spon)
+
+    def test_two_serving_legislators_with_one_name_key_are_refused(self):
+        roster = {"lower": [(graph.node_id("person", "openstates/c"), ["Mike Jones"], "2024-01-10", None, None)],
+                  "upper": [(graph.node_id("person", "openstates/d"), ["Mary Jones"], "2024-01-10", None, None)]}
+        _, edges, _ = self.build([{"name": "M. Jones", "person": None, "primary": True}], roster)
+        self.assertFalse([e for e in edges if e["predicate"] == "sponsored"])
+
+
+class StateBridgedPersonTest(unittest.TestCase):
+    """A delegate who also sat in Congress (the sidecar's identities): HR is
+    Congress's H.R., HB is still the House of Delegates' bill."""
+
+    def test_hr_is_congress_for_a_bridged_person(self):
+        people = StateLayerTest.PEOPLE
+        with mock.patch.dict(graph.IDENTITIES, {"openstates/a": "bioguide/X000001"}):
+            sn, se, _ = graph.build_state_skeleton("va", people, StateLayerTest.LIS, today="2026-09-27")
+            pid = {"ocd-person/a": graph.node_id("person", "bioguide/X000001")}
+        rec = StateLayerTest().bills()
+        rec["bills"]["hr/9"] = {**rec["bills"]["hb/1"], "identifier": "HR 9", "openstates_id": "ocd-bill/9"}
+        bn, be, _ = graph.build_state_bills("va", "2026", rec, pid, [])
+        roster = {"lower": [(pid["ocd-person/a"], ["Jeion A. Ward"], "2024-01-10", None, "H0173")]}
+        vote = {"id": "ocd-vote/1", "bill": "hb/1", "date": "2026-02-03", "motion": "H VOTE:", "result": "pass",
+                "chamber": "lower", "counts": {"yes": 1}, "positions": [["ocd-person/a", "Jeion A. Ward", "yes"]]}
+        vn, ve, _ = graph.build_state_votes("va", "2026", [vote, {**vote, "id": "ocd-vote/2", "bill": "hr/9"}],
+                                            pid, roster)
+        nodes = sn + bn + vn
+        for n in nodes:     # the federal load's props, merged as Postgres merges them
+            if n["id"] == pid["ocd-person/a"]:
+                n["props"]["bioguide"] = "X000001"
+        backend = graph.memory_backend(nodes, se + be + ve)
+        a = graph.answer(graph.parse_question("how did Jeion Ward vote on HB 1"), backend)
+        self.assertEqual([r["item_id"] for r in a["rows"]], ["instrument/va/2026/hb/1"])
+        a = graph.answer(graph.parse_question("how did Jeion Ward vote on HR 9"), backend)
+        self.assertNotIn("instrument/va/2026/hr/9", [r["item_id"] for r in a["rows"]])
+        a = graph.answer(graph.parse_question("how did Jeion Ward vote on HR 9 in Virginia"), backend)
+        self.assertEqual([r["item_id"] for r in a["rows"]], ["instrument/va/2026/hr/9"])

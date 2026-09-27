@@ -943,7 +943,8 @@ async def handle_state_search(structured, question, loop):
         identifier = re.sub(r"\s+", " ", m.group(1).upper()) if m else None
     if identifier:
         # The language model's route carries no session; the question's own year does.
-        year = structured.get("requested_session") or _extract_state_session(question)
+        year = structured.get("requested_session") or _extract_state_session(
+            re.sub(r"\b[HS]\.?\s*[BJR]\.?\s*(?:R\.?\s*)?\d+\b", " ", question, flags=re.I))  # not the bill number
         year = year if year and len(year) == 4 else None
         hits = await loop.run_in_executor(None, graph.state_bill_lookup, st, identifier, year)
         note = None
@@ -955,7 +956,8 @@ async def handle_state_search(structured, question, loop):
             if not year and not note and len(hits) > 1:
                 note = (f"{identifier} is a different bill each session; newest first. "
                         f"Add a year (e.g. \"{identifier} from {graph.session_key(hits[-1][0])[0]}\") to pin one.")
-            return reply([graph.state_bill_row(st, s, k, b) for s, k, b in hits[:10]], note)
+            return reply([graph.state_bill_row(st, s, k, b, graph._newer_actions(st, s, k, b))
+                          for s, k, b in hits[:10]], note)
         if structured.get("_fast_path") == "state_bill_id":
             return reply([], f"No {identifier} in the {state_code} sessions on this server "
                              f"({', '.join(graph.state_sessions(st))}).", empty_reason="no_such_bill")
@@ -1946,11 +1948,12 @@ async def state_search(request: Request, body: StateSearchRequest):
         raise HTTPException(status_code=500, detail="State search failed.")
 
 
-def _state_bill_fingerprint(bill, versions):
+def _state_bill_fingerprint(bill, versions, session=""):
     """Short fingerprint of a state bill's mutable state — its latest action
     and its text versions — so the translation cache invalidates when the
-    bill moves through the legislature."""
-    parts = [str(bill.get("latest_action_date") or ""), str(bill.get("latest_action") or ""),
+    bill moves through the legislature. The session is in it too: the cache
+    key names the bill number only, and HB 1 is a different bill each year."""
+    parts = [str(session), str(bill.get("latest_action_date") or ""), str(bill.get("latest_action") or ""),
              "|".join(v["name"] or "" for v in versions)]
     return hashlib.sha1("|".join(parts).encode()).hexdigest()[:12]
 
@@ -1988,7 +1991,7 @@ def _state_bill_stream(page, st, session, key, user_context=None):
                  "state": st.upper(), "primary": sp["primary"], "openstates_id": sp["person"]}
                 for sp in bill["sponsors"]]
     versions = graph.state_versions(st, session, bill)
-    fingerprint = _state_bill_fingerprint(bill, versions)
+    fingerprint = _state_bill_fingerprint(bill, versions, session)
     lis_code = graph.lis_session(st, session)
     lis_url = (f"https://lis.virginia.gov/bill-details/{lis_code}/{bill['identifier'].replace(' ', '')}"
                if st == "va" and lis_code else None)

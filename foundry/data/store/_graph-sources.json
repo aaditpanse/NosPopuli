@@ -54,7 +54,21 @@
     }
   },
   "identities": {
-    "va/fairfax/walkinshaw/j": "bioguide/W000831"
+    "va/fairfax/walkinshaw/j": "bioguide/W000831",
+    "openstates/0fc65226-0939-44ab-a1be-83616989dc8c": "bioguide/G000568",
+    "openstates/1e4f5466-a48d-455a-887f-2fdd804b22ca": "bioguide/H001060",
+    "openstates/320275f6-9432-413c-b3ec-b26e7229af9e": "bioguide/C001105",
+    "openstates/cce0e188-78ac-4655-bfbe-b6ee8b0386e3": "bioguide/M001200",
+    "openstates/1e0a3192-a0b7-4fd7-88f3-9679aa1c2cf3": "bioguide/T000477",
+    "openstates/b5f17702-fe68-424b-8e62-32efa326ebea": "bioguide/G000580",
+    "openstates/0bba07ba-7713-4ca7-8f44-699c832e0d2a": "bioguide/G000580",
+    "openstates/68256a03-ac6c-48a7-8184-bdc136ab038a": "bioguide/C001118",
+    "openstates/59767e0a-8a9f-4f96-bebf-9eabde31a91d": "bioguide/W000825",
+    "openstates/30e93a95-5457-4263-96f9-2ea38017a253": "bioguide/S001209",
+    "openstates/0aea6a95-df57-407e-a70d-b809a24401a2": "bioguide/K000399",
+    "openstates/f15c1fad-543e-408a-b899-eed2fb883010": "bioguide/M001227",
+    "openstates/0dd787e8-c62a-46a9-aa0e-915f574e75d2": "bioguide/M001239",
+    "openstates/d2a28b1a-6991-4b0b-b582-0414025b7389": "bioguide/S001230"
   },
   "legislatures": {
     "_comment": "A state legislature enters the graph by an entry here (sources/openstates.py, graph.load_state). first_session: the earliest Open States session with bills on disk (Virginia's dump rows start in 2017; 2010-2016 are empty sessions). lis_from: the first session Virginia's LIS publishes CSVs for; a regular session is LIS code YYYY1 and special session N is YYYY(N+1). governors: holders the Open States people data lacks, asserted by a person.",
