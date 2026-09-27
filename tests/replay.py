@@ -441,7 +441,7 @@ def prepare_env():
     # *_fixture database is named (record_db_url): capturing a fixture is not
     # worth running CREATE TABLE against production. Without one, DB-backed
     # routes record their fail-open path, and say so in meta.notes.
-    os.environ["SUPABASE_DB_URL"] = record_db_url() if RECORDING else ""
+    os.environ["DATABASE_URL"] = record_db_url() if RECORDING else ""
     # api.py reads MONITOR_SECRET at import: set, an unauthenticated request is
     # 403; unset, 503. A developer's .env set it and CI did not, so every admin
     # fixture was 403 locally and 503 in CI. A fixed placeholder, in both modes,

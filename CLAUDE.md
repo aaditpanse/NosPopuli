@@ -144,7 +144,7 @@ rather than absorb it.
 - **A replay miss must raise.** `tests/replay.py` never falls through to a live call.
   Do not add a network fallback, do not widen a seam to "just work" — a suite that can
   reach the internet is a suite that can be green for the wrong reason.
-- **Never point the harness at a real database.** `replay.py` blanks `SUPABASE_DB_URL`
+- **Never point the harness at a real database.** `replay.py` blanks `DATABASE_URL`
   before importing `api` because `correspondence/router.py` runs `init_db()` at import.
   Undoing that runs DDL against production.
 - **No secrets in CI.** If a test needs one, the seam it should replay through is

@@ -7,30 +7,20 @@ from psycopg_pool import ConnectionPool
 from psycopg.rows import dict_row
 
 
-_DB_URL = os.getenv("SUPABASE_DB_URL")
+_DB_URL = os.getenv("DATABASE_URL")
 _pool: ConnectionPool | None = None
-
-
-def _configure_conn(conn):
-    # Supabase's transaction pooler (port 6543, PgBouncer in transaction mode)
-    # does not keep session-level prepared statements between transactions.
-    # psycopg3 prepares statements after a few uses of the same query and
-    # would crash with 'prepared statement "_pg3_0" already exists' on hot
-    # paths. Disabling preparation client-side keeps every query plain.
-    conn.prepare_threshold = None
 
 
 def _get_pool() -> ConnectionPool:
     global _pool
     if _pool is None:
         if not _DB_URL:
-            raise RuntimeError("SUPABASE_DB_URL is not set")
+            raise RuntimeError("DATABASE_URL is not set")
         _pool = ConnectionPool(
             conninfo=_DB_URL,
             min_size=2,
             max_size=10,
             open=True,
-            configure=_configure_conn,
         )
     return _pool
 

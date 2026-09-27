@@ -508,7 +508,7 @@ Required in `.env`:
 
 ```
 ANTHROPIC_API_KEY       CONGRESS_API_KEY        GovInfo_API_KEY
-LEGISCAN_API_KEY        GOOGLE_CIVIC_API_KEY    SUPABASE_DB_URL
+LEGISCAN_API_KEY        GOOGLE_CIVIC_API_KEY    DATABASE_URL
 ```
 
 Optional, per feature: `FEC_API_KEY` and `LDA_API_KEY` (money and lobbying),
@@ -593,7 +593,7 @@ clock where a pinned route reads it (`api._dt.date.today()` is frozen to
 frozen subset under `tests/golden/_store/` instead of the live `foundry/data/store/`.
 The subset is whole files copied unchanged, never hand-edited.
 
-Note it blanks `SUPABASE_DB_URL` before importing `api` — `correspondence/router.py`
+Note it blanks `DATABASE_URL` before importing `api` — `correspondence/router.py`
 calls `init_db()` at import time, so without that, merely importing the app runs
 `CREATE TABLE IF NOT EXISTS` against production.
 

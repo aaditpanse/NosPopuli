@@ -32,7 +32,7 @@ from dotenv import load_dotenv
 from money import stock_perf
 
 # Match the rest of the app: load the repo .env so ANTHROPIC_API_KEY (and the
-# Supabase creds behind the disk cache) are present when run as a standalone
+# DATABASE_URL behind the disk cache) are present when run as a standalone
 # script, not just inside the already-configured web process.
 load_dotenv(pathlib.Path(__file__).parent.parent / ".env")
 

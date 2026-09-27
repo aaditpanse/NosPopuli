@@ -1546,7 +1546,7 @@ def _graph_plate(ask):
     the ledger's older paths may. A topic miss or a vacant seat is a real
     answer and is returned as one. Fail-open; never raises into /ledger."""
     import graph
-    if not os.getenv("SUPABASE_DB_URL"):
+    if not os.getenv("DATABASE_URL"):
         return None
     try:
         out = graph.answer(ask, graph.pg_backend())
@@ -3083,7 +3083,7 @@ async def graph_votes(person: str, topic: Optional[str] = None):
     nobody has loaded yet, is reported as such, never as a 500 and never as
     'no votes'."""
     import graph
-    if not os.getenv("SUPABASE_DB_URL"):
+    if not os.getenv("DATABASE_URL"):
         return graph.shape_answer([], [], person, topic) | {
             "empty_reason": "graph unavailable: no database configured"}
     try:
@@ -3106,7 +3106,7 @@ async def graph_search(q: str):
                 "empty_reason": "not a question the graph answers: try 'how did <person> vote "
                                 "on <topic>', 'who voted no on <instrument>', or 'who held "
                                 "<seat> on <date>'"}
-    if not os.getenv("SUPABASE_DB_URL"):
+    if not os.getenv("DATABASE_URL"):
         return {"ask": parsed["ask"], "query": q, "rows": [], "hops": [], "weak_hops": [],
                 "empty_reason": "graph unavailable: no database configured"}
     try:

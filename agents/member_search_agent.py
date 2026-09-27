@@ -185,7 +185,7 @@ def fetch_member_legislation(bioguide_id, limit=20):
     longer career is counted from 2003 and the payload says so. Fail-open:
     without the database the block is empty and names why."""
     import graph
-    if not os.getenv("SUPABASE_DB_URL"):
+    if not os.getenv("DATABASE_URL"):
         return {"sponsored": [], "sponsored_count": None, "cosponsored_count": None, "policy_areas": {},
                 "empty_reason": "the bill graph is not reachable from this server"}
     from correspondence.db import _get_pool

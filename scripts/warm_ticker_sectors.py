@@ -3,7 +3,7 @@
 Classifies each stock Congress has disclosed trading into a market sector
 (Haiku, disk-cached ~1 year). Idempotent: only uncached tickers hit the model,
 so re-running is cheap and safe. Needs ANTHROPIC_API_KEY with a balance;
-writes go to the shared disk cache (prod Supabase if SUPABASE_DB_URL is set),
+writes go to the shared disk cache (the server's Postgres if DATABASE_URL is set),
 so warming once benefits every environment.
 
 Uses the Message Batches API by default — 50% of synchronous token prices,

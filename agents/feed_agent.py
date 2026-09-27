@@ -682,7 +682,7 @@ _FEED_COLS = """d.congress, d.bill_type, d.number, d.title, d.introduced, d.late
 
 
 def _query(sql, args):
-    if not os.getenv("SUPABASE_DB_URL"):
+    if not os.getenv("DATABASE_URL"):
         return []
     try:
         from psycopg.rows import dict_row

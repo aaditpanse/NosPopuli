@@ -26,7 +26,7 @@ import datetime
 import requests
 from dotenv import load_dotenv
 
-# Load .env BEFORE importing correspondence.db — it reads SUPABASE_DB_URL at
+# Load .env BEFORE importing correspondence.db — it reads DATABASE_URL at
 # import time, so the env must be populated first (matters when this module is
 # the entrypoint, e.g. `python lda_client.py seed`; in-app, api.py loads first).
 load_dotenv()
