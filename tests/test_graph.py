@@ -2619,6 +2619,13 @@ class OtherStatesTest(unittest.TestCase):
         self.assertEqual([(e["valid_from"], e["valid_to"]) for e in held], [("2020-01-13", None)])
         self.assertFalse([g for g in gaps if "closed at" in g or g.startswith("conflicting")])
 
+    def test_a_sitting_namesake_is_the_one_asked_about(self):
+        people = {"people": [dict(_os_person("x", "Keith Murphy", [("lower", "Hillsborough 7", None, "2018-12-31")]),
+                                  retired=True),
+                             _os_person("y", "Keith Murphy", [("upper", "16", "2022-12-07", None)])]}
+        with mock.patch.object(graph, "_state_file", return_value=people):
+            self.assertEqual(graph.state_member_lookup("nh", "Keith Murphy")["person"]["ocd_person_id"], "ocd-person/y")
+
     def test_a_sitting_member_with_no_dates_begins_with_the_chambers_term(self):
         people = [_os_person("a", "Member A", [("lower", "1", "2022-11-09", None)]),
                   _os_person("b", "Member B", [("lower", "2", "2022-11-09", None)]),

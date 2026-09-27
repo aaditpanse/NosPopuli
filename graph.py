@@ -2179,8 +2179,10 @@ def state_member_lookup(st, name):
     if not hits:
         hits = [p for p in people if (p.get("family_name") or "").lower() == q.split()[-1]
                 and (len(q.split()) == 1 or (p.get("given_name") or "").lower().startswith(q.split()[0][0]))]
-        current = [p for p in hits if any(r.get("end") is None for r in p.get("roles") or [])]
-        hits = current or hits
+    # One sitting member among namesakes is the one asked about: New
+    # Hampshire's Keith Murphy is two Open States records, one retired.
+    current = [p for p in hits if not p.get("retired") and any(r.get("end") is None for r in p.get("roles") or [])]
+    hits = current if len(current) == 1 else hits
     if len(hits) == 1:
         return {"person": state_member_card(st, hits[0])}
     if hits:
