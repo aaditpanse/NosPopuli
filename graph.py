@@ -2038,7 +2038,11 @@ def state_bill_page(st, session, key):
     """Everything the state bill page shows, from files: {bill, meta, votes,
     newer_actions, people}, or None when the bill is not on disk. newer_actions
     are the legislature's own history rows dated after the Open States
-    record's latest action: advisory, as the plan says."""
+    record's latest action: advisory, as the plan says. The state and the
+    session come from a request: only a loaded state and a session on disk
+    name a file (fail-closed; "../" never reaches a path)."""
+    if st not in LEGISLATURES or session not in state_sessions(st):
+        return None
     bills = _state_file("state_bills", st, session)
     if not bills or key not in bills["bills"]:
         return None
@@ -3913,9 +3917,12 @@ def _topic_sql(topic):
         pattern = f"instrument/{st or '%'}/%/{typ}/{number}"
         in_year = (" AND (n.props->>'first_year')::int <= %s AND (n.props->>'last_year')::int >= %s"
                    if year else "")
+        # A regular session's bill before a special's: California's and
+        # Texas' specials reuse AB 1 and HB 2 (session_sort ends -00 for
+        # the regular session).
         return (" i.id = (SELECT n.id FROM graph_node n WHERE n.kind = 'instrument' AND n.id LIKE %s"
-                f" AND n.id NOT LIKE 'instrument/us/%%'{in_year} ORDER BY n.props->>'session_sort' DESC LIMIT 1)",
-                [pattern, *([year, year] if year else [])])
+                f" AND n.id NOT LIKE 'instrument/us/%%'{in_year} ORDER BY n.props->>'session_sort' LIKE '%%-00' DESC NULLS LAST,"
+                " n.props->>'session_sort' DESC NULLS LAST, n.props->>'session' DESC LIMIT 1)", [pattern, *([year, year] if year else [])])
     st, topic = split_scope(topic)
     if st:
         return (f" i.props->>'jurisdiction' = %s AND{_TOPIC_SQL}", [state_div(st), f"{topic}%", f"%{topic}%"])
@@ -4306,7 +4313,8 @@ def memory_backend(nodes, edges):
             hits = [n for n in nodes if n["kind"] == "instrument" and not n["id"].startswith("instrument/us/")
                     and re.fullmatch(rf"instrument/{st or '[a-z]{2}'}/[^/]+/{typ}/{number}", n["id"])
                     and (not year or (n["props"].get("first_year") or 0) <= year <= (n["props"].get("last_year") or 0))]
-            return bool(hits) and i["id"] == max(hits, key=lambda n: n["props"].get("session_sort") or "")["id"]
+            return bool(hits) and i["id"] == max(hits, key=lambda n: ((n["props"].get("session_sort") or "").endswith("-00"),
+                                                                    n["props"].get("session_sort") or ""))["id"]
         st, topic = split_scope(topic)
         if st and i["props"].get("jurisdiction") != state_div(st):
             return False
@@ -4565,6 +4573,14 @@ def strip_place(topic):
         words -= {"county"}
         _PLACE_WORDS = words
     kept, dropped = [], []
+    # A loaded legislature's state by its whole name, longest first: "New
+    # Hampshire" goes as one (never "new" out of "new housing bills"), and
+    # "West Virginia" is not Virginia. Postal codes stay: "in", "or", "me".
+    for name in _legislature_names():
+        rx = _state_name_rx(name) + "(?:'s)?"
+        if re.search(rx, topic, re.I):
+            dropped.append(name)
+            topic = re.sub(r"\s+", " ", re.sub(rx, " ", topic, flags=re.I)).strip()
     for w in topic.split():
         (dropped if w.lower().strip(",'s") in _PLACE_WORDS or w.lower() == "county" else kept).append(w)
     # "HB 1 in Virginia" leaves "HB 1 in": the preposition went with the place.
@@ -4677,12 +4693,28 @@ def _as_org_row(r):
 _STATE_SCOPED_ASKS = {"voters", "sponsors", "law", "related", "referrals", "reported", "signed_by"}
 
 
+def _legislature_names():
+    """The loaded legislatures' state names, longest first. Pure."""
+    return sorted((DIVISION_NAMES[code] for code in LEGISLATURES if code in DIVISION_NAMES), key=len, reverse=True)
+
+
+def _state_name_rx(name):
+    """A state name as a whole phrase, and not the end of a longer one:
+    Virginia, not West Virginia's. Pure."""
+    behind = "".join(f"(?<!{re.escape(o[:-len(name)])})" for o in DIVISION_NAMES.values()
+                     if o != name and o.lower().endswith(" " + name.lower()))
+    return rf"{behind}\b{re.escape(name)}\b"
+
+
 def _state_scope(place):
-    """The loaded legislature a dropped place word names ("Virginia", "VA"),
-    or None. Pure."""
-    words = {w.lower().strip(",'s") for w in (place or "").split()}
-    return next((code for code in sorted(LEGISLATURES)
-                 if code in words or DIVISION_NAMES.get(code, "").lower() in words), None)
+    """The loaded legislature a dropped place names ("Virginia", "VA", "New
+    Hampshire"), or None. Pure."""
+    text = (place or "").lower()
+    words = {w.strip(",'s") for w in text.split()}
+    for name in _legislature_names():
+        if re.search(_state_name_rx(name), text, re.I):
+            return next(code for code, n in DIVISION_NAMES.items() if n == name)
+    return next((code for code in sorted(LEGISLATURES) if code in words), None)
 
 
 def answer(parsed, backend, limit=200):

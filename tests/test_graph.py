@@ -2162,6 +2162,31 @@ class OpenStatesTest(unittest.TestCase):
         self.assertEqual(o.stored_name({legacy: {"status": "ok"}}, link), legacy)
         self.assertTrue(o.stored_name({}, link).endswith(".pdf"))
 
+    def test_a_pdf_link_that_answers_html_is_a_failure(self):
+        class Resp:
+            def __init__(self, body):
+                self.content, self.headers = body, {"content-type": "text/html"}
+
+            def raise_for_status(self):
+                pass
+
+        class Session:
+            def get(self, url, timeout):
+                return Resp(b"<html>billPdf</html>" if "billPdf" in url else b"<p>AB 1</p>")
+
+        bills = {"bills": {"ab/1": {"versions": [
+            {"name": "Introduced", "links": [{"media_type": "application/pdf", "url": "https://x/billPdf.xhtml?v=1"}]},
+            {"name": "Amended", "links": [{"media_type": "text/html", "url": "https://x/billText?v=2"}]}]}}}
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)):
+            path = graph.data_path("state_bills", state="ca", session="20252026")
+            path.parent.mkdir(parents=True)
+            path.write_text(json.dumps(bills))
+            got = self.o.sync_text("ca", "20252026", session_=Session(), gap=0)
+            manifest = json.loads((self.o.text_root("ca", "20252026") / "manifest.json").read_text())
+        self.assertEqual((got["fetched"], got["failed"]), (1, 1))
+        bad = next(e for e in manifest.values() if e["status"] == "error")
+        self.assertIn("not a PDF", bad["detail"])
+
     def test_a_bill_record_does_not_depend_on_row_order(self):
         bill = {"id": "ocd-bill/1", "identifier": "HB 1", "extras": '{"VA_LEG_ID": 98525}', "title": "Minimum wage",
                 "classification": "{bill}", "subject": "{}", "from_organization_id": "org-h",
@@ -2470,6 +2495,19 @@ class OtherStatesTest(unittest.TestCase):
         self.assertEqual({e["src"] for e in edges if e["predicate"] == "voted_on"}, {a, b, c})
         self.assertIn("3 voter(s) matched by name; 1 could not be matched", gaps[0])
         self.assertIn("1 voter row(s) that name no member by name", gaps[1])
+
+    def test_a_bill_page_reads_only_a_loaded_state_and_a_session_on_disk(self):
+        self.assertIsNone(graph.state_bill_page("zz", "2026", "hb/1"))
+        self.assertIsNone(graph.state_bill_page("va", "/../../../etc/x", "hb/1"))
+
+    def test_a_loaded_state_by_name_scopes_a_question(self):
+        with mock.patch.dict(graph.LEGISLATURES, {"ne": self.NE, "nh": self.NH}):
+            self.assertEqual(graph.strip_place("LB 1001A in Nebraska"), ("LB 1001A", "Nebraska"))
+            topic, place = graph.strip_place("HB 1 in New Hampshire")
+            self.assertEqual((topic, graph._state_scope(place)), ("HB 1", "nh"))
+            # "new" is not New Hampshire, and West Virginia is not Virginia.
+            self.assertEqual(graph.strip_place("new housing bills")[0], "new housing bills")
+            self.assertIsNone(graph._state_scope("West Virginia"))
 
     def test_a_bill_number_may_carry_a_letter(self):
         self.assertEqual((graph.bill_number("34"), graph.bill_number("34a")), (34, "34a"))

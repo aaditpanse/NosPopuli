@@ -1967,7 +1967,7 @@ def _state_not_synced(st, session, bill_type, number):
     if not conf:
         return f"{graph.DIVISION_NAMES.get(st, st.upper())}'s legislature is not loaded on this server."
     bills = graph.data_path("state_bills", state=st, session=session)
-    if not bills.exists():
+    if session not in graph.state_sessions(st) or not bills.exists():
         return f"{label} is not on this server: no record of that session is on disk."
     month = (json.loads(bills.read_text()).get("meta") or {}).get("dump_month")
     return (f"{label} is not in the Open States record of {month or 'the last extract'}. "

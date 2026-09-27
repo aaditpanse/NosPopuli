@@ -597,8 +597,12 @@ def sync_text(st, sid, session_=None, gap=1.0, limit=None):
                 if wait > 0:
                     time.sleep(wait)
                 try:
-                    r = session_.get(link["url"], timeout=60)
+                    r = session_.get(link["url"], timeout=(15, 60))
                     r.raise_for_status()
+                    if link["media_type"] == "application/pdf" and not r.content.startswith(b"%PDF"):
+                        # California's billPdf.xhtml answers with an HTML page
+                        # that loads the PDF by script: not the text.
+                        raise ValueError(f"not a PDF: {r.headers.get('content-type')}, {len(r.content)} bytes")
                     (root / (name + ".gz")).write_bytes(gzip.compress(r.content))
                     entry = {"status": "ok", "url": link["url"], "bill": key, "version": v["name"],
                              "media_type": link["media_type"], "bytes": len(r.content),
@@ -611,7 +615,8 @@ def sync_text(st, sid, session_=None, gap=1.0, limit=None):
                     fetched += 1
                 except Exception as e:
                     entry = {"status": "error", "url": link["url"], "bill": key, "version": v["name"],
-                             "error": type(e).__name__, "http": getattr(getattr(e, "response", None), "status_code", None),
+                             "error": type(e).__name__, "detail": str(e)[:200],
+                             "http": getattr(getattr(e, "response", None), "status_code", None),
                              "tried": datetime.date.today().isoformat()}
                     failed += 1
                 last[host] = time.monotonic()
