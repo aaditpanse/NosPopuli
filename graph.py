@@ -419,8 +419,10 @@ def _edge(g, src, predicate, dst, valid_from, valid_to, certification,
     state's delegation removes exactly the edges tagged with it."""
     assert predicate in PREDICATES, predicate
     key = (src, predicate, dst, source_ref)
+    # A record with no date writes "" (a Massachusetts bill with no first
+    # action): no date is None, which the date column takes.
     row = {"src": src, "predicate": predicate, "dst": dst,
-           "valid_from": valid_from, "valid_to": valid_to,
+           "valid_from": valid_from or None, "valid_to": valid_to or None,
            "certification": certification, "source_id": source_id,
            "source_ref": source_ref, "props": {"jurisdiction": jurisdiction, **props}}
     if key in g["edges"] and g["edges"][key]["props"] != row["props"]:
