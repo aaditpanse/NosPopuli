@@ -2619,6 +2619,18 @@ class OtherStatesTest(unittest.TestCase):
         self.assertEqual([(e["valid_from"], e["valid_to"]) for e in held], [("2020-01-13", None)])
         self.assertFalse([g for g in gaps if "closed at" in g or g.startswith("conflicting")])
 
+    def test_a_sitting_member_with_no_dates_begins_with_the_chambers_term(self):
+        people = [_os_person("a", "Member A", [("lower", "1", "2022-11-09", None)]),
+                  _os_person("b", "Member B", [("lower", "2", "2022-11-09", None)]),
+                  _os_person("c", "Steve Clouse", [("lower", "93", None, None)])]
+        with mock.patch.dict(graph.LEGISLATURES, {"al": {"name": "Alabama Legislature"}}):
+            _, edges, gaps = graph.build_state_skeleton("al", people, [], today="2026-09-27")
+        clouse = next(e for e in edges if e["predicate"] == "holds" and e["src"] == graph.node_id("person", "openstates/c"))
+        self.assertEqual((clouse["valid_from"], clouse["valid_to"], clouse["props"]["bound_from"]),
+                         ("2022-11-09", None, "inferred"))
+        self.assertIn("1 sitting member(s) with no dates begin when their chamber's current term began, by inference",
+                      gaps)
+
     def test_an_inferred_start_closes_no_one(self):
         # The sitting senator since 2020; a predecessor's old term with no
         # start, ending 2024, is inferred to begin in 2022. It is not a

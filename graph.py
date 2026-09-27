@@ -2744,7 +2744,8 @@ STATE_SOURCE = "openstates"
 # 5: inferred term starts, a roll call's chamber from its voters, cleaned
 # names, committee sponsors apart. 6: a one-day duplicate term is skipped,
 # no one succeeds themself, an inferred start closes no one.
-STATE_SCOPE_VERSION = 6
+# 7: a sitting member with no dates begins with the chamber's term.
+STATE_SCOPE_VERSION = 7
 STATE_CHAMBERS = {"upper": "Senate", "lower": "House", "legislature": "Legislative"}
 # Open States' vote options → the one position vocabulary.
 _STATE_POSITION = {"yes": "aye", "no": "no", "not voting": "absent", "abstain": "present", "other": "other"}
@@ -2856,7 +2857,15 @@ def build_state_skeleton(st, people, lis_sessions=(), today=None):
         return pid
 
     holds, post_label, lis_of, retired = {}, {}, {}, set()
-    skipped_roles = backwards = started = 0
+    skipped_roles = backwards = started = sitting_started = 0
+    # The start most sitting members of a chamber share: when its current
+    # term began (Alabama's House, elected together in 2022).
+    term_began = {}
+    for ch in state_chambers(st):
+        starts = [r["start"] for p in people if not p.get("retired") for r in p["roles"]
+                  if r["type"] == ch and r["start"] and not r["end"]]
+        if starts:
+            term_began[ch] = max(set(starts), key=lambda d: (starts.count(d), d))
     for p in people:
         roles = [r for r in p["roles"] if r["type"] in (*state_chambers(st), "governor")]
         if not roles:
@@ -2887,6 +2896,12 @@ def build_state_skeleton(st, people, lis_sessions=(), today=None):
             g["nodes"][pid]["props"]["aliases"] = sorted(every - {g["nodes"][pid]["name"]})
         for r in roles:
             inferred_start = False
+            if not r["start"] and not r["end"] and not p.get("retired") and term_began.get(r["type"]):
+                # A sitting member with neither date (13 in Alabama's House):
+                # an incumbent whose current term began with the chamber's.
+                r = {**r, "start": term_began[r["type"]]}
+                inferred_start = "sitting with no dates in the people repo; the chamber's current term began then"
+                sitting_started += 1
             if not r["start"] and r["end"] and r["type"] != "governor":
                 # The people repo often keeps only when an older term ended
                 # (Utah's Curt Bramble, District 16, to 2023-01-01). Without
@@ -2896,7 +2911,7 @@ def build_state_skeleton(st, people, lis_sessions=(), today=None):
                 # bound, and the hold says it is inferred.
                 end = datetime.date.fromisoformat(r["end"])
                 r = {**r, "start": end.replace(year=end.year - 2, day=min(end.day, 28)).isoformat()}
-                inferred_start = True
+                inferred_start = "the term's end; the people repo gives no start (two years before the end)"
                 started += 1
             if not r["start"]:
                 skipped_roles += 1
@@ -2919,7 +2934,7 @@ def build_state_skeleton(st, people, lis_sessions=(), today=None):
             hp = {"bound_from": "exact", "bounds_source": "open states people repo", "party": p.get("party")}
             if inferred_start:
                 hp["bound_from"] = "inferred"
-                hp["inferred_from"] = "the term's end; the people repo gives no start (two years before the end)"
+                hp["inferred_from"] = inferred_start
             if expired:
                 hp["bound_to"] = "exact"
             elif r["end"]:
@@ -2960,6 +2975,9 @@ def build_state_skeleton(st, people, lis_sessions=(), today=None):
                                                   "server, so every term is ingested from Open States alone)"))
     if skipped_roles:
         g["gaps"].append(f"{skipped_roles} role(s) with no start date or district skipped")
+    if sitting_started:
+        g["gaps"].append(f"{sitting_started} sitting member(s) with no dates begin when their chamber's current "
+                         f"term began, by inference")
     if started:
         g["gaps"].append(f"{started} role(s) with an end and no start date begin two years before their end, "
                          f"by inference")
