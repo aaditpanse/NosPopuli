@@ -73,6 +73,23 @@ DATASETS = {
                     "source": "api.congress.gov nomination", "licence": "public domain (U.S. government work)"},
     "lobbying": {"path": "derived/lobbying/lobbying-{year}.json", "by": "sources/lda_client.py bulk",
                  "source": "lda.gov LDA filings API", "licence": "public record (Lobbying Disclosure Act)"},
+    "state_people": {"path": "derived/states/{state}/people.json", "by": "sources/openstates.py people",
+                     "source": "github.com/openstates/people", "licence": "CC0"},
+    "state_bills": {"path": "derived/states/{state}/bills-{session}.json", "by": "sources/openstates.py extract",
+                    "source": "Open States monthly Postgres dump (data.openstates.org)",
+                    "licence": "public record, as scraped by Open States"},
+    "state_votes": {"path": "derived/states/{state}/votes-{session}.json", "by": "sources/openstates.py extract",
+                    "source": "Open States monthly Postgres dump (data.openstates.org)",
+                    "licence": "public record, as scraped by Open States"},
+    "state_certification": {"path": "derived/states/{state}/member-session.json",
+                            "by": "graph.py write_state_cert_index",
+                            "source": "derived from the older sessions' roll calls", "licence": "derived"},
+    "lis": {"path": "raw/lis/{session}/{name}", "by": "sources/lis.py sync",
+            "source": "Virginia LIS daily files (lis.blob.core.windows.net/lisfiles)",
+            "licence": "public record (Virginia General Assembly)"},
+    "state_text": {"path": "raw/lis/text/{session}/{name}", "by": "sources/lis.py text",
+                   "source": "bill text versions as published by Virginia LIS",
+                   "licence": "public record (Virginia General Assembly)"},
     "public": {"path": "public/{name}.json", "by": "graph.py fetch",
                "source": "unitedstates/congress-legislators", "licence": "CC0"},
     "images": {"path": "raw/unitedstates-images/congress/225x275/{bioguide}.jpg",
@@ -151,6 +168,30 @@ def write_manifest():
     return out
 
 
+_ROMAN = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5}
+
+
+def session_key(session):
+    """(year, special number) of an Open States session id — "2026" is
+    (2026, 0), "2026S1" (2026, 1), "2020specialI" (2020, 1) — for newest-
+    first order and the LIS code. None for a shape it does not know. Pure."""
+    m = re.fullmatch(r"(\d{4})(?:S(\d+)|special([IV]+))?", session or "")
+    if not m:
+        return None
+    return int(m.group(1)), int(m.group(2)) if m.group(2) else _ROMAN.get(m.group(3), 0) if m.group(3) else 0
+
+
+def lis_session(st, session):
+    """Virginia LIS's code for an Open States session ("2026" → "20261",
+    "2026S1" → "20262"), or None when LIS publishes no files for it (before
+    the legislature's `lis_from`, or a state without LIS). Pure."""
+    conf = LEGISLATURES.get(st) or {}
+    key = session_key(session)
+    if not conf.get("lis_from") or not key or key[0] < int(conf["lis_from"]):
+        return None
+    return f"{key[0]}{key[1] + 1}"
+
+
 class _Glob(dict):
     def __missing__(self, key):
         return "*"
@@ -190,6 +231,8 @@ _CONFIG = json.loads(_SOURCES_PATH.read_text())
 SOURCES = _CONFIG["sources"]
 STATE_NAMES = _CONFIG["states"]
 IDENTITIES = _CONFIG["identities"]
+# State legislatures to load, by postal code (see the sidecar's own comment).
+LEGISLATURES = {k: v for k, v in _CONFIG.get("legislatures", {}).items() if not k.startswith("_")}
 # Every state, DC and territory a member of Congress has sat for, by name.
 # STATE_NAMES is the sidecar's list of states to *load*; this is the list of
 # states that *exist*, so a node for Texas is never named "TX".

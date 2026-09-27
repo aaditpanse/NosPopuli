@@ -2040,3 +2040,19 @@ class MemberLookupTest(unittest.TestCase):
         # A withdrawn cosponsorship is not one.
         self.assertEqual((s["sponsored_count"], s["cosponsored_count"], s["counted_since"]), (2, 1, 2003))
         self.assertEqual(s["policy_areas"], {"Health": 1, "Other": 1})
+
+
+class StateSessionTest(unittest.TestCase):
+    """Open States session ids and Virginia LIS codes (the state layer)."""
+
+    def test_session_ids_order_newest_first(self):
+        ids = ["2020specialI", "2026", "2021S2", "2026S1", "2017"]
+        self.assertEqual(sorted(ids, key=graph.session_key, reverse=True),
+                         ["2026S1", "2026", "2021S2", "2020specialI", "2017"])
+        self.assertIsNone(graph.session_key("2026 Regular Session"))
+
+    def test_lis_codes_exist_only_from_lis_from(self):
+        self.assertEqual((graph.lis_session("va", "2026"), graph.lis_session("va", "2026S1")), ("20261", "20262"))
+        # LIS publishes nothing before 2024, and a state without LIS has none.
+        self.assertIsNone(graph.lis_session("va", "2023"))
+        self.assertIsNone(graph.lis_session("md", "2026"))
