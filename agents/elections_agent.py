@@ -132,9 +132,13 @@ async def _search_elections_with_claude(state_name, state_code):
     try:
         anthropic_client = AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
         response = await anthropic_client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=512,
-            tools=[{"type": "web_search_20260209", "name": "web_search"}],
+            model="claude-sonnet-5",
+            # Sonnet 5 thinks before it answers, and one run of this call used
+            # 5,867 output tokens: 512 ended the call with no text. "direct"
+            # search: 7-69 s, where letting it script its own searches took
+            # 380 s for the same answer (2026-09-27).
+            max_tokens=8192,
+            tools=[{"type": "web_search_20260209", "name": "web_search", "allowed_callers": ["direct"]}],
             messages=[{
                 "role": "user",
                 "content": (
@@ -502,9 +506,9 @@ async def _fetch_polling_with_claude(election_name, state_name, election_id):
     try:
         client = AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
         response = await client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=600,
-            tools=[{"type": "web_search_20260209", "name": "web_search"}],
+            model="claude-sonnet-5",
+            max_tokens=8192,      # room to think, as in _search_elections_with_claude
+            tools=[{"type": "web_search_20260209", "name": "web_search", "allowed_callers": ["direct"]}],
             messages=[{"role": "user", "content": (
                 f"Find the latest polling data for the {election_name}"
                 f"{' in ' + state_name if state_name else ''} on realclearpolling.com. "

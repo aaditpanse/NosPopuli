@@ -4,7 +4,7 @@ Bills routinely reference programs, funds, statutes, offices, or doctrines by
 name without explaining them — e.g. "Anti-Weaponization Fund", "Section 230",
 "Title IX". The translator catches the well-known ones from training data; this
 module covers the long tail (newer programs, niche offices, recent doctrines)
-via a single batched Haiku web search per bill.
+via a single batched Sonnet 5 web search per bill.
 
 Cost discipline:
 - One resolver call per translator invocation, never more, regardless of how
@@ -63,7 +63,7 @@ def resolve_references(terms, client) -> dict:
     """Return {term: definition_text} for as many terms as possible.
 
     Terms already in the disk cache come back free. For uncached terms,
-    issues exactly ONE Haiku web search call covering the entire missing
+    issues exactly ONE web search call covering the entire missing
     set. Empty input → empty dict, no API call.
     """
     if not terms:
@@ -118,14 +118,13 @@ _CITE = re.compile(r"[<(]\s*/?\s*cite\b[^>]*>|</cite>")
 
 
 def _batch_resolve(terms: list, client) -> dict:
-    """One batched Haiku web-search call for every uncached term. Returns
+    """One batched Sonnet 5 web-search call for every uncached term. Returns
     {term: "summary + Source: url"} on success, {} on any failure.
 
-    These are 2-3 sentence factual definitions with one citation — Haiku
-    handles them well at ~3x lower input cost than Sonnet, and web search
-    still supplies the authoritative source URL. Robust JSON extraction and
-    the graceful empty-result fallback below absorb Haiku's occasional
-    formatting slips."""
+    2-3 sentence factual definitions with one citation each. Sonnet 5 since
+    2026-09-27, the owner's choice over Haiku 4.5 (about 3x the input cost;
+    the year-long term cache keeps the total small). Robust JSON extraction
+    and the empty-result fallback below absorb a formatting slip."""
     terms_block = "\n".join(f"- {t}" for t in terms)
     prompt = (
         "You are a legislative research assistant. Each item below is a "
@@ -145,13 +144,14 @@ def _batch_resolve(terms: list, client) -> dict:
 
     try:
         msg = client.messages.create(
-            model="claude-haiku-4-5-20251001",
+            model="claude-sonnet-5",
             max_tokens=2000,
             # Cap fan-out: one batched call resolves up to REF_HARD_LIMIT (5)
             # terms, so a handful of searches suffices. Without a cap a cold
             # call can run many billed searches (fee + tokens per search).
-            # Haiku 4.5 cannot run this tool version's programmatic calls;
-            # "direct" makes it call search itself (Sonnet does not need it).
+            # "direct": the model calls search itself, as Haiku 4.5 needed
+            # (it cannot run this tool version's programmatic calls). Kept
+            # on Sonnet 5 so the result and its cost stay one plain call.
             tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 5,
                     "allowed_callers": ["direct"]}],
             messages=[{"role": "user", "content": prompt}],
