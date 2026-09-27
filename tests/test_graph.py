@@ -2193,6 +2193,28 @@ class OpenStatesTest(unittest.TestCase):
         bad = next(e for e in manifest.values() if e["status"] == "error")
         self.assertIn("not a PDF", bad["detail"])
 
+    def test_dead_links_do_not_leave_a_host_that_is_up(self):
+        import requests
+
+        class Resp:
+            status_code, content, headers = 404, b"", {}
+
+            def raise_for_status(self):
+                raise requests.HTTPError("404", response=self)
+
+        class Session:
+            def get(self, url, timeout):
+                return Resp()
+
+        versions = [{"name": f"v{i}", "links": [{"media_type": "text/html", "url": f"https://up.example/{i}"}]}
+                    for i in range(15)]
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)):
+            path = graph.data_path("state_bills", state="ia", session="2025-2026")
+            path.parent.mkdir(parents=True)
+            path.write_text(json.dumps({"bills": {"hf/1": {"versions": versions}}}))
+            got = self.o.sync_text("ia", "2025-2026", session_=Session(), gap=0)
+        self.assertEqual((got["failed"], got["host_skipped"], got["hosts_down"]), (15, 0, []))
+
     def test_a_host_that_answers_429_waits_and_is_asked_less_often(self):
         class Resp:
             def __init__(self, code):

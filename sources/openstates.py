@@ -637,7 +637,12 @@ def sync_text(st, sid, session_=None, gap=1.0, limit=None, failing=None):
                              "http": getattr(getattr(e, "response", None), "status_code", None),
                              "tried": datetime.date.today().isoformat()}
                     failed += 1
-                    failing[host] = failing.get(host, 0) + 1
+                    # Only a host that does not answer, fails, or refuses
+                    # counts toward leaving it: Iowa's run of dead links
+                    # (404) left a host that was up.
+                    status = entry["http"]
+                    down = status is None and not isinstance(e, ValueError) or status == 403 or (status or 0) >= 500
+                    failing[host] = failing.get(host, 0) + 1 if down else 0
                 last[host] = time.monotonic()
                 manifest[name] = entry
                 if (fetched + failed) % 200 == 0:
