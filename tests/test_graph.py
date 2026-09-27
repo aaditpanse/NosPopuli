@@ -2147,15 +2147,21 @@ class OpenStatesTest(unittest.TestCase):
         self.assertEqual(o.text_name("https://lis.virginia.gov/cgi-bin/legp604.exe?201+ful+HB907ER"),
                          "legp604-201-HB907ER.html")
         self.assertRegex(o.text_name("https://capitol.texas.gov/x/HB00001I.htm", "text/html"), r"^[0-9a-f]{16}\.html$")
-        links = [{"media_type": "application/pdf", "url": "a.PDF"}, {"media_type": "text/html", "url": "a.HTML"}]
-        self.assertEqual(o.pick_link(links)["url"], "a.HTML")
-        self.assertEqual(o.pick_link(links[:1])["url"], "a.PDF")
+        links = [{"media_type": "application/pdf", "url": "https://x/a.PDF"},
+                 {"media_type": "text/html", "url": "https://x/a.HTML"}]
+        self.assertEqual(o.pick_link(links)["url"], "https://x/a.HTML")
+        self.assertEqual(o.pick_link(links[:1])["url"], "https://x/a.PDF")
         self.assertIsNone(o.pick_link([]))
         # Minnesota's typo and North Dakota's bare "pdf" are PDFs; a Word
         # file alone is not a link we store.
-        self.assertEqual(o.pick_link([{"media_type": "applcation/pdf", "url": "m"}])["media_type"], "application/pdf")
-        self.assertEqual(o.pick_link([{"media_type": "pdf", "url": "n"}])["media_type"], "application/pdf")
-        self.assertIsNone(o.pick_link([{"media_type": "application/msword", "url": "w"}]))
+        self.assertEqual(o.pick_link([{"media_type": "applcation/pdf", "url": "https://m"}])["media_type"],
+                         "application/pdf")
+        self.assertEqual(o.pick_link([{"media_type": "pdf", "url": "https://n"}])["media_type"], "application/pdf")
+        self.assertIsNone(o.pick_link([{"media_type": "application/msword", "url": "https://w"}]))
+        # Connecticut's ftp:// copy is passed over for its https:// one.
+        self.assertEqual(o.pick_link([{"media_type": "text/html", "url": "ftp://ftp.cga.ct.gov/a.htm"},
+                                      {"media_type": "application/pdf", "url": "https://www.cga.ct.gov/a.pdf"}])["url"],
+                         "https://www.cga.ct.gov/a.pdf")
         # Virginia's first fetch named 514 files "<hash>.bin": kept, not refetched.
         link = {"url": "https://lis.virginia.gov/other", "media_type": "application/pdf"}
         legacy = o.text_name(link["url"]).rsplit(".", 1)[0] + ".bin"
@@ -2186,6 +2192,35 @@ class OpenStatesTest(unittest.TestCase):
         self.assertEqual((got["fetched"], got["failed"]), (1, 1))
         bad = next(e for e in manifest.values() if e["status"] == "error")
         self.assertIn("not a PDF", bad["detail"])
+
+    def test_a_host_that_answers_429_waits_and_is_asked_less_often(self):
+        class Resp:
+            def __init__(self, code):
+                self.status_code, self.content, self.headers = code, b"<p>x</p>", {"Retry-After": "7"}
+
+            def raise_for_status(self):
+                if self.status_code >= 400:
+                    raise ConnectionError(self.status_code)
+
+        answers = iter([429, 200])
+
+        class Session:
+            def get(self, url, timeout):
+                return Resp(next(answers))
+
+        versions = [{"name": f"v{i}", "links": [{"media_type": "text/html", "url": f"https://busy.example/{i}"}]}
+                    for i in range(2)]
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)), \
+                mock.patch.object(self.o.time, "sleep") as slept:
+            path = graph.data_path("state_bills", state="ak", session="34")
+            path.parent.mkdir(parents=True)
+            path.write_text(json.dumps({"bills": {"hb/1": {"versions": versions}}}))
+            got = self.o.sync_text("ak", "34", session_=Session(), gap=1.0)
+        self.assertEqual((got["fetched"], got["failed"]), (1, 1))
+        waits = [c.args[0] for c in slept.call_args_list]
+        # Retry-After's 7 seconds, then the host's gap doubled from 1 to 2.
+        self.assertEqual(waits[0], 7)
+        self.assertGreater(max(waits[1:]), 1.5)
 
     def test_a_host_that_fails_ten_times_is_left_for_the_next_run(self):
         class Session:

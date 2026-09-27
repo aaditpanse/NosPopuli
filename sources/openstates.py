@@ -542,7 +542,8 @@ def pick_link(links):
     clean kind."""
     for kind in ("text/html", "application/pdf"):
         for ln in links:
-            if link_kind(ln.get("media_type")) == kind:
+            # An ftp:// link (Connecticut, Texas) is not one we can fetch.
+            if link_kind(ln.get("media_type")) == kind and (ln.get("url") or "").startswith("http"):
                 return {**ln, "media_type": kind}
     return None
 
@@ -563,13 +564,16 @@ def text_root(st, sid):
     return graph.data_path("state_text", state=st, session=sid, name="manifest.json").parent
 
 
-def sync_text(st, sid, session_=None, gap=1.0, limit=None):
+def sync_text(st, sid, session_=None, gap=1.0, limit=None, failing=None):
     """Fetch the text of every version of one session once, from the links
     the Open States record gives. Stored gzipped under
     raw/states/<st>/text/<session>/ with a manifest; a PDF also gets a
     .txt.gz of its extracted text. At most one request a second to each
     host (`gap`). A failure is recorded and retried on the next run; a
-    stored file is never fetched again. Returns counts."""
+    stored file is never fetched again. A host that answers 429 is asked
+    half as often (Retry-After is kept). `failing`: {host: failures in a
+    row}, shared across one run's sessions so a dead host is left once.
+    Returns counts."""
     import requests
     from urllib.parse import urlsplit
     if session_ is None:
@@ -581,7 +585,8 @@ def sync_text(st, sid, session_=None, gap=1.0, limit=None):
     manifest_path = root / "manifest.json"
     manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
     fetched = failed = kept = none = skipped = 0
-    last, failing = {}, {}
+    last, gaps = {}, {}
+    failing = {} if failing is None else failing
     try:
         for key, b in sorted(bills.items()):
             for v in b["versions"]:
@@ -601,11 +606,15 @@ def sync_text(st, sid, session_=None, gap=1.0, limit=None):
                     # The rest of its links wait for the next run.
                     skipped += 1
                     continue
-                wait = last.get(host, 0) + gap - time.monotonic()
+                wait = last.get(host, 0) + gaps.get(host, gap) - time.monotonic()
                 if wait > 0:
                     time.sleep(wait)
                 try:
                     r = session_.get(link["url"], timeout=(15, 60))
+                    if getattr(r, "status_code", 200) == 429:
+                        retry = r.headers.get("Retry-After") or ""
+                        time.sleep(min(300, int(retry)) if retry.isdigit() else 30)
+                        gaps[host] = min(10.0, max(gap, gaps.get(host, gap)) * 2)
                     r.raise_for_status()
                     if link["media_type"] == "application/pdf" and not r.content.startswith(b"%PDF"):
                         # California's billPdf.xhtml answers with an HTML page
@@ -672,11 +681,12 @@ if __name__ == "__main__":
         # newest first. text --latest: each text state's last two years.
         if args[:1] == ["--latest"]:
             for st in [k for k, v in graph.LEGISLATURES.items() if v.get("text")]:
+                failing = {}
                 for sid in text_sessions(st, latest=True):
-                    print(json.dumps(sync_text(st, sid)), flush=True)
+                    print(json.dumps(sync_text(st, sid, failing=failing)), flush=True)
         else:
-            st, sessions = args[0], args[1:]
+            st, sessions, failing = args[0], args[1:], {}
             for sid in sessions or text_sessions(st):
-                print(json.dumps(sync_text(st, sid)), flush=True)
+                print(json.dumps(sync_text(st, sid, failing=failing)), flush=True)
     else:
         print(__doc__)
