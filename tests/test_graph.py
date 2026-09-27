@@ -2529,7 +2529,7 @@ class OtherStatesTest(unittest.TestCase):
         with mock.patch.dict(graph.LEGISLATURES, {"nh": self.NH}):
             _, edges, gaps = graph.build_state_skeleton("nh", people, [], today="2026-09-27")
         self.assertEqual(len([e for e in edges if e["predicate"] == "holds"]), 1)
-        self.assertIn("1 role(s) that end before they begin skipped", gaps)
+        self.assertIn("1 role(s) that end before or on the day they begin skipped", gaps)
 
     def test_a_voter_named_by_surname_alone(self):
         a, b = graph.node_id("person", "openstates/a"), graph.node_id("person", "openstates/b")
@@ -2607,6 +2607,29 @@ class OtherStatesTest(unittest.TestCase):
         held = sorted((e["valid_from"], e["props"]["bound_from"]) for e in edges if e["predicate"] == "holds")
         self.assertEqual(held, [("2021-01-01", "inferred"), ("2023-01-01", "exact")])
         self.assertIn("1 role(s) with an end and no start date begin two years before their end, by inference", gaps)
+
+    def test_a_one_day_duplicate_term_does_not_close_the_real_one(self):
+        # Louisiana's people repo: Jimmy Harris, District 4, from 2020-01-13,
+        # and again 2020-01-13 to 2020-01-13.
+        people = [_os_person("h", "Jimmy Harris", [("upper", "4", "2020-01-13", None),
+                                                    ("upper", "4", "2020-01-13", "2020-01-13")])]
+        with mock.patch.dict(graph.LEGISLATURES, {"la": {"name": "Louisiana Legislature"}}):
+            _, edges, gaps = graph.build_state_skeleton("la", people, [], today="2026-09-27")
+        held = [e for e in edges if e["predicate"] == "holds"]
+        self.assertEqual([(e["valid_from"], e["valid_to"]) for e in held], [("2020-01-13", None)])
+        self.assertFalse([g for g in gaps if "closed at" in g or g.startswith("conflicting")])
+
+    def test_an_inferred_start_closes_no_one(self):
+        # The sitting senator since 2020; a predecessor's old term with no
+        # start, ending 2024, is inferred to begin in 2022. It is not a
+        # successor: the sitting senator stays open.
+        people = [_os_person("s", "Sitting Senator", [("upper", "14", "2020-01-13", None)]),
+                  _os_person("o", "Old Record", [("upper", "14", None, "2024-01-08")])]
+        with mock.patch.dict(graph.LEGISLATURES, {"la": {"name": "Louisiana Legislature"}}):
+            _, edges, gaps = graph.build_state_skeleton("la", people, [], today="2026-09-27")
+        sitting = next(e for e in edges if e["predicate"] == "holds" and e["src"] == graph.node_id("person", "openstates/s"))
+        self.assertIsNone(sitting["valid_to"])
+        self.assertFalse([g for g in gaps if "closed at" in g])
 
     def test_the_current_sessions_span_the_latest_year(self):
         index = {"2025_26": {"key": [2025, 0], "years": [2025, 2026]}, "2026_ss": {"key": [2026, 0], "years": [2026, 2026]},

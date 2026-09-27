@@ -443,7 +443,12 @@ def _close_double_holds(g, holds_by_post, post_label, seats=None):
         rows.sort(key=lambda r: r["valid_from"])
         n = (seats or {}).get(post, 1)
         for i, later in enumerate(rows[1:], 1):
-            open_ = [r for r in rows[:i] if r["valid_to"] is None]
+            if later["props"].get("bound_from") == "inferred":
+                # A start we inferred is no evidence of a successor: it
+                # closed four sitting Louisiana senators.
+                continue
+            # A person does not succeed themself.
+            open_ = [r for r in rows[:i] if r["valid_to"] is None and r["src"] != later["src"]]
             for earlier in open_[:max(0, len(open_) - n + 1)]:
                 day_before = (datetime.date.fromisoformat(later["valid_from"])
                               - datetime.timedelta(days=1)).isoformat()
@@ -2737,8 +2742,9 @@ STATE_SOURCE = "openstates"
 # 4: every state's shapes — one chamber, multi-member seats, a chapter's
 # year from its action, the sidecar's name for the session laws.
 # 5: inferred term starts, a roll call's chamber from its voters, cleaned
-# names, committee sponsors apart.
-STATE_SCOPE_VERSION = 5
+# names, committee sponsors apart. 6: a one-day duplicate term is skipped,
+# no one succeeds themself, an inferred start closes no one.
+STATE_SCOPE_VERSION = 6
 STATE_CHAMBERS = {"upper": "Senate", "lower": "House", "legislature": "Legislative"}
 # Open States' vote options → the one position vocabulary.
 _STATE_POSITION = {"yes": "aye", "no": "no", "not voting": "absent", "abstain": "present", "other": "other"}
@@ -2895,8 +2901,10 @@ def build_state_skeleton(st, people, lis_sessions=(), today=None):
             if not r["start"]:
                 skipped_roles += 1
                 continue
-            if r["end"] and r["end"] < r["start"]:
-                backwards += 1     # the people repo's duplicate of a term, ending before it begins
+            if r["end"] and r["end"] <= r["start"]:
+                # The people repo's duplicate of a term, ending before or on
+                # the day it begins (four Louisiana senators, 2020-01-13).
+                backwards += 1
                 continue
             if r["type"] == "governor":
                 post = gov
@@ -2956,7 +2964,7 @@ def build_state_skeleton(st, people, lis_sessions=(), today=None):
         g["gaps"].append(f"{started} role(s) with an end and no start date begin two years before their end, "
                          f"by inference")
     if backwards:
-        g["gaps"].append(f"{backwards} role(s) that end before they begin skipped")
+        g["gaps"].append(f"{backwards} role(s) that end before or on the day they begin skipped")
     return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
 
 
@@ -3554,8 +3562,12 @@ def state_scopes(st, today=None):
     roster = {}
     for e in se:
         if e["predicate"] == "holds" and chamber_of.get(e["dst"]):
+            # For matching a name, a start we inferred is an unknown one:
+            # Florida's Jeff Brandes has only his term's end (2022) and
+            # sponsored bills from 2012. The hold keeps the inferred bound.
+            start = "0000-00-00" if e["props"].get("bound_from") == "inferred" else e["valid_from"]
             roster.setdefault(chamber_of[e["dst"]], []).append(
-                (e["src"], names.get(e["src"], []), e["valid_from"], e["valid_to"], lis_member.get(e["src"])))
+                (e["src"], names.get(e["src"], []), start, e["valid_to"], lis_member.get(e["src"])))
     sessions = state_sessions(st)
     votes_count, known = state_vote_counts(st), set()
     bills_paths = {sid: data_path("state_bills", state=st, session=sid) for sid in sessions}
