@@ -6,6 +6,7 @@ with three roll calls, a seat that changed hands with no contest on disk, and
 a person who won two different bodies' seats in the same district.
 """
 
+import datetime
 import json
 import os
 import pathlib
@@ -2056,3 +2057,77 @@ class StateSessionTest(unittest.TestCase):
         # LIS publishes nothing before 2024, and a state without LIS has none.
         self.assertIsNone(graph.lis_session("va", "2023"))
         self.assertIsNone(graph.lis_session("md", "2026"))
+
+
+class OpenStatesTest(unittest.TestCase):
+    """sources/openstates.py: the people repo and the monthly dump, parsed.
+    Checked 2026-09-27 on the server: Virginia 2017-2027, 20 sessions,
+    36,799 bills and 100,420 roll calls in 51 s; a second run writes
+    nothing."""
+
+    def setUp(self):
+        from sources import openstates
+        self.o = openstates
+
+    def test_lis_member_ids_from_every_link_shape(self):
+        doc = lambda url: {"id": "ocd-person/x", "name": "A", "links": [{"url": url}], "roles": []}
+        for url, want in (("https://lis.virginia.gov/cgi-bin/legp604.exe?241+mbr+H124", "H0124"),
+                          ("https://house.vga.virginia.gov/members/H0407", "H0407"),
+                          ("https://apps.senate.virginia.gov/Senator/memberpage.php?id=S113", "S0113"),
+                          ("https://ballotpedia.org/Someone", None)):
+            self.assertEqual(self.o.parse_person(doc(url), "va")["ids"].get("lis"), want, url)
+        # Another state has no LIS.
+        self.assertEqual(self.o.parse_person(doc("https://x/memberpage.php?id=S113"), "md")["ids"], {})
+
+    def test_roles_keep_dates_and_an_open_end(self):
+        p = self.o.parse_person({"id": "ocd-person/y", "name": "Aaron Rouse", "party": [{"name": "Democratic"}],
+                                 "roles": [{"type": "upper", "district": 22, "start_date": datetime.date(2024, 1, 10)},
+                                           {"type": "upper", "district": "7", "start_date": "2023-01-18",
+                                            "end_date": "2024-01-08"}]}, "va")
+        self.assertEqual(p["roles"], [{"type": "upper", "district": "22", "start": "2024-01-10", "end": None},
+                                      {"type": "upper", "district": "7", "start": "2023-01-18", "end": "2024-01-08"}])
+        self.assertEqual(p["party"], "Democratic")
+
+    def test_small_parsers(self):
+        self.assertEqual(self.o.pg_array('{filing,introduction}'), ["filing", "introduction"])
+        self.assertEqual(self.o.pg_array('{"a, b",c}'), ["a, b", "c"])
+        self.assertEqual(self.o.pg_array("{}"), [])
+        self.assertEqual([self.o.bill_key(x) for x in ("HB 1", "HJR 05", "SB1", "HB", "")],
+                         ["hb/1", "hjr/5", "sb/1", None, None])
+        self.assertEqual(self.o.copy_columns("COPY public.opencivicdata_votecount (id, option, value, vote_event_id) FROM stdin;"),
+                         ["id", "option", "value", "vote_event_id"])
+        self.assertEqual(self.o.dump_months(datetime.date(2026, 1, 3)), ["2026-01", "2025-12"])
+
+    def test_a_bill_record_does_not_depend_on_row_order(self):
+        bill = {"id": "ocd-bill/1", "identifier": "HB 1", "extras": '{"VA_LEG_ID": 98525}', "title": "Minimum wage",
+                "classification": "{bill}", "subject": "{}", "from_organization_id": "org-h",
+                "first_action_date": "2025-11-17", "latest_action_date": "2026-04-08",
+                "latest_action_description": "Acts of Assembly Chapter text (CHAP0350)", "latest_passage_date": None}
+        sponsors = [{"name": "Z Cosponsor", "person_id": "p2", "primary": "f", "classification": "cosponsor"},
+                    {"name": "Jeion A. Ward", "person_id": "p1", "primary": "t", "classification": "primary"}]
+        versions = [{"note": "Enrolled", "date": "", "links": [{"media_type": "text/html", "url": "u/2.HTML"}]},
+                    {"note": "Introduced", "date": "", "links": [{"media_type": "application/pdf", "url": "u/1.PDF"},
+                                                                   {"media_type": "text/html", "url": "u/1.HTML"}]}]
+        actions = [{"id": "a2", "date": "2025-11-17", "description": "Referred", "organization_id": "org-h",
+                    "classification": "{referral-committee}", "order": "1"},
+                   {"id": "a1", "date": "2025-11-17", "description": "Prefiled", "organization_id": "org-h",
+                    "classification": "{filing,introduction}", "order": "0"}]
+        rec = lambda s, v, a: self.o.bill_record(bill, {"org-h": "lower"}, a, s, v, [], [], [], [], [])
+        one, two = rec(sponsors, versions, actions), rec(sponsors[::-1], versions[::-1], actions[::-1])
+        self.assertEqual(one, two)
+        self.assertEqual([s["name"] for s in one["sponsors"]], ["Jeion A. Ward", "Z Cosponsor"])
+        self.assertEqual([a["description"] for a in one["actions"]], ["Prefiled", "Referred"])
+        self.assertEqual((one["chamber"], one["extras"]), ("lower", {"VA_LEG_ID": 98525}))
+
+    def test_a_vote_keeps_name_only_voters_for_the_loader(self):
+        v = self.o.vote_record({"id": "ocd-vote/1", "bill_id": "ocd-bill/1", "start_date": "2026-03-12T00:00:00",
+                                "motion_text": "S VOTE:", "motion_classification": "{}", "result": "pass",
+                                "organization_id": "org-s", "dedupe_key": "302675-HB1"},
+                               {"org-s": "upper"}, {"ocd-bill/1": "hb/1"},
+                               [{"option": "yes", "value": "21"}, {"option": "no", "value": "19"}],
+                               [{"voter_id": "", "voter_name": "Luther Cifers, III", "option": "no"},
+                                {"voter_id": "ocd-person/b", "voter_name": "Jennifer B. Boysko", "option": "yes"}], [])
+        self.assertEqual((v["bill"], v["date"], v["chamber"], v["counts"]), ("hb/1", "2026-03-12", "upper",
+                                                                            {"yes": 21, "no": 19}))
+        self.assertEqual(v["positions"], [["ocd-person/b", "Jennifer B. Boysko", "yes"],
+                                          [None, "Luther Cifers, III", "no"]])
