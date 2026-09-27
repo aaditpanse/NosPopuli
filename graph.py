@@ -25,6 +25,7 @@ seeds for a county are hand-written per source in SOURCES.
 """
 
 import datetime
+import functools
 import hashlib
 import json
 import os
@@ -2107,7 +2108,7 @@ def state_bill_row(st, session, key, b, newer=()):
     primary = next((s for s in b.get("sponsors") or [] if s.get("primary")), None)
     return {"ocd_id": b.get("openstates_id"), "identifier": b["identifier"], "title": b["title"],
             "subjects": b.get("subjects") or [], "state": st.upper(), "jurisdiction": state_div(st),
-            "session": session, "type": itype, "number": int(number), "chamber": b.get("chamber"),
+            "session": session, "type": itype, "number": bill_number(number), "chamber": b.get("chamber"),
             "latest_action": b.get("latest_action"), "latest_action_date": b.get("latest_action_date"),
             "date_issued": b.get("first_action_date") or "",
             "sponsor": primary["name"] if primary else None,
@@ -2182,11 +2183,12 @@ def state_member_card(st, p):
                    key=lambda r: r.get("start") or "", reverse=True)
     top = roles[0] if roles else {}
     conf = LEGISLATURES.get(st.lower()) or {}
-    chamber = conf.get(top.get("type"), top.get("type") or "")
+    name_of = lambda t: conf.get(t) or (conf.get("name") if t == "legislature" else t)  # noqa: E731
+    chamber = name_of(top.get("type")) or ""
     return {"ocd_person_id": p["id"], "name": p.get("name"), "party": p.get("party"), "state": st.upper(),
             "chamber": chamber, "district": top.get("district"), "current": top.get("end") is None,
             "photo_url": p.get("image") or "", "lis_id": (p.get("ids") or {}).get("lis"),
-            "terms": [{"chamber": conf.get(r["type"], r["type"]), "district": r.get("district"),
+            "terms": [{"chamber": name_of(r["type"]), "district": r.get("district"),
                        "start": r.get("start"), "end": r.get("end")} for r in roles],
             "is_state_legislator": True, "source": "open states people"}
 
@@ -2217,8 +2219,10 @@ def state_member_bills(st, person_id, n):
         mine = mine.values()
         rows += [dict(state_bill_row(st, sid, k, b, _newer_actions(st, sid, k, b)),
                       sponsorship="primary" if not co else "cosponsor")
-                 for co, k, b in sorted(mine, key=lambda t: (t[0], t[1].split("/")[0] in _SIMPLE_RESOLUTIONS,
-                                                             -int(t[1].split("/")[1])))]
+                 # Newest number first within each group; two stable sorts,
+                 # since "34a" has no negative.
+                 for co, k, b in sorted(sorted(mine, key=lambda t: _number_order(t[1].split("/")[1]), reverse=True),
+                                        key=lambda t: (t[0], t[1].split("/")[0] in _SIMPLE_RESOLUTIONS))]
         if len(rows) >= n and current <= set(read):
             break
     return rows, read
@@ -2759,18 +2763,20 @@ def _state_post(st, chamber, district):
     return f"{st}/{chamber}/{district_kind}:{slug}", f"{state_div(st)}/{district_kind}:{slug}"
 
 
-def district_seats(rows, today, multi, retired=frozenset()):
+def district_seats(rows, multi, retired=frozenset()):
     """How many members one district seats. 1 unless its chamber is listed
     under the legislature's `multi_member` (New Hampshire's House seats up
-    to ten per district); then the most holders it had at once, from terms
-    with both ends and the open terms of sitting legislators. A retired
-    person's open term is the contradiction to close, never a seat. Pure."""
+    to ten per district); then the most holders it had at once, an open
+    term running on. A retired person's open term is the
+    contradiction to close, never a seat. Pure."""
     if not multi:
         return 1
-    bounded = [(h["valid_from"], h["valid_to"]) for h in rows if h["valid_to"]]
-    most = max((sum(1 for f, t in bounded if f <= day <= t) for day, _ in bounded), default=0)
-    now = sum(1 for h in rows if not h["valid_to"] and h["valid_from"] <= today and h["src"] not in retired)
-    return max(1, most, now)
+    # An open term runs to today. New Hampshire's 2022 map reused district
+    # names: the new Rockingham 11 seats four, one of whom left in 2026.
+    # A term's last day is its successor's first (the handover): ends are
+    # exclusive.
+    spans = [(h["valid_from"], h["valid_to"] or "9999") for h in rows if h["valid_to"] or h["src"] not in retired]
+    return max([1, *(sum(1 for f, t in spans if f <= day < t) for day, _ in spans)])
 
 
 def _lis_vote_days(lis_sessions):
@@ -2836,7 +2842,7 @@ def build_state_skeleton(st, people, lis_sessions=(), today=None):
         return pid
 
     holds, post_label, lis_of, retired = {}, {}, {}, set()
-    skipped_roles = 0
+    skipped_roles = backwards = 0
     for p in people:
         roles = [r for r in p["roles"] if r["type"] in (*state_chambers(st), "governor")]
         if not roles:
@@ -2869,6 +2875,9 @@ def build_state_skeleton(st, people, lis_sessions=(), today=None):
             if not r["start"]:
                 skipped_roles += 1
                 continue
+            if r["end"] and r["end"] < r["start"]:
+                backwards += 1     # the people repo's duplicate of a term, ending before it begins
+                continue
             if r["type"] == "governor":
                 post = gov
                 post_label[post] = "Governor"
@@ -2890,7 +2899,7 @@ def build_state_skeleton(st, people, lis_sessions=(), today=None):
                         STATE_SOURCE, f"{p['id']}/{r['type']}/{r['start']}", sdiv, hp)
             holds.setdefault(post, []).append(row)
     multi = set(conf.get("multi_member") or ())
-    seats = {post: district_seats(rows, today, g["nodes"][post]["props"].get("chamber") in multi, retired)
+    seats = {post: district_seats(rows, g["nodes"][post]["props"].get("chamber") in multi, retired)
              for post, rows in holds.items() if post != gov}
     for post, n in seats.items():
         if n > 1:
@@ -2920,6 +2929,8 @@ def build_state_skeleton(st, people, lis_sessions=(), today=None):
                                                   "server, so every term is ingested from Open States alone)"))
     if skipped_roles:
         g["gaps"].append(f"{skipped_roles} role(s) with no start date or district skipped")
+    if backwards:
+        g["gaps"].append(f"{backwards} role(s) that end before they begin skipped")
     return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
 
 
@@ -2927,7 +2938,26 @@ def state_instrument_id(st, session, key):
     return f"instrument/{st}/{session}/{key}"
 
 
-_CHAPTER = re.compile(r"Chapter (\d+)", re.I)
+# A resolution's chapter ("Res. Chapter 12", California) is not a law's.
+_CHAPTER = re.compile(r"(?<!Res\. )Chapter (\d+)", re.I)
+# Open States tags actions that are not the Governor's as executive-
+# signature: New Hampshire's "Conference Committee Report; Not Signed Off",
+# Texas' "Transmitted to the Governor", Virginia's "Governor's
+# recommendation adopted". A signature says it was signed or approved.
+_SIGNED_WORDS = re.compile(r"\b(?:signed|approved)\b", re.I)
+_NOT_SIGNED = re.compile(r"\bnot\s+signed\b", re.I)
+
+
+def executive_act(action):
+    """"signed", "vetoed" or None for one Open States action: its
+    classification, confirmed by its words. Pure."""
+    text = action.get("description") or ""
+    if "executive-veto" in action["classification"] and re.search(r"veto", text, re.I):
+        return "vetoed"
+    if "executive-signature" in action["classification"] and _SIGNED_WORDS.search(text) \
+            and not _NOT_SIGNED.search(text):
+        return "signed"
+    return None
 
 
 def _sponsor_by_name(name, day, last, members):
@@ -2945,9 +2975,9 @@ def _sponsor_by_name(name, day, last, members):
     on_day = [m for m in members if m[2] <= day <= (m[3] or "9999")]
     in_life = [m for m in members if m[2] <= (last or day) and (m[3] or "9999") >= day]
     for pool, when in ((on_day, "on the bill's first action date"), (in_life, "during the bill's life")):
-        hits = {m[0] for m in pool if key and key in state_name_keys(m[1])}
+        hits = {m[0] for m in pool if key and key in name_keys(m[1])}
         if not hits:
-            hits = {m[0] for m in pool if surname in {k[0] for k in state_name_keys(m[1])}}
+            hits = {m[0] for m in pool if surname in {k[0] for k in name_keys(m[1])}}
             how = f"surname alone, the only legislator serving {when} with it"
         else:
             how = f"surname and first initial, among the legislators serving {when}"
@@ -2990,6 +3020,7 @@ def build_state_bills(st, session, rec, person_ids, governor_holds, known_ids=fr
         _node(g, iid, "instrument", f"{b['identifier']}: {b['title']}", props, STATE_SOURCE, b["openstates_id"])
         ref = f"{st}/{session}/{key}/sponsors"
         day, last = b.get("first_action_date") or "", b.get("latest_action_date") or b.get("first_action_date") or ""
+        linked = set()
         for sp in b["sponsors"]:
             extra = {}
             if not sp["person"]:
@@ -3005,6 +3036,9 @@ def build_state_bills(st, session, rec, person_ids, governor_holds, known_ids=fr
                 if pid is None:
                     unknown += 1
                     continue
+            if pid in linked:
+                continue    # listed twice (primary and co-sponsor): the first row, the primary, stands
+            linked.add(pid)
             _edge(g, pid, "sponsored", iid, b.get("first_action_date"), b.get("first_action_date"), "ingested",
                   STATE_SOURCE, ref, sdiv, {"role": "sponsor" if sp["primary"] else "cosponsor",
                                             "date_inferred": "the bill's first action; Open States gives no "
@@ -3012,8 +3046,7 @@ def build_state_bills(st, session, rec, person_ids, governor_holds, known_ids=fr
         aref = f"{st}/{session}/{key}/actions"
         seen = set()
         for a in b["actions"]:
-            pred = "signed" if "executive-signature" in a["classification"] else \
-                "vetoed" if "executive-veto" in a["classification"] else None
+            pred = executive_act(a)
             if pred and (pred, a["date"]) in seen:
                 pred = None     # one act, recorded twice (the chapter line and the approval line)
             if pred:
@@ -3066,6 +3099,18 @@ def build_state_bills(st, session, rec, person_ids, governor_holds, known_ids=fr
 _BILL_ID = re.compile(r"([A-Za-z][A-Za-z. ]*?)\.?(?:\s*(?:\d{2}-)?0*(\d+[A-Za-z]{0,2})|\s+([A-Za-z]{1,2}))")
 
 
+def bill_number(number):
+    """A bill number as the API gives it: an int, or a string when a letter
+    is part of it (Nebraska's "1001a", Michigan's "a"). Pure."""
+    return int(number) if str(number).isdigit() else str(number)
+
+
+def _number_order(number):
+    """Sort key for a bill number: 34 before 34a before 35. Pure."""
+    m = re.match(r"(\d*)(.*)", str(number))
+    return int(m.group(1) or 0), m.group(2)
+
+
 def bill_key_of(identifier):
     """'HB 1' → 'hb/1', 'H.B. 1' → 'hb/1', 'LB 1001A' → 'lb/1001a', 'HJR A'
     → 'hjr/a'; None for anything else. Pure."""
@@ -3090,6 +3135,20 @@ def _lis_match(v, lis_by_key):
     return hits[0] if len(hits) == 1 else None
 
 
+# Marks a roll call adds to a name: Nebraska's footnote star, Texas' chair
+# "(C)" (sometimes unclosed).
+_VOTER_MARK = re.compile(r"\*|\(C\)?$")
+# What Texas' scraped roll calls put in the name column that is no one.
+_NOT_A_VOTER = re.compile(r"(?i)present|absent|excused|(?:mr\.?\s+)?speaker|[a-z]\.?|")
+
+
+@functools.lru_cache(maxsize=65536)
+def _fold(name):
+    """A name lower-cased and without accents, for comparing. Pure."""
+    import unicodedata
+    return "".join(c for c in unicodedata.normalize("NFKD", name.lower()) if not unicodedata.combining(c)).strip()
+
+
 def build_state_votes(st, session, votes, person_ids, roster, lis_rec=None):
     """The current session's roll calls → `considered` (the chamber) and
     `voted_on` (each member). A voter Open States names without an id is
@@ -3103,7 +3162,7 @@ def build_state_votes(st, session, votes, person_ids, roster, lis_rec=None):
     lis_by_key = {}
     for lv in (lis_rec or {}).get("votes") or []:
         lis_by_key.setdefault((lv["bill"], lv["chamber"], lv["date"]), []).append(lv)
-    matched = unmatched = disagree = by_name = unresolved = no_bill = 0
+    matched = unmatched = disagree = by_name = unresolved = no_bill = not_people = 0
     for v in votes:
         if not v["bill"] or v["chamber"] not in state_chambers(st):
             no_bill += 1
@@ -3122,8 +3181,25 @@ def build_state_votes(st, session, votes, person_ids, roster, lis_rec=None):
         for voter, name, option in v["positions"]:
             pid = person_ids.get(voter) if voter else None
             if pid is None:
+                name = _VOTER_MARK.sub("", name or "").strip()
+                if _NOT_A_VOTER.fullmatch(name):
+                    not_people += 1
+                    continue
                 key = state_name_key(name)
-                hits = {m[0] for m in members if key and key in state_name_keys(m[1])}
+                hits = {m[0] for m in members if key and key in name_keys(m[1])}
+                how = "name within the chamber on the day"
+                if not hits:
+                    # A surname alone, one word or two: Nebraska's "Meyer",
+                    # Texas' "Rodríguez Ramos", California's "Ávila Farías".
+                    tail = _fold(name)
+                    hits = {m[0] for m in members for n in m[1] if _fold(n) == tail or _fold(n).endswith(" " + tail)}
+                    how = "surname alone, within the chamber on the day"
+                if not hits and len(name) >= 4 and " " not in name:
+                    # Texas' roll calls cut long surnames ("Talaric", "Schofiel").
+                    tail = _fold(name)
+                    hits = {m[0] for m in members for n in m[1] if _fold(n).split()[-1:] and
+                            _fold(n).split()[-1].startswith(tail)}
+                    how = "the start of a surname the roll call cut off, within the chamber on the day"
                 if len(hits) != 1:
                     unresolved += 1
                     continue
@@ -3132,7 +3208,7 @@ def build_state_votes(st, session, votes, person_ids, roster, lis_rec=None):
             position = _STATE_POSITION.get(option, option)
             props = {"position": position, "vote_id": v["id"], "chamber": v["chamber"], "question": v["motion"]}
             if voter is None:
-                props["voter_matched_by"] = "name within the chamber on the day"
+                props["voter_matched_by"] = how
             cert = "ingested"
             lis_member = next((m[4] for m in members if m[0] == pid), None)
             if lv and lis_member and lis_member in lv["positions"]:
@@ -3149,6 +3225,9 @@ def build_state_votes(st, session, votes, person_ids, roster, lis_rec=None):
     if by_name or unresolved:
         g["gaps"].append(f"{st.upper()} {session}: {by_name} voter(s) matched by name; {unresolved} could not be "
                          f"matched to exactly one member and were dropped")
+    if not_people:
+        g["gaps"].append(f"{st.upper()} {session}: {not_people} voter row(s) that name no member by name "
+                         f"(\"Present\", \"Speaker\", a lone initial) not loaded")
     if no_bill:
         g["gaps"].append(f"{st.upper()} {session}: {no_bill} roll call(s) on no bill or no chamber not loaded")
     return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
@@ -3170,6 +3249,17 @@ def state_name_keys(names):
                 keys.add(state_name_key(f"{nick} {rest[-1]}"))
     keys.discard(None)
     return keys
+
+
+@functools.lru_cache(maxsize=65536)
+def _name_keys(names):
+    return frozenset(state_name_keys(names))
+
+
+def name_keys(names):
+    """state_name_keys, cached: a roll call matches every voter against
+    every member serving that day (52,000 voters in New Hampshire's 2026)."""
+    return _name_keys(tuple(names))
 
 
 def state_name_key(name):

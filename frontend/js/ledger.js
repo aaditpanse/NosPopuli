@@ -144,7 +144,7 @@
   // because the call sits inside a single-quoted attribute.
   function billCall(s, title) {
     const call = s.is_state_bill
-      ? `openStateBill(${JSON.stringify(s.state)},${JSON.stringify(s.session)},${JSON.stringify((s.type || "").toLowerCase())},${Number(s.number)},${JSON.stringify(title || "")})`
+      ? `openStateBill(${JSON.stringify(s.state)},${JSON.stringify(s.session)},${JSON.stringify((s.type || "").toLowerCase())},${JSON.stringify(s.number)},${JSON.stringify(title || "")})`
       : `openBill(${Number(s.congress)},${JSON.stringify(s.type)},${Number(s.number)},${JSON.stringify(title || "")})`;
     return esc(call);
   }
@@ -413,7 +413,8 @@
   async function openStateBill(st, session, type, number, title, opts) {
     st = String(st || "").toLowerCase();
     type = String(type || "").toLowerCase();
-    number = Number(number);
+    // Nebraska's "1001a" is a number with a letter; a plain one stays a number.
+    number = /^\d+$/.test(String(number)) ? Number(number) : String(number).toLowerCase();
     state.loading = true;
     state.bill = {
       isState: true, state: st, session, type, number,

@@ -168,14 +168,16 @@ def select_floor_roll_call(votes, chamber_class, state_code=None):
     verdict: None, and the page shows no seat map rather than a committee
     tally as the House's.
     """
+    seats = STATE_CHAMBERS.get((state_code or "").upper(), {}).get(chamber_class, 0)
+    # More votes than the chamber has seats is another chamber's tally filed
+    # under this one (Open States' Texas Senate, 2025-05-29: 122-13).
     candidates = [v for v in votes or [] if v.get("chamber") == chamber_class
-                  and not _is_committee_vote(v.get("motion"))]
+                  and not _is_committee_vote(v.get("motion")) and not (seats and _participation(v) > seats)]
     if not candidates:
         return None
     target = max(candidates, key=lambda v: (_has_floor_marker(v.get("motion")), _participation(v),
                                             v.get("date") or ""))
     if not _has_floor_marker(target.get("motion")):
-        seats = STATE_CHAMBERS.get((state_code or "").upper(), {}).get(chamber_class, 0)
         if seats and _participation(target) < seats * 0.5:
             return None
     return target

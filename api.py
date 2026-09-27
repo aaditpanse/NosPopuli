@@ -16,7 +16,7 @@ import secrets
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, Union
 from agents.vote_parser_agent import parse_vote_references
 from agents.vote_fetcher_agent import fetch_house_votes, fetch_senate_votes
 from agents.vote_mapper_agent import map_house_votes, map_senate_votes
@@ -245,7 +245,7 @@ class StateBillRequest(BaseModel):
     state_code: str
     session: str
     bill_type: str
-    number: int
+    number: Union[int, str]     # "1001a": Nebraska's A bills, Florida's special-session letters
     user_context: Optional[dict] = None
 
 
@@ -1477,7 +1477,7 @@ async def ledger_ask(request: Request, body: LedgerAsk):
                 "state_code": r["state"],
                 "session": r["session"],
                 "bill_type": r["type"],
-                "number": int(r["number"]),
+                "number": graph.bill_number(r["number"]),
                 "path": r["path"],
             }, {"section": "done"})
         if len(rows) == 1 and rows[0].get("congress") and rows[0].get("number"):
@@ -2083,7 +2083,7 @@ async def get_state_bill(request: Request, body: StateBillRequest):
     """Streams a state bill as NDJSON, read from the files on this server —
     parity with the federal /bill."""
     import graph
-    st, key = body.state_code.lower(), f"{body.bill_type.lower()}/{body.number}"
+    st, key = body.state_code.lower(), f"{body.bill_type.lower()}/{str(body.number).lower()}"
     try:
         page = await asyncio.to_thread(graph.state_bill_page, st, body.session, key)
     except Exception as e:
@@ -2097,11 +2097,11 @@ async def get_state_bill(request: Request, body: StateBillRequest):
 
 @app.get("/api/state/bill/{st}/{session}/{bill_type}/{number}/text")
 @limiter.limit("30/minute")
-async def state_bill_text(request: Request, st: str, session: str, bill_type: str, number: int,
+async def state_bill_text(request: Request, st: str, session: str, bill_type: str, number: str,
                           version: Optional[str] = None):
     """One text version of a state bill, whole, from the stored copy."""
     import graph
-    page = await asyncio.to_thread(graph.state_bill_page, st.lower(), session, f"{bill_type.lower()}/{number}")
+    page = await asyncio.to_thread(graph.state_bill_page, st.lower(), session, f"{bill_type.lower()}/{number.lower()}")
     if not page:
         raise HTTPException(status_code=404, detail=_state_not_synced(st.lower(), session, bill_type, number))
     versions = graph.state_versions(st.lower(), session, page["bill"])

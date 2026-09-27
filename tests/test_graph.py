@@ -2369,7 +2369,13 @@ class OtherStatesTest(unittest.TestCase):
             nodes, edges, gaps = graph.build_state_skeleton("nh", people, [], today="2026-09-27")
             self.assertIn("Cy Gamma's hold on House District Rockingham 30 closed at 2025-05-31", "\n".join(gaps))
         # A chamber not listed as multi-member seats one: two open holders close.
-        self.assertEqual(graph.district_seats([{"valid_from": "2024-01-01", "valid_to": None}] * 2, "2026-01-01", False), 1)
+        self.assertEqual(graph.district_seats([{"valid_from": "2024-01-01", "valid_to": None, "src": "x"}] * 2, False), 1)
+        # New Hampshire's 2022 map reused "Rockingham 11" for a four-seat
+        # district; one member left in 2026, three sit. Four seats, not three.
+        h = lambda src, f, t=None: {"src": src, "valid_from": f, "valid_to": t}
+        rows = [h("gg", "2018-12-05", "2022-12-06"), h("gg", "2022-12-07"), h("jg", "2022-12-07"), h("mp", "2022-12-07"),
+                h("lh", "2022-12-07", "2026-07-29"), h("old", "2004-12-01")]
+        self.assertEqual(graph.district_seats(rows, True, retired={"old"}), 4)
 
     def test_nebraska_has_one_chamber(self):
         people = [_os_person("n", "Tom Brewer", [("legislature", "43", "2023-01-04", None)])]
@@ -2422,6 +2428,52 @@ class OtherStatesTest(unittest.TestCase):
             nodes, edges, _ = graph.build_state_bills("ca", "20192020", rec, {}, [])
         law = next(n for n in nodes if n["id"] == "instrument/ca/acts/2019/chap/296")
         self.assertEqual(law["name"], "Statutes of California 2019, Chapter 296")
+
+    def test_a_signature_says_it_was_signed(self):
+        act = lambda text, cls: graph.executive_act({"description": text, "classification": [cls]})
+        self.assertEqual(act("Signed by Governor Sununu 06/27/2023; Chapter 123", "executive-signature"), "signed")
+        self.assertEqual(act("Approved by Governor-Chapter 350 (effective 7/1/26)", "executive-signature"), "signed")
+        self.assertEqual(act("Vetoed by the Governor.", "executive-veto"), "vetoed")
+        # Tagged executive-signature by Open States, and not one.
+        for text in ("Conference Committee Report; Not Signed Off;  SJ 20", "Transmitted to the Governor",
+                     "Governor's recommendation adopted"):
+            self.assertIsNone(act(text, "executive-signature"), text)
+        # A resolution's chapter is not a law's.
+        self.assertIsNone(graph._CHAPTER.search("Chaptered by Secretary of State - Res. Chapter 12, Statutes of 2023."))
+        self.assertEqual(graph._CHAPTER.search("Chaptered by Secretary of State. Chapter 296, Statutes of 2019.").group(1),
+                         "296")
+
+    def test_a_role_that_ends_before_it_begins_is_skipped(self):
+        # New Hampshire's people repo has Gerry Ward's 2022 term twice, once
+        # ending the day before it starts.
+        people = [_os_person("w", "Gerry Ward", [("lower", "Rockingham 27", "2022-12-07", None),
+                                                  ("lower", "Rockingham 27", "2022-12-07", "2022-12-06")])]
+        with mock.patch.dict(graph.LEGISLATURES, {"nh": self.NH}):
+            _, edges, gaps = graph.build_state_skeleton("nh", people, [], today="2026-09-27")
+        self.assertEqual(len([e for e in edges if e["predicate"] == "holds"]), 1)
+        self.assertIn("1 role(s) that end before they begin skipped", gaps)
+
+    def test_a_voter_named_by_surname_alone(self):
+        a, b = graph.node_id("person", "openstates/a"), graph.node_id("person", "openstates/b")
+        c = graph.node_id("person", "openstates/c")
+        roster = {"legislature": [(a, ["Tom Brewer"], "2023-01-04", None, None),
+                                  (b, ["Eliot Bostar"], "2023-01-04", None, None),
+                                  (c, ["Ana-Maria Rodriguez Ramos"], "2023-01-04", None, None)]}
+        # A footnote star, a two-word surname with an accent the roster
+        # lacks, a word that is no one, and a name no member has.
+        votes = [{"id": "v1", "bill": "lb/5", "date": "2026-02-03", "motion": "Final Reading", "result": "pass",
+                  "chamber": "legislature", "counts": {"yes": 3},
+                  "positions": [[None, "Brewer", "yes"], [None, "Bostar*", "yes"], [None, "Rodríguez Ramos", "yes"],
+                                [None, "Present", "yes"], [None, "Nobody", "yes"]]}]
+        with mock.patch.dict(graph.LEGISLATURES, {"ne": self.NE}):
+            _, edges, gaps = graph.build_state_votes("ne", "109", votes, {}, roster)
+        self.assertEqual({e["src"] for e in edges if e["predicate"] == "voted_on"}, {a, b, c})
+        self.assertIn("3 voter(s) matched by name; 1 could not be matched", gaps[0])
+        self.assertIn("1 voter row(s) that name no member by name", gaps[1])
+
+    def test_a_bill_number_may_carry_a_letter(self):
+        self.assertEqual((graph.bill_number("34"), graph.bill_number("34a")), (34, "34a"))
+        self.assertEqual(sorted(["35", "34a", "34", "a"], key=graph._number_order), ["a", "34", "34a", "35"])
 
     def test_district_names_are_ocd_slugs(self):
         self.assertEqual(graph._state_post("nh", "lower", "Rockingham 30"),

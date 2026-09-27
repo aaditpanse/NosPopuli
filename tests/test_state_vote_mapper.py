@@ -53,6 +53,20 @@ class SelectFloorVsCommittee(unittest.TestCase):
         self.assertIsNotNone(select_floor_roll_call(v, "lower", "VA"))
 
 
+class ImpossibleTally(unittest.TestCase):
+    """TX HB 2, 89R: Open States files the House's 122-13 under the Senate
+    too (2025-05-29). A 31-seat chamber cannot cast 136 votes."""
+
+    def test_a_tally_larger_than_the_chamber_is_not_its_vote(self):
+        votes = [_vote(chamber="upper", motion="passage", yes=31, no=0, vid="s1", date="2025-05-23"),
+                 _vote(chamber="upper", motion="passage", yes=122, no=13, nv=1, vid="s2", date="2025-05-29")]
+        self.assertEqual(select_floor_roll_call(votes, "upper", "TX")["id"], "s1")
+
+    def test_nebraska_has_one_chamber_of_49(self):
+        v = [_vote(chamber="legislature", motion="Final Reading", yes=43, no=2)]
+        self.assertEqual(select_floor_roll_call(v, "legislature", "NE")["counts"]["yes"], 43)
+
+
 class NoFloorVoteCA(unittest.TestCase):
     """CA SB 1407 — Assembly (lower) has only a committee vote → None."""
 

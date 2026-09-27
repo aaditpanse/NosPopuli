@@ -77,8 +77,8 @@ def state_doc(st, session, key, b, people_names=None, newer=()):
     summaries = [a["abstract"] for a in b.get("abstracts") or [] if (a.get("note") or "") != "title"]
     summary = " ".join(summaries)[:12000]
     chapter = next((m.group(1) for a in b.get("actions") or []
-                    for m in [re.search(r"Chapter (\d+)", a.get("description") or "", re.I)]
-                    if m and ("became-law" in a["classification"] or "executive-signature" in a["classification"])), None)
+                    for m in [graph._CHAPTER.search(a.get("description") or "")]
+                    if m and ("became-law" in a["classification"] or graph.executive_act(a) == "signed")), None)
     primary = next((s for s in b.get("sponsors") or [] if s["primary"]), None)
     parts = [f"{b['identifier']}: {b['title']}"]
     others = [t for t in b.get("other_titles") or [] if t != b["title"]][:8]
@@ -334,6 +334,7 @@ def _iso(d):
 def as_result(row):
     """A bill_doc row in the shape search_bills has always returned, so the
     ranker and validator downstream need no change. Pure."""
+    import graph
     laws = row.get("law_numbers") or []
     jurisdiction = row.get("jurisdiction") or US_DIV
     if jurisdiction != US_DIV:
@@ -344,7 +345,7 @@ def as_result(row):
             "identifier": f"{row['bill_type'].upper()} {row['number']}",
             "title": row.get("title") or f"{row['bill_type'].upper()} {row['number']}",
             "date_issued": row["introduced"].isoformat() if row.get("introduced") else "",
-            "type": row["bill_type"], "number": int(row["number"]),
+            "type": row["bill_type"], "number": graph.bill_number(row["number"]),
             "is_law": bool(row.get("is_law")), "chapter": laws[0] if laws else None,
             "policy_area": row.get("policy_area"), "is_state_bill": True,
             "latest_action": row.get("latest_action"),

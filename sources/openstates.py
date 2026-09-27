@@ -148,7 +148,9 @@ def people(st, sync=True):
     """Every legislator and statewide officer of one state, current and
     retired, written to derived/states/<st>/people.json. Returns its meta."""
     import yaml
-    root = sync_people([st]) if sync else _raw("openstates-people")
+    # Every sidecar state stays checked out: pulling one must not drop the
+    # others' folders from the shared clone.
+    root = sync_people(sorted({st, *graph.LEGISLATURES})) if sync else _raw("openstates-people")
     base = root / "data" / st
     records, files = [], 0
     for folder in ("legislature", "retired", "executive"):
