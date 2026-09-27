@@ -2776,7 +2776,17 @@ def build_state_skeleton(st, people, lis_sessions=(), today=None):
             props["asserted_by"] = p["asserted_by"]
         if nk != f"openstates/{p['id'].removeprefix('ocd-person/')}" and not nk.startswith("asserted/"):
             props["identity"], props["identity_asserted_by"] = nk, "the sidecar's identities"
-        _node(g, pid, "person", p["name"], props, STATE_SOURCE, p["id"])
+        prior = g["nodes"].get(pid)
+        if prior is None:
+            _node(g, pid, "person", p["name"], props, STATE_SOURCE, p["id"])
+        else:
+            # Two Open States records of one legislator (the sidecar joined
+            # them): keep every name, and the serving record's name and ids.
+            serving = any(r["type"] in ("upper", "lower") and not r.get("end") for r in roles)
+            every = {prior["name"], p["name"], *prior["props"]["aliases"], *props["aliases"]}
+            if serving:
+                _node(g, pid, "person", p["name"], {**prior["props"], **props}, STATE_SOURCE, p["id"])
+            g["nodes"][pid]["props"]["aliases"] = sorted(every - {g["nodes"][pid]["name"]})
         for r in roles:
             if not r["start"]:
                 skipped_roles += 1
@@ -3329,7 +3339,8 @@ def load_state(cur, st, force=False):
     cur.execute("SELECT scope, fingerprint FROM graph_scope")
     loaded = dict(cur.fetchall())
     out = {}
-    for scope, (fp, orphan_kinds, build) in state_scopes(st).items():
+    scopes = state_scopes(st)
+    for scope, (fp, orphan_kinds, build) in scopes.items():
         if not force and loaded.get(scope) == fp:
             continue
         nodes, edges, gaps = build()
@@ -3338,6 +3349,21 @@ def load_state(cur, st, force=False):
             closed = _close_holds_in_db(sorted({n["id"] for n in nodes if n["kind"] == "person"}), cur)
             gaps = gaps + [f"{c['name']}'s hold on {c['post']} closed at {c['valid_to']}: {c['why']}" for c in closed]
         out[scope] = (_summary(nodes, edges), gaps)
+    if out:
+        # A person whose id changed (a new identity link) keeps the old node
+        # while the bill and vote scopes still point at it, so the skeleton's
+        # own orphan pass cannot drop it. Once every scope has moved, sweep
+        # it; otherwise two nodes answer to one name.
+        skel = f"{st}/skeleton"
+        keep = [n["id"] for n in scopes[skel][2]()[0]]
+        cur.execute("""
+            DELETE FROM graph_node n WHERE n.scope = %s AND n.kind = 'person' AND NOT (n.id = ANY(%s))
+              AND NOT EXISTS (SELECT 1 FROM graph_edge e WHERE e.src = n.id)
+              AND NOT EXISTS (SELECT 1 FROM graph_edge e WHERE e.dst = n.id)""", (skel, keep))
+        if cur.rowcount:
+            summary, gaps = out.get(skel, ({}, []))
+            out[skel] = (summary, gaps + [f"{cur.rowcount} person node(s) no longer emitted (a changed identity) "
+                                          f"swept after every scope moved"])
     return out
 
 

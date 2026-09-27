@@ -1,5 +1,5 @@
 {
-  "_comment": "Per-source facts the stores do not carry, read by graph.py. Leading underscore = sidecar, not a source (see api._foundry_store_paths). A county enters the graph by getting an entry here: its OCD slugs, the elections store that seats its members, and the statutory term (Virginia county supervisors take office January 1 after the November general, Va. Code 24.2-217 / 15.2-1400, four-year terms). `identities` is the human-asserted bridge between a local person (keyed county/surname/initial) and an external id; it is the residue name matching leaves for a person to decide.",
+  "_comment": "Per-source facts the stores do not carry, read by graph.py. Leading underscore = sidecar, not a source (see api._foundry_store_paths). A county enters the graph by getting an entry here: its OCD slugs, the elections store that seats its members, and the statutory term (Virginia county supervisors take office January 1 after the November general, Va. Code 24.2-217 / 15.2-1400, four-year terms). `identities` is the human-asserted bridge between a local person (keyed county/surname/initial) and an external id; it is the residue name matching leaves for a person to decide. An Open States key (openstates/<uuid>) maps to the federal person it also is (bioguide/<id>), or to another Open States record of the same legislator: Open States splits a legislator who left and came back into two records, and the legislature's own member id (LIS) shows they are one.",
   "states": {
     "va": "Virginia"
   },
@@ -68,7 +68,10 @@
     "openstates/0aea6a95-df57-407e-a70d-b809a24401a2": "bioguide/K000399",
     "openstates/f15c1fad-543e-408a-b899-eed2fb883010": "bioguide/M001227",
     "openstates/0dd787e8-c62a-46a9-aa0e-915f574e75d2": "bioguide/M001239",
-    "openstates/d2a28b1a-6991-4b0b-b582-0414025b7389": "bioguide/S001230"
+    "openstates/d2a28b1a-6991-4b0b-b582-0414025b7389": "bioguide/S001230",
+    "openstates/989cab54-1cdb-4783-a3eb-24c139763f0b": "bioguide/G000580",
+    "openstates/e0cfd740-bdcc-4644-a93b-b7cbb6cbd027": "openstates/3a48fc34-a650-4fd5-acea-e703e2b8de90",
+    "openstates/e1257f92-4694-4db0-8c21-3f04e6317e61": "openstates/815f7b31-d344-481a-9922-ad77d16b808a"
   },
   "legislatures": {
     "_comment": "A state legislature enters the graph by an entry here (sources/openstates.py, graph.load_state). first_session: the earliest Open States session with bills on disk (Virginia's dump rows start in 2017; 2010-2016 are empty sessions). lis_from: the first session Virginia's LIS publishes CSVs for; a regular session is LIS code YYYY1 and special session N is YYYY(N+1). governors: holders the Open States people data lacks, asserted by a person.",

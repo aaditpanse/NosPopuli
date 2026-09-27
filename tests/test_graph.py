@@ -2581,3 +2581,21 @@ class StateBridgedPersonTest(unittest.TestCase):
         self.assertNotIn("instrument/va/2026/hr/9", [r["item_id"] for r in a["rows"]])
         a = graph.answer(graph.parse_question("how did Jeion Ward vote on HR 9 in Virginia"), backend)
         self.assertEqual([r["item_id"] for r in a["rows"]], ["instrument/va/2026/hr/9"])
+
+
+class StateSplitRecordTest(unittest.TestCase):
+    """Open States splits a legislator who left and came back into two
+    records; the sidecar joins them, and the node keeps both names."""
+
+    def test_two_records_one_node_the_serving_name(self):
+        old = _os_person("old", "Alex Q. Askew", [("lower", "85", "2020-01-08", "2021-12-31")], lis="H0311")
+        new = _os_person("new", "Alex Askew", [("lower", "95", "2024-01-10", None)], lis="H0311")
+        with mock.patch.dict(graph.IDENTITIES, {"openstates/old": "openstates/new"}):
+            for people in ([old, new], [new, old]):
+                nodes, edges, _ = graph.build_state_skeleton("va", people, [], today="2026-09-27")
+                ask = [n for n in nodes if n["kind"] == "person" and "Askew" in n["name"]]
+                self.assertEqual(len(ask), 1)
+                self.assertEqual(ask[0]["name"], "Alex Askew")
+                self.assertIn("Alex Q. Askew", ask[0]["props"]["aliases"])
+                holds = [e for e in edges if e["predicate"] == "holds" and e["src"] == ask[0]["id"]]
+                self.assertEqual(len(holds), 2)
