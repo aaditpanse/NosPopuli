@@ -114,6 +114,9 @@ def resolve_references(terms, client) -> dict:
     return resolved
 
 
+_CITE = re.compile(r"[<(]\s*/?\s*cite\b[^>]*>|</cite>")
+
+
 def _batch_resolve(terms: list, client) -> dict:
     """One batched Haiku web-search call for every uncached term. Returns
     {term: "summary + Source: url"} on success, {} on any failure.
@@ -147,7 +150,10 @@ def _batch_resolve(terms: list, client) -> dict:
             # Cap fan-out: one batched call resolves up to REF_HARD_LIMIT (5)
             # terms, so a handful of searches suffices. Without a cap a cold
             # call can run many billed searches (fee + tokens per search).
-            tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 5}],
+            # Haiku 4.5 cannot run this tool version's programmatic calls;
+            # "direct" makes it call search itself (Sonnet does not need it).
+            tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 5,
+                    "allowed_callers": ["direct"]}],
             messages=[{"role": "user", "content": prompt}],
             # Safety cap: successful web searches finish in ~75s, but a runaway
             # can otherwise hold the request (and the open /bill stream) for
@@ -184,7 +190,9 @@ def _batch_resolve(terms: list, client) -> dict:
     requested_lower = {t.lower(): t for t in terms}
     for entry in parsed.get("definitions", []):
         term_raw = (entry.get("term") or "").strip()
-        summary = (entry.get("summary") or "").strip()
+        # With web search the model marks its sources inline (<cite index=
+        # "12-5">…</cite>) even inside the JSON; the page shows plain text.
+        summary = _CITE.sub("", entry.get("summary") or "").strip()
         source = (entry.get("source") or "").strip()
         if not term_raw or not summary:
             continue
