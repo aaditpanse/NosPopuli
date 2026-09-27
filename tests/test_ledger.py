@@ -135,6 +135,21 @@ class FunnelTests(unittest.TestCase):
         self.assertTrue(stories[0]["english_title"].startswith("Require rural hospitals"))
         self.assertEqual(stories[0]["english_text"], "Passed House")
 
+    def test_a_state_row_keeps_its_session_and_stage(self):
+        # Virginia's latest action text says nothing Congress's rules know;
+        # the stage comes from the classified actions (graph.state_stage).
+        rows = [{"is_state_bill": True, "state": "va", "session": "2026", "type": "hb", "number": 1,
+                 "identifier": "HB 1", "title": "Minimum wage", "path": "/state/va/2026/hb/1",
+                 "latest_action": "Acts of Assembly Chapter text (CHAP0350)", "stage": "law"},
+                {"is_state_bill": True, "state": "va", "session": "2024", "type": "hb", "number": 1,
+                 "identifier": "HB 1", "title": "Minimum wage", "latest_action": "Continued to 2025", "stage": "committee"}]
+        stories = stories_from_results(rows)
+        self.assertEqual([s["id"] for s in stories], ["va-2026-hb1", "va-2024-hb1"])
+        self.assertEqual([s["stage"] for s in stories], ["law", "committee"])
+        self.assertEqual(stories[0]["path"], "/state/va/2026/hb/1")
+        funnel = {r["id"]: r["n"] for r in build_funnel(rows)}
+        self.assertEqual((funnel["committee"], funnel["law"]), (2, 1))
+
 
 class CompactTests(unittest.TestCase):
     def test_strips_preface(self):

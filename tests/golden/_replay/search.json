@@ -14,6 +14,7 @@
    "policy_area": null,
    "session": "2026",
    "sponsor": "Rozia A. Henson, Jr.",
+   "stage": "committee",
    "state": "va",
    "title": "Virginia Health Care Fund; additional funding and uses.",
    "type": "hb"
@@ -32,6 +33,7 @@
    "policy_area": "Administration of Government",
    "session": "2018",
    "sponsor": "George L. Barker",
+   "stage": "committee",
    "state": "va",
    "title": "Virginia Health Care Access Program; established.",
    "type": "sb"
@@ -50,6 +52,7 @@
    "policy_area": "Administration of Government",
    "session": "2018",
    "sponsor": "Mark D. Sickles",
+   "stage": "committee",
    "state": "va",
    "title": "Virginia Health Care Access Program and Authority; established and created.",
    "type": "hb"
@@ -68,6 +71,7 @@
    "policy_area": null,
    "session": "2022",
    "sponsor": "Betsy B. Carr",
+   "stage": "law",
    "state": "va",
    "title": "Health care coverage; premium payments for certain service members.",
    "type": "hb"
@@ -86,6 +90,7 @@
    "policy_area": null,
    "session": "2017",
    "sponsor": "Emmett W. Hanger, Jr.",
+   "stage": "introduced",
    "state": "va",
    "title": "Commending the Virginia Health Care Foundation.",
    "type": "sj"
@@ -104,6 +109,7 @@
    "policy_area": null,
    "session": "2022",
    "sponsor": "John A. Cosgrove, Jr.",
+   "stage": "law",
    "state": "va",
    "title": "Health care coverage; premium payments for certain service members.",
    "type": "sb"
@@ -122,6 +128,7 @@
    "policy_area": null,
    "session": "2022",
    "sponsor": "Jennifer L. McClellan",
+   "stage": "law",
    "state": "va",
    "title": "Virginia Health Benefit Exchange; annual marketing plan.",
    "type": "sb"
@@ -140,6 +147,7 @@
    "policy_area": null,
    "session": "2022",
    "sponsor": "Sam Rasoul",
+   "stage": "law",
    "state": "va",
    "title": "Virginia Health Benefit Exchange; annual marketing plan.",
    "type": "hb"
@@ -158,6 +166,7 @@
    "policy_area": null,
    "session": "2026",
    "sponsor": "Barbara A. Favola",
+   "stage": "passed",
    "state": "va",
    "title": "Commending the Virginia Hospital & Healthcare Association.",
    "type": "sj"
@@ -176,6 +185,7 @@
    "policy_area": null,
    "session": "2025",
    "sponsor": "Rodney T. Willett",
+   "stage": "committee",
    "state": "va",
    "title": "Virginia Health Workforce Development Authority; Virginia Nursing Workforce Center established; reporting and monitoring of health care workforce programs; residency slots; work group; report.",
    "type": "hb"
@@ -194,6 +204,7 @@
    "policy_area": null,
    "session": "2026",
    "sponsor": "Mark D. Obenshain",
+   "stage": "law",
    "state": "va",
    "title": "Health insurance; reporting requirements.",
    "type": "sb"
@@ -212,6 +223,7 @@
    "policy_area": "Health",
    "session": "2017",
    "sponsor": "Siobhan S. Dunnavant",
+   "stage": "committee",
    "state": "va",
    "title": "Medicaid Supplemental Rate Fund; created.",
    "type": "sb"
@@ -230,6 +242,7 @@
    "policy_area": null,
    "session": "2026",
    "sponsor": "Irene Shin",
+   "stage": "law",
    "state": "va",
    "title": "Health insurance; reporting requirements.",
    "type": "hb"
@@ -248,6 +261,7 @@
    "policy_area": null,
    "session": "2022",
    "sponsor": "David R. Suetterlein",
+   "stage": "passed",
    "state": "va",
    "title": "Health-related social need; Jt. Com. on Health Care to study benefit of hospitals, etc., addressing.",
    "type": "sj"
@@ -266,6 +280,7 @@
    "policy_area": null,
    "session": "2021",
    "sponsor": "Rodney T. Willett",
+   "stage": "law",
    "state": "va",
    "title": "VIIS; any health care provider in the Commonwealth that administers immunizations to participate.",
    "type": "hb"
@@ -284,6 +299,7 @@
    "policy_area": null,
    "session": "2024",
    "sponsor": "Christopher T. Head",
+   "stage": "law",
    "state": "va",
    "title": "Virginia Health Workforce Development Authority; powers and duties, definition.",
    "type": "sb"
@@ -302,6 +318,7 @@
    "policy_area": null,
    "session": "2020specialI",
    "sponsor": null,
+   "stage": "introduced",
    "state": "va",
    "title": "Commending the Virginia Hospital & Healthcare Association, Virginia's hospitals.",
    "type": "sr"
@@ -320,6 +337,7 @@
    "policy_area": "Health",
    "session": "2018",
    "sponsor": "Richard P. Bell",
+   "stage": "committee",
    "state": "va",
    "title": "Certificate of public need; open heart services in Northern Virginia.",
    "type": "hb"
@@ -338,6 +356,7 @@
    "policy_area": null,
    "session": "2020specialI",
    "sponsor": null,
+   "stage": "introduced",
    "state": "va",
    "title": "Commending the Virginia Hospital & Healthcare Association, Virginia's hospitals, & hospital workers.",
    "type": "hr"
@@ -356,6 +375,7 @@
    "policy_area": null,
    "session": "2026",
    "sponsor": "Dan I. Helmer",
+   "stage": "committee",
    "state": "va",
    "title": "Hospital price transparency; price comparison tool, penalties for noncompliance.",
    "type": "hb"
@@ -376,6 +396,7 @@
    "policy_area": "Health",
    "session": "2018",
    "sponsor": "James A. \"Jay\" Leftwich",
+   "stage": "committee",
    "state": "va",
    "title": "Health care provider panels; vertically integrated carriers, public hospitals.",
    "type": "hb"
@@ -394,6 +415,7 @@
    "policy_area": null,
    "session": "2022",
    "sponsor": "Kathy J. Byron",
+   "stage": "law",
    "state": "va",
    "title": "Health care; consent to disclosure of records.",
    "type": "hb"
@@ -412,6 +434,7 @@
    "policy_area": "Health",
    "session": "2019",
    "sponsor": "Terry G. Kilgore",
+   "stage": "committee",
    "state": "va",
    "title": "Health care provider panels; vertically integrated carriers, public hospitals.",
    "type": "hb"
@@ -430,6 +453,7 @@
    "policy_area": null,
    "session": "2020specialI",
    "sponsor": null,
+   "stage": "law",
    "state": "va",
    "title": "Telemedicine services; originating site.",
    "type": "hb"
@@ -448,6 +472,7 @@
    "policy_area": "Health",
    "session": "2019",
    "sponsor": "Vivian E. Watts",
+   "stage": "law",
    "state": "va",
    "title": "Continuing care retirement communities; accessing medical assistance, certificate of public need.",
    "type": "hb"
@@ -466,6 +491,7 @@
    "policy_area": null,
    "session": "2020specialI",
    "sponsor": null,
+   "stage": "law",
    "state": "va",
    "title": "Telemedicine services; originating site.",
    "type": "sb"
@@ -484,6 +510,7 @@
    "policy_area": "Commissions, Boards and Institutions Generally",
    "session": "2019",
    "sponsor": "Lee J. Carter",
+   "stage": "committee",
    "state": "va",
    "title": "Health care spending in the Commonwealth; JLARC to study.",
    "type": "hj"
@@ -502,6 +529,7 @@
    "policy_area": null,
    "session": "2020",
    "sponsor": "Patrick A. Hope",
+   "stage": "law",
    "state": "va",
    "title": "Health care providers, certain; program to address career fatigue and wellness, civil immunity.",
    "type": "hb"
@@ -520,6 +548,7 @@
    "policy_area": "Health",
    "session": "2018",
    "sponsor": "James A. \"Jay\" Leftwich",
+   "stage": "committee",
    "state": "va",
    "title": "Certificate of public need; definition of \"medical care facility.\"",
    "type": "hb"
@@ -538,6 +567,7 @@
    "policy_area": null,
    "session": "2020",
    "sponsor": "George L. Barker",
+   "stage": "law",
    "state": "va",
    "title": "Health care providers, certain; program to address career fatigue and wellness, civil immunity.",
    "type": "sb"
@@ -556,6 +586,7 @@
    "policy_area": "Commissions, Boards and Institutions Generally",
    "session": "2018",
    "sponsor": "Lee J. Carter",
+   "stage": "committee",
    "state": "va",
    "title": "Health care spending; JLARC to study.",
    "type": "hj"
@@ -574,6 +605,7 @@
    "policy_area": null,
    "session": "2020",
    "sponsor": "Lee J. Carter",
+   "stage": "committee",
    "state": "va",
    "title": "Health care spending in the Commonwealth; Joint Commission on Health Care to study.",
    "type": "hj"
@@ -592,6 +624,7 @@
    "policy_area": null,
    "session": "2022",
    "sponsor": "Christopher T. Head",
+   "stage": "committee",
    "state": "va",
    "title": "Health care providers; amends definition to include home care organizations and hospice.",
    "type": "hb"
@@ -610,6 +643,7 @@
    "policy_area": null,
    "session": "2024",
    "sponsor": "Patrick A. Hope",
+   "stage": "law",
    "state": "va",
    "title": "Advance Health Care Planning Registry; amendment of regulations.",
    "type": "hb"
@@ -628,6 +662,7 @@
    "policy_area": "Administration of Government",
    "session": "2018",
    "sponsor": "George L. Barker",
+   "stage": "committee",
    "state": "va",
    "title": "Virginia Health Care Access Program; established.",
    "type": "sb"
@@ -646,6 +681,7 @@
    "policy_area": null,
    "session": "2022",
    "sponsor": "Glenn R. Davis",
+   "stage": "law",
    "state": "va",
    "title": "Carrier & managed care health insurance plans; VDH to review efficiency & productivity, etc.",
    "type": "hb"
@@ -664,6 +700,7 @@
    "policy_area": "Health",
    "session": "2018",
    "sponsor": "Kathy J. Byron",
+   "stage": "committee",
    "state": "va",
    "title": "Medical care facility projects; permits for certain projects in Planning District II, civil penalty.",
    "type": "hb"
@@ -682,6 +719,7 @@
    "policy_area": null,
    "session": "2025",
    "sponsor": "Patrick A. Hope",
+   "stage": "committee",
    "state": "va",
    "title": "Uniform Health Care Decisions Act; created, repeals most provisions of Health Care Decisions Act.",
    "type": "hb"
@@ -700,6 +738,7 @@
    "policy_area": "Commissions, Boards and Institutions Generally",
    "session": "2018",
    "sponsor": "Lee J. Carter",
+   "stage": "committee",
    "state": "va",
    "title": "Universal health care; JLARC to study cost of implementing.",
    "type": "hj"
@@ -718,6 +757,7 @@
    "policy_area": null,
    "session": "2020specialI",
    "sponsor": null,
+   "stage": "committee",
    "state": "va",
    "title": "Declaration of disaster; health care providers, immunity from civil liability.",
    "type": "hb"

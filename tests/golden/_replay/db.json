@@ -19,6 +19,15 @@
   "rowcount": 0,
   "rows": []
  },
+ "sql SELECT value, cached_at FROM disk_cache WHERE key=%s ('ledger:v2:2519a1d26d1bb303e4e1897a8042edd06325a351',)": {
+  "rowcount": 0,
+  "rows": []
+ },
+ "sql SELECT value, cached_at FROM disk_cache WHERE key=%s ('ledger:v2:60def499dfb2a54bf854abbebca2433b8ecb3385',)": {
+  "_no_db": true,
+  "rowcount": 0,
+  "rows": []
+ },
  "sql SELECT value, cached_at FROM disk_cache WHERE key=%s ('ledger:v2:78c5a2c3bf8aef232cf73d99071f9909edb5dd9b',)": {
   "_no_db": true,
   "rowcount": 0,
@@ -29,6 +38,10 @@
   "rowcount": 0,
   "rows": []
  },
+ "sql SELECT value, cached_at FROM disk_cache WHERE key=%s ('ledger:v2:de1a03054648d9df4068e92a07e82f28188d72a1',)": {
+  "rowcount": 0,
+  "rows": []
+ },
  "sql SELECT value, cached_at FROM disk_cache WHERE key=%s ('search:v6:1670afaae3e22d7275c0e1546534fe2c4e956941',)": {
   "_no_db": true,
   "rowcount": 0,
@@ -36,6 +49,10 @@
  },
  "sql SELECT value, cached_at FROM disk_cache WHERE key=%s ('search:v6:59898edfdaa94e06c60a86928906f80531a4945f',)": {
   "_no_db": true,
+  "rowcount": 0,
+  "rows": []
+ },
+ "sql SELECT value, cached_at FROM disk_cache WHERE key=%s ('search:v6:704de753c9d98e5b804ae60789e4bd26af432a52',)": {
   "rowcount": 0,
   "rows": []
  },

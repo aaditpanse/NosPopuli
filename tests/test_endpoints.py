@@ -163,24 +163,16 @@ def test_recording_uses_only_a_local_fixture_database(monkeypatch):
 # The Virginia classification defect is fixed; its test is in ClassifyTests.
 # Only the two that need a captured response or the api.py source belong here.
 
-@pytest.mark.xfail(strict=True, reason="ledger_ask's federal override rewrites the query to "
-                                       "federal, so a Virginia ask is answered "
-                                       "out of Congress and the empty state "
-                                       "blames Virginia for my missing data")
 def test_virginia_answer_does_not_blame_virginia():
-    """Two defects in one captured response, neither of which "must not return
-    zero" would have caught.
+    """Promoted 2026-09-27 (state layer, step 15). Until then the federal
+    override in `ledger_ask` rewrote *Healthcare bills in Virginia* to
+    federal, searched Congress, found nothing, and answered "Nothing in
+    Virginia matched that ask." — my gap blamed on Virginia, and federal
+    House bills (hr10293 and others) offered as the answer to a state
+    question.
 
-    The fixture (post_ledger__healthcare_bills_in.json) records
-    `query_type: "legislation"` — rewritten from `state_legislation` at
-    the federal override in `ledger_ask` (api.py:1633) — alongside `state_code: "VA"`, and the headline
-    "Nothing in Virginia matched that ask."
-
-    So: it searched Congress, found nothing there, and reported that as
-    Virginia having nothing. CLAUDE.md is explicit that missing data is framed
-    as my gap, not the jurisdiction's, and this is the inverse. In the log's
-    other six runs the same query returned hr10293/hr10287/hr10280 — federal
-    House bills presented as the answer to a state question.
+    Now a state ask is searched in the state's own bills, and an empty
+    answer must still not blame the jurisdiction.
     """
     fx = json.loads((replay.GOLDEN / "post_ledger__healthcare_bills_in.json").read_text())
     plate = next(l for l in fx["response"]["ndjson"] if l.get("section") == "plate")

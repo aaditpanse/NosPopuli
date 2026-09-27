@@ -217,7 +217,11 @@ def classify_question(question, state_code=None, allow_graph=True):
     }
 
 
-def funnel_stage(latest_action, is_law=False):
+def funnel_stage(latest_action, is_law=False, stage=None):
+    # A state bill arrives with its stage worked out from classified actions
+    # (graph.state_stage); the text rules below are Congress's wording.
+    if stage:
+        return stage
     if is_law:
         return "law"
     a = (latest_action or "").lower()
@@ -231,7 +235,7 @@ def funnel_stage(latest_action, is_law=False):
 
 
 def build_funnel(results):
-    stages = [funnel_stage(r.get("latest_action"), r.get("is_law")) for r in (results or [])]
+    stages = [funnel_stage(r.get("latest_action"), r.get("is_law"), r.get("stage")) for r in (results or [])]
     n = len(stages)
     n_committee = sum(1 for s in stages if s in ("committee", "passed", "law"))
     n_passed = sum(1 for s in stages if s in ("passed", "law"))
@@ -248,6 +252,9 @@ def build_funnel(results):
 def stories_from_results(results, limit=8):
     out = []
     for r in (results or [])[:limit]:
+        if r.get("is_state_bill"):
+            out.append(_state_story(r))
+            continue
         congress = r.get("congress")
         btype = (r.get("type") or "").lower()
         number = r.get("number")
@@ -269,6 +276,24 @@ def stories_from_results(results, limit=8):
             "meta": f"{btype.upper()} {number}" + (f" · {r.get('latest_action')}" if r.get("latest_action") else ""),
         })
     return out
+
+
+def _state_story(r):
+    """A state search row as a story. A state bill number is only unique
+    within a session, so the id carries the state and the session."""
+    btype, number = (r.get("type") or "").lower(), r.get("number")
+    title = r.get("title") or f"{btype.upper()} {number}"
+    st = (r.get("state") or "").lower()
+    return {
+        "id": f"{st}-{r.get('session')}-{btype}{number}",
+        "state": st, "session": r.get("session"), "is_state_bill": True, "path": r.get("path"),
+        "type": btype, "number": number, "title": title, "english_title": compact_title(title),
+        "english_text": r.get("latest_action") or "", "latest_action": r.get("latest_action") or "",
+        "latest_action_date": r.get("latest_action_date"), "sponsor": r.get("sponsor"),
+        "is_law": bool(r.get("is_law")), "stage": funnel_stage(r.get("latest_action"), r.get("is_law"), r.get("stage")),
+        "meta": f"{r.get('identifier') or btype.upper() + ' ' + str(number)} ({r.get('session')})"
+                + (f" · {r.get('latest_action')}" if r.get("latest_action") else ""),
+    }
 
 
 def _short_name(full):
@@ -334,7 +359,8 @@ async def enrich_stories(stories, fetch_bill, budget=3.0):
         except Exception as e:
             print(f"[LEDGER] enrich {s.get('id')}: {e}")
 
-    tasks = [asyncio.ensure_future(one(s)) for s in stories]
+    # A state story already carries its record from the files; Congress.gov has nothing to add.
+    tasks = [asyncio.ensure_future(one(s)) for s in stories if not s.get("is_state_bill")]
     try:
         await asyncio.wait_for(asyncio.shield(asyncio.gather(*tasks, return_exceptions=True)), timeout=budget)
     except asyncio.TimeoutError:
@@ -642,7 +668,7 @@ def member_headline(member, sponsored):
     n = len(rows)
     if n == 0:
         return f"{who} No sponsored bills on record."
-    n_law = sum(1 for r in rows if funnel_stage(r.get("latest_action"), r.get("is_law")) == "law")
+    n_law = sum(1 for r in rows if funnel_stage(r.get("latest_action"), r.get("is_law"), r.get("stage")) == "law")
     noun = "recent bill" if n == 1 else "recent bills"
     law_bit = "None are law." if n_law == 0 else ("One became law." if n_law == 1 else f"{n_law} became law.")
     return f"{who} {n} {noun} shown. {law_bit}"

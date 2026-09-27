@@ -1,7 +1,7 @@
 {
  "meta": {
   "app_sha": "",
-  "captured": "2026-09-27T14:01:43",
+  "captured": "2026-09-27T14:09:48",
   "notes": "state query via /search",
   "volatile": []
  },
@@ -66,6 +66,7 @@
      "policy_area": null,
      "session": "2026",
      "sponsor": "Rozia A. Henson, Jr.",
+     "stage": "committee",
      "state": "va",
      "title": "Virginia Health Care Fund; additional funding and uses.",
      "type": "hb"
@@ -84,6 +85,7 @@
      "policy_area": "Administration of Government",
      "session": "2018",
      "sponsor": "George L. Barker",
+     "stage": "committee",
      "state": "va",
      "title": "Virginia Health Care Access Program; established.",
      "type": "sb"
@@ -102,6 +104,7 @@
      "policy_area": "Administration of Government",
      "session": "2018",
      "sponsor": "Mark D. Sickles",
+     "stage": "committee",
      "state": "va",
      "title": "Virginia Health Care Access Program and Authority; established and created.",
      "type": "hb"
@@ -120,6 +123,7 @@
      "policy_area": null,
      "session": "2022",
      "sponsor": "Betsy B. Carr",
+     "stage": "law",
      "state": "va",
      "title": "Health care coverage; premium payments for certain service members.",
      "type": "hb"
@@ -138,6 +142,7 @@
      "policy_area": null,
      "session": "2022",
      "sponsor": "John A. Cosgrove, Jr.",
+     "stage": "law",
      "state": "va",
      "title": "Health care coverage; premium payments for certain service members.",
      "type": "sb"
@@ -156,6 +161,7 @@
      "policy_area": null,
      "session": "2025",
      "sponsor": "Rodney T. Willett",
+     "stage": "committee",
      "state": "va",
      "title": "Virginia Health Workforce Development Authority; Virginia Nursing Workforce Center established; reporting and monitoring of health care workforce programs; residency slots; work group; report.",
      "type": "hb"
@@ -174,6 +180,7 @@
      "policy_area": null,
      "session": "2022",
      "sponsor": "Jennifer L. McClellan",
+     "stage": "law",
      "state": "va",
      "title": "Virginia Health Benefit Exchange; annual marketing plan.",
      "type": "sb"
@@ -192,6 +199,7 @@
      "policy_area": null,
      "session": "2022",
      "sponsor": "Sam Rasoul",
+     "stage": "law",
      "state": "va",
      "title": "Virginia Health Benefit Exchange; annual marketing plan.",
      "type": "hb"

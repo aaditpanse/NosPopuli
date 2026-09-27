@@ -1,0 +1,32 @@
+{
+ "meta": {
+  "app_sha": "3ec8869",
+  "captured": "2026-09-27T10:14:12",
+  "notes": "a state bill number with a year: the state bill plate",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "question": "Virginia HB 1 from 2026"
+  },
+  "method": "POST",
+  "path": "/ledger"
+ },
+ "response": {
+  "ndjson": [
+   {
+    "bill_type": "hb",
+    "number": 1,
+    "path": "/state/va/2026/hb/1",
+    "plate": "state_bill",
+    "section": "plate",
+    "session": "2026",
+    "state_code": "VA"
+   },
+   {
+    "section": "done"
+   }
+  ],
+  "status": 200
+ }
+}

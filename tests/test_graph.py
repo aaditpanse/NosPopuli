@@ -2425,3 +2425,21 @@ class StateSearchReadersTest(unittest.TestCase):
         self.assertEqual([(r["identifier"], r["sponsorship"]) for r in rows], [("HB 1", "primary"), ("HB 7", "cosponsor")])
         self.assertEqual(read, ["2026", "2025"])
         self.assertEqual(rows[0]["path"], "/state/va/2026/hb/1")
+
+
+class StateStageTest(unittest.TestCase):
+    """The ledger funnel's stage for a state bill (plan step 15)."""
+
+    def test_classified_actions_furthest_wins(self):
+        acts = lambda *cs: [{"classification": [c]} for c in cs]
+        self.assertEqual(graph.state_stage(acts("introduction")), "introduced")
+        self.assertEqual(graph.state_stage(acts("introduction", "referral-committee")), "committee")
+        self.assertEqual(graph.state_stage(acts("referral-committee", "passage")), "passed")
+        # Virginia has no became-law action: the Governor's signature is the law.
+        self.assertEqual(graph.state_stage(acts("passage", "executive-signature")), "law")
+        self.assertEqual(graph.state_stage(acts("passage", "executive-veto")), "passed")
+
+    def test_newer_legislature_rows_only_move_a_bill_on(self):
+        acts = [{"classification": ["passage"]}]
+        self.assertEqual(graph.state_stage(acts, [{"description": "Approved by Governor-Chapter 350"}]), "law")
+        self.assertEqual(graph.state_stage(acts, [{"description": "Referred to Committee on Finance"}]), "passed")

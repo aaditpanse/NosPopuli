@@ -863,8 +863,6 @@ Live problems I know about and haven't fixed. Listed so nobody has to rediscover
 - The watchlist regex is anchored, so "show me what I'm watching" misses and falls
   through to federal bill search.
 - Local search discards the topic (above).
-- `/ledger` forces every query to federal (the federal override in `ledger_ask` (`api.py:1633`)), so state legislation search
-  is unreachable from the home page despite being fully built for all 50 states.
 - Braddock District resolves to nobody from 2025-09-10 to 2026-01-12. Walkinshaw's hold
   now closes the day before his federal term (right), but Sizemore Heizer's begins at
   her first observed meeting because the special election that seated her is not on
@@ -904,11 +902,6 @@ Found while building the golden fixtures, pinned as expected-failures:
   matching bills". Nothing in `api.py` consults `legiscan_client.has_key()`, which
   already exists. The shape to copy is the graph route's `empty_reason`
   (`api.py:3050`).
-- **"Nothing in Virginia matched that ask."** is what `/ledger` answers for
-  *Healthcare bills in Virginia* — after the federal override in `ledger_ask` (`api.py:1633`) rewrote the query to
-  federal and searched Congress. It blames the jurisdiction for my own gap, which is
-  the inverse of the rule I care most about. Captured in
-  `tests/golden/post_ledger__healthcare_bills_in.json`.
 - **Confidence is inverted, not merely useless.** Across the 73 logged searches,
   `conf=0.95` is 9-of-11 zero-result while `conf=0.6` and `0.75` are 0-for-3. The most
   confident bucket is the least correct one. `/search "LA County"` returns

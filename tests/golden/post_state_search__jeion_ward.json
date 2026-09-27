@@ -1,7 +1,7 @@
 {
  "meta": {
-  "app_sha": "ebc956a",
-  "captured": "2026-09-27T10:02:51",
+  "app_sha": "",
+  "captured": "2026-09-27T14:09:33",
   "notes": "a Virginia legislator from the roster file, with what they sponsored",
   "volatile": []
  },
@@ -67,6 +67,7 @@
      "source": "open states",
      "sponsor": "Jeion A. Ward",
      "sponsorship": "primary",
+     "stage": "law",
      "state": "VA",
      "subjects": [],
      "title": "Minimum wage; increases incrementally to $15.00 per hour by January 1, 2028.",

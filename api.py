@@ -44,7 +44,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from agents.router_agent import route_query, fast_route_state, intents_from_structured, structure_question
+from agents.router_agent import (route_query, fast_route_state, intents_from_structured, structure_question,
+                                 _extract_state_session)
 from agents.search_agent import search_bills, search_summaries
 from agents.title_search_agent import search_by_title
 from sources.bill_fetcher import fetch_bill
@@ -87,6 +88,7 @@ from agents.ledger_agent import (
     fallback_headline,
     foundry_place_coverage,
     STATE_NAMES,
+    extract_state,
     build_shelves,
     shelf_cache_key,
     member_headline,
@@ -959,7 +961,8 @@ async def handle_state_search(structured, question, loop):
         m = re.search(r"\b([HS][BJCR]?\s*\d+)\b", question, re.IGNORECASE)
         identifier = re.sub(r"\s+", " ", m.group(1).upper()) if m else None
     if identifier:
-        year = structured.get("requested_session")
+        # The language model's route carries no session; the question's own year does.
+        year = structured.get("requested_session") or _extract_state_session(question)
         year = year if year and len(year) == 4 else None
         hits = await loop.run_in_executor(None, graph.state_bill_lookup, st, identifier, year)
         note = None
@@ -1420,33 +1423,58 @@ async def ledger_ask(request: Request, body: LedgerAsk):
             "recent": (data or {}).get("recent") or [],
         }, {"section": "done"})
 
+    import graph
     loop = asyncio.get_event_loop()
     state_code = classified.get("state_code") or body.state_code
+    # The question's own state, not the reader's home: "housing bills" from a
+    # Virginian still means Congress unless the router says it is a state ask.
+    named = (extract_state(body.question) or "").upper() or None
     search_body = SearchRequest(
         question=body.question,
         max_results=body.max_results or 10,
-        state_code=None,
+        state_code=named if named in graph.loaded_states() else None,
     )
     search_out = {"query_type": "legislation", "results": []}
     member_out = None
     structured = {}
+    searched = None     # the state whose bills were searched; None is Congress
     try:
         structured = structure_question(
             search_body.question, search_body.state_code,
             max_results=search_body.max_results, get_client=get_client)
-        # Every /ledger ask is searched in Congress, even when classify_question
-        # says the jurisdiction is a state. The ledger cannot show a state bill
-        # yet: stories_from_results drops any row without a Congress number, so
-        # state results would become a silent zero. That is roadmap item 2.
-        # (search_body carries no state_code, so the state fast path never ran.)
-        structured["jurisdiction"] = "federal"
-        structured.pop("state_code", None)
-        if structured.get("query_type") in ("state_legislation", "state_member"):
-            structured["query_type"] = "legislation"
-        structured["intents"] = intents_from_structured(structured)
-        member_out, search_out = await _ledger_member_and_search(
-            structured, search_body, body.question, loop
-        )
+        state_ask = structured.get("jurisdiction") == "state"
+        if state_ask:
+            state_code = (structured.get("state_code") or named or body.state_code or "").upper() or None
+        if state_ask and state_code:
+            structured["state_code"] = state_code
+            if structured.get("query_type") == "state_member":
+                structured["query_type"] = "member"
+            if state_code not in graph.loaded_states():
+                return _ndjson_lines({
+                    "section": "plate", "plate": "uncharted", "question": body.question,
+                    "state_code": state_code,
+                    "place": {"name": None, "body": f"{STATE_NAMES.get(state_code, state_code)} legislature",
+                              "slug": "", "state": state_code},
+                    "reason": _state_not_loaded(state_code),
+                }, {"section": "done"})
+            searched = state_code
+            search_out = await handle_state_search(structured, body.question, loop)
+            if search_out.get("query_type") == "state_member":
+                member_out = {"query_type": "member", "found": bool(search_out.get("member")),
+                              "member": search_out.get("member"),
+                              "legislation": {"sponsored": search_out.get("sponsored_bills") or [],
+                                              "sessions_read": search_out.get("sessions_read") or []}}
+                search_out = {"query_type": "legislation", "state_code": state_code, "results": [],
+                              "ambiguity_reason": search_out.get("ambiguity_reason")}
+        else:
+            structured["jurisdiction"] = "federal"
+            structured.pop("state_code", None)
+            if structured.get("query_type") in ("state_legislation", "state_member"):
+                structured["query_type"] = "legislation"
+            structured["intents"] = intents_from_structured(structured)
+            member_out, search_out = await _ledger_member_and_search(
+                structured, search_body, body.question, loop
+            )
     except HTTPException:
         raise
     except Exception:
@@ -1455,6 +1483,19 @@ async def ledger_ask(request: Request, body: LedgerAsk):
 
     if structured.get("_fast_path") in ("bill_id", "state_bill_id") or structured.get("specific_bill"):
         rows = search_out.get("results") or []
+        # Straight to the bill only on an exact match: a stand-in from another
+        # session goes to the list, with the note that says it is a stand-in.
+        if len(rows) == 1 and rows[0].get("is_state_bill") and not search_out.get("ambiguity_reason"):
+            r = rows[0]
+            return _ndjson_lines({
+                "section": "plate",
+                "plate": "state_bill",
+                "state_code": r["state"],
+                "session": r["session"],
+                "bill_type": r["type"],
+                "number": int(r["number"]),
+                "path": r["path"],
+            }, {"section": "done"})
         if len(rows) == 1 and rows[0].get("congress") and rows[0].get("number"):
             r = rows[0]
             return _ndjson_lines({
@@ -1523,8 +1564,11 @@ async def ledger_ask(request: Request, body: LedgerAsk):
         deck = "The newest bills this committee has handled. Committees are where most bills stop."
     else:
         funnel = build_funnel(funnel_rows)
-        headline = fallback_headline(body.question, place_name, stories)
-        deck = "Most bills never leave committee. Click a bar to read only that stage."
+        # Name what was searched: a federal search that finds nothing is not
+        # the reader's state having nothing.
+        headline = fallback_headline(body.question, STATE_NAMES.get(searched) if searched else None, stories)
+        deck = ((searched and search_out.get("ambiguity_reason"))
+                or "Most bills never leave committee. Click a bar to read only that stage.")
 
     plate_payload = {
         "section": "plate",

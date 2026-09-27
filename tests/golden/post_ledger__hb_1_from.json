@@ -1,0 +1,96 @@
+{
+ "meta": {
+  "app_sha": "3ec8869",
+  "captured": "2026-09-27T10:14:11",
+  "notes": "a year the store has no HB 1 for: the other sessions, and a note that says so",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "question": "HB 1 from 2020 in Virginia"
+  },
+  "method": "POST",
+  "path": "/ledger"
+ },
+ "response": {
+  "ndjson": [
+   {
+    "cached": null,
+    "committee": null,
+    "deck": "No HB 1 in 2020 on this server \u2014 showing HB 1 from other sessions.",
+    "funnel": [
+     {
+      "id": "all",
+      "label": "Introduced",
+      "n": 1,
+      "width": "100%"
+     },
+     {
+      "id": "committee",
+      "label": "Waiting in committee",
+      "n": 1,
+      "width": "100%"
+     },
+     {
+      "id": "passed",
+      "label": "Passed one chamber",
+      "n": 1,
+      "width": "100%"
+     },
+     {
+      "id": "law",
+      "label": "Became law",
+      "n": 1,
+      "width": "100%"
+     }
+    ],
+    "headline": "1 bill matched. One passed a chamber. One became law.",
+    "person_only": false,
+    "place_name": "Virginia",
+    "plate": "ledger",
+    "query_type": "state_legislation",
+    "question": "HB 1 from 2020 in Virginia",
+    "section": "plate",
+    "state_code": "VA",
+    "stories": [
+     {
+      "_relevance": 0,
+      "english_text": "Acts of Assembly Chapter text (CHAP0350)",
+      "english_title": "Minimum wage; increases incrementally to $15.00 per hour by January 1, 2028",
+      "id": "va-2026-hb1",
+      "is_law": true,
+      "is_state_bill": true,
+      "latest_action": "Acts of Assembly Chapter text (CHAP0350)",
+      "latest_action_date": "2026-04-08",
+      "meta": "HB 1 (2026) \u00b7 Acts of Assembly Chapter text (CHAP0350)",
+      "number": 1,
+      "path": "/state/va/2026/hb/1",
+      "session": "2026",
+      "sponsor": "Jeion A. Ward",
+      "stage": "law",
+      "state": "va",
+      "title": "Minimum wage; increases incrementally to $15.00 per hour by January 1, 2028.",
+      "type": "hb"
+     }
+    ]
+   },
+   {
+    "section": "shelves",
+    "shelves": [
+     {
+      "id": "all",
+      "item_ids": [
+       "va-2026-hb1"
+      ],
+      "kind": "topic",
+      "label": "These bills"
+     }
+    ]
+   },
+   {
+    "section": "done"
+   }
+  ],
+  "status": 200
+ }
+}

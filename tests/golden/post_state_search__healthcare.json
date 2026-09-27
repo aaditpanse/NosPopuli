@@ -1,7 +1,7 @@
 {
  "meta": {
   "app_sha": "",
-  "captured": "2026-09-27T14:02:19",
+  "captured": "2026-09-27T14:09:38",
   "notes": "the state layer directly: the Virginia search index on this server",
   "volatile": []
  },
@@ -65,6 +65,7 @@
      "policy_area": null,
      "session": "2022",
      "sponsor": "Kathy J. Byron",
+     "stage": "law",
      "state": "va",
      "title": "Health care; consent to disclosure of records.",
      "type": "hb"
@@ -83,6 +84,7 @@
      "policy_area": "Commissions, Boards and Institutions Generally",
      "session": "2019",
      "sponsor": "Lee J. Carter",
+     "stage": "committee",
      "state": "va",
      "title": "Health care spending in the Commonwealth; JLARC to study.",
      "type": "hj"
@@ -101,6 +103,7 @@
      "policy_area": "Health",
      "session": "2018",
      "sponsor": "James A. \"Jay\" Leftwich",
+     "stage": "committee",
      "state": "va",
      "title": "Health care provider panels; vertically integrated carriers, public hospitals.",
      "type": "hb"
@@ -119,6 +122,7 @@
      "policy_area": "Health",
      "session": "2019",
      "sponsor": "Terry G. Kilgore",
+     "stage": "committee",
      "state": "va",
      "title": "Health care provider panels; vertically integrated carriers, public hospitals.",
      "type": "hb"
@@ -137,6 +141,7 @@
      "policy_area": null,
      "session": "2020specialI",
      "sponsor": null,
+     "stage": "law",
      "state": "va",
      "title": "Telemedicine services; originating site.",
      "type": "hb"
@@ -155,6 +160,7 @@
      "policy_area": null,
      "session": "2020specialI",
      "sponsor": null,
+     "stage": "law",
      "state": "va",
      "title": "Telemedicine services; originating site.",
      "type": "sb"
@@ -173,6 +179,7 @@
      "policy_area": null,
      "session": "2020",
      "sponsor": "Patrick A. Hope",
+     "stage": "law",
      "state": "va",
      "title": "Health care providers, certain; program to address career fatigue and wellness, civil immunity.",
      "type": "hb"
@@ -191,6 +198,7 @@
      "policy_area": null,
      "session": "2020",
      "sponsor": "George L. Barker",
+     "stage": "law",
      "state": "va",
      "title": "Health care providers, certain; program to address career fatigue and wellness, civil immunity.",
      "type": "sb"
@@ -209,6 +217,7 @@
      "policy_area": "Health",
      "session": "2019",
      "sponsor": "Vivian E. Watts",
+     "stage": "law",
      "state": "va",
      "title": "Continuing care retirement communities; accessing medical assistance, certificate of public need.",
      "type": "hb"
@@ -227,6 +236,7 @@
      "policy_area": "Health",
      "session": "2018",
      "sponsor": "James A. \"Jay\" Leftwich",
+     "stage": "committee",
      "state": "va",
      "title": "Certificate of public need; definition of \"medical care facility.\"",
      "type": "hb"

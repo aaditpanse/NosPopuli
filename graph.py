@@ -2011,6 +2011,36 @@ def loaded_states():
     return {st.upper() for st in LEGISLATURES if state_sessions(st)}
 
 
+# The ledger funnel's stages (agents/ledger_agent.build_funnel), from the
+# Open States action classifications. Virginia has no "became-law" action:
+# a bill the Governor signs is a chapter, so the signature is the law.
+_STAGES = ("introduced", "committee", "passed", "law")
+_STAGE_OF_CLASS = {"became-law": "law", "executive-signature": "law", "passage": "passed", "enrolled": "passed",
+                   "executive-receipt": "passed", "referral-committee": "committee",
+                   "committee-passage": "committee", "committee-passage-favorable": "committee",
+                   "committee-failure": "committee"}
+# The legislature's newer history rows carry text only.
+_LIS_STAGE = ((re.compile(r"approved by governor|acts of assembly chapter|signed by governor", re.I), "law"),
+              (re.compile(r"passed (?:house|senate)|enrolled|communicated to governor", re.I), "passed"),
+              (re.compile(r"referred to committee|reported from", re.I), "committee"))
+
+
+def state_stage(actions, newer=()):
+    """How far a state bill got, furthest wins: its classified actions, then
+    the legislature's newer (advisory) rows, which can only move it on. Pure."""
+    best = 0
+    for a in actions or []:
+        for c in a.get("classification") or []:
+            if c in _STAGE_OF_CLASS:
+                best = max(best, _STAGES.index(_STAGE_OF_CLASS[c]))
+    for h in newer or []:
+        for rx, stage in _LIS_STAGE:
+            if rx.search(h.get("description") or ""):
+                best = max(best, _STAGES.index(stage))
+                break
+    return _STAGES[best]
+
+
 def state_bill_row(st, session, key, b):
     """A bills-file record as one state search result. Pure."""
     itype, number = key.split("/")
@@ -2023,6 +2053,7 @@ def state_bill_row(st, session, key, b):
             "sponsor": primary["name"] if primary else None,
             "is_law": any("became-law" in a["classification"] or "executive-signature" in a["classification"]
                           for a in b.get("actions") or []),
+            "stage": state_stage(b.get("actions")),
             "path": f"/state/{st.lower()}/{session}/{itype}/{number}", "is_state_bill": True,
             "source": "open states"}
 

@@ -1,0 +1,36 @@
+{
+ "meta": {
+  "app_sha": "",
+  "captured": "2026-09-27T14:10:01",
+  "notes": "a state with no data on this server: the uncharted plate says so",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "question": "Texas school voucher bills"
+  },
+  "method": "POST",
+  "path": "/ledger"
+ },
+ "response": {
+  "ndjson": [
+   {
+    "place": {
+     "body": "Texas legislature",
+     "name": null,
+     "slug": "",
+     "state": "TX"
+    },
+    "plate": "uncharted",
+    "question": "Texas school voucher bills",
+    "reason": "TX legislation is not loaded on this server yet. States loaded: VA.",
+    "section": "plate",
+    "state_code": "TX"
+   },
+   {
+    "section": "done"
+   }
+  ],
+  "status": 200
+ }
+}

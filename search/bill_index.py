@@ -63,10 +63,11 @@ def batches(docs, max_inputs=_BATCH_INPUTS, max_chars=_BATCH_CHARS):
 # ---------------------------------------------------------------- documents
 
 DOCS_VERSION = 2       # 2: latest action and sponsor columns, for the feed
+STATE_DOCS_VERSION = 1  # 1: the funnel stage column
 US_DIV = "ocd-division/country:us"
 
 
-def state_doc(st, session, key, b, people_names=None):
+def state_doc(st, session, key, b, people_names=None, newer=()):
     """One state bill (a bills-<session>.json record) → its search
     document: identifier and title, other titles, subjects, and the
     legislature's own summary (Open States abstracts, the title one left
@@ -95,7 +96,8 @@ def state_doc(st, session, key, b, people_names=None):
             "doc_sha": hashlib.sha1(doc.encode()).hexdigest(), "latest_action": b.get("latest_action"),
             "latest_action_date": b.get("latest_action_date"), "sponsor_bioguide": None,
             "sponsor_name": primary["name"] if primary else None,
-            "jurisdiction": graph.state_div(st), "session": session}
+            "jurisdiction": graph.state_div(st), "session": session,
+            "stage": graph.state_stage(b.get("actions"), newer)}
 
 
 def load_state_docs(st, force=False):
@@ -109,8 +111,11 @@ def load_state_docs(st, force=False):
     with _get_pool().connection() as conn:
         for sid in graph.state_sessions(st):
             path = graph.data_path("state_bills", state=st, session=sid)
+            lis_path = graph.data_path("state_lis", state=st, session=sid)
             st_ = path.stat()
-            fp = f"{DOCS_VERSION}\n{st_.st_size} {st_.st_mtime_ns}"
+            # The legislature's newer actions move a bill's stage, so its file is in the fingerprint.
+            lis_fp = " ".join(map(str, graph._stat(lis_path))) if lis_path.exists() else "-"
+            fp = f"{DOCS_VERSION}s{STATE_DOCS_VERSION}\n{st_.st_size} {st_.st_mtime_ns}\n{lis_fp}"
             scope = f"docs/{st}/{sid}"
             with conn.transaction(), conn.cursor() as cur:
                 cur.execute("SELECT fingerprint FROM graph_scope WHERE scope = %s", (scope,))
@@ -118,7 +123,10 @@ def load_state_docs(st, force=False):
                 if row and row[0] == fp and not force:
                     continue
                 bills = json.loads(path.read_text())["bills"]
-                out[sid] = _write_docs(cur, (state_doc(st, sid, k, b) for k, b in bills.items()))
+                history = json.loads(lis_path.read_text()).get("history", {}) if lis_path.exists() else {}
+                newer = lambda k, b: [h for h in history.get(k, [])
+                                      if (h.get("date") or "") > (b.get("latest_action_date") or "")]
+                out[sid] = _write_docs(cur, (state_doc(st, sid, k, b, newer=newer(k, b)) for k, b in bills.items()))
                 cur.execute("""INSERT INTO graph_scope (scope, fingerprint, loaded_at, nodes, edges)
                                VALUES (%s, %s, NOW(), %s, 0)
                                ON CONFLICT (scope) DO UPDATE SET fingerprint = excluded.fingerprint,
@@ -163,7 +171,7 @@ def _write_docs(cur, docs):
                    title TEXT, introduced DATE, policy_area TEXT, subjects TEXT[], is_law BOOLEAN,
                    law_numbers TEXT[], summary TEXT, doc TEXT, doc_sha TEXT, latest_action TEXT,
                    latest_action_date DATE, sponsor_bioguide TEXT, sponsor_name TEXT,
-                   jurisdiction TEXT, session TEXT) ON COMMIT DROP""")
+                   jurisdiction TEXT, session TEXT, stage TEXT) ON COMMIT DROP""")
     n = 0
     with cur.copy("COPY stage_doc FROM STDIN") as cp:
         for d in docs:
@@ -171,17 +179,17 @@ def _write_docs(cur, docs):
                           d["introduced"], d["policy_area"], d["subjects"], d["is_law"], d["law_numbers"],
                           d["summary"], d["doc"], d["doc_sha"], d["latest_action"], d["latest_action_date"],
                           d["sponsor_bioguide"], d["sponsor_name"], d.get("jurisdiction") or US_DIV,
-                          d.get("session")))
+                          d.get("session"), d.get("stage")))
             n += 1
     # A new action changes a row without changing its document, so the
     # embedding (keyed on doc_sha) stays and only the columns move.
     cur.execute("""
         INSERT INTO bill_doc (instrument_id, congress, bill_type, number, title, introduced, policy_area,
                               subjects, is_law, law_numbers, summary, doc, doc_sha, latest_action,
-                              latest_action_date, sponsor_bioguide, sponsor_name, jurisdiction, session, updated_at)
+                              latest_action_date, sponsor_bioguide, sponsor_name, jurisdiction, session, stage, updated_at)
         SELECT DISTINCT ON (instrument_id) instrument_id, congress, bill_type, number, title, introduced,
                policy_area, subjects, is_law, law_numbers, summary, doc, doc_sha, latest_action,
-               latest_action_date, sponsor_bioguide, sponsor_name, jurisdiction, session, NOW()
+               latest_action_date, sponsor_bioguide, sponsor_name, jurisdiction, session, stage, NOW()
         FROM stage_doc
         ON CONFLICT (instrument_id) DO UPDATE SET
             title = excluded.title, introduced = excluded.introduced, policy_area = excluded.policy_area,
@@ -189,12 +197,13 @@ def _write_docs(cur, docs):
             summary = excluded.summary, doc = excluded.doc, doc_sha = excluded.doc_sha,
             latest_action = excluded.latest_action, latest_action_date = excluded.latest_action_date,
             sponsor_bioguide = excluded.sponsor_bioguide, sponsor_name = excluded.sponsor_name,
-            jurisdiction = excluded.jurisdiction, session = excluded.session, updated_at = NOW()
+            jurisdiction = excluded.jurisdiction, session = excluded.session, stage = excluded.stage,
+            updated_at = NOW()
         WHERE (bill_doc.doc_sha, bill_doc.latest_action, bill_doc.latest_action_date, bill_doc.sponsor_bioguide,
-               bill_doc.sponsor_name, bill_doc.jurisdiction, bill_doc.session)
+               bill_doc.sponsor_name, bill_doc.jurisdiction, bill_doc.session, bill_doc.stage)
               IS DISTINCT FROM (excluded.doc_sha, excluded.latest_action, excluded.latest_action_date,
                                 excluded.sponsor_bioguide, excluded.sponsor_name, excluded.jurisdiction,
-                                excluded.session)""")
+                                excluded.session, excluded.stage)""")
     cur.execute("DROP TABLE stage_doc")
     return n
 
@@ -340,7 +349,7 @@ def as_result(row):
             "policy_area": row.get("policy_area"), "is_state_bill": True,
             "latest_action": row.get("latest_action"),
             "latest_action_date": _iso(row.get("latest_action_date")),
-            "sponsor": row.get("sponsor_name"),
+            "sponsor": row.get("sponsor_name"), "stage": row.get("stage"),
             "path": f"/state/{st}/{row.get('session')}/{row['bill_type']}/{row['number']}",
         }
     return {
@@ -420,7 +429,7 @@ def search(question, congresses=None, limit=10, laws_only=False, jurisdiction=US
         ids = rrf(fts, near)[:limit]
         cur.execute("""SELECT instrument_id, congress, bill_type, number, title, introduced,
                               policy_area, is_law, law_numbers, jurisdiction, session,
-                              latest_action, latest_action_date, sponsor_name
+                              latest_action, latest_action_date, sponsor_name, stage
                        FROM bill_doc WHERE instrument_id = ANY(%s)""", (ids,))
         rows = {r["instrument_id"]: r for r in cur.fetchall()}
     return [as_result(rows[i]) for i in ids if i in rows]

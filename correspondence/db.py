@@ -275,6 +275,7 @@ def init_db():
             -- whose it is, and every search filters on it, federal by default.
             ALTER TABLE bill_doc ADD COLUMN IF NOT EXISTS jurisdiction TEXT NOT NULL DEFAULT 'ocd-division/country:us';
             ALTER TABLE bill_doc ADD COLUMN IF NOT EXISTS session TEXT;
+            ALTER TABLE bill_doc ADD COLUMN IF NOT EXISTS stage TEXT;
             ALTER TABLE bill_doc ALTER COLUMN congress DROP NOT NULL;
             CREATE INDEX IF NOT EXISTS idx_bill_doc_jurisdiction ON bill_doc (jurisdiction, session);
         """)
