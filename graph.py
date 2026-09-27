@@ -1950,6 +1950,135 @@ def snapshot_votes(persons, year, topic, limit, loaded_congress):
     return rows[:limit], len(rows), len(rows) > limit, files
 
 
+# ------------------------------------------------ state records, per request
+#
+# The state bill page reads the files the sync keeps (plan step 13): the Open
+# States record, its roll calls, the legislature's newer actions, the text.
+# A session's votes file is tens of MB, so each parsed file is kept while its
+# mtime stands, a few at a time.
+
+_STATE_FILE_CACHE, _STATE_FILE_MAX = {}, 6
+
+
+def _state_file(kind, st, session):
+    """A parsed derived file, cached per (kind, state, session, mtime);
+    None when it is not on disk."""
+    path = data_path(kind, state=st, session=session) if kind != "state_people" else data_path(kind, state=st)
+    try:
+        mtime = path.stat().st_mtime_ns
+    except FileNotFoundError:
+        return None
+    key = (kind, st, session)
+    hit = _STATE_FILE_CACHE.get(key)
+    if hit and hit[0] == mtime:
+        return hit[1]
+    data = json.loads(path.read_text())
+    if kind == "state_votes":
+        by_bill = {}
+        for v in data["votes"]:
+            by_bill.setdefault(v["bill"], []).append(v)
+        data = {"meta": data["meta"], "by_bill": by_bill}
+    if len(_STATE_FILE_CACHE) >= _STATE_FILE_MAX:
+        _STATE_FILE_CACHE.pop(next(iter(_STATE_FILE_CACHE)))
+    _STATE_FILE_CACHE[key] = (mtime, data)
+    return data
+
+
+def state_bill_page(st, session, key):
+    """Everything the state bill page shows, from files: {bill, meta, votes,
+    newer_actions, people}, or None when the bill is not on disk. newer_actions
+    are the legislature's own history rows dated after the Open States
+    record's latest action: advisory, as the plan says."""
+    bills = _state_file("state_bills", st, session)
+    if not bills or key not in bills["bills"]:
+        return None
+    bill = bills["bills"][key]
+    votes = (_state_file("state_votes", st, session) or {"by_bill": {}})["by_bill"].get(key, [])
+    lis = _state_file("state_lis", st, session)
+    newer = []
+    if lis:
+        last = bill.get("latest_action_date") or ""
+        newer = [dict(h, source="legislature's daily file", certification="advisory")
+                 for h in lis.get("history", {}).get(key, []) if (h.get("date") or "") > last]
+    people = {p["id"]: p for p in (_state_file("state_people", st, None) or {"people": []})["people"]}
+    return {"bill": bill, "meta": bills["meta"], "votes": votes, "newer_actions": newer, "people": people,
+            "lis_meta": (lis or {}).get("meta")}
+
+
+# Furthest along first: the version a reader wants when none is named.
+_VERSION_ORDER = ("chapter", "enrolled", "reenrolled", "engrossed", "substitute", "amendment", "committee",
+                  "printed", "introduced")
+
+
+def state_versions(st, session, bill):
+    """The bill's text versions with whether each is on disk: [{name, date,
+    url, media_type, file, text}] in the record's order. Pure but for
+    reading the text manifest."""
+    manifest_path = DATA_DIR / "raw" / "lis" / "text" / session / "manifest.json"
+    manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
+    from sources.lis import pick_link, text_name
+    out = []
+    for v in bill.get("versions") or []:
+        link = pick_link(v["links"])
+        name = text_name(link["url"]) if link else None
+        entry = manifest.get(name) or {}
+        out.append({"name": v["name"], "date": v.get("date"), "url": link["url"] if link else None,
+                    "media_type": link["media_type"] if link else None, "file": name,
+                    "text": entry.get("status") == "ok" and (link["media_type"] == "text/html" or entry.get("text"))})
+    return out
+
+
+def default_version(versions):
+    """The furthest version with text on disk, else the last one. Pure."""
+    def rank(v):
+        n = (v["name"] or "").lower()
+        return next((i for i, w in enumerate(_VERSION_ORDER) if w in n), len(_VERSION_ORDER))
+    with_text = [v for v in versions if v["text"]]
+    pool = with_text or versions
+    return min(pool, key=rank) if pool else None
+
+
+def html_text(raw):
+    """A stored LIS page's text: the legacy pages wrap the bill in their
+    site's frame (<div id="mainC">) and are cp1252; the newer ones are the
+    bill alone. Pure."""
+    from bs4 import BeautifulSoup
+    html = raw.decode("utf-8") if raw[:3] == b"\xef\xbb\xbf" or _is_utf8(raw) else raw.decode("cp1252", "replace")
+    soup = BeautifulSoup(html, "html.parser")
+    main = soup.find(id="mainC") or soup.body or soup
+    for tag in main(["script", "style", "nav"]):
+        tag.decompose()
+    # Lines break at blocks, not at every tag: "§ <b>40.1-28.10</b> of the
+    # Code" is one line of the bill.
+    for br in main.find_all("br"):
+        br.replace_with("\n")
+    for block in main.find_all(["p", "div", "tr", "li", "h1", "h2", "h3", "h4", "table", "center"]):
+        block.insert_after("\n")
+    lines = [re.sub(r"[ \t\xa0\r\n]+", " ", ln).strip() for ln in main.get_text("").split("\n")]
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()
+
+
+def _is_utf8(raw):
+    try:
+        raw.decode("utf-8")
+        return True
+    except UnicodeDecodeError:
+        return False
+
+
+def state_version_text(session, version):
+    """The text of one version as stored, or None when it is not on disk."""
+    import gzip
+    if not version or not version.get("file"):
+        return None
+    root = DATA_DIR / "raw" / "lis" / "text" / session
+    if version["media_type"] == "application/pdf":
+        p = root / (version["file"] + ".txt.gz")
+        return gzip.decompress(p.read_bytes()).decode("utf-8", "replace") if p.exists() else None
+    p = root / (version["file"] + ".gz")
+    return html_text(gzip.decompress(p.read_bytes())) if p.exists() else None
+
+
 def state_vote_counts(st):
     """{session: roll calls on disk}, from each votes file's meta. A session
     that has not sat has a file with none: it is not the current one."""

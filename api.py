@@ -260,8 +260,10 @@ class DistrictImpactRequest(BaseModel):
 
 
 class StateBillRequest(BaseModel):
-    ocd_id: str
     state_code: str
+    session: str
+    bill_type: str
+    number: int
     user_context: Optional[dict] = None
 
 
@@ -2096,125 +2098,118 @@ async def state_search(request: Request, body: StateSearchRequest):
         raise HTTPException(status_code=500, detail="State search failed.")
 
 
-def _state_bill_fingerprint(bill_data):
-    """Short fingerprint of a state bill's mutable state, so the translation
-    cache invalidates when the bill moves through the legislature. LegiScan's
-    per-bill change_hash already captures this exactly; fall back to the latest
-    action if it's ever missing."""
-    change_hash = bill_data.get("change_hash")
-    if change_hash:
-        return str(change_hash)[:12]
-    parts = [
-        str(bill_data.get("latest_action_date") or ""),
-        str(bill_data.get("latest_action_description") or ""),
-    ]
+def _state_bill_fingerprint(bill, versions):
+    """Short fingerprint of a state bill's mutable state — its latest action
+    and its text versions — so the translation cache invalidates when the
+    bill moves through the legislature."""
+    parts = [str(bill.get("latest_action_date") or ""), str(bill.get("latest_action") or ""),
+             "|".join(v["name"] or "" for v in versions)]
     return hashlib.sha1("|".join(parts).encode()).hexdigest()[:12]
 
 
-def _state_bill_stream(bill_data, state_code, ocd_id):
-    """NDJSON section generator for /state/bill, mirroring the federal stream.
-    The instant pieces (meta, votes, timeline, sponsors) come straight from the
-    fetched bill; only the text fetch and Haiku translation are deferred, and
-    they stream in as they resolve instead of blocking the whole page."""
+def _state_not_synced(st, session, bill_type, number):
+    """Why a state bill page is empty: the files read, never a live call."""
+    import graph
+    conf = graph.LEGISLATURES.get(st)
+    label = f"{bill_type.upper()} {number} of {graph.DIVISION_NAMES.get(st, st.upper())}'s {session} session"
+    if not conf:
+        return f"{graph.DIVISION_NAMES.get(st, st.upper())}'s legislature is not loaded on this server."
+    bills = graph.data_path("state_bills", state=st, session=session)
+    if not bills.exists():
+        return f"{label} is not on this server: no record of that session is on disk."
+    month = (json.loads(bills.read_text()).get("meta") or {}).get("dump_month")
+    return (f"{label} is not in the Open States record of {month or 'the last extract'}. "
+            f"A bill filed since appears after the next monthly extract.")
+
+
+def _state_bill_stream(page, st, session, key, user_context=None):
+    """NDJSON section generator for /state/bill, from the files the sync
+    keeps (plan step 13): the Open States record, its roll calls, the
+    legislature's newer actions (advisory), the stored text. Only the
+    translation calls a model."""
+    import graph
     loop = asyncio.get_event_loop()
 
     def ex(fn, *args):
         return loop.run_in_executor(None, fn, *args)
 
-    identifier = bill_data.get("identifier", "")
-    title = bill_data.get("title", "")
-    sources = [
-        {"url": s.get("url"), "note": s.get("note") or ""}
-        for s in (bill_data.get("sources") or []) if s.get("url")
-    ]
-    sponsors = [
-        {"name": s.get("name", ""), "party": "", "state": state_code}
-        for s in (bill_data.get("sponsorships") or []) if s.get("primary")
-    ]
-    fingerprint = _state_bill_fingerprint(bill_data)
+    bill, people = page["bill"], page["people"]
+    state_name = graph.DIVISION_NAMES.get(st, st.upper())
+    person = lambda pid: people.get(pid) or {}  # noqa: E731
+    sponsors = [{"name": person(sp["person"]).get("name") or sp["name"], "party": person(sp["person"]).get("party") or "",
+                 "state": st.upper(), "primary": sp["primary"], "openstates_id": sp["person"]}
+                for sp in bill["sponsors"]]
+    versions = graph.state_versions(st, session, bill)
+    fingerprint = _state_bill_fingerprint(bill, versions)
+    lis_code = graph.lis_session(st, session)
+    lis_url = (f"https://lis.virginia.gov/bill-details/{lis_code}/{bill['identifier'].replace(' ', '')}"
+               if st == "va" and lis_code else None)
     synthetic_bill_data = {
         "bill": {
-            "congress": None, "type": state_code, "number": identifier, "title": title,
-            "sponsors": [{"fullName": s["name"]} for s in sponsors],
-            "latestAction": {"text": bill_data.get("latest_action_description", "")},
-            "policyArea": {"name": ""},
+            "congress": None, "type": st.upper(), "number": bill["identifier"], "title": bill["title"],
+            "sponsors": [{"fullName": sp["name"]} for sp in sponsors if sp["primary"]],
+            "latestAction": {"text": bill.get("latest_action") or ""},
+            "policyArea": {"name": (bill.get("subjects") or [""])[0]},
         }
     }
 
     async def stream():
-        text_task = asyncio.ensure_future(ex(fetch_state_bill_text, bill_data))
+        chosen = graph.default_version(versions)
+        text_task = asyncio.ensure_future(ex(graph.state_version_text, session, chosen))
 
         async def sec_meta():
-            return {
-                "section": "meta", "identifier": identifier, "title": title,
-                "state_code": state_code, "is_state_bill": True,
-                "source_url": bill_data.get("url") or None,
-                "sources": sources, "sponsors": sponsors,
-            }
+            return {"section": "meta", "identifier": bill["identifier"], "title": bill["title"], "state_code": st.upper(),
+                    "state_name": state_name, "session": session, "chamber": bill.get("chamber"),
+                    "is_state_bill": True, "source_url": lis_url, "sources": [{"url": u} for u in bill["sources"]],
+                    "sponsors": [sp for sp in sponsors if sp["primary"]], "record": {
+                        "source": page["meta"].get("source"), "dump_month": page["meta"].get("dump_month"),
+                        "certification": "ingested",
+                        "note": "Open States' copy of the legislature's record; not affirmed by a second publisher"}}
+
+        async def sec_sponsors():
+            return {"section": "sponsors", "sponsors": [sp for sp in sponsors if sp["primary"]],
+                    "cosponsors": [sp for sp in sponsors if not sp["primary"]]}
 
         async def sec_votes():
-            # LegiScan getBill carries only roll-call *summaries*. Pick the floor
-            # vote per chamber, then fetch its per-legislator detail (getRollCall)
-            # and the session roster (getSessionPeople, cached) to label seats —
-            # at most 2 roll-call queries + 1 cached roster per bill open.
-            summaries = bill_data.get("votes") or []
-            session_id = (bill_data.get("session_id")
-                          or (bill_data.get("session") or {}).get("session_id"))
-            selected = {
-                "lower": select_floor_roll_call(summaries, "lower", state_code),
-                "upper": select_floor_roll_call(summaries, "upper", state_code),
-            }
-
-            people_map = {}
-            if any(selected.values()) and session_id:
-                people_map = await ex(legiscan.get_session_people, session_id)
-
-            async def build(chamber_class):
-                sel = selected[chamber_class]
-                if not sel or not sel.get("roll_call_id"):
-                    return None
-                rc = await ex(legiscan.get_roll_call, sel["roll_call_id"])
-                if not rc:
-                    return None
-                return map_roll_call(rc, state_code, chamber_class, people_map)
-
-            house, senate = await asyncio.gather(build("lower"), build("upper"))
-            return {"section": "votes", "votes": {"house": house, "senate": senate}}
+            people_map = {pid: {"name": p.get("name"), "party": (p.get("party") or "")[:1]} for pid, p in people.items()}
+            out = {}
+            for chamber, label in (("lower", "house"), ("upper", "senate")):
+                sel = select_floor_roll_call(page["votes"], chamber, st.upper())
+                out[label] = map_roll_call(sel, st.upper(), chamber, people_map) if sel else None
+            return {"section": "votes", "votes": out, "roll_calls": len(page["votes"])}
 
         async def sec_timeline():
-            return {"section": "timeline", "timeline": "",
-                    "timeline_events": structure_state_actions(bill_data)}
+            events = [{"date": a["date"], "text": a["description"], "chamber": a.get("chamber"),
+                       "classification": a.get("classification")} for a in bill["actions"]]
+            events += [{"date": h["date"], "text": h["description"], "chamber": h.get("chamber"),
+                        "source": h["source"], "certification": h["certification"]} for h in page["newer_actions"]]
+            return {"section": "timeline", "timeline": "", "timeline_events": events}
 
         async def sec_text():
             txt = await text_task
-            return {"section": "bill_text", "bill_text": txt or None}
+            return {"section": "bill_text", "bill_text": (txt or None) and txt[:50000],
+                    "truncated": bool(txt) and len(txt) > 50000, "version": chosen and chosen["name"],
+                    "versions": [{k: v[k] for k in ("name", "date", "url", "text")} for v in versions],
+                    "empty_reason": None if txt else ("no text version of this bill is on this server yet"
+                                                      if versions else "the record lists no text version")}
 
         async def sec_translation():
             txt = await text_task
             tr = await ex(translate_state_bill, synthetic_bill_data, txt, get_client(), fingerprint)
             return {"section": "translation", "translation": tr or "Translation unavailable for this bill."}
 
-        producers = [
-            asyncio.ensure_future(sec_meta()),
-            asyncio.ensure_future(sec_votes()),
-            asyncio.ensure_future(sec_timeline()),
-            asyncio.ensure_future(sec_text()),
-            asyncio.ensure_future(sec_translation()),
-        ]
+        producers = [asyncio.ensure_future(f()) for f in
+                     (sec_meta, sec_sponsors, sec_votes, sec_timeline, sec_text, sec_translation)]
         for fut in asyncio.as_completed(producers):
             try:
                 yield json.dumps(await fut) + "\n"
             except Exception as e:
-                print(f"[API] state bill section error {ocd_id}: {e}")
-
+                print(f"[API] state bill section error {st}/{session}/{key}: {e}")
         try:
-            log_action(
-                agent_name="api", action="get_state_bill",
-                input_data={"ocd_id": ocd_id, "state": state_code},
-                output_data={"status": "complete"},
-            )
+            log_action(agent_name="api", action="get_state_bill",
+                       input_data={"state": st, "session": session, "bill": key}, output_data={"status": "complete"})
         except Exception as e:
-            print(f"[API] state bill logging error {ocd_id}: {e}")
+            print(f"[API] state bill logging error {st}/{session}/{key}: {e}")
         yield json.dumps({"section": "done"}) + "\n"
 
     return stream
@@ -2223,15 +2218,36 @@ def _state_bill_stream(bill_data, state_code, ocd_id):
 @app.post("/state/bill")
 @limiter.limit("30/minute")
 async def get_state_bill(request: Request, body: StateBillRequest):
-    """Streams state bill detail as NDJSON — parity with the federal /bill."""
-    loop = asyncio.get_event_loop()
-
-    bill_data = await loop.run_in_executor(None, fetch_state_bill, body.ocd_id)
-    if not bill_data:
-        raise HTTPException(status_code=404, detail="State bill not found.")
-
-    stream = _state_bill_stream(bill_data, body.state_code, body.ocd_id)
+    """Streams a state bill as NDJSON, read from the files on this server —
+    parity with the federal /bill."""
+    import graph
+    st, key = body.state_code.lower(), f"{body.bill_type.lower()}/{body.number}"
+    try:
+        page = await asyncio.to_thread(graph.state_bill_page, st, body.session, key)
+    except Exception as e:
+        print(f"[API] state bill data unreadable {st}/{body.session}/{key}: {type(e).__name__}: {e}")
+        raise HTTPException(status_code=503, detail="The bill data on this server could not be read for this bill.")
+    if not page:
+        raise HTTPException(status_code=404, detail=_state_not_synced(st, body.session, body.bill_type, body.number))
+    stream = _state_bill_stream(page, st, body.session, key, body.user_context)
     return StreamingResponse(stream(), media_type="application/x-ndjson", headers=STREAM_HEADERS)
+
+
+@app.get("/api/state/bill/{st}/{session}/{bill_type}/{number}/text")
+@limiter.limit("30/minute")
+async def state_bill_text(request: Request, st: str, session: str, bill_type: str, number: int,
+                          version: Optional[str] = None):
+    """One text version of a state bill, whole, from the stored copy."""
+    import graph
+    page = await asyncio.to_thread(graph.state_bill_page, st.lower(), session, f"{bill_type.lower()}/{number}")
+    if not page:
+        raise HTTPException(status_code=404, detail=_state_not_synced(st.lower(), session, bill_type, number))
+    versions = graph.state_versions(st.lower(), session, page["bill"])
+    chosen = next((v for v in versions if v["name"] == version), None) if version else graph.default_version(versions)
+    text = await asyncio.to_thread(graph.state_version_text, session, chosen)
+    return {"text": text or None, "version": chosen and chosen["name"],
+            "versions": [{k: v[k] for k in ("name", "date", "url", "text")} for v in versions],
+            "empty_reason": None if text else "this version's text is not on this server yet"}
 
 
 @app.post("/state/member/search")

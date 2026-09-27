@@ -191,8 +191,10 @@ def sync_dump(today=None):
         dest = raw / f"{month}-public.pgdump"
         if manifest.get("month") == month and dest.exists() and dest.stat().st_size == size:
             return {**manifest, "unchanged": True}
-        # curl resumes a partial file (-C -) and streams to disk.
-        subprocess.run(["curl", "-sS", "-L", "-C", "-", "-A", _UA, "-o", str(dest), url], check=True)
+        if not (dest.exists() and dest.stat().st_size == size):
+            # curl resumes a partial file (-C -) and streams to disk; a
+            # complete one (downloaded by hand) is only recorded.
+            subprocess.run(["curl", "-sS", "-L", "-C", "-", "-A", _UA, "-o", str(dest), url], check=True)
         if dest.stat().st_size != size:
             raise RuntimeError(f"{dest.name}: {dest.stat().st_size} bytes on disk, the server says {size}")
         digest = hashlib.sha256()

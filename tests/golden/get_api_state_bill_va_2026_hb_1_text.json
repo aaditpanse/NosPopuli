@@ -1,0 +1,40 @@
+{
+ "meta": {
+  "app_sha": "9865c8c",
+  "captured": "2026-09-27T06:33:01",
+  "notes": "a Virginia bill's stored text",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "path": "/api/state/bill/va/2026/hb/1/text"
+ },
+ "response": {
+  "json": {
+   "empty_reason": null,
+   "text": "CHAPTER 350\nAn Act to amend and reenact \u00a7 40.1-28.10 of the Code of Virginia, relating to minimum wage.\n[H 1]\nApproved April 8, 2026\n\nBe it enacted by the General Assembly of Virginia:\n1. That \u00a7 40.1-28.10 of the Code of Virginia is amended and reenacted as follows:\n\u00a7 40.1-28.10. Minimum wages.\nA. 1. Prior to May 1, 2021, every employer shall pay to each of its employees wages at a rate not less than the federal minimum wage.\n2. Beginning May 1, 2021, every employer shall pay to each of his employees at a rate not less than the federal minimum wage or 75 percent of the Virginia minimum wage provided for in this section, whichever is greater. For the purposes of this subdivision \"employee\" means any person or individual who is enrolled in an established employer on-the-job or other training program for a period not to exceed 90 days which meets standards set by regulations adopted by the Commissioner.\nB. From May 1, 2021 January 1, 2026, until January 1, 2022 2027, every employer shall pay to each of its employees wages at a rate not less than the greater of (i) $9.50 $12.77 per hour or (ii) the federal minimum wage.\nC. From January 1, 2022 2027, until January 1, 2023 2028, every employer shall pay to each of its employees wages at a rate not less than the greater of (i) $11.00 $13.75 per hour or (ii) the federal minimum wage.\nD. From January 1, 2023 2028, until January 1, 2025 2029, every employer shall pay to each of its employees wages at a rate not less than the greater of (i) $12.00 $15.00 per hour or (ii) the federal minimum wage.\nE. From and after January 1, 2025 2029, every employer shall pay to each of his employees wages at a rate not less than the greater of (i) the adjusted state hourly minimum wage or (ii) the federal minimum wage.\nF. By October 1, 2024 2028, and annually thereafter, the Commissioner shall establish the adjusted state hourly minimum wage that shall be in effect during the 12-month period commencing on the following January 1. The Commissioner shall set the adjusted state hourly minimum wage at the sum of (i) the amount of the state hourly minimum wage rate that is in effect on the date such adjustment is made and (ii) a percentage of the amount described in clause (i) that is equal to the percentage by which the United States Average Consumer Price Index for all items, all urban consumers (CPI-U), as published by the Bureau of Labor Statistics of the U.S. Department of Labor, or a successor index as calculated by the U.S. Department of Labor, has increased during the most recent calendar year for which such information is available. The amount of each annual adjustment shall not be less than zero.",
+   "version": "Chaptered",
+   "versions": [
+    {
+     "date": null,
+     "name": "Introduced",
+     "text": true,
+     "url": "https://lis.blob.core.windows.net/files/1081189.HTML"
+    },
+    {
+     "date": null,
+     "name": "Enrolled",
+     "text": true,
+     "url": "https://lis.blob.core.windows.net/files/1199671.HTML"
+    },
+    {
+     "date": null,
+     "name": "Chaptered",
+     "text": true,
+     "url": "https://lis.blob.core.windows.net/files/1217587.HTML"
+    }
+   ]
+  },
+  "status": 200
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "meta": {
+  "app_sha": "9865c8c",
+  "captured": "2026-09-27T06:33:01",
+  "notes": "a state bill not in the record: 404 naming the record read",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "bill_type": "hb",
+   "number": 99999,
+   "session": "2026",
+   "state_code": "va"
+  },
+  "method": "POST",
+  "path": "/state/bill"
+ },
+ "response": {
+  "json": {
+   "detail": "HB 99999 of Virginia's 2026 session is not in the Open States record of 2026-09. A bill filed since appears after the next monthly extract."
+  },
+  "status": 404
+ }
+}

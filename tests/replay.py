@@ -704,6 +704,11 @@ CASES = (
     ("GET", "/member/finance", None, {"name": "Tammy Baldwin", "state": "WI",
                                       "chamber": "senate"}, None, "FEC"),
     ("GET", "/api/bill/119/hr/1234/text", None, None, None, "bill text, from the stored typescript"),
+    ("POST", "/state/bill", {"state_code": "va", "session": "2026", "bill_type": "hb", "number": 1}, None, None,
+     "a Virginia bill from the Open States files: record, votes, timeline, stored text"),
+    ("POST", "/state/bill", {"state_code": "va", "session": "2026", "bill_type": "hb", "number": 99999}, None,
+     None, "a state bill not in the record: 404 naming the record read"),
+    ("GET", "/api/state/bill/va/2026/hb/1/text", None, None, None, "a Virginia bill's stored text"),
     ("GET", "/api/bill/119/hr/99999/text", None, None, None,
      "a bill not in the last sync: no text, and no live call"),
     ("GET", "/bill/110/hr/2/text", None, None, None,
@@ -761,6 +766,9 @@ def _slug(method, path, body, params=None):
     hint = ""
     if isinstance(body, dict):
         q = str(body.get("question") or body.get("name") or body.get("date") or "")
+        if not q and body.get("bill_type"):
+            # A bill body names the bill: two bills must not share a fixture.
+            q = f"{body.get('state_code', '')} {body.get('session', '')} {body['bill_type']}{body.get('number', '')}"
         hint = "__" + "_".join(q.lower().split()[:3]) if q else ""
     if params:
         hint += "__" + "_".join(f"{k}-{v}" for k, v in sorted(params.items()))

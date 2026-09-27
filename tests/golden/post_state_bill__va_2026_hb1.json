@@ -1,0 +1,2220 @@
+{
+ "meta": {
+  "app_sha": "9865c8c",
+  "captured": "2026-09-27T06:33:01",
+  "notes": "a Virginia bill from the Open States files: record, votes, timeline, stored text",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "bill_type": "hb",
+   "number": 1,
+   "session": "2026",
+   "state_code": "va"
+  },
+  "method": "POST",
+  "path": "/state/bill"
+ },
+ "response": {
+  "ndjson": [
+   {
+    "chamber": "lower",
+    "identifier": "HB 1",
+    "is_state_bill": true,
+    "record": {
+     "certification": "ingested",
+     "dump_month": "2026-09",
+     "note": "Open States' copy of the legislature's record; not affirmed by a second publisher",
+     "source": "Open States monthly Postgres dump (data.openstates.org)"
+    },
+    "section": "meta",
+    "session": "2026",
+    "source_url": "https://lis.virginia.gov/bill-details/20261/HB1",
+    "sources": [
+     {
+      "url": "https://lis.virginia.gov/bill-details/20261/HB1"
+     }
+    ],
+    "sponsors": [
+     {
+      "name": "Jeion Ward",
+      "openstates_id": "ocd-person/f3e15ab0-8419-43c2-ab7a-f3984419d1eb",
+      "party": "Democratic",
+      "primary": true,
+      "state": "VA"
+     }
+    ],
+    "state_code": "VA",
+    "state_name": "Virginia",
+    "title": "Minimum wage; increases incrementally to $15.00 per hour by January 1, 2028."
+   },
+   {
+    "cosponsors": [
+     {
+      "name": "Adele McClure",
+      "openstates_id": "ocd-person/d0de7acb-ce8d-4bb2-b6e5-99cefe5e76a6",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Alex Askew",
+      "openstates_id": "ocd-person/3a48fc34-a650-4fd5-acea-e703e2b8de90",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Alfonso Lopez",
+      "openstates_id": "ocd-person/ed935430-db59-4962-91f7-c0eeca2ef8e2",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Amy Laufer",
+      "openstates_id": "ocd-person/7e0776e4-a915-4758-a7b3-70ca42ce3fe4",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Atoosa Reaser",
+      "openstates_id": "ocd-person/38f25fcb-2f54-411a-84d5-2d1f748d4183",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Betsy Carr",
+      "openstates_id": "ocd-person/a6f78488-1c78-4409-8c4a-bf0d0920e852",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Bonita Anthony",
+      "openstates_id": "ocd-person/725be36e-2485-4f9f-a15f-86c574cc8d4b",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Briana Sewell",
+      "openstates_id": "ocd-person/23775904-887c-4a2c-9424-0683608193ba",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Cliff Hayes",
+      "openstates_id": "ocd-person/77b071e3-b8fa-4455-b2e6-3d487a8145c8",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Candi King",
+      "openstates_id": "ocd-person/b04d518c-c077-4f41-82d7-8cd55ac1a54b",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Charlie Schmidt",
+      "openstates_id": null,
+      "party": "",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Charniele Herring",
+      "openstates_id": "ocd-person/a0b9b444-ee25-48a1-ab61-cf0be462e89d",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Dan Helmer",
+      "openstates_id": "ocd-person/5e5e025d-7e50-4c2f-ba81-720f19aa0d81",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "David Reid",
+      "openstates_id": "ocd-person/0258144f-e8e8-4710-a80c-362f2077f57b",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "David Bulova",
+      "openstates_id": "ocd-person/07903462-a2a0-4dd2-9b67-1dc42eec240a",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Debra Gardner",
+      "openstates_id": "ocd-person/28a2a753-16db-4236-baf0-398c0cafa259",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Delores McQuinn",
+      "openstates_id": "ocd-person/4ae07d5d-1da3-4370-b796-7698013ca994",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Destiny LeVere Bolling",
+      "openstates_id": "ocd-person/43d936f6-2ae8-42fe-a9a9-a4f139842afa",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Don Scott",
+      "openstates_id": "ocd-person/f8cafb3b-ed12-40e9-b062-318790434179",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Elizabeth Bennett-Parker",
+      "openstates_id": "ocd-person/c3b0c2fc-c7bf-45f8-8ee3-50d5a57bad08",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Liz Guzm\u00e1n",
+      "openstates_id": "ocd-person/34c31079-0077-4ce5-9985-d0f2a95a12a7",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Garrett McGuire",
+      "openstates_id": "ocd-person/418a32b0-5822-4673-9293-e8363038805b",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Gretchen M. Bulova",
+      "openstates_id": null,
+      "party": "",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Holly Seibold",
+      "openstates_id": "ocd-person/745d2197-96c4-4e10-be1d-19f70c35f541",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Irene Shin",
+      "openstates_id": "ocd-person/3f02dc5d-5107-4620-add7-c32a2ea8bf44",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "J.J. Singh",
+      "openstates_id": "ocd-person/837c9441-c0d2-497e-80e9-955bf152831b",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Jackie Glass",
+      "openstates_id": "ocd-person/dae8ce89-647a-407a-9550-60c404a89e29",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Jessica L. Anderson",
+      "openstates_id": null,
+      "party": "",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "John Chilton McAuliff",
+      "openstates_id": null,
+      "party": "",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Josh Thomas",
+      "openstates_id": "ocd-person/b6db5cc9-d9d3-4cbd-9532-6126a47c2ab3",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Josh Cole",
+      "openstates_id": "ocd-person/986f0601-025b-4fa7-acda-b2d3c2280784",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Karen Keys-Gamarra",
+      "openstates_id": "ocd-person/7c045b50-e18d-422e-b87f-26eb7b61d651",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Karen R. \"Kacey\" Carnegie",
+      "openstates_id": null,
+      "party": "",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Karrie Delaney",
+      "openstates_id": "ocd-person/7ec1cbe4-667d-4dbb-a840-459449ccd5df",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Kathy Tran",
+      "openstates_id": "ocd-person/ddba8b1b-8a1d-42c2-aba5-adc1331ee6f1",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Katrina Callsen",
+      "openstates_id": "ocd-person/d0263d88-91b1-414d-b58b-1ff0523f75ec",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Kelly Fowler",
+      "openstates_id": "ocd-person/bf558d98-23da-41c4-8ae2-4dc45631808c",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Kimberly Pope Adams",
+      "openstates_id": null,
+      "party": "",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Laura Jane Cohen",
+      "openstates_id": "ocd-person/6840c55c-6496-44ce-8a60-3288e222ddc0",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Leslie Chambers Mehta",
+      "openstates_id": null,
+      "party": "",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Lily V. Franklin",
+      "openstates_id": null,
+      "party": "",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Lindsey Dougherty",
+      "openstates_id": "ocd-person/1084ab28-a14a-4814-8501-96cfd1b17d1d",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Luke Torian",
+      "openstates_id": "ocd-person/44ebbeab-055c-402b-a56e-bb7487d0da62",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Cia Price",
+      "openstates_id": "ocd-person/58b46062-f618-4b27-b0ec-3bbb57db839b",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Marcus Simon",
+      "openstates_id": "ocd-person/ca122856-dfc5-4ba1-84bb-48fdcf7a36f5",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Margaret A. Franklin",
+      "openstates_id": null,
+      "party": "",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Mark C. Downey",
+      "openstates_id": null,
+      "party": "",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Mark Sickles",
+      "openstates_id": "ocd-person/aa6ad05b-c593-4b81-abf4-299f8669839d",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Marty Martinez",
+      "openstates_id": "ocd-person/beaab5ae-3e8d-4c12-b388-a59cdc467771",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "May Nivar",
+      "openstates_id": "ocd-person/50a18b88-f257-4234-920f-cfa531a28be4",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Michael Feggans",
+      "openstates_id": "ocd-person/cbf3268e-ced2-4aad-8ed1-18e4f37534ec",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Michael J. Jones",
+      "openstates_id": null,
+      "party": "",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Michelle Maldonado",
+      "openstates_id": "ocd-person/47e6d456-740e-4707-ae93-4b6efe8c0ce1",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Nadarius Clark",
+      "openstates_id": "ocd-person/a7fd18db-f30c-45c6-aa90-bdb6f2ce412b",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Nicole Cole",
+      "openstates_id": "ocd-person/f09abfed-0fb2-4ef3-966c-4cc0246b701d",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Patrick Hope",
+      "openstates_id": "ocd-person/c10414ad-5251-4fba-8ad9-a541311f2b9f",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Paul Krizek",
+      "openstates_id": "ocd-person/d90e6a36-4464-4481-b00d-74ed9964d45e",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Phil Hernandez",
+      "openstates_id": "ocd-person/bbd31428-1b2b-48c6-aa76-cb785e91ca8f",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Rae Cousins",
+      "openstates_id": "ocd-person/359eaeba-903c-42b4-b9e3-5c5b4e9d721d",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Rip Sullivan",
+      "openstates_id": "ocd-person/658209cc-5e85-4c57-aa94-878089f3d816",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Rod Willett",
+      "openstates_id": "ocd-person/8ec90d7b-fd5f-4157-b779-1979e7a54e76",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "J.R. Henson",
+      "openstates_id": "ocd-person/892b7901-d71e-4d8b-b8d0-9034a3d4a066",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Sam Rasoul",
+      "openstates_id": "ocd-person/6ab67007-e48a-4048-bb7b-20a608a88f77",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Shelly Simonds",
+      "openstates_id": "ocd-person/8329b3a6-9d6f-427e-9342-e53277e7c6ff",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Stacey Annie Carroll",
+      "openstates_id": null,
+      "party": "",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Virgil Thornton",
+      "openstates_id": "ocd-person/63c0c8ef-ded6-406e-9d5d-a114fa35e26a",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     },
+     {
+      "name": "Vivian Watts",
+      "openstates_id": "ocd-person/b251a648-d2d3-4799-8213-e803fed621de",
+      "party": "Democratic",
+      "primary": false,
+      "state": "VA"
+     }
+    ],
+    "section": "sponsors",
+    "sponsors": [
+     {
+      "name": "Jeion Ward",
+      "openstates_id": "ocd-person/f3e15ab0-8419-43c2-ab7a-f3984419d1eb",
+      "party": "Democratic",
+      "primary": true,
+      "state": "VA"
+     }
+    ]
+   },
+   {
+    "roll_calls": 7,
+    "section": "votes",
+    "votes": {
+     "house": {
+      "date": "2026-02-03",
+      "dot_r": 5.0,
+      "motion": "H VOTE:",
+      "result": "Passed",
+      "seats": [
+       {
+        "color": "#2a6e2a",
+        "name": "Adele McClure",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 101.38,
+        "y": 143.06
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Alex Askew",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 104.8,
+        "y": 134.02
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Alfonso Lopez",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 110.1,
+        "y": 125.95
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Amy Laufer",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 117.03,
+        "y": 119.23
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Atoosa Reaser",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 125.27,
+        "y": 114.19
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Betsy Carr",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 134.4,
+        "y": 111.06
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Bonita Anthony",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 144.0,
+        "y": 110.0
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Briana Sewell",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 153.6,
+        "y": 111.06
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Cliff Hayes",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 162.73,
+        "y": 114.19
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Charlie Schmidt",
+        "party": "",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 170.97,
+        "y": 119.23
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Charniele Herring",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 177.9,
+        "y": 125.95
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Dan Helmer",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 183.2,
+        "y": 134.02
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "David Reid",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 186.62,
+        "y": 143.06
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Debra Gardner",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 82.01,
+        "y": 138.08
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Delores McQuinn",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 85.47,
+        "y": 128.12
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Destiny LeVere Bolling",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 90.51,
+        "y": 118.86
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Don Scott",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 97.0,
+        "y": 110.56
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Elizabeth Bennett-Parker",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 104.77,
+        "y": 103.43
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Liz Guzm\u00e1n",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 113.61,
+        "y": 97.68
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Garrett McGuire",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 123.27,
+        "y": 93.45
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Gretchen M. Bulova",
+        "party": "",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 133.49,
+        "y": 90.87
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Holly Seibold",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 144.0,
+        "y": 90.0
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Irene Shin",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 154.51,
+        "y": 90.87
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "J.J. Singh",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 164.73,
+        "y": 93.45
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Jackie Glass",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 174.39,
+        "y": 97.68
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Jeion Ward",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 183.23,
+        "y": 103.43
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Jessica L. Anderson",
+        "party": "",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 191.0,
+        "y": 110.56
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "John Chilton McAuliff",
+        "party": "",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 197.49,
+        "y": 118.86
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Josh Thomas",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 202.53,
+        "y": 128.12
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Josh Cole",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 205.99,
+        "y": 138.08
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Karen R. \"Kacey\" Carnegie",
+        "party": "",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 62.64,
+        "y": 133.11
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Karrie Delaney",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 66.31,
+        "y": 122.05
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Kathy Tran",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 71.49,
+        "y": 111.6
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Katrina Callsen",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 78.05,
+        "y": 101.97
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Kelly Fowler",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 85.89,
+        "y": 93.34
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Kimberly Pope Adams",
+        "party": "",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 94.85,
+        "y": 85.88
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Laura Jane Cohen",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 104.76,
+        "y": 79.73
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Leslie Chambers Mehta",
+        "party": "",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 115.42,
+        "y": 75.01
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Lily V. Franklin",
+        "party": "",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 126.63,
+        "y": 71.82
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Lindsey Dougherty",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 138.17,
+        "y": 70.2
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Luke Torian",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 149.83,
+        "y": 70.2
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Cia Price",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 161.37,
+        "y": 71.82
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Marcus Simon",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 172.58,
+        "y": 75.01
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Margaret A. Franklin",
+        "party": "",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 183.24,
+        "y": 79.73
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Mark C. Downey",
+        "party": "",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 193.15,
+        "y": 85.88
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Marty Martinez",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 202.11,
+        "y": 93.34
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "May Nivar",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 209.95,
+        "y": 101.97
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Michael Feggans",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 216.51,
+        "y": 111.6
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Michelle Maldonado",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 221.69,
+        "y": 122.05
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Nadarius Clark",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 225.36,
+        "y": 133.11
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Nicole Cole",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 43.27,
+        "y": 128.14
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Patrick Hope",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 47.09,
+        "y": 116.27
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Paul Krizek",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 52.3,
+        "y": 104.94
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Phil Hernandez",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 58.83,
+        "y": 94.32
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Rae Cousins",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 66.58,
+        "y": 84.56
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Rip Sullivan",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 75.45,
+        "y": 75.79
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Rod Willett",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 85.3,
+        "y": 68.15
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "J.R. Henson",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 95.99,
+        "y": 61.74
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Sam Rasoul",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 107.38,
+        "y": 56.66
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Shelly Simonds",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 119.29,
+        "y": 52.98
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Stacey Annie Carroll",
+        "party": "",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 131.55,
+        "y": 50.75
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Terry Austin",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 144.0,
+        "y": 50.0
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Virgil Thornton",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 156.45,
+        "y": 50.75
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Vivian Watts",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 168.71,
+        "y": 52.98
+       },
+       {
+        "color": "#c8bfaa",
+        "name": "Barry Knight",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "not voting",
+        "x": 180.62,
+        "y": 56.66
+       },
+       {
+        "color": "#c8bfaa",
+        "name": "Karen Keys-Gamarra",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "not voting",
+        "x": 192.01,
+        "y": 61.74
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Anne Ferrell Tata",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 202.7,
+        "y": 68.15
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Bill Wiley",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 212.55,
+        "y": 75.79
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Chris Runion",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 221.42,
+        "y": 84.56
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Delores Oates",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 229.17,
+        "y": 94.32
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Ellen H. McLaughlin",
+        "party": "",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 235.7,
+        "y": 104.94
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Eric Phillips",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 240.91,
+        "y": 116.27
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Eric Zehr",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 244.73,
+        "y": 128.14
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Otto Wachsmann",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 23.9,
+        "y": 123.16
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Hillary Pugh Kent",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 27.64,
+        "y": 111.15
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Buddy Fowler",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 32.58,
+        "y": 99.58
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Israel O'Quinn",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 38.67,
+        "y": 88.57
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Jay Leftwich",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 45.84,
+        "y": 78.24
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Will Morefield",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 54.02,
+        "y": 68.68
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Jason Ballard",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 63.13,
+        "y": 60.0
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Joe McNamara",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 73.07,
+        "y": 52.29
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Justin Pence",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 83.74,
+        "y": 45.63
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Karen Hamilton",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 95.03,
+        "y": 40.08
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Keith Hodges",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 106.82,
+        "y": 35.7
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Madison Whittle",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 119.0,
+        "y": 32.55
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Mike Webert",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 131.44,
+        "y": 30.64
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Mike Cherry",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 144.0,
+        "y": 30.0
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Mitchell Cornett",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 156.56,
+        "y": 30.64
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Phil Scott",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 169.0,
+        "y": 32.55
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Lee Ware",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 181.18,
+        "y": 35.7
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Rob Bloxom",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 192.97,
+        "y": 40.08
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Scott Wyatt",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 204.26,
+        "y": 45.63
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Terry Kilgore",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 214.93,
+        "y": 52.29
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Tom Garrett",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 224.87,
+        "y": 60.0
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Tommy Wright",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 233.98,
+        "y": 68.68
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Tim Griffin",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 242.16,
+        "y": 78.24
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Tony Wilt",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 249.33,
+        "y": 88.57
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Wendell Walker",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 255.42,
+        "y": 99.58
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Will Davis",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 260.36,
+        "y": 111.15
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Wren Williams",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 264.1,
+        "y": 123.16
+       }
+      ],
+      "summary": {
+       "nay": 34,
+       "not_voting": 2,
+       "present": 0,
+       "yea": 64
+      },
+      "svgH": 159,
+      "svgW": 288,
+      "vote_id": "ocd-vote/6889287c-b017-4084-9c09-6cb795e76753"
+     },
+     "senate": {
+      "date": "2026-03-04",
+      "dot_r": 6.0,
+      "motion": "Passage  R",
+      "result": "Passed",
+      "seats": [
+       {
+        "color": "#2a6e2a",
+        "name": "Aaron Rouse",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 87.32,
+        "y": 129.56
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Angelia Graves",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 95.64,
+        "y": 113.23
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Barbara Favola",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 110.12,
+        "y": 102.0
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Danica Roem",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 128.0,
+        "y": 98.0
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Dave Marsden",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 145.88,
+        "y": 102.0
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Elizabeth Bennett-Parker",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 160.36,
+        "y": 113.23
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Jennifer Boysko",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 168.68,
+        "y": 129.56
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Jennifer Carroll Foy",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 66.01,
+        "y": 124.08
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Jeremy McPike",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 74.51,
+        "y": 104.86
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Kannan Srinivasan",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 88.77,
+        "y": 89.43
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Louise Lucas",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 107.27,
+        "y": 79.45
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Lamont Bagby",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 128.0,
+        "y": 76.0
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Lashrecse Aird",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 148.73,
+        "y": 79.45
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Mamie Locke",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 167.23,
+        "y": 89.43
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Michael J. Jones",
+        "party": "",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 181.49,
+        "y": 104.86
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Creigh Deeds",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 189.99,
+        "y": 124.08
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Russet Perry",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 44.7,
+        "y": 118.61
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Saddam Salim",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 53.16,
+        "y": 97.63
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Schuyler VanValkenburg",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 66.81,
+        "y": 79.57
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Scott Surovell",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 84.69,
+        "y": 65.7
+       },
+       {
+        "color": "#2a6e2a",
+        "name": "Stella Pekarsky",
+        "party": "D",
+        "source": "state",
+        "state": "VA",
+        "vote": "yes",
+        "x": 105.57,
+        "y": 56.98
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Bill DeSteph",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 128.0,
+        "y": 54.0
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Bryce Reeves",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 150.43,
+        "y": 56.98
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Christie Craig",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 171.31,
+        "y": 65.7
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Chris Head",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 189.19,
+        "y": 79.57
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "David Suetterlein",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 202.84,
+        "y": 97.63
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Emily Jordan",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 211.3,
+        "y": 118.61
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Glen Sturtevant",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 23.39,
+        "y": 113.14
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Danny Diggs",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 31.77,
+        "y": 90.97
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Luther Cifers",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 44.78,
+        "y": 71.16
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Mark Obenshain",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 61.81,
+        "y": 54.66
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Mark Peake",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 82.02,
+        "y": 42.28
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Richard Stuart",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 104.44,
+        "y": 34.6
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Ryan McDougle",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 128.0,
+        "y": 32.0
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Travis Hackworth",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 151.56,
+        "y": 34.6
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Tammy Mulchi",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 173.98,
+        "y": 42.28
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Tara Durant",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 194.19,
+        "y": 54.66
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Timmy French",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 211.22,
+        "y": 71.16
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Todd Pillion",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 224.23,
+        "y": 90.97
+       },
+       {
+        "color": "#8b1a1a",
+        "name": "Bill Stanley",
+        "party": "R",
+        "source": "state",
+        "state": "VA",
+        "vote": "no",
+        "x": 232.61,
+        "y": 113.14
+       }
+      ],
+      "summary": {
+       "nay": 19,
+       "not_voting": 0,
+       "present": 0,
+       "yea": 21
+      },
+      "svgH": 145,
+      "svgW": 256,
+      "vote_id": "ocd-vote/1193bb53-4e23-4a13-acf6-d6bea951d73c"
+     }
+    }
+   },
+   {
+    "section": "timeline",
+    "timeline": "",
+    "timeline_events": [
+     {
+      "chamber": "lower",
+      "classification": [
+       "filing",
+       "introduction"
+      ],
+      "date": "2025-11-17",
+      "text": "Prefiled and ordered printed; Offered 01-14-2026 26101997D"
+     },
+     {
+      "chamber": "lower",
+      "classification": [
+       "referral-committee"
+      ],
+      "date": "2025-11-17",
+      "text": "Referred to Committee on Labor and Commerce"
+     },
+     {
+      "chamber": "lower",
+      "classification": [],
+      "date": "2026-01-20",
+      "text": "Fiscal Impact Statement from Department of Planning and Budget (HB1)"
+     },
+     {
+      "chamber": "lower",
+      "classification": [
+       "committee-passage"
+      ],
+      "date": "2026-01-20",
+      "text": "Reported from Labor and Commerce and referred to Appropriations (15-Y 7-N)"
+     },
+     {
+      "chamber": "lower",
+      "classification": [],
+      "date": "2026-01-23",
+      "text": "Fiscal Impact Statement from Department of Planning and Budget (HB1)"
+     },
+     {
+      "chamber": "lower",
+      "classification": [
+       "committee-passage"
+      ],
+      "date": "2026-01-28",
+      "text": "Reported from Appropriations (15-Y 7-N)"
+     },
+     {
+      "chamber": "lower",
+      "classification": [
+       "reading-1"
+      ],
+      "date": "2026-01-30",
+      "text": "Read first time"
+     },
+     {
+      "chamber": "lower",
+      "classification": [
+       "reading-2"
+      ],
+      "date": "2026-02-02",
+      "text": "Read second time and engrossed"
+     },
+     {
+      "chamber": "lower",
+      "classification": [
+       "passage",
+       "reading-3"
+      ],
+      "date": "2026-02-03",
+      "text": "Read third time and passed House (64-Y 34-N 0-A)"
+     },
+     {
+      "chamber": "upper",
+      "classification": [],
+      "date": "2026-02-04",
+      "text": "Constitutional reading dispensed (on 1st reading)"
+     },
+     {
+      "chamber": "upper",
+      "classification": [
+       "referral-committee"
+      ],
+      "date": "2026-02-04",
+      "text": "Referred to Committee on Commerce and Labor"
+     },
+     {
+      "chamber": "upper",
+      "classification": [
+       "committee-passage"
+      ],
+      "date": "2026-02-23",
+      "text": "Reported from Commerce and Labor and rereferred to Finance and Appropriations (8-Y 5-N)"
+     },
+     {
+      "chamber": "upper",
+      "classification": [
+       "committee-passage"
+      ],
+      "date": "2026-03-03",
+      "text": "Reported from Finance and Appropriations (9-Y 5-N)"
+     },
+     {
+      "chamber": "upper",
+      "classification": [],
+      "date": "2026-03-03",
+      "text": "Rules suspended"
+     },
+     {
+      "chamber": "upper",
+      "classification": [],
+      "date": "2026-03-03",
+      "text": "Constitutional reading dispensed (on 2nd reading) (40-Y 0-N 0-A)"
+     },
+     {
+      "chamber": "upper",
+      "classification": [],
+      "date": "2026-03-03",
+      "text": "Passed by for the day (Voice Vote)"
+     },
+     {
+      "chamber": "upper",
+      "classification": [
+       "reading-3"
+      ],
+      "date": "2026-03-04",
+      "text": "Read third time"
+     },
+     {
+      "chamber": "upper",
+      "classification": [
+       "passage"
+      ],
+      "date": "2026-03-04",
+      "text": "Passed Senate (21-Y 19-N 0-A)"
+     },
+     {
+      "chamber": "lower",
+      "classification": [
+       "enrolled"
+      ],
+      "date": "2026-03-11",
+      "text": "Enrolled"
+     },
+     {
+      "chamber": "lower",
+      "classification": [
+       "passage"
+      ],
+      "date": "2026-03-11",
+      "text": "Bill text as passed House and Senate (HB1ER)"
+     },
+     {
+      "chamber": "lower",
+      "classification": [],
+      "date": "2026-03-11",
+      "text": "Fiscal Impact Statement from Department of Planning and Budget (HB1)"
+     },
+     {
+      "chamber": "upper",
+      "classification": [
+       "passage"
+      ],
+      "date": "2026-03-11",
+      "text": "Signed by President"
+     },
+     {
+      "chamber": "lower",
+      "classification": [
+       "passage"
+      ],
+      "date": "2026-03-12",
+      "text": "Signed by Speaker"
+     },
+     {
+      "chamber": "lower",
+      "classification": [
+       "enrolled",
+       "executive-receipt"
+      ],
+      "date": "2026-03-14",
+      "text": "Enrolled Bill communicated to Governor on March 14, 2026"
+     },
+     {
+      "chamber": "committee:Office of the Governor",
+      "classification": [
+       "executive-receipt"
+      ],
+      "date": "2026-03-14",
+      "text": "Governor's Action Deadline 11:59 p.m., April 13, 2026"
+     },
+     {
+      "chamber": "committee:Office of the Governor",
+      "classification": [
+       "executive-signature"
+      ],
+      "date": "2026-04-08",
+      "text": "Approved by Governor-Chapter 350 (effective 7/1/2026)"
+     },
+     {
+      "chamber": "committee:Office of the Governor",
+      "classification": [],
+      "date": "2026-04-08",
+      "text": "Acts of Assembly Chapter text (CHAP0350)"
+     }
+    ]
+   },
+   {
+    "bill_text": "CHAPTER 350\nAn Act to amend and reenact \u00a7 40.1-28.10 of the Code of Virginia, relating to minimum wage.\n[H 1]\nApproved April 8, 2026\n\nBe it enacted by the General Assembly of Virginia:\n1. That \u00a7 40.1-28.10 of the Code of Virginia is amended and reenacted as follows:\n\u00a7 40.1-28.10. Minimum wages.\nA. 1. Prior to May 1, 2021, every employer shall pay to each of its employees wages at a rate not less than the federal minimum wage.\n2. Beginning May 1, 2021, every employer shall pay to each of his employees at a rate not less than the federal minimum wage or 75 percent of the Virginia minimum wage provided for in this section, whichever is greater. For the purposes of this subdivision \"employee\" means any person or individual who is enrolled in an established employer on-the-job or other training program for a period not to exceed 90 days which meets standards set by regulations adopted by the Commissioner.\nB. From May 1, 2021 January 1, 2026, until January 1, 2022 2027, every employer shall pay to each of its employees wages at a rate not less than the greater of (i) $9.50 $12.77 per hour or (ii) the federal minimum wage.\nC. From January 1, 2022 2027, until January 1, 2023 2028, every employer shall pay to each of its employees wages at a rate not less than the greater of (i) $11.00 $13.75 per hour or (ii) the federal minimum wage.\nD. From January 1, 2023 2028, until January 1, 2025 2029, every employer shall pay to each of its employees wages at a rate not less than the greater of (i) $12.00 $15.00 per hour or (ii) the federal minimum wage.\nE. From and after January 1, 2025 2029, every employer shall pay to each of his employees wages at a rate not less than the greater of (i) the adjusted state hourly minimum wage or (ii) the federal minimum wage.\nF. By October 1, 2024 2028, and annually thereafter, the Commissioner shall establish the adjusted state hourly minimum wage that shall be in effect during the 12-month period commencing on the following January 1. The Commissioner shall set the adjusted state hourly minimum wage at the sum of (i) the amount of the state hourly minimum wage rate that is in effect on the date such adjustment is made and (ii) a percentage of the amount described in clause (i) that is equal to the percentage by which the United States Average Consumer Price Index for all items, all urban consumers (CPI-U), as published by the Bureau of Labor Statistics of the U.S. Department of Labor, or a successor index as calculated by the U.S. Department of Labor, has increased during the most recent calendar year for which such information is available. The amount of each annual adjustment shall not be less than zero.",
+    "empty_reason": null,
+    "section": "bill_text",
+    "truncated": false,
+    "version": "Chaptered",
+    "versions": [
+     {
+      "date": null,
+      "name": "Introduced",
+      "text": true,
+      "url": "https://lis.blob.core.windows.net/files/1081189.HTML"
+     },
+     {
+      "date": null,
+      "name": "Enrolled",
+      "text": true,
+      "url": "https://lis.blob.core.windows.net/files/1199671.HTML"
+     },
+     {
+      "date": null,
+      "name": "Chaptered",
+      "text": true,
+      "url": "https://lis.blob.core.windows.net/files/1217587.HTML"
+     }
+    ]
+   },
+   {
+    "section": "translation",
+    "translation": "# HB 1 \u2014 Virginia Minimum Wage Increase Explained\n\n## 1. What This Bill Does\nVirginia will gradually raise its minimum wage to $15.00 per hour by January 1, 2028, then adjust it annually based on inflation.\n\n## 2. Who It Affects\n- **Workers**: Employees earning minimum wage will see raises over the next few years\n- **Small and large employers**: All businesses must pay at least the new minimum wage rates\n- **Low-wage industries**: Retail, food service, and hospitality will be most affected\n- **Consumers**: May see slight price increases as businesses adjust to higher labor costs\n\n## 3. Costs, Trade-offs, and Obligations\n\n**Who pays**: Employers pay workers more in wages.\n\n**Timeline of required wage increases**:\n- By January 1, 2026: $12.77 per hour\n- By January 1, 2027: $13.75 per hour  \n- By January 1, 2028: $15.00 per hour\n- After 2028: Annual increases matching inflation\n\n**Trade-offs**: \n- *Benefit*: Workers earn more\n- *Potential cost*: Some businesses may reduce hours, hire fewer workers, or raise prices\n- *Unknown*: The actual economic impact on Virginia businesses and jobs\n\n**No special exemptions or phase-outs** for small businesses are mentioned in this text.\n\n## 4. Current Status\nThis bill was **already approved and signed into law** on April 8, 2026. It is now in effect and being carried out."
+   },
+   {
+    "section": "done"
+   }
+  ],
+  "status": 200
+ }
+}
