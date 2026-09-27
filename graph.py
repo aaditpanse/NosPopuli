@@ -1950,6 +1950,52 @@ def snapshot_votes(persons, year, topic, limit, loaded_congress):
     return rows[:limit], len(rows), len(rows) > limit, files
 
 
+def state_snapshot_votes(st, persons, year, topic, limit):
+    """A state legislator's votes in one year, read from the Open States
+    votes files of that year's sessions — the ones not loaded as edges.
+    None when the year's sessions are loaded (the graph answers). Same row
+    shape as the graph's. Returns (rows, total, truncated, files read)."""
+    sessions = [sid for sid in state_sessions(st) if (session_key(sid) or (0,))[0] == year]
+    counts = {sid: 1 for sid in state_sessions(st) if data_path("state_votes", state=st, session=sid).exists()}
+    if not sessions or set(sessions) & set(current_state_sessions(state_sessions(st), counts)):
+        return None
+    ids = {p["openstates_id"]: p for p in persons if p.get("openstates_id")}
+    rows, files = [], []
+    for sid in sessions:
+        vp = data_path("state_votes", state=st, session=sid)
+        if not vp.exists():
+            continue
+        files.append(vp.name)
+        bills = json.loads(data_path("state_bills", state=st, session=sid).read_text())["bills"]
+        for v in json.loads(vp.read_text())["votes"]:
+            if not v["bill"]:
+                continue
+            iid = state_instrument_id(st, sid, v["bill"])
+            b = bills.get(v["bill"]) or {}
+            title = f"{b.get('identifier', v['bill'])}: {b.get('title') or ''}".strip(": ")
+            if topic:
+                sref = state_bill_ref(topic)
+                if sref:
+                    if v["bill"] != f"{sref[1]}/{sref[2]}":
+                        continue
+                elif split_scope(topic)[1].lower() not in title.lower() and not any(
+                        split_scope(topic)[1].lower() in (x or "").lower() for x in b.get("subjects") or []):
+                    continue
+            for voter, _name, option in v["positions"]:
+                person = ids.get(voter)
+                if not person:
+                    continue
+                rows.append({"person_id": person["id"], "person": person["name"],
+                             "position": _STATE_POSITION.get(option, option), "date": v["date"],
+                             "certification": "ingested", "vote_id": v["id"], "question": v["motion"],
+                             "item_id": iid, "title": title, "instrument_type": v["bill"].split("/")[0],
+                             "jurisdiction": state_div(st), "topic": (b.get("subjects") or [None])[0],
+                             "topic_derived_by": "open states subject" if b.get("subjects") else None,
+                             "result": v["result"], "meeting_id": None})
+    rows.sort(key=lambda r: (r["date"], r["item_id"]), reverse=True)
+    return rows[:limit], len(rows), len(rows) > limit, files
+
+
 def _pac_label(source):
     """Where a PAC row's dollars were reported. The bulk file counts what
     each PAC said it gave (its own filing, 24K); the API path counted what
@@ -3145,7 +3191,8 @@ def _pg_persons(cur, query):
     all_in = lambda col: " AND ".join(f"{col} ILIKE %s" for _ in likes)  # noqa: E731
     cur.execute(f"""
         SELECT id, name, props->'aliases' AS aliases, props->>'seat' AS seat,
-               props->>'bioguide' AS bioguide, props->>'lis' AS lis
+               props->>'bioguide' AS bioguide, props->>'lis' AS lis,
+               props->>'openstates_id' AS openstates_id
         FROM graph_node
         WHERE kind = 'person'
           AND (({all_in("name")}) OR EXISTS (
@@ -3210,6 +3257,33 @@ _BILL_REF = re.compile(r"^\s*(h\.?\s*r|s|h\.?\s*res|s\.?\s*res|h\.?\s*j\.?\s*res
                        r"(?:\s*,?\s*(?:in|of|from)\s+the\s+(\d+)(?:st|nd|rd|th)(?:\s+congress)?)?\s*$", re.I)
 
 
+# A state bill number. "HR"/"SR" are also federal (H.R.), so they are read
+# as state bills only with a state scope ("va:HR 5", from "HR 5 in Virginia").
+_STATE_REF = re.compile(r"^\s*(?:([a-z]{2}):)?\s*(h\.?\s*j\.?\s*r|s\.?\s*j\.?\s*r|h\.?\s*b|s\.?\s*b|h\.?\s*r|s\.?\s*r)"
+                        r"\.?\s*0*(\d+)(?:\s*,?\s*(?:in|of|from)\s+(?:the\s+)?(\d{4})(?:\s+session)?)?\s*$", re.I)
+_STATE_ONLY_TYPES = {"hb", "sb", "hjr", "sjr"}
+
+
+def state_bill_ref(topic):
+    """(state or None, type, number, year or None) for "HB 1", "SB 5 in
+    2022" or "va:HR 5"; None for anything else, and for "HR 5" with no
+    state scope (that is H.R. 5). Pure."""
+    m = _STATE_REF.match(topic or "")
+    if not m:
+        return None
+    st, typ = (m.group(1) or "").lower() or None, re.sub(r"[^a-z]", "", m.group(2).lower())
+    if typ not in _STATE_ONLY_TYPES and not st:
+        return None
+    return st, typ, m.group(3), int(m.group(4)) if m.group(4) else None
+
+
+def split_scope(topic):
+    """"va:housing" → ("va", "housing"): a topic scoped to one state's
+    legislature by answer() when the question named it. Pure."""
+    m = re.match(r"^([a-z]{2}):(.*)$", topic or "")
+    return (m.group(1), m.group(2).strip()) if m and m.group(1) in LEGISLATURES else (None, topic)
+
+
 def _bill_ref(topic):
     """(type, number, congress or None) for "HR 1" or "HR 1 in the 110th"."""
     m = _BILL_REF.match(topic or "")
@@ -3220,6 +3294,17 @@ def _bill_ref(topic):
 def _topic_sql(topic):
     """(clause, args) for the instrument alias `i`: a bill number by id,
     anything else by policy area or title."""
+    sref = state_bill_ref(topic)
+    if sref:
+        # Every session has an HB 1: the newest one on record (in the year
+        # asked, if one was), in the scoped state or any loaded one.
+        st, typ, number, year = sref
+        pattern = f"instrument/{st or '%'}/{f'{year}%' if year else '%'}/{typ}/{number}"
+        return (" i.id = (SELECT n.id FROM graph_node n WHERE n.kind = 'instrument' AND n.id LIKE %s"
+                " AND n.id NOT LIKE 'instrument/us/%%' ORDER BY n.props->>'session' DESC LIMIT 1)", [pattern])
+    st, topic = split_scope(topic)
+    if st:
+        return (f" i.props->>'jurisdiction' = %s AND{_TOPIC_SQL}", [state_div(st), f"{topic}%", f"%{topic}%"])
     ref = _bill_ref(topic)
     if ref:
         # Every Congress has an H.R. 1: a bare number is the most recent one
@@ -3521,6 +3606,14 @@ def _seat_terms(seat_query):
     """'Braddock', 'VA-11', 'Virginia's 11th', 'Senate class 2' → tokens a
     post's natural key or role must contain."""
     q = seat_query.lower().replace("\u2019", "'")
+    chamber = "lower" if re.search(r"\b(delegates?|house of delegates|state house|assembly(man|woman|member)?)\b", q) \
+        else "upper" if re.search(r"\bstate senat(e|or)s?\b", q) else None
+    if chamber:
+        kind = "sldl" if chamber == "lower" else "sldu"
+        st = next((code for code in sorted(LEGISLATURES)
+                   if re.search(rf"\b{re.escape(DIVISION_NAMES.get(code, code).lower())}\b|\b{code}\b", q)), None)
+        m = re.search(r"\b(\d{1,3})(?:st|nd|rd|th)?\b", q)
+        return ([f"{st}/{chamber}/"] if st else [f"/{chamber}/"]) + ([f"{kind}:{m.group(1)}"] if m else [])
     m = re.search(r"\b([a-z]{2})[- ]?(\d{1,2})\b", q)
     if m:
         return [f"us/house/{m.group(1)}/cd:{m.group(2)}"]
@@ -3593,6 +3686,15 @@ def memory_backend(nodes, edges):
         return newest_of[ref]
 
     def topic_ok(i, topic):
+        sref = state_bill_ref(topic)
+        if sref:
+            st, typ, number, year = sref
+            hits = [n for n in nodes if n["kind"] == "instrument" and not n["id"].startswith("instrument/us/")
+                    and re.fullmatch(rf"instrument/{st or '[a-z]{2}'}/{year or ''}[^/]*/{typ}/{number}", n["id"])]
+            return bool(hits) and i["id"] == max(hits, key=lambda n: n["props"].get("session") or "")["id"]
+        st, topic = split_scope(topic)
+        if st and i["props"].get("jurisdiction") != state_div(st):
+            return False
         ref = _bill_ref(topic)
         if ref:
             return i["id"] == newest(ref)
@@ -3619,9 +3721,9 @@ def memory_backend(nodes, edges):
                 for nid in node_ids for e in side.get(nid, []) if e["predicate"] == predicate]
 
     def laws(topic, limit):
-        # Federal bills only: a county motion has no President and no public law.
+        # Federal and state bills: a county motion has no executive and no law.
         items = sorted((n for n in nodes if n["kind"] == "instrument" and topic_ok(n, topic)
-                        and n["id"].startswith("instrument/us/")
+                        and re.match(r"instrument/[a-z]{2}/", n["id"])
                         and n["props"].get("instrument_type") not in _NOT_BILLS),
                        key=lambda n: n["id"])[:limit + 1]
         raw = []
@@ -3641,7 +3743,7 @@ def memory_backend(nodes, edges):
         has_all = lambda text: all(t in text.lower() for t in toks)  # noqa: E731
         return sorted(({"id": n["id"], "name": n["name"], "aliases": n["props"].get("aliases", []),
                         "seat": n["props"].get("seat"), "bioguide": n["props"].get("bioguide"),
-                        "lis": n["props"].get("lis")}
+                        "lis": n["props"].get("lis"), "openstates_id": n["props"].get("openstates_id")}
                        for n in nodes if n["kind"] == "person"
                        and (has_all(n["name"]) or any(has_all(a) for a in n["props"].get("aliases", [])))),
                       key=lambda p: p["name"])
@@ -3750,7 +3852,7 @@ def pg_backend():
                 WITH items AS (
                     SELECT i.id, i.name, i.props->>'actions_fetched' AS actions_fetched
                     FROM graph_node i
-                    WHERE i.kind = 'instrument' AND i.id LIKE 'instrument/us/%%'
+                    WHERE i.kind = 'instrument' AND i.id ~ '^instrument/[a-z]{{2}}/'
                       AND COALESCE(i.props->>'instrument_type', '') <> ALL(%s) AND {clause}
                     ORDER BY i.id LIMIT %s)
                 SELECT it.id AS item_id, it.name AS title, it.actions_fetched,
@@ -3849,6 +3951,9 @@ def strip_place(topic):
     kept, dropped = [], []
     for w in topic.split():
         (dropped if w.lower().strip(",'s") in _PLACE_WORDS or w.lower() == "county" else kept).append(w)
+    # "HB 1 in Virginia" leaves "HB 1 in": the preposition went with the place.
+    while dropped and kept and kept[-1].lower() in ("in", "of", "for", "from", "the"):
+        kept.pop()
     return " ".join(kept) or topic, " ".join(dropped) or None
 
 
@@ -3873,7 +3978,7 @@ def committee_matches(orgs, query):
     if "subcommittee" not in q and any(not o["props"].get("parent_code") for o in hits):
         hits = [o for o in hits if not o["props"].get("parent_code")]
     return sorted(hits, key=lambda o: o["name"])
-_LAW_TYPES = ("pl", "pvtl")
+_LAW_TYPES = ("pl", "pvtl", "chapter")
 # Instruments that are not bills: laws, and nominations (a nomination has no
 # law to become, so "law about X" must never list one as "no law").
 _NOT_BILLS = _LAW_TYPES + ("pn",)
@@ -3953,6 +4058,17 @@ def _as_org_row(r):
     return r
 
 
+_STATE_SCOPED_ASKS = {"voters", "sponsors", "law", "related", "referrals", "reported", "signed_by"}
+
+
+def _state_scope(place):
+    """The loaded legislature a dropped place word names ("Virginia", "VA"),
+    or None. Pure."""
+    words = {w.lower().strip(",'s") for w in (place or "").split()}
+    return next((code for code in sorted(LEGISLATURES)
+                 if code in words or DIVISION_NAMES.get(code, "").lower() in words), None)
+
+
 def answer(parsed, backend, limit=200):
     """Run one parsed question against a backend. Every branch returns a
     dict with `ask`, `hops` / `weak_hops`, and an `empty_reason` when there
@@ -3962,6 +4078,13 @@ def answer(parsed, backend, limit=200):
         return {"ask": ask, "rows": [], "hops": [], "weak_hops": [],
                 "empty_reason": "graph not loaded: run `python graph.py load fairfax-bos`"}
     topic, place = strip_place(parsed["topic"]) if parsed.get("topic") else (None, None)
+    # A state whose legislature is loaded is a scope, not noise: "who voted
+    # no on HB 5 in Virginia" asks about Virginia's bills. It scopes the
+    # bill asks, and a person's votes only when the person sits there (a
+    # senator asked about "housing in Virginia" keeps their own votes).
+    scope = _state_scope(place)
+    if scope and topic and ask in _STATE_SCOPED_ASKS:
+        topic, place = f"{scope}:{topic}", None
     if ask == "sponsored":
         persons = backend["persons"](parsed["person"])
         if not persons:
@@ -4199,6 +4322,21 @@ def answer(parsed, backend, limit=200):
             return which | {"place_ignored": place}
         year = parsed.get("year")
         loaded = current_session()[0]
+        state_people = [p for p in persons if p.get("openstates_id")]
+        if scope and topic and state_people:
+            topic, place = f"{scope}:{topic}", None
+        if year and state_people:
+            st = scope or next(iter(LEGISLATURES), None)
+            files_rows = state_snapshot_votes(st, state_people, year, topic, limit) if st else None
+            if files_rows is not None:
+                rows, total, truncated, files = files_rows
+                out = shape_answer(rows, persons, parsed["person"], topic, total, truncated) | {
+                    "ask": ask, "place_ignored": place, "year": year, "from_snapshot": files}
+                if not rows:
+                    out["empty_reason"] = (f"no recorded vote by {', '.join(p['name'] for p in state_people)} "
+                                           f"in {st.upper()}'s {year} roll calls on disk"
+                                           + (f" on {topic!r}" if topic else ""))
+                return out
         if year and (year - 1789) // 2 + 1 != loaded:
             rows, total, truncated, files = snapshot_votes(persons, year, topic, limit, loaded)
             out = shape_answer(rows, persons, parsed["person"], topic, total, truncated) | {

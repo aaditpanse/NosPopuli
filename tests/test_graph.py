@@ -294,7 +294,9 @@ class CloseHoldsAcrossTest(unittest.TestCase):
 class StripPlaceTest(unittest.TestCase):
     def test_place_words_leave_the_topic(self):
         self.assertEqual(graph.strip_place("Fairfax zoning"), ("zoning", "Fairfax"))
-        self.assertEqual(graph.strip_place("zoning in Fairfax County"), ("zoning in", "Fairfax County"))
+        # The preposition goes with the place: "zoning in" matches no title.
+        self.assertEqual(graph.strip_place("zoning in Fairfax County"), ("zoning", "Fairfax County"))
+        self.assertEqual(graph.strip_place("HB 1 in Virginia"), ("HB 1", "Virginia"))
         self.assertEqual(graph.strip_place("Virginia housing"), ("housing", "Virginia"))
         self.assertEqual(graph.strip_place("zoning"), ("zoning", None))
         self.assertEqual(graph.strip_place("Fairfax"), ("Fairfax", "Fairfax"))   # never empty
@@ -2285,3 +2287,43 @@ class StateLayerTest(unittest.TestCase):
         sessions = ["2025", "2026", "2026S1", "2027"]
         self.assertEqual(graph.current_state_sessions(sessions, {"2025": 9, "2026": 11, "2026S1": 3, "2027": 0}),
                          ["2026", "2026S1"])
+
+
+class StateAnswerTest(unittest.TestCase):
+    """Questions about the General Assembly (plan step 10). Checked on the
+    server 2026-09-27: "how did Jeion Ward vote on HB 1", "who voted no on
+    HB 1 in Virginia" (77), "who sponsored HB 1" (56), a 2024 vote read from
+    its file, district 87's holder; H.R. 1 answers unchanged."""
+
+    def test_state_bill_numbers(self):
+        r = graph.state_bill_ref
+        self.assertEqual(r("HB 1"), (None, "hb", "1", None))
+        self.assertEqual(r("S.J.R. 5 in 2022"), (None, "sjr", "5", 2022))
+        self.assertEqual(r("va:HR 5"), ("va", "hr", "5", None))
+        # Without a state, HR is the House of Representatives' H.R.
+        self.assertIsNone(r("HR 5"))
+        self.assertEqual(graph._bill_ref("HR 5"), ("hr", "5", None))
+        self.assertEqual(graph.split_scope("va:housing"), ("va", "housing"))
+        self.assertEqual(graph.split_scope("zz:housing"), (None, "zz:housing"))
+
+    def test_seat_words(self):
+        self.assertEqual(graph._seat_terms("House of Delegates district 87"), ["/lower/", "sldl:87"])
+        self.assertEqual(graph._seat_terms("Virginia state senator for the 13th"), ["va/upper/", "sldu:13"])
+        self.assertEqual(graph._seat_terms("VA-11"), ["us/house/va/cd:11"])
+
+    def test_a_virginia_vote_through_the_memory_backend(self):
+        people = StateLayerTest.PEOPLE
+        sn, se, _ = graph.build_state_skeleton("va", people, StateLayerTest.LIS, today="2026-09-27")
+        rec = StateLayerTest().bills()
+        pid = {"ocd-person/a": graph.node_id("person", "openstates/a")}
+        bn, be, _ = graph.build_state_bills("va", "2026", rec, pid, [])
+        roster = {"lower": [(pid["ocd-person/a"], ["Jeion A. Ward"], "2024-01-10", None, "H0173")]}
+        votes = [{"id": "ocd-vote/1", "bill": "hb/1", "date": "2026-02-03", "motion": "H VOTE:", "result": "pass",
+                  "chamber": "lower", "counts": {"yes": 1}, "positions": [["ocd-person/a", "Jeion A. Ward", "yes"]]}]
+        vn, ve, _ = graph.build_state_votes("va", "2026", votes, pid, roster)
+        backend = graph.memory_backend(sn + bn + vn, se + be + ve)
+        a = graph.answer(graph.parse_question("how did Jeion Ward vote on HB 1"), backend)
+        self.assertEqual([(r["position"], r["date"]) for r in a["rows"]], [("aye", "2026-02-03")])
+        a = graph.answer(graph.parse_question("who voted yes on HB 1 in Virginia"), backend)
+        self.assertEqual([r["person"] for r in a["rows"]], ["Jeion A. Ward"])
+        self.assertIsNone(a["place_ignored"])       # Virginia scoped the ask; it was not dropped
