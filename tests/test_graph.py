@@ -2131,3 +2131,44 @@ class OpenStatesTest(unittest.TestCase):
                                                                             {"yes": 21, "no": 19}))
         self.assertEqual(v["positions"], [["ocd-person/b", "Jennifer B. Boysko", "yes"],
                                           [None, "Luther Cifers, III", "no"]])
+
+
+class LisTest(unittest.TestCase):
+    """sources/lis.py: Virginia's own files. Checked 2026-09-27: roll calls
+    tied to a bill through HISTORY.CSV — 2024 9,279, 2025 6,331, 2026
+    8,746; a few hundred a session name no bill and are counted."""
+
+    BILLS = ('"Bill_id","Bill_description","Patron_id","Patron_name","Passed","Failed","Carried_over","Approved",'
+             '"Vetoed","Full_text_doc1","Full_text_doc2","Full_text_doc3","Full_text_doc4","Full_text_doc5",'
+             '"Full_text_doc6","Chapter_id","Introduction_date"\n'
+             '"HB1","Minimum wage.","H0173","Ward","Y","N","N","Y","N","HB1","HB1ER","CHAP0350","","","","CHAP0350",'
+             '"11/17/2025"\n')
+    # 2024's shape: a space after each comma, ISO dates, refids padded to 20.
+    HISTORY = ('Bill_id, "History_date", "History_description", "History_refid"\n'
+               '"HB1", "2024-02-02T00:00:00", "H VOTE: Passage (51-Y 49-N)", "HV0202              "\n'
+               '"HB1", "3/4/2026", "S Passed Senate (21-Y 19-N 0-A)", "SV899"\n'
+               '"HB1", "3/4/2026", " Approved by Governor-Chapter 350", ""\n')
+    VOTES = '"10458X"\n"HV0202","H0056","N","H0108","Y"\n"SV899","S0019","Y","S0062","X"\n"ZZ1","H0056","Y"\n'
+
+    def test_votes_are_tied_to_their_bill_through_history(self):
+        from sources import lis
+        r = lis.session_record(self.BILLS, self.HISTORY, self.VOTES)
+        self.assertEqual(r["bills"]["hb/1"]["text_docs"], ["HB1", "HB1ER", "CHAP0350"])
+        self.assertEqual(r["bills"]["hb/1"]["introduced"], "2025-11-17")
+        self.assertEqual([(v["id"], v["bill"], v["chamber"], v["date"]) for v in r["votes"]],
+                         [("HV0202", "hb/1", "lower", "2024-02-02"), ("SV899", "hb/1", "upper", "2026-03-04")])
+        self.assertEqual(r["votes"][1]["positions"], {"S0019": "yes", "S0062": "not voting"})
+        # ZZ1 names no bill in history: counted, not guessed.
+        self.assertEqual((r["unlinked_votes"], r["empty_votes"]), (1, 0))
+        # A row with no chamber letter keeps its words and no chamber.
+        self.assertEqual(r["history"]["hb/1"][2]["chamber"], None)
+
+    def test_text_file_names_and_link_choice(self):
+        from sources import lis
+        self.assertEqual(lis.text_name("https://lis.blob.core.windows.net/files/1217587.HTML"), "1217587.HTML")
+        self.assertEqual(lis.text_name("https://lis.virginia.gov/cgi-bin/legp604.exe?201+ful+HB907ER"),
+                         "legp604-201-HB907ER.html")
+        links = [{"media_type": "application/pdf", "url": "a.PDF"}, {"media_type": "text/html", "url": "a.HTML"}]
+        self.assertEqual(lis.pick_link(links)["url"], "a.HTML")
+        self.assertEqual(lis.pick_link(links[:1])["url"], "a.PDF")
+        self.assertIsNone(lis.pick_link([]))
