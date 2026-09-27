@@ -22,6 +22,15 @@ lobbying, sponsor money. Elections work. And Foundry — the self-building local
 I'm proudest of: nine municipal sources ingested, certified against independent second
 sources, with the uncertified records visibly quarantined rather than quietly published.
 
+**Where it runs (since 2026-09-26).** One Hetzner server behind Cloudflare holds the
+app, Postgres 17 (with pgvector and PostGIS) and the federal bulk data under
+`/srv/bulk`. A sync at 11:30 UTC each day downloads what changed, reloads the graph and
+commits the small tracked files back to `main`; a timer deploys `main` every five
+minutes. The bill page, member pages, campaign money, member photos and the feed read
+those files and the graph, not Congress.gov: a bill page's data is ready in 160–320 ms.
+`/search` still asks GovInfo until the local search passes its evaluation (below).
+Railway and Supabase are paused, and are deleted after 2026-10-03.
+
 **What's half-built.** State legislation is fully implemented for all 50 states
 through LegiScan — and the home page cannot reach it. `/ledger` forces every query to
 federal (the federal override in `ledger_ask` (`api.py:1633`)), so "Virginia housing bills" is classified as a
@@ -317,10 +326,31 @@ Measured on the fresh load: 42 scopes in 780 s; 269,951 nodes and 3,202,580 edge
 about 6.8 GB of WAL, all of it archived. The daily load replaces the skeleton, the
 current Congress and whatever changed: about 75 s.
 
-*Next for the graph:* every bill, not only the voted ones. The 119th Congress has
-19,067 bills and resolutions; the graph holds 1,468. That, the move to one Hetzner
-server, and local copies of the federal bulk data (BILLSTATUS, Voteview, FEC bulk)
-are one plan, decided 2026-09-25. Then the General Assembly.
+*The pages read files* (2026-09-27). From the 108th Congress (2003) on, a bill page
+reads the record, actions, cosponsors, related bills, amendments and committee reports
+from the BILLSTATUS zips, the text from the stored typescript (every version GovInfo
+published), and the roll calls from the vote files: the clerks' from the 118th,
+Voteview's before, found by the clerk's roll number. A bill not in the last sync is a
+404 that names the GovInfo file it read; there is no live fallback. Members come from
+the legislators files and the graph's `sponsored` edges (counted from 2003, and the page
+says so); campaign money from FEC bulk, including each committee's sources from the
+committee summary file; the feed from `bill_doc` and the graph; photos from a mirror of
+unitedstates/images. Parity was checked against the live APIs: 118 HR 815's record,
+Tammy Baldwin's 2026 totals to the cent, and the NDAA and HR 1 roll calls.
+
+Still live, on purpose: anything before the 108th Congress, donor industries (they need
+FEC's multi-GB `indiv` file), LegiScan, geocoding, Google Civic, market prices, and the
+models.
+
+*Search.* Every bill since 2003 has a search document (`bill_doc`: titles, subjects,
+policy area, the latest CRS summary) and one vector in Voyage 4's shared space:
+documents embedded by `voyage-4-large` through the API, questions by `voyage-4-nano` on
+the server's CPU, so a question never leaves the machine. `search.bill_index.search`
+fuses full-text and nearest-vector ranks (RRF, k=60). `/search` switches to it when it
+finds at least as many relevant bills as today's search on a hand-judged set
+(`scripts/search_smoketest.py --pool` / `--score`).
+
+*Next for the graph:* the General Assembly.
 
 **5. Rebuild what `/newspaper` did.** See the next section — I deleted the old tabbed
 app rather than porting it, so these are rebuilds in `ledger.js`, not migrations. The
@@ -455,18 +485,25 @@ no purple.
 
 ```
 Backend       Python · FastAPI · uvicorn · slowapi rate limiting
-Models        Haiku  — routing, expansion, validation, translation (~98% of calls)
-              Sonnet — web search for bill background, election polling
-              Opus   — Foundry extractor synthesis only
-Federal       Congress.gov · GovInfo (BILLS + PLAW) · clerk.house.gov + senate.gov XML
+Models        Haiku 4.5 — routing, expansion, validation, translation (most calls)
+              Sonnet 5  — web search: bill background, upcoming elections, polling
+              Opus      — Foundry extractor synthesis only
+Search        Voyage 4 — voyage-4-large for documents (API), voyage-4-nano for
+              questions (on the server CPU, requirements-embed.txt)
+Federal       GovInfo bulk (BILLSTATUS, bill text, CRPT) · Voteview · clerk.house.gov +
+              senate.gov XML · FEC bulk · lda.gov · Congress.gov (nominations; bills
+              before 2003) · GovInfo search (/search, until it switches)
 State         LegiScan  (all 50 states)
 Local         Foundry — my own synthesized extractors, 9 sources
 Civic         Google Civic (elections) · Census geocoder (districts) · FEC · Senate LDA
-Storage       Postgres on Supabase (psycopg3 pool) — subscriptions, mail, disk_cache
+Storage       Postgres 17 on the server (psycopg3 pool, pgvector, PostGIS) — the graph,
+              bill_doc and bill_embedding, subscriptions, mail, disk_cache
               Foundry stores are JSON on disk under foundry/data/store/
 Email         Gmail OAuth for user letters · SMTP for system notifications
 Frontend      Vanilla HTML/CSS/JS. Playfair Display · Source Serif 4 · IBM Plex Mono
-Deploy        Railway, auto-deploy from GitHub
+Deploy        One Hetzner CX53 behind Cloudflare; the server pulls main every 5 minutes
+Backups       WAL-G continuous archive + nightly restic pg_dump to a Hetzner Storage Box;
+              a weekly restore check compares exact row counts
 ```
 
 ### Where the data lives
@@ -480,11 +517,14 @@ raw/<source>/…            downloads exactly as published, each with its manife
                           (govinfo/, voteview/, fec/, districts/)
 derived/bills/            bills-<congress>.json        GovInfo BILLSTATUS + CRPT
 derived/votes/            congress-votes-<c>-<n>.json  clerks (118th on), Voteview (1st–117th)
-derived/fec/              fec-<cycle>.json             FEC bulk
+derived/fec/              fec-<cycle>.json             FEC bulk (the graph's members)
+                          candidates-<cycle>.json      every candidate's committee money
+                                                       and each member's PACs (untracked)
 derived/nominations/      nominations-<congress>.json  Congress.gov
 derived/lobbying/         lobbying-<year>.json         lda.gov
 derived/certification/    member-congress.json         from the older roll calls
 public/                   the unitedstates project's legislators, executive, committees
+raw/unitedstates-images/  member photos (a sparse git clone, pulled Mondays)
 datasets.json             written by `graph.py manifest` after each sync
 ```
 
@@ -521,6 +561,136 @@ budgets and switches).
 python -m scripts.event_watcher        # daily bill-state watcher
 python -m scripts.clear_search_cache   # --all to include feed/elections
 ```
+
+A `.env` on a laptop reads no database unless `DATABASE_URL` is set; point it at an SSH
+tunnel to the server, never at Supabase (the old `SUPABASE_DB_URL` name is ignored).
+Graph loads and bulk syncs belong on the server.
+
+### On the server
+
+`nospopuli-1` (`/srv/nospopuli/app` is the checkout, `/srv/nospopuli/venv` the
+virtualenv with `requirements.txt` and `requirements-embed.txt`, `/srv/bulk` the data,
+`/srv/nospopuli/models` the query model, `/etc/nospopuli/env` the secrets). Run a module
+as the app: `sudo -u nospopuli` from the checkout, with that env file loaded. Caddy
+terminates TLS for Cloudflare, which is the only source the firewall lets in on 80/443.
+
+The scripts are `/usr/local/sbin/nospopuli-{deploy,sync,backup,restore-check}`. The
+sync stops the deploy timer while it runs, so a deploy cannot reset the checkout between
+the Foundry refresh and its commit. The units, verbatim:
+
+```ini
+# nospopuli.service
+[Unit]
+Description=NosPopuli API (uvicorn)
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+User=nospopuli
+Group=nospopuli
+WorkingDirectory=/srv/nospopuli/app
+EnvironmentFile=/etc/nospopuli/env
+# One worker: the rate limiter and the TTL caches live in process memory.
+ExecStart=/srv/nospopuli/venv/bin/uvicorn api:app --host 127.0.0.1 --port 8000 --workers 1 --proxy-headers --forwarded-allow-ips 127.0.0.1
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+# nospopuli-deploy.service
+[Unit]
+Description=Deploy NosPopuli from origin/main if it moved
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/nospopuli-deploy
+
+# nospopuli-deploy.timer
+[Unit]
+Description=Check origin/main every 5 minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+
+[Install]
+WantedBy=timers.target
+
+# nospopuli-sync.service
+[Unit]
+Description=NosPopuli daily sync: Foundry, roll calls, federal bulk data, graph load
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/nospopuli/env
+ExecStart=/usr/local/sbin/nospopuli-sync
+TimeoutStartSec=6h
+
+# nospopuli-sync.timer
+[Unit]
+Description=Daily NosPopuli sync at 11:30 UTC
+
+[Timer]
+OnCalendar=*-*-* 11:30:00 UTC
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+
+# nospopuli-backup.service
+[Unit]
+Description=NosPopuli backup
+After=postgresql.service
+
+[Service]
+Type=oneshot
+User=postgres
+ExecStart=/usr/local/sbin/nospopuli-backup
+
+# nospopuli-backup.timer
+[Unit]
+Description=Nightly NosPopuli backup
+
+[Timer]
+OnCalendar=*-*-* 03:00:00 UTC
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+
+# nospopuli-restore-check.service
+[Unit]
+Description=NosPopuli restore-check
+After=postgresql.service
+
+[Service]
+Type=oneshot
+User=postgres
+ExecStart=/usr/local/sbin/nospopuli-restore-check
+
+# nospopuli-restore-check.timer
+[Unit]
+Description=Weekly NosPopuli restore check
+
+[Timer]
+OnCalendar=Sun *-*-* 05:00:00 UTC
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+```
+
+The sync, in order: Foundry refresh; the clerks' roll calls; on Mondays the public
+legislators and committee files, district shapes and member photos; GovInfo BILLSTATUS
+and bill text; Voteview; nominations; lobbying filings; FEC bulk for the current cycle;
+the certification index; `graph.py load all`; the search documents and any new
+embeddings; `graph.py manifest`; then a commit of the tracked data to `main` with a
+deploy key.
 
 ---
 
@@ -716,12 +886,17 @@ Live problems I know about and haven't fixed. Listed so nobody has to rediscover
   read from the filings' free text and their Congress inferred from the filing year;
   both are reported as advisory. A PAC is linked to an organization only when its
   connected-organization name has the same key.
+- **A member name that fits several people gets no page.** `/member/search` and the
+  `/search` member branch return `candidates` for "Johnson" rather than guessing, but
+  no view reads that list, so the page says "not found".
+- **State search has no LegiScan key on the server.** `LEGISCAN_API_KEY` is not set in
+  `/etc/nospopuli/env`, so every state query takes the no-key path below.
 - **`GET /api/graph/votes` still merges people who share a name.** It reads
   `graph.votes`, which does not go through `answer`'s ambiguity check, so
   `?person=Warner` returns every Warner's votes together. `/api/graph/search` and
   `/ledger` ask which one.
 
-Found while building the golden fixtures, all four now pinned as expected-failures:
+Found while building the golden fixtures, pinned as expected-failures:
 
 - **A state query with no LegiScan key is a silent zero.** `legiscan_client._call`
   logs to stdout and returns `None` before any HTTP (`sources/legiscan_client.py:62`), and
@@ -738,11 +913,6 @@ Found while building the golden fixtures, all four now pinned as expected-failur
   `conf=0.95` is 9-of-11 zero-result while `conf=0.6` and `0.75` are 0-for-3. The most
   confident bucket is the least correct one. `/search "LA County"` returns
   `off_topic` at 0.95 while `classify_question` resolves it to `lacounty-bos`.
-- **`/api/member/{bioguide}` returns `chambers` in an unstable order.**
-  `agents/member_search_agent.py:165` builds it as a `set` and returns `list(chambers)` at
-  `:186`, so the order tracks `PYTHONHASHSEED` — stable within a process, different
-  between them. Harmless today, but it means the field cannot be pinned; the fixture
-  compares it unordered and says so.
 
 ---
 

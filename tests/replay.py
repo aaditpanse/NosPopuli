@@ -538,12 +538,9 @@ def build_app(monkeypatch):
 # ------------------------------------------------------------ golden compare
 
 # Response paths whose list ORDER is not defined by the application, so pinning
-# it would pin a coin flip. `member_search_agent.py:165` builds `chambers` as a
-# set and returns `list(chambers)` at :186 — order therefore tracks
-# PYTHONHASHSEED, which is stable inside one process and different between them.
-# Contents are still compared; only the ordering is waived. Fixing this properly
-# means sorting in the application, which is out of scope for a test change.
-UNORDERED = ("member.chambers",)
+# it would pin a coin flip. Empty since 2026-09-27: `member.chambers` came from
+# a set and tracked PYTHONHASHSEED; the local profile sorts it.
+UNORDERED = ()
 
 
 def normalize(obj, prefix=""):

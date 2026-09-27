@@ -30,8 +30,8 @@ agents/         the LLM agents — router, ledger, search, feed, translator,
 sources/        external data in: congress.gov, GovInfo bulk, Voteview, district
                 shapes, nominations, LegiScan, FEC (API and bulk), Senate LDA,
                 House disclosures. One module per upstream, plus the shared session
-search/         the search plumbing that is not an agent: cache, logger, rank,
-                and the user-flag log that feeds the same loop
+search/         the search plumbing that is not an agent: the bill index (full
+                text + Voyage vectors), cache, logger, rank, and the user-flag log
 resolvers/      location → jurisdiction: zip, address, point, district
 money/          the money layer: bill↔market, stock performance, industry
                 classification, the public-law corpus
@@ -76,8 +76,9 @@ with provenance** that gets traversed. Classification is a projection and it dis
 the half of a mixed question that made it interesting. v1 of the graph is Virginia top
 to bottom plus the whole federal layer: every member since 1789, the presidency,
 committees, the current Congress's votes, bills, laws and campaign committees. The
-skeleton is small enough for two Postgres tables — no graph database. The plan for
-every bill, the Hetzner move and the bulk sync is in README "What's next".
+skeleton is small enough for two Postgres tables — no graph database. Every bill since
+2003 is in it now, and the pages read the bulk files; README "What's next" has the
+detail.
 
 **What the map is for:** questions whose answers require crossing layers of government
 — how the person I elected actually voted — become a walk across the map, with every
@@ -86,6 +87,22 @@ accuracy comes from **certification**, not from mapping. Anticipating the questi
 explicitly not the goal: the entity and edge types are finite, their combinations are
 not. Model the domain, don't enumerate the asks. Longer version in `README.md` under
 "What the map is for".
+
+## Where it runs
+
+One Hetzner server (`nospopuli-1`) behind Cloudflare: the app, Postgres 17, and the
+federal bulk data in `NOSPOPULI_DATA_DIR` (`/srv/bulk`). Every dataset is named once in
+`graph.DATASETS`; read and write through `graph.data_path`. README "Running it" has the
+paths and the systemd units.
+
+- **Pushing to `main` deploys.** The server pulls `origin/main` every five minutes.
+- **The daily sync (11:30 UTC) commits to `main` too** — the tracked data files — so
+  pull before you push.
+- **A laptop has no database.** The code reads `DATABASE_URL`; a `.env` that still
+  says `SUPABASE_DB_URL` gets none, which is deliberate. Graph loads and bulk syncs run
+  on the server, as the `nospopuli` user with `/etc/nospopuli/env`.
+- **The bill routes answer from files from the 108th Congress (2003) on**, with no
+  live fallback; before it they still ask Congress.gov, and each such call says so.
 
 ## Rules
 
