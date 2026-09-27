@@ -1,0 +1,24 @@
+{
+ "meta": {
+  "app_sha": "",
+  "captured": "2026-09-27T14:01:34",
+  "notes": "the state member route for a state not loaded",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "name": "Ward",
+   "state_code": "TX"
+  },
+  "method": "POST",
+  "path": "/state/member/search"
+ },
+ "response": {
+  "json": {
+   "found": false,
+   "member": null,
+   "reason": "TX legislation is not loaded on this server yet. States loaded: VA."
+  },
+  "status": 200
+ }
+}

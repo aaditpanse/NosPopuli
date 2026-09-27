@@ -1,0 +1,80 @@
+{
+ "meta": {
+  "app_sha": "ebc956a",
+  "captured": "2026-09-27T10:02:51",
+  "notes": "a Virginia legislator from the roster file, with what they sponsored",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "max_results": 5,
+   "question": "Jeion Ward",
+   "state_code": "VA"
+  },
+  "method": "POST",
+  "path": "/state/search"
+ },
+ "response": {
+  "json": {
+   "ambiguity_reason": null,
+   "candidates": [],
+   "confidence": 0.85,
+   "member": {
+    "chamber": "Virginia House of Delegates",
+    "current": true,
+    "district": "87",
+    "is_state_legislator": true,
+    "lis_id": "H0173",
+    "name": "Jeion Ward",
+    "ocd_person_id": "ocd-person/f3e15ab0-8419-43c2-ab7a-f3984419d1eb",
+    "party": "Democratic",
+    "photo_url": "https://memdata.virginiageneralassembly.gov/images/display_image/H0173",
+    "source": "open states people",
+    "state": "VA",
+    "terms": [
+     {
+      "chamber": "Virginia House of Delegates",
+      "district": "87",
+      "end": null,
+      "start": "2024-01-10"
+     },
+     {
+      "chamber": "Virginia House of Delegates",
+      "district": "92",
+      "end": "2024-01-08",
+      "start": "2004-01-14"
+     }
+    ]
+   },
+   "query_type": "state_member",
+   "sessions_read": [
+    "2026"
+   ],
+   "sponsored_bills": [
+    {
+     "chamber": "lower",
+     "date_issued": "2025-11-17",
+     "identifier": "HB 1",
+     "is_law": true,
+     "is_state_bill": true,
+     "jurisdiction": "ocd-division/country:us/state:va",
+     "latest_action": "Acts of Assembly Chapter text (CHAP0350)",
+     "latest_action_date": "2026-04-08",
+     "number": 1,
+     "ocd_id": "ocd-bill/3493c95d-b184-43e5-b359-77a6860c7de7",
+     "path": "/state/va/2026/hb/1",
+     "session": "2026",
+     "source": "open states",
+     "sponsor": "Jeion A. Ward",
+     "sponsorship": "primary",
+     "state": "VA",
+     "subjects": [],
+     "title": "Minimum wage; increases incrementally to $15.00 per hour by January 1, 2028.",
+     "type": "hb"
+    }
+   ],
+   "state_code": "VA"
+  },
+  "status": 200
+ }
+}

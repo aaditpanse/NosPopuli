@@ -143,11 +143,14 @@ def test_recording_uses_only_a_local_fixture_database(monkeypatch):
     nothing; a URL that breaks the rule raises instead of falling back."""
     monkeypatch.delenv("NOSPOPULI_RECORD_DB_URL", raising=False)
     assert replay.record_db_url() == ""
-    ok = "postgresql://me@localhost:5432/nospopuli_fixture"
-    monkeypatch.setenv("NOSPOPULI_RECORD_DB_URL", ok)
-    assert replay.record_db_url() == ok
+    for ok in ("postgresql://me@localhost:5432/nospopuli_fixture",
+               "postgresql:///nospopuli_fixture?host=/var/run/postgresql"):
+        monkeypatch.setenv("NOSPOPULI_RECORD_DB_URL", ok)
+        assert replay.record_db_url() == ok
     for bad in ("postgresql://me@db.example.com/nospopuli_fixture",
+                "postgresql:///nospopuli_fixture?host=db.example.com",
                 "postgresql://me@localhost/nospopuli",
+                "postgresql:///nospopuli?host=/var/run/postgresql",
                 "postgresql://me@localhost/fixture_nospopuli"):
         monkeypatch.setenv("NOSPOPULI_RECORD_DB_URL", bad)
         with pytest.raises(RuntimeError):

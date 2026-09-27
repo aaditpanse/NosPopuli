@@ -60,7 +60,6 @@ from search.search_rank import rank_by_relevance
 from agents.state_search_agent import (
     search_state_bills,
     get_recent_state_bills,
-    ENABLED_STATES,
     fetch_state_bill_by_identifier,
     filter_enacted,
     get_state_validator_floor,
@@ -893,19 +892,29 @@ async def handle_browse(structured, question, loop):
     }
 
 
+def _state_not_loaded(state_code):
+    import graph
+    loaded = ", ".join(sorted(graph.loaded_states())) or "none"
+    return (f"{state_code} legislation is not loaded on this server yet. "
+            f"States loaded: {loaded}.")
+
+
 async def handle_state_search(structured, question, loop):
+    """A state question, answered from the files and the search index on
+    this server (Open States, plan step 14). Nothing is fetched live."""
+    import graph
     state_code = structured["state_code"]
+    st = state_code.lower()
+
+    def reply(results, note=None, **extra):
+        return {"query_type": "state_legislation", "state_code": state_code,
+                "confidence": structured.get("confidence", 1.0), "ambiguity_reason": note,
+                "query": structured, "results": results, **extra}
 
     # ── Off-topic — same polite empty as federal ──
     if structured.get("query_type") == "off_topic":
-        log_search(
-            query=question,
-            query_type="off_topic",
-            expanded_terms=[],
-            results_count=0,
-            result_ids=[],
-            confidence=structured.get("confidence", 1.0),
-        )
+        log_search(query=question, query_type="off_topic", expanded_terms=[], results_count=0,
+                   result_ids=[], confidence=structured.get("confidence", 1.0))
         return {
             "query_type": "off_topic",
             "state_code": state_code,
@@ -918,266 +927,86 @@ async def handle_state_search(structured, question, loop):
             "results": [],
         }
 
-    # ── Member query: route to legislator search instead of bill search ──
+    if state_code not in graph.loaded_states():
+        return reply([], _state_not_loaded(state_code), empty_reason="state_not_loaded")
+
+    # ── Member query: the roster file and the bills each person sponsored ──
     if structured.get("query_type") == "member" and structured.get("entity_name"):
-        member = await loop.run_in_executor(
-            None, search_state_member, structured["entity_name"], state_code
-        )
+        found = await loop.run_in_executor(None, graph.state_member_lookup, st, structured["entity_name"])
+        member, bills, read = found.get("person"), [], []
         if member:
-            bills = await loop.run_in_executor(
-                None, fetch_state_member_bills, member["ocd_person_id"], state_code, 10
-            )
-        else:
-            bills = []
+            bills, read = await loop.run_in_executor(
+                None, graph.state_member_bills, st, member["ocd_person_id"], 10)
         return {
             "query_type": "state_member",
             "state_code": state_code,
             "confidence": structured.get("confidence", 1.0),
-            "ambiguity_reason": structured.get("ambiguity_reason"),
+            # The router's own note is about Congress ("not a current member"), not this roster.
+            "ambiguity_reason": (
+                None if member else
+                f"More than one {state_code} legislator matches {structured['entity_name']}." if found.get("candidates") else
+                f"No {state_code} legislator named {structured['entity_name']} in the roster on this server."),
             "member": member,
-            "sponsored_bills": bills,
+            "candidates": found.get("candidates") or [],
+            "sponsored_bills": bills[:10],
+            "sessions_read": read,
         }
 
-    # ── Fast-path bill-ID (from fast_route_state) — session-aware ──
-    fast_path = structured.get("_fast_path")
+    # ── A bill number: newest session first, since states renumber each session ──
     specific_bill = structured.get("specific_bill") or {}
-    if fast_path == "state_bill_id" and specific_bill.get("identifier"):
-        identifier = specific_bill["identifier"]
-        requested_session = structured.get("requested_session")
-        ambiguity_note = None
-
-        # Try requested session first when given, else current session
-        if requested_session:
-            direct = await loop.run_in_executor(
-                None, fetch_state_bill_by_identifier, identifier, state_code, requested_session
-            )
-        else:
-            direct = await loop.run_in_executor(
-                None, fetch_state_bill_by_identifier, identifier, state_code
-            )
-
-        # Fall back to current session when explicit session lookup misses
-        if not direct and requested_session:
-            direct = await loop.run_in_executor(
-                None, fetch_state_bill_by_identifier, identifier, state_code
-            )
-            if direct:
-                ambiguity_note = (
-                    f"No {identifier} found in the {requested_session} session — "
-                    f"showing the current-session bill instead."
-                )
-
-        # No session given and current returned nothing — search across all sessions.
-        # State legislatures reset numbering each session, so the user is likely
-        # asking about a historical bill (e.g. FL HB 1557 from 2022).
-        if not direct and not requested_session:
-            any_session = await loop.run_in_executor(
-                None, fetch_state_bill_by_identifier, identifier, state_code, "any"
-            )
-            if any_session:
-                direct = any_session
-                first = any_session[0] if any_session else {}
-                sess = first.get("session") or "an earlier session"
-                ambiguity_note = (
-                    f"No {identifier} in the current session — showing {identifier} from {sess}. "
-                    f"Add a year to your search (e.g. \"{identifier} from 2024\") to pin a specific version."
-                )
-
-        # Still nothing — likely a numbering-convention mismatch (e.g. Arkansas
-        # House bills start at HB 1001, not HB 1). Fall through to a keyword
-        # search using the identifier as the query, and tell the user.
-        if not direct:
-            fallback = await loop.run_in_executor(
-                None, search_state_bills, identifier, state_code, None, 5
-            )
-            if fallback:
-                ambiguity_note = (
-                    f"No exact match for {identifier} in {state_code}. "
-                    f"Showing the closest matches — your state may use a different numbering convention "
-                    f"(e.g. Arkansas House bills start at HB 1001)."
-                )
-                direct = fallback
-            else:
-                ambiguity_note = (
-                    f"No bill matching {identifier} found in {state_code}. "
-                    f"Check the bill number — states use different numbering conventions."
-                )
-
-        return {
-            "query_type": "state_legislation",
-            "state_code": state_code,
-            "confidence": 1.0,
-            "ambiguity_reason": ambiguity_note,
-            "query": structured,
-            "results": direct or [],
-        }
-
-    # ── Legacy bill-ID fallback (when router didn't fast-path) ──
-    bill_id_match = re.search(r"\b([HS][BJCR]?\s*\d+)\b", question, re.IGNORECASE)
-    if bill_id_match:
-        identifier = re.sub(r"\s+", " ", bill_id_match.group(1).upper().strip())
-        direct = await loop.run_in_executor(
-            None, fetch_state_bill_by_identifier, identifier, state_code
-        )
-        if direct:
-            return {
-                "query_type": "state_legislation",
-                "state_code": state_code,
-                "confidence": 1.0,
-                "ambiguity_reason": None,
-                "query": structured,
-                "results": direct,
-            }
-        # fall through to text search if identifier not found
+    identifier = specific_bill.get("identifier") if structured.get("_fast_path") == "state_bill_id" else None
+    if not identifier:
+        m = re.search(r"\b([HS][BJCR]?\s*\d+)\b", question, re.IGNORECASE)
+        identifier = re.sub(r"\s+", " ", m.group(1).upper()) if m else None
+    if identifier:
+        year = structured.get("requested_session")
+        year = year if year and len(year) == 4 else None
+        hits = await loop.run_in_executor(None, graph.state_bill_lookup, st, identifier, year)
+        note = None
+        if not hits and year:
+            hits = await loop.run_in_executor(None, graph.state_bill_lookup, st, identifier, None)
+            if hits:
+                note = f"No {identifier} in {year} on this server — showing {identifier} from other sessions."
+        if hits:
+            if not year and not note and len(hits) > 1:
+                note = (f"{identifier} is a different bill each session; newest first. "
+                        f"Add a year (e.g. \"{identifier} from {graph.session_key(hits[-1][0])[0]}\") to pin one.")
+            return reply([graph.state_bill_row(st, s, k, b) for s, k, b in hits[:10]], note)
+        if structured.get("_fast_path") == "state_bill_id":
+            return reply([], f"No {identifier} in the {state_code} sessions on this server "
+                             f"({', '.join(graph.state_sessions(st))}).", empty_reason="no_such_bill")
 
     target_count = max(structured.get("result_count", 5), 10)
 
-    # ── Browse: "show me anything recent" / "latest bills" — bypass keyword
-    # search and validator (there's no topic to score against). Goes straight
-    # to the most-recently-updated state bills.
+    # ── Browse: "show me anything recent" — the latest actions, no topic to score ──
     if structured.get("query_subtype") == "browse":
-        results = await loop.run_in_executor(
-            None, get_recent_state_bills, state_code, target_count
-        )
+        results = await loop.run_in_executor(None, graph.state_recent_bills, st, target_count * 3)
         if structured.get("status") == "enacted":
-            enacted = filter_enacted(results or [])
-            if enacted:
-                results = enacted
-        log_search(
-            query=question, query_type="state_legislation", expanded_terms=[],
-            results_count=len(results or []),
-            result_ids=[r.get("identifier", "") for r in (results or [])],
-            confidence=structured.get("confidence", 1.0),
-        )
-        return {
-            "query_type": "state_legislation",
-            "state_code": state_code,
-            "confidence": structured.get("confidence", 1.0),
-            "ambiguity_reason": None,
-            "query": structured,
-            "results": results or [],
-        }
+            results = [r for r in results if r["is_law"]] or results
+        results = results[:target_count]
+        log_search(query=question, query_type="state_legislation", expanded_terms=[],
+                   results_count=len(results), result_ids=[r["identifier"] for r in results],
+                   confidence=structured.get("confidence", 1.0))
+        return reply(results)
 
-    # ── Search cache (per-state namespace, 30-min TTL) ──
-    sc_key = None
-    if not (structured.get("_bypass_search_cache") or search_cache.is_freshness_query(structured, question)):
-        sc_key = search_cache.cache_key(
-            structured, question, target_count,
-            jurisdiction=f"state:{state_code.upper()}",
-        )
-        cached = search_cache.get(sc_key)
-        if cached:
-            results = await loop.run_in_executor(None, search_cache.rehydrate, cached)
-            log_search(
-                query=question, query_type="state_legislation", expanded_terms=[],
-                results_count=len(results),
-                result_ids=[r.get("identifier", "") for r in results],
-                confidence=structured.get("confidence", 1.0),
-            )
-            return {
-                "query_type": "state_legislation",
-                "state_code": state_code,
-                "confidence": structured.get("confidence", 1.0),
-                "ambiguity_reason": None,
-                "query": structured,
-                "results": results,
-                "cached": True,
-            }
-
-    # ── Search LegiScan with structured router output ──
-    # Prefer named_entity (router's best guess at an act name); otherwise
-    # synthesise a phrase from the keywords. Two-word topic phrases like
-    # "housing affordability" often perform worse in the full-text index than
-    # their canonical form ("affordable housing") — when the expander surfaces
-    # a known synonym we'll let it ride at the front of the queue.
-    named_entity = (structured.get("named_entity") or "").strip()
-    keywords = structured.get("keywords", []) or []
-    primary_term = named_entity or " ".join(keywords) or question
-
-    expanded = await loop.run_in_executor(
-        None, expand_query, keywords, structured.get("topic", ""), get_client()
-    )
-
-    # If the primary is just a keyword join (no named entity) and the expander
-    # produced a synonym, use the synonym as the primary — they're often
-    # canonical phrasings indexed more reliably.
-    if not named_entity and expanded:
-        primary_term = expanded[0]
-        expanded = expanded[1:]
-
-    seen = set()
-    results = []
-
-    # Primary term — retried once on empty/timeout (transient search slowness
-    # is common on first-touch phrase queries).
-    primary_results = await loop.run_in_executor(
-        None, search_state_bills, primary_term, state_code, None, 20
-    )
-    if not primary_results:
-        primary_results = await loop.run_in_executor(
-            None, search_state_bills, primary_term, state_code, None, 20
-        )
-    for r in primary_results:
-        key = r.get("ocd_id")
-        if key and key not in seen:
-            seen.add(key)
-            results.append(r)
-
-    # Enrichment from expanded synonyms is opportunistic. Skip entirely when
-    # the primary already gave us a useful set (3+ hits), and stop on first
-    # failure so one slow LegiScan response can't ruin the whole search.
-    if len(results) < 3 and expanded:
-        for term in expanded[:2]:
-            try:
-                term_results = await loop.run_in_executor(
-                    None, search_state_bills, term, state_code, None, 20
-                )
-            except Exception:
-                break
-            if not term_results:
-                continue
-            for r in term_results:
-                key = r.get("ocd_id")
-                if key and key not in seen:
-                    seen.add(key)
-                    results.append(r)
-            if len(results) >= target_count:
-                break
-
-    results = results[:target_count]
-
-    if structured.get("status") == "enacted":
-        enacted = filter_enacted(results)
-        if enacted:
-            results = enacted
-
-    # Per-state validator floor (parametrised in state_search_agent.STATE_VALIDATOR_FLOOR)
-    floor = get_state_validator_floor(state_code)
+    # ── Topic: the hybrid index over this state's bills (full text + Voyage) ──
+    # The whole question goes in, as for federal: the index ranks meaning, so
+    # the keyword expansion LegiScan needed has nothing to add.
+    from search import bill_index
     results = await loop.run_in_executor(
-        None, validate_results, question, results, get_client(), floor, True
-    )
+        None, lambda: bill_index.search(question, limit=20, jurisdiction=graph.state_div(st),
+                                        laws_only=structured.get("status") == "enacted"))
+    results = results[:target_count]
+    results = await loop.run_in_executor(
+        None, validate_results, question, results, get_client(), get_state_validator_floor(state_code), True)
 
-    if sc_key and results:
-        await loop.run_in_executor(None, search_cache.store, sc_key, results)
-
-    log_search(
-        query=question,
-        query_type="state_legislation",
-        expanded_terms=expanded or [],
-        results_count=len(results),
-        result_ids=[r.get("identifier", "") for r in results],
-        confidence=structured.get("confidence", 1.0),
-    )
-
-    return {
-        "query_type": "state_legislation",
-        "state_code": state_code,
-        "confidence": structured.get("confidence", 1.0),
-        "ambiguity_reason": None,
-        "query": structured,
-        "results": results,
-        "cached": False,
-    }
+    log_search(query=question, query_type="state_legislation", expanded_terms=[],
+               results_count=len(results), result_ids=[r.get("identifier", "") for r in results],
+               confidence=structured.get("confidence", 1.0))
+    # No search cache: search_cache.store keeps Congress rows only, and the
+    # index answers from this server in well under a second.
+    return reply(results, None if results else
+                 f"No {state_code} bills on this server matched that question.")
 
 
 @app.post("/resolve-zip")
@@ -1392,18 +1221,11 @@ async def _dispatch(structured: dict, body: "SearchRequest", question: str, loop
     # state context we never route back to federal handlers.
     if structured.get("jurisdiction") == "state" and structured.get("state_code"):
         state_code = structured["state_code"]
-        if state_code in ENABLED_STATES:
-            result = await handle_state_search(structured, question, loop)
-            if suggested_jurisdiction and isinstance(result, dict):
-                result["suggested_jurisdiction"] = suggested_jurisdiction
-            return result
-        return {
-            "query_type": "legislation",
-            "confidence": 1.0,
-            "ambiguity_reason": f"{state_code} state legislation is not yet available.",
-            "query": structured,
-            "results": [],
-        }
+        # handle_state_search answers a state not loaded here honestly.
+        result = await handle_state_search(structured, question, loop)
+        if suggested_jurisdiction and isinstance(result, dict):
+            result["suggested_jurisdiction"] = suggested_jurisdiction
+        return result
 
     query_type = structured.get("query_type", "legislation")
 
@@ -2053,12 +1875,13 @@ async def get_law(request: Request, body: LawRequest):
 @app.post("/state/search")
 @limiter.limit("20/minute")
 async def state_search(request: Request, body: StateSearchRequest):
+    import graph
     state_code = body.state_code.upper()
-    if state_code not in ENABLED_STATES:
-        raise HTTPException(
-            status_code=400,
-            detail=f"{body.state_code} is not yet available. Check back soon.",
-        )
+    if state_code not in graph.loaded_states():
+        # Answered before the router runs: no model call for a state with no data.
+        return {"query_type": "state_legislation", "state_code": state_code, "confidence": 1.0,
+                "ambiguity_reason": _state_not_loaded(state_code), "query": None, "results": [],
+                "empty_reason": "state_not_loaded"}
     try:
         loop = asyncio.get_event_loop()
 
@@ -2255,25 +2078,27 @@ async def state_member_search(request: Request, body: StateMemberSearchRequest):
     if not body.name.strip():
         raise HTTPException(status_code=400, detail="Name required")
 
+    import graph
+    state_code = (body.state_code or "").upper()
+    if state_code not in graph.loaded_states():
+        return {"found": False, "member": None, "reason": _state_not_loaded(state_code or "That state")}
     loop = asyncio.get_event_loop()
-    member = await loop.run_in_executor(
-        None, search_state_member, body.name, body.state_code
-    )
-
-    if not member:
-        return {"found": False, "member": None}
-
-    bills = await loop.run_in_executor(
-        None, fetch_state_member_bills, member["ocd_person_id"], body.state_code, 10
-    )
-
+    found = await loop.run_in_executor(None, graph.state_member_lookup, state_code.lower(), body.name)
+    if not found.get("person"):
+        return {"found": False, "member": None, "candidates": found.get("candidates") or [],
+                "reason": None if found.get("candidates") else
+                f"No {state_code} legislator named {body.name.strip()} in the roster on this server."}
+    member = found["person"]
+    bills, read = await loop.run_in_executor(
+        None, graph.state_member_bills, state_code.lower(), member["ocd_person_id"], 10)
     return {
         "found": True,
         "member": member,
         "legislation": {
-            "sponsored": bills,
-            "sponsored_count": len(bills),
-            "cosponsored_count": 0,
+            "sponsored": bills[:10],
+            "sponsored_count": sum(1 for b in bills if b["sponsorship"] == "primary"),
+            "cosponsored_count": sum(1 for b in bills if b["sponsorship"] == "cosponsor"),
+            "sessions_read": read,
             "policy_areas": {},
         },
     }

@@ -2364,3 +2364,64 @@ class StateReviewFixesTest(unittest.TestCase):
                                                              2026, None, 10))
             finally:
                 graph.DATA_DIR = old
+
+
+class StateSearchReadersTest(unittest.TestCase):
+    """/state/search and /state/member/search read the files (plan step 14)."""
+
+    def setUp(self):
+        self._dir = tempfile.TemporaryDirectory()
+        self._old, graph.DATA_DIR = graph.DATA_DIR, pathlib.Path(self._dir.name)
+        graph._STATE_FILE_CACHE.clear()
+        role = lambda t, d, s, e=None: {"type": t, "district": d, "start": s, "end": e}
+        people = [
+            {"id": "ocd-person/a", "name": "Jeion Ward", "given_name": "Jeion", "family_name": "Ward",
+             "other_names": ["Jeion A. Ward"], "roles": [role("lower", "87", "2024-01-10")]},
+            {"id": "ocd-person/b", "name": "Anne Smith", "given_name": "Anne", "family_name": "Smith",
+             "roles": [role("lower", "1", "2024-01-10")]},
+            {"id": "ocd-person/c", "name": "Alan Smith", "given_name": "Alan", "family_name": "Smith",
+             "roles": [role("upper", "2", "2024-01-10")]},
+            {"id": "ocd-person/g", "name": "A Governor", "roles": [{"type": "governor", "start": "2026-01-17"}]},
+        ]
+        self._write("state_people", None, {"meta": {}, "people": people})
+        bill = lambda ident, sponsors, when: {"identifier": ident, "title": ident + " title", "sponsors": sponsors,
+                                              "latest_action_date": when, "actions": []}
+        ward = {"name": "Jeion A. Ward", "person": "ocd-person/a", "primary": True}
+        self._write("state_bills", "2025", {"meta": {}, "bills": {"hb/1": bill("HB 1", [], "2025-03-01")}})
+        self._write("state_bills", "2026", {"meta": {}, "bills": {
+            "hb/1": bill("HB 1", [ward, dict(ward, primary=False)], "2026-04-08"),
+            "hb/7": bill("HB 7", [dict(ward, primary=False)], "2026-02-01")}})
+
+    def tearDown(self):
+        graph.DATA_DIR = self._old
+        graph._STATE_FILE_CACHE.clear()
+        self._dir.cleanup()
+
+    def _write(self, kind, session, obj):
+        p = graph.data_path(kind, state="va") if kind == "state_people" else graph.data_path(kind, state="va", session=session)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(json.dumps(obj))
+
+    def test_a_bill_number_is_newest_session_first_or_the_named_year(self):
+        self.assertEqual([s for s, _, _ in graph.state_bill_lookup("va", "HB 1")], ["2026", "2025"])
+        self.assertEqual([s for s, _, _ in graph.state_bill_lookup("va", "hb1", 2025)], ["2025"])
+        self.assertEqual(graph.state_bill_lookup("va", "HB 99"), [])
+
+    def test_a_name_an_alias_and_a_title(self):
+        for q in ("Jeion Ward", "jeion a. ward", "Delegate Ward"):
+            self.assertEqual(graph.state_member_lookup("va", q)["person"]["ocd_person_id"], "ocd-person/a", q)
+
+    def test_two_people_with_one_surname_are_never_guessed(self):
+        found = graph.state_member_lookup("va", "Smith")
+        self.assertNotIn("person", found)
+        self.assertEqual({c["ocd_person_id"] for c in found["candidates"]}, {"ocd-person/b", "ocd-person/c"})
+        self.assertEqual(graph.state_member_lookup("va", "Anne Smith")["person"]["ocd_person_id"], "ocd-person/b")
+
+    def test_a_governor_is_not_a_legislator(self):
+        self.assertEqual(graph.state_member_lookup("va", "A Governor"), {})
+
+    def test_sponsored_bills_once_each_primary_first(self):
+        rows, read = graph.state_member_bills("va", "ocd-person/a", 10)
+        self.assertEqual([(r["identifier"], r["sponsorship"]) for r in rows], [("HB 1", "primary"), ("HB 7", "cosponsor")])
+        self.assertEqual(read, ["2026", "2025"])
+        self.assertEqual(rows[0]["path"], "/state/va/2026/hb/1")

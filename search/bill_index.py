@@ -318,6 +318,10 @@ def rrf(*rankings, k=RRF_K):
     return sorted(score, key=lambda x: (-score[x], x))
 
 
+def _iso(d):
+    return d.isoformat() if hasattr(d, "isoformat") else (d or "")
+
+
 def as_result(row):
     """A bill_doc row in the shape search_bills has always returned, so the
     ranker and validator downstream need no change. Pure."""
@@ -334,6 +338,10 @@ def as_result(row):
             "type": row["bill_type"], "number": int(row["number"]),
             "is_law": bool(row.get("is_law")), "chapter": laws[0] if laws else None,
             "policy_area": row.get("policy_area"), "is_state_bill": True,
+            "latest_action": row.get("latest_action"),
+            "latest_action_date": _iso(row.get("latest_action_date")),
+            "sponsor": row.get("sponsor_name"),
+            "path": f"/state/{st}/{row.get('session')}/{row['bill_type']}/{row['number']}",
         }
     return {
         "package_id": f"BILLS-{row['congress']}{row['bill_type']}{row['number']}",
@@ -411,7 +419,8 @@ def search(question, congresses=None, limit=10, laws_only=False, jurisdiction=US
         near = [r["instrument_id"] for r in cur.fetchall()]
         ids = rrf(fts, near)[:limit]
         cur.execute("""SELECT instrument_id, congress, bill_type, number, title, introduced,
-                              policy_area, is_law, law_numbers, jurisdiction, session
+                              policy_area, is_law, law_numbers, jurisdiction, session,
+                              latest_action, latest_action_date, sponsor_name
                        FROM bill_doc WHERE instrument_id = ANY(%s)""", (ids,))
         rows = {r["instrument_id"]: r for r in cur.fetchall()}
     return [as_result(rows[i]) for i in ids if i in rows]

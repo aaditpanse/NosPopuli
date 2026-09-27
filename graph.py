@@ -2005,6 +2005,122 @@ def state_bill_page(st, session, key):
             "lis_meta": (lis or {}).get("meta")}
 
 
+def loaded_states():
+    """The legislatures with bills on this server, upper-case. A state not
+    here answers 'not loaded on this server', never another state's data."""
+    return {st.upper() for st in LEGISLATURES if state_sessions(st)}
+
+
+def state_bill_row(st, session, key, b):
+    """A bills-file record as one state search result. Pure."""
+    itype, number = key.split("/")
+    primary = next((s for s in b.get("sponsors") or [] if s.get("primary")), None)
+    return {"ocd_id": b.get("openstates_id"), "identifier": b["identifier"], "title": b["title"],
+            "subjects": b.get("subjects") or [], "state": st.upper(), "jurisdiction": state_div(st),
+            "session": session, "type": itype, "number": int(number), "chamber": b.get("chamber"),
+            "latest_action": b.get("latest_action"), "latest_action_date": b.get("latest_action_date"),
+            "date_issued": b.get("first_action_date") or "",
+            "sponsor": primary["name"] if primary else None,
+            "is_law": any("became-law" in a["classification"] or "executive-signature" in a["classification"]
+                          for a in b.get("actions") or []),
+            "path": f"/state/{st.lower()}/{session}/{itype}/{number}", "is_state_bill": True,
+            "source": "open states"}
+
+
+def state_bill_lookup(st, identifier, year=None):
+    """[(session, key, bill)] for a bill number, newest session first: every
+    session of `year` when one is named, else every session on disk. States
+    renumber each session, so HB 1 is a different bill each year."""
+    key = bill_key_of(identifier)
+    if not key:
+        return []
+    out = []
+    for sid in reversed(state_sessions(st)):
+        if year and (session_key(sid) or (0,))[0] != int(year):
+            continue
+        bills = _state_file("state_bills", st, sid)
+        if bills and key in bills["bills"]:
+            out.append((sid, key, bills["bills"][key]))
+    return out
+
+
+def state_recent_bills(st, n):
+    """The n bills with the latest action in the newest session on disk."""
+    sessions = state_sessions(st)
+    bills = (_state_file("state_bills", st, sessions[-1]) if sessions else None) or {"bills": {}}
+    rows = sorted(bills["bills"].items(), key=lambda kv: (kv[1].get("latest_action_date") or "", kv[0]),
+                  reverse=True)[:n]
+    return [state_bill_row(st, sessions[-1], k, b) for k, b in rows]
+
+
+def _roster_names(p):
+    return {n.lower() for n in [p.get("name") or "", *(p.get("other_names") or [])] if n}
+
+
+def state_member_lookup(st, name):
+    """A state legislator by name from the roster file: {person} on one
+    match, {candidates} on a tie, {} on none. An exact name (or an alias
+    the roster lists) wins; then a surname, current members first. A
+    guess between two people is never made."""
+    people = [p for p in (_state_file("state_people", st, None) or {"people": []})["people"]
+              if any(r.get("type") in ("upper", "lower") for r in p.get("roles") or [])]
+    q = re.sub(r"^(?:del(?:egate)?|sen(?:ator)?|rep(?:resentative)?)\.?\s+", "", (name or "").strip(), flags=re.I).lower()
+    if not q:
+        return {}
+    hits = [p for p in people if q in _roster_names(p)]
+    if not hits:
+        hits = [p for p in people if (p.get("family_name") or "").lower() == q.split()[-1]
+                and (len(q.split()) == 1 or (p.get("given_name") or "").lower().startswith(q.split()[0][0]))]
+        current = [p for p in hits if any(r.get("end") is None for r in p.get("roles") or [])]
+        hits = current or hits
+    if len(hits) == 1:
+        return {"person": state_member_card(st, hits[0])}
+    if hits:
+        return {"candidates": [state_member_card(st, p) for p in hits]}
+    return {}
+
+
+def state_member_card(st, p):
+    """A roster person in the shape the state member view reads. Pure."""
+    roles = sorted((r for r in p.get("roles") or [] if r.get("type") in ("upper", "lower")),
+                   key=lambda r: r.get("start") or "", reverse=True)
+    top = roles[0] if roles else {}
+    conf = LEGISLATURES.get(st.lower()) or {}
+    chamber = conf.get(top.get("type"), top.get("type") or "")
+    return {"ocd_person_id": p["id"], "name": p.get("name"), "party": p.get("party"), "state": st.upper(),
+            "chamber": chamber, "district": top.get("district"), "current": top.get("end") is None,
+            "photo_url": p.get("image") or "", "lis_id": (p.get("ids") or {}).get("lis"),
+            "terms": [{"chamber": conf.get(r["type"], r["type"]), "district": r.get("district"),
+                       "start": r.get("start"), "end": r.get("end")} for r in roles],
+            "is_state_legislator": True, "source": "open states people"}
+
+
+def state_member_bills(st, person_id, n):
+    """Bills a legislator sponsored, newest session first, primary before
+    co-sponsor within a session: (rows, sessions read). Reading stops once
+    n are found and the current sessions are read (a prefiled next session
+    alone is not the member's record), so a count covers those sessions only."""
+    rows, read = [], []
+    sessions = state_sessions(st)
+    current = set(current_state_sessions(sessions, state_vote_counts(st)))
+    for sid in reversed(sessions):
+        bills = _state_file("state_bills", st, sid)
+        if not bills:
+            continue
+        read.append(sid)
+        mine = {}
+        for k, b in bills["bills"].items():
+            for s in b.get("sponsors") or []:
+                if s.get("person") == person_id:
+                    mine[k] = (min(mine.get(k, (True,))[0], not s["primary"]), k, b)
+        mine = mine.values()
+        rows += [dict(state_bill_row(st, sid, k, b), sponsorship="primary" if not co else "cosponsor")
+                 for co, k, b in sorted(mine, key=lambda t: (t[0], -int(t[1].split("/")[1])))]
+        if len(rows) >= n and current <= set(read):
+            break
+    return rows, read
+
+
 # Furthest along first: the version a reader wants when none is named.
 _VERSION_ORDER = ("chapter", "enrolled", "reenrolled", "engrossed", "substitute", "amendment", "committee",
                   "printed", "introduced")

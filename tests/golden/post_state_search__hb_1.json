@@ -1,0 +1,73 @@
+{
+ "meta": {
+  "app_sha": "",
+  "captured": "2026-09-27T14:02:19",
+  "notes": "a Virginia bill number, from the bills files, newest session first",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "max_results": 5,
+   "question": "HB 1",
+   "state_code": "VA"
+  },
+  "method": "POST",
+  "path": "/state/search"
+ },
+ "response": {
+  "json": {
+   "ambiguity_reason": null,
+   "confidence": 1.0,
+   "query": {
+    "_bypass_search_cache": false,
+    "_fast_path": "state_bill_id",
+    "ambiguity_reason": null,
+    "confidence": 1.0,
+    "entity_name": null,
+    "expanded_terms": [],
+    "jurisdiction": "state",
+    "keywords": [],
+    "named_entity": null,
+    "query_subtype": "specific_bill",
+    "query_type": "legislation",
+    "requested_session": null,
+    "result_count": 1,
+    "specific_bill": {
+     "identifier": "HB 1",
+     "number": 1,
+     "type": "HB"
+    },
+    "state_code": "VA",
+    "status": "any",
+    "time_filter": false,
+    "time_range": null,
+    "topic": ""
+   },
+   "query_type": "state_legislation",
+   "results": [
+    {
+     "chamber": "lower",
+     "date_issued": "2025-11-17",
+     "identifier": "HB 1",
+     "is_law": true,
+     "is_state_bill": true,
+     "jurisdiction": "ocd-division/country:us/state:va",
+     "latest_action": "Acts of Assembly Chapter text (CHAP0350)",
+     "latest_action_date": "2026-04-08",
+     "number": 1,
+     "ocd_id": "ocd-bill/3493c95d-b184-43e5-b359-77a6860c7de7",
+     "path": "/state/va/2026/hb/1",
+     "session": "2026",
+     "source": "open states",
+     "sponsor": "Jeion A. Ward",
+     "state": "VA",
+     "subjects": [],
+     "title": "Minimum wage; increases incrementally to $15.00 per hour by January 1, 2028.",
+     "type": "hb"
+    }
+   ],
+   "state_code": "VA"
+  },
+  "status": 200
+ }
+}

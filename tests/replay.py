@@ -361,6 +361,22 @@ def _install(monkeypatch, caches):
     import graph
     monkeypatch.setattr(graph, "DATA_DIR", STORE / "bulk")
 
+    # 9. The hybrid bill search. It opens its own pool (not db._cursor) and
+    #    embeds the question with a local model a laptop may not have, so
+    #    the seam is the function: its result, keyed by its arguments. The
+    #    ranking itself is pinned in test_search_rank, not here.
+    from search import bill_index
+    real_search = bill_index.search
+
+    def fake_search(question, congresses=None, limit=10, laws_only=False,
+                    jurisdiction=bill_index.US_DIV, sessions=None):
+        key = _key("search", question, jurisdiction, {"congresses": congresses, "limit": limit,
+                                                      "laws_only": laws_only, "sessions": sessions})
+        return caches["search"].fetch(key, lambda: real_search(
+            question, congresses, limit, laws_only, jurisdiction, sessions))
+
+    monkeypatch.setattr(bill_index, "search", fake_search)
+
     # 38 routes carry @limiter.limit over in-process storage on a module global
     # that never resets, and get_remote_address collapses every TestClient call
     # to one key — so a 10/min route 429s on the 11th test. RATELIMIT_ENABLED
@@ -472,9 +488,12 @@ def record_db_url():
     url = os.environ.get("NOSPOPULI_RECORD_DB_URL", "").strip()
     if not url:
         return ""
-    from urllib.parse import urlparse
+    from urllib.parse import urlparse, parse_qs
     u = urlparse(url)
-    if u.hostname not in ("localhost", "127.0.0.1", "::1") or not u.path.lstrip("/").endswith("_fixture"):
+    # A Unix socket (no host, or ?host=/a/path) is on this machine by definition.
+    sock = not u.hostname and all(h.startswith("/") for h in parse_qs(u.query).get("host", ["/"]))
+    local = u.hostname in ("localhost", "127.0.0.1", "::1") or sock
+    if not local or not u.path.lstrip("/").endswith("_fixture"):
         raise RuntimeError("NOSPOPULI_RECORD_DB_URL must name a database ending in _fixture on localhost")
     return url
 
@@ -528,7 +547,7 @@ def build_app(monkeypatch):
     """Returns (api module, TestClient) with every boundary closed."""
     from starlette.testclient import TestClient
     prepare_env()
-    caches = {n: Cache(n) for n in ("llm", "http", "db")}
+    caches = {n: Cache(n) for n in ("llm", "http", "db", "search")}
     api = _install(monkeypatch, caches)
     # global_exception_handler turns everything into a generic 500, so asserting
     # on that body is the only stable behaviour available.
@@ -709,6 +728,16 @@ CASES = (
     ("POST", "/state/bill", {"state_code": "va", "session": "2026", "bill_type": "hb", "number": 99999}, None,
      None, "a state bill not in the record: 404 naming the record read"),
     ("GET", "/api/state/bill/va/2026/hb/1/text", None, None, None, "a Virginia bill's stored text"),
+    ("POST", "/state/search", {"question": "HB 1", "state_code": "VA", "max_results": 5}, None, None,
+     "a Virginia bill number, from the bills files, newest session first"),
+    ("POST", "/state/search", {"question": "Jeion Ward", "state_code": "VA", "max_results": 5}, None, None,
+     "a Virginia legislator from the roster file, with what they sponsored"),
+    ("POST", "/state/search", {"question": "school vouchers", "state_code": "TX", "max_results": 5}, None, None,
+     "a state with no data on this server says so, before any model call"),
+    ("POST", "/state/member/search", {"name": "Jeion Ward", "state_code": "VA"}, None, None,
+     "the state member route, from the roster and bills files"),
+    ("POST", "/state/member/search", {"name": "Ward", "state_code": "TX"}, None, None,
+     "the state member route for a state not loaded"),
     ("GET", "/api/bill/119/hr/99999/text", None, None, None,
      "a bill not in the last sync: no text, and no live call"),
     ("GET", "/bill/110/hr/2/text", None, None, None,
@@ -728,7 +757,7 @@ CASES = (
     ("POST", "/ledger", {"question": ""}, None, None, "empty is the home plate"),
     ("POST", "/state/search", {"question": "healthcare", "state_code": "VA",
                                "max_results": 5}, None, None,
-     "the state layer directly — records the no-LegiScan-key path"),
+     "the state layer directly: the Virginia search index on this server"),
 
     # --- auth-gated: contract only, no secrets in the fixture -----------
     ("GET", "/monitor/flags", None, None, None, "contract: refuses without the secret"),
@@ -796,7 +825,7 @@ def record(argv):
 
     mp = pytest.MonkeyPatch()
     prepare_env()
-    caches = {n: Cache(n) for n in ("llm", "http", "db")}
+    caches = {n: Cache(n) for n in ("llm", "http", "db", "search")}
     api = _install(mp, caches)
     client = TestClient(api.app, raise_server_exceptions=False)
     GOLDEN.mkdir(parents=True, exist_ok=True)

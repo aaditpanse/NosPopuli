@@ -1,0 +1,29 @@
+{
+ "meta": {
+  "app_sha": "",
+  "captured": "2026-09-27T14:02:19",
+  "notes": "a state with no data on this server says so, before any model call",
+  "volatile": []
+ },
+ "request": {
+  "body": {
+   "max_results": 5,
+   "question": "school vouchers",
+   "state_code": "TX"
+  },
+  "method": "POST",
+  "path": "/state/search"
+ },
+ "response": {
+  "json": {
+   "ambiguity_reason": "TX legislation is not loaded on this server yet. States loaded: VA.",
+   "confidence": 1.0,
+   "empty_reason": "state_not_loaded",
+   "query": null,
+   "query_type": "state_legislation",
+   "results": [],
+   "state_code": "TX"
+  },
+  "status": 200
+ }
+}
