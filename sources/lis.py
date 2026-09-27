@@ -23,6 +23,7 @@ published (gzipped), and a PDF-only version also gets its text extracted.
 Run on the server, not in a request:
     python -m sources.lis sync va          # CSVs for each LIS session -> derived/states/va/lis-<session>.json
     python -m sources.lis text va 2026     # text for one session's versions (all sessions if none named)
+    python -m sources.lis text --latest    # every text state's last two years of sessions (daily sync)
 """
 
 import csv
@@ -286,11 +287,18 @@ if __name__ == "__main__":
                 print(st, sid, json.dumps({k: m[k] for k in ("code", "bills", "votes", "unlinked_votes", "empty_votes", "unchanged",
                                                                "errors") if k in m}))
     elif cmd == "text":
-        st, sessions = args[0], args[1:]
-        if not sessions:
-            sessions = sorted({p.stem.removeprefix("bills-") for p in graph.data_glob("state_bills", state=st)},
-                              key=graph.session_key)
-        for sid in sessions:
-            print(json.dumps(sync_text(st, sid)))
+        # text <st> [session ...]: those sessions, or every one on disk.
+        # text --latest: each text state's sessions of its last two years (the
+        # sitting one and the prefiles for the next), for the daily sync.
+        if args[:1] == ["--latest"]:
+            for st in [k for k, v in graph.LEGISLATURES.items() if v.get("text")]:
+                sessions = graph.state_sessions(st)
+                last = max((graph.session_key(x)[0] for x in sessions), default=0)
+                for sid in [x for x in sessions if graph.session_key(x)[0] >= last - 1]:
+                    print(st, json.dumps(sync_text(st, sid)))
+        else:
+            st, sessions = args[0], args[1:]
+            for sid in sessions or graph.state_sessions(st):
+                print(json.dumps(sync_text(st, sid)))
     else:
         print(__doc__)
