@@ -2446,3 +2446,45 @@ class StateStageTest(unittest.TestCase):
         acts = [{"classification": ["passage"]}]
         self.assertEqual(graph.state_stage(acts, [{"description": "Approved by Governor-Chapter 350"}]), "law")
         self.assertEqual(graph.state_stage(acts, [{"description": "Referred to Committee on Finance"}]), "passed")
+
+
+class StateBesideFederalTest(unittest.TestCase):
+    """Plan step 18: the Virginia layer beside Congress, and an older
+    session's vote answered from its file."""
+
+    def test_a_federal_question_is_unchanged_beside_a_virginia_one(self):
+        nodes, edges, _ = graph.build_congress(LEGISLATORS, [SNAPSHOT_WITH_SPONSORS], today=TODAY)
+        fed = graph.search("who sponsored HR 5184", graph.memory_backend(nodes, edges), today=TODAY)
+        sn, se, _ = graph.build_state_skeleton("va", StateLayerTest.PEOPLE, StateLayerTest.LIS, today="2026-09-27")
+        pid = {"ocd-person/a": graph.node_id("person", "openstates/a")}
+        bn, be, _ = graph.build_state_bills("va", "2026", StateLayerTest().bills(), pid, [])
+        b = graph.memory_backend(nodes + sn + bn, edges + se + be)
+        both = graph.search("who sponsored HR 5184", b, today=TODAY)
+        self.assertTrue(fed["rows"])
+        self.assertEqual(both["rows"], fed["rows"])
+        va = graph.search("who sponsored HB 1 in Virginia", b, today=TODAY)
+        self.assertEqual({r["item_id"] for r in va["rows"]}, {"instrument/va/2026/hb/1"})
+
+    def test_an_older_sessions_vote_is_read_from_its_file(self):
+        with tempfile.TemporaryDirectory() as d:
+            old, graph.DATA_DIR = graph.DATA_DIR, pathlib.Path(d)
+            try:
+                def put(kind, sid, obj):
+                    p = graph.data_path(kind, state="va", session=sid)
+                    p.parent.mkdir(parents=True, exist_ok=True)
+                    p.write_text(json.dumps(obj))
+                vote = lambda bill, date: {"id": "ocd-vote/" + date, "bill": bill, "date": date, "motion": "H VOTE:",
+                                           "result": "pass", "positions": [["ocd-person/a", "Jeion A. Ward", "no"]]}
+                put("state_bills", "2024", {"bills": {"hb/1": {"identifier": "HB 1", "title": "Minimum wage"}}})
+                put("state_votes", "2024", {"meta": {"votes": 1}, "votes": [vote("hb/1", "2024-02-06")]})
+                put("state_bills", "2026", {"bills": {}})
+                put("state_votes", "2026", {"meta": {"votes": 1}, "votes": [vote("hb/2", "2026-02-03")]})
+                ward = [{"id": "p", "name": "Jeion A. Ward", "openstates_id": "ocd-person/a"}]
+                rows, total, truncated, files = graph.state_snapshot_votes("va", ward, 2024, "HB 1", 10)
+                self.assertEqual([(r["position"], r["item_id"], r["certification"]) for r in rows],
+                                 [("no", "instrument/va/2024/hb/1", "ingested")])
+                self.assertEqual((total, truncated, files), (1, False, ["votes-2024.json"]))
+                # 2026 is the current session: its votes are edges, so the file does not answer.
+                self.assertIsNone(graph.state_snapshot_votes("va", ward, 2026, None, 10))
+            finally:
+                graph.DATA_DIR = old
