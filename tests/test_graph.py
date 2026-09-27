@@ -2509,6 +2509,25 @@ class OtherStatesTest(unittest.TestCase):
             self.assertEqual(graph.strip_place("new housing bills")[0], "new housing bills")
             self.assertIsNone(graph._state_scope("West Virginia"))
 
+    def test_a_bare_number_is_the_newest_year_regular_session_first(self):
+        def backend(sessions):
+            g = graph._graph()
+            pid = graph.node_id("person", "openstates/p")
+            graph._node(g, pid, "person", "Pat Doe", {}, "t")
+            for sid, sort in sessions:
+                iid = f"instrument/tx/{sid}/hb/2"
+                graph._node(g, iid, "instrument", f"HB 2 ({sid})",
+                            {"session_sort": sort, "first_year": int(sort[:4]), "last_year": int(sort[:4])}, "t")
+                graph._edge(g, pid, "voted_on", iid, f"{sort[:4]}-05-01", f"{sort[:4]}-05-01", "ingested", "t", f"v-{sid}",
+                            "ocd-division/country:us/state:tx", {"position": "no"})
+            return graph.memory_backend(list(g["nodes"].values()), list(g["edges"].values()))
+        voted = lambda b: [r["item_id"] for r in b["voters"]("tx:HB 2", "no", 10)[0]]
+        # In one year, the regular session's HB 2 before the special's.
+        self.assertEqual(voted(backend([("89R", "2025-00"), ("892", "2025-02"), ("88", "2023-00")])),
+                         ["instrument/tx/89R/hb/2"])
+        # A later year's special session before an older regular one.
+        self.assertEqual(voted(backend([("89R", "2025-00"), ("901", "2027-01")])), ["instrument/tx/901/hb/2"])
+
     def test_a_bill_number_may_carry_a_letter(self):
         self.assertEqual((graph.bill_number("34"), graph.bill_number("34a")), (34, "34a"))
         self.assertEqual(sorted(["35", "34a", "34", "a"], key=graph._number_order), ["a", "34", "34a", "35"])

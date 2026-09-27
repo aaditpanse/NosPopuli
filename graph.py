@@ -3917,12 +3917,12 @@ def _topic_sql(topic):
         pattern = f"instrument/{st or '%'}/%/{typ}/{number}"
         in_year = (" AND (n.props->>'first_year')::int <= %s AND (n.props->>'last_year')::int >= %s"
                    if year else "")
-        # A regular session's bill before a special's: California's and
-        # Texas' specials reuse AB 1 and HB 2 (session_sort ends -00 for
-        # the regular session).
+        # The newest year, and in it the regular session's bill before a
+        # special's: California's and Texas' specials reuse AB 1 and HB 2
+        # (session_sort is "<first year>-<n>", n 00 for the regular one).
         return (" i.id = (SELECT n.id FROM graph_node n WHERE n.kind = 'instrument' AND n.id LIKE %s"
-                f" AND n.id NOT LIKE 'instrument/us/%%'{in_year} ORDER BY n.props->>'session_sort' LIKE '%%-00' DESC NULLS LAST,"
-                " n.props->>'session_sort' DESC NULLS LAST, n.props->>'session' DESC LIMIT 1)", [pattern, *([year, year] if year else [])])
+                f" AND n.id NOT LIKE 'instrument/us/%%'{in_year} ORDER BY left(n.props->>'session_sort', 4) DESC NULLS LAST,"
+                " n.props->>'session_sort' LIKE '%%-00' DESC NULLS LAST, n.props->>'session_sort' DESC NULLS LAST, n.props->>'session' DESC LIMIT 1)", [pattern, *([year, year] if year else [])])
     st, topic = split_scope(topic)
     if st:
         return (f" i.props->>'jurisdiction' = %s AND{_TOPIC_SQL}", [state_div(st), f"{topic}%", f"%{topic}%"])
@@ -4313,8 +4313,9 @@ def memory_backend(nodes, edges):
             hits = [n for n in nodes if n["kind"] == "instrument" and not n["id"].startswith("instrument/us/")
                     and re.fullmatch(rf"instrument/{st or '[a-z]{2}'}/[^/]+/{typ}/{number}", n["id"])
                     and (not year or (n["props"].get("first_year") or 0) <= year <= (n["props"].get("last_year") or 0))]
-            return bool(hits) and i["id"] == max(hits, key=lambda n: ((n["props"].get("session_sort") or "").endswith("-00"),
-                                                                    n["props"].get("session_sort") or ""))["id"]
+            order = lambda n: n["props"].get("session_sort") or ""  # noqa: E731
+            return bool(hits) and i["id"] == max(hits, key=lambda n: (order(n)[:4], order(n).endswith("-00"),
+                                                                    order(n)))["id"]
         st, topic = split_scope(topic)
         if st and i["props"].get("jurisdiction") != state_div(st):
             return False

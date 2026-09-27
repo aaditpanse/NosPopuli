@@ -943,9 +943,12 @@ async def handle_state_search(structured, question, loop):
         identifier = re.sub(r"\s+", " ", m.group(1).upper()) if m else None
     if identifier:
         # The language model's route carries no session; the question's own year does.
+        # The bill number is cut out first, only where the question spells this bill.
         m = graph.find_state_bill(st, question)
+        if m and graph.bill_key_of(m.group(1)) != graph.bill_key_of(identifier):
+            m = None
         year = structured.get("requested_session") or _extract_state_session(
-            question[:m.start()] + " " + question[m.end():] if m else question)  # not the bill number
+            question[:m.start()] + " " + question[m.end():] if m else question)
         year = year if year and len(year) == 4 else None
         hits = await loop.run_in_executor(None, graph.state_bill_lookup, st, identifier, year)
         note = None
