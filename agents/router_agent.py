@@ -4,7 +4,6 @@ import re
 import json
 from dotenv import load_dotenv
 from agents.documentor_agent import log_action
-from agents.state_search_agent import ENABLED_STATES
 
 load_dotenv()
 
@@ -339,7 +338,7 @@ def fast_route_state(user_question: str, state_code: str | None = None):
     Regex fast-path for state bill IDs. Returns a structured dict on a confident
     match (with `requested_session` set when the query had an explicit year or
     ordinal anchor), else None. Defaults to the current session when no anchor
-    is given; the caller resolves that via LegiScan.
+    is given; the caller reads the newest session on disk first.
     """
     if not user_question:
         return None
@@ -782,7 +781,8 @@ def structure_question(question, state_code=None, *, full_history=False,
     fast-path hit never builds a client. Fail-closed: an LLM error raises
     into the caller, which already turns it into its own error response."""
     structured = None
-    if state_code and state_code.upper() in ENABLED_STATES:
+    import graph
+    if state_code and state_code.upper() in graph.loaded_states():
         structured = fast_route_state(question, state_code)
     if structured is None:
         structured = fast_route(question)

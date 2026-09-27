@@ -28,7 +28,7 @@ graph.py        the property graph: build, load, traverse
 agents/         the LLM agents — router, ledger, search, feed, translator,
                 the vote trio, documentor. If it prompts a model, it lives here
 sources/        external data in: congress.gov, GovInfo bulk, Voteview, district
-                shapes, nominations, LegiScan, FEC (API and bulk), Senate LDA,
+                shapes, nominations, Open States, Virginia LIS, FEC (API and bulk), Senate LDA,
                 House disclosures. One module per upstream, plus the shared session
 search/         the search plumbing that is not an agent: the bill index (full
                 text + Voyage vectors), cache, logger, rank, and the user-flag log
@@ -53,13 +53,16 @@ By path, `sys.path[0]` becomes `scripts/` and every local import fails.
   feed, flags. **Their endpoints still work.** Before concluding an endpoint is dead or
   a feature was never built, read "Rebuilding the newspaper capabilities" in
   `README.md`; it lists each one with its endpoints.
-- **`/ledger` forces every query to federal** (the override in `ledger_ask`,
-  `api.py:1633`). There is no exception: `/ledger` never passes a `state_code` to
-  routing, so the state bill-ID fast path cannot run there. The state layer works for all
-  50 states and the home page cannot reach it. "Virginia housing bills" is classified
-  `jurisdiction: "state"`, then searched in Congress.
-- **State legislation is LegiScan, not OpenStates.** Any comment or identifier
-  suggesting otherwise is stale. `grep -rl openstates *.py` is empty.
+- **State legislation is Open States plus Virginia LIS, not LegiScan.** LegiScan never
+  issued a key and its code is deleted. The record is Open States' monthly dump and
+  people repo (`sources/openstates.py`); Virginia's own daily files (`sources/lis.py`)
+  certify holds, downgrade disagreeing votes to advisory and show newer actions as
+  advisory rows, and never write the record. A state is loaded by an entry under
+  `"legislatures"` in `foundry/data/store/_graph-sources.json`; only Virginia has one.
+  Any other state answers "not loaded on this server".
+- **`/ledger` sends a state question to the state layer only when the router says it is
+  one.** The reader's home state alone does not: "housing bills" from a Virginian
+  still searches Congress.
 - **Routing is two layers.** `classify_question` in `agents/ledger_agent.py` is the $0
   regex layer (watch, graph, elections, place, bill ID, local). `structure_question` in
   `agents/router_agent.py` is the second layer (state and federal fast paths, then the

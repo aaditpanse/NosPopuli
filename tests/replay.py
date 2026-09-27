@@ -502,7 +502,7 @@ def clear_memory_caches():
     """Empty every in-process TTLCache before a request.
 
     There is a second cache tier above the seams — cachetools.TTLCache
-    instances in bill_fetcher, legiscan_client, lda_client, feed_agent,
+    instances in bill_fetcher, lda_client, feed_agent,
     elections_agent and bill_market. It made recording lie: pass one fetched
     live and warmed the module cache, so passes two and three never reached the
     seam and their keys were never written. A fresh test process then missed.
@@ -517,7 +517,7 @@ def clear_memory_caches():
     # Named explicitly rather than swept out of sys.modules: touching every
     # attribute of every loaded module pulls on deprecated re-exports and
     # buries the run in warnings.
-    for name in ("bill_fetcher", "legiscan_client", "lda_client", "feed_agent",
+    for name in ("bill_fetcher", "lda_client", "feed_agent",
                  "elections_agent", "bill_market", "search_cache", "stock_perf",
                  "translator_agent", "historian_agent", "industry_classifier"):
         mod = sys.modules.get(name)

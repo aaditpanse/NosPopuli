@@ -887,8 +887,6 @@ Live problems I know about and haven't fixed. Listed so nobody has to rediscover
 - **A member name that fits several people gets no page.** `/member/search` and the
   `/search` member branch return `candidates` for "Johnson" rather than guessing, but
   no view reads that list, so the page says "not found".
-- **State search has no LegiScan key on the server.** `LEGISCAN_API_KEY` is not set in
-  `/etc/nospopuli/env`, so every state query takes the no-key path below.
 - **`GET /api/graph/votes` still merges people who share a name.** It reads
   `graph.votes`, which does not go through `answer`'s ambiguity check, so
   `?person=Warner` returns every Warner's votes together. `/api/graph/search` and
@@ -896,12 +894,6 @@ Live problems I know about and haven't fixed. Listed so nobody has to rediscover
 
 Found while building the golden fixtures, pinned as expected-failures:
 
-- **A state query with no LegiScan key is a silent zero.** `legiscan_client._call`
-  logs to stdout and returns `None` before any HTTP (`sources/legiscan_client.py:62`), and
-  `search` turns that into `[]` — indistinguishable from "Virginia genuinely has no
-  matching bills". Nothing in `api.py` consults `legiscan_client.has_key()`, which
-  already exists. The shape to copy is the graph route's `empty_reason`
-  (`api.py:3050`).
 - **Confidence is inverted, not merely useless.** Across the 73 logged searches,
   `conf=0.95` is 9-of-11 zero-result while `conf=0.6` and `0.75` are 0-for-3. The most
   confident bucket is the least correct one. `/search "LA County"` returns

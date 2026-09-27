@@ -4,7 +4,6 @@ import re
 import hashlib
 from dotenv import load_dotenv
 from agents.documentor_agent import log_action
-from agents.state_search_agent import STATE_JURISDICTIONS
 from resolvers.reference_resolver import resolve_references, REF_HARD_LIMIT
 from correspondence.db import get_disk_cache, set_disk_cache, _cursor
 
@@ -154,7 +153,8 @@ def translate_state_bill(bill_data, bill_text, client, fingerprint=None):
     else:
         text_section = ""
 
-    state_name = STATE_JURISDICTIONS.get(state_code, "state")
+    import graph
+    state_name = graph.DIVISION_NAMES.get(str(state_code).lower(), "state")
     prompt = f"""
 You are a plain English translator for state legislation.
 Explain this bill clearly to a {state_name} resident with no legal background.

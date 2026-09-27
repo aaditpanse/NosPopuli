@@ -1,6 +1,20 @@
 import json
 from agents.documentor_agent import log_action
 
+# Per-state validator floor. Default is 5 (matches federal); thin-metadata
+# states drop to 4 so we don't return empty too aggressively. Tuned for
+# LegiScan's metadata; revisit as each state loads from Open States.
+_DEFAULT_STATE_VALIDATOR_FLOOR = 5
+STATE_VALIDATOR_FLOOR = {
+    # Thin metadata / small legislatures
+    "WY": 4, "SD": 4, "ND": 4, "VT": 4, "NH": 4, "AK": 4, "DE": 4,
+    "MT": 4, "RI": 4, "ME": 4, "ID": 4, "NE": 4, "HI": 4,
+}
+
+
+def get_state_validator_floor(state_code: str) -> int:
+    return STATE_VALIDATOR_FLOOR.get((state_code or "").upper(), _DEFAULT_STATE_VALIDATOR_FLOOR)
+
 def validate_results_batch(query, results, client, min_score=5, batch_size=20):
     """
     Like validate_results but handles large result sets by batching.

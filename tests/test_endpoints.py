@@ -186,28 +186,18 @@ def test_virginia_answer_does_not_blame_virginia():
             f"blames the jurisdiction for my own gap: {plate['headline']!r}")
 
 
-@pytest.mark.xfail(strict=True, reason="nothing in api.py consults "
-                                       "legiscan.has_key(), so a missing key is "
-                                       "served as an ordinary zero-result")
 def test_state_search_says_why_it_is_empty():
-    """`legiscan_client.search` returns [] whether the state genuinely has no
-    matching bills or my API key is absent (`legiscan_client.py:62-63` logs to
-    stdout and returns None before any HTTP). Those are not the same answer, and
-    rule 12 says the empty one must say which: a missing key is my gap, not
-    Virginia's.
+    """Replaces a LegiScan-era xfail (retired 2026-09-27 with the LegiScan
+    code). A missing key used to come back as an ordinary zero, the same
+    answer as "Virginia has no such bills". The state layer now reads files
+    on this server, so the empty that can happen is a state not loaded, and
+    it must say so rather than look like a real zero."""
+    def body(name):
+        return json.loads((replay.GOLDEN / f"{name}.json").read_text())["response"]["json"]
 
-    `has_key()` already exists at legiscan_client.py:55 and no caller uses it.
-    The shape to copy is the graph route's, api.py:3050, which returns an
-    explicit `empty_reason` when its backing store is unavailable.
-    """
-    from sources import legiscan_client
-    import api as api_mod
-    import inspect
-
-    assert not legiscan_client.has_key(), (
-        "a LegiScan key is configured now — re-pin this against a key-less run")
-    # No network: _call short-circuits on the missing key before any request.
-    assert legiscan_client.search("VA", "healthcare") == []
-    assert "has_key" in inspect.getsource(api_mod), (
-        "the state search path never asks whether a key exists, so it cannot "
-        "tell a real zero from an unconfigured one")
+    tx = body("post_state_search__school_vouchers")
+    assert tx["results"] == [] and tx["empty_reason"] == "state_not_loaded"
+    assert "not loaded on this server" in tx["ambiguity_reason"]
+    va = body("post_state_search__healthcare")
+    assert va["results"], "a loaded state's topic search returns its own bills"
+    assert all(r["jurisdiction"] == "ocd-division/country:us/state:va" for r in va["results"])

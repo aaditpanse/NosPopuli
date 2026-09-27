@@ -4,9 +4,7 @@ import hashlib
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from agents.documentor_agent import log_action
-from agents.state_search_agent import get_recent_state_bills, ENABLED_STATES
 from correspondence.db import get_disk_cache, set_disk_cache
-from sources.legiscan_client import has_key as legiscan_has_key
 
 # ── Curation patterns ─────────────────────────────────────────
 # Ceremonial / procedural / honorary titles — never relevant to a citizen feed.
@@ -557,9 +555,11 @@ def fetch_feed(interests, senator_bioguides, rep_bioguide, days_back=60, max_per
     state_status = "skipped"
 
     all_bioguides = list(senator_bioguides or []) + ([rep_bioguide] if rep_bioguide else [])
-    state_enabled = bool(state_code and state_code.upper() in ENABLED_STATES)
-    fetch_state = state_enabled and legiscan_has_key()
-    if state_enabled and not legiscan_has_key():
+    # The state pool reads the legislature's files on this server; a state
+    # with none is "unavailable", never an empty that looks like a quiet week.
+    import graph
+    fetch_state = bool(state_code and state_code.upper() in graph.loaded_states())
+    if state_code and not fetch_state:
         state_status = "unavailable"
 
     with ThreadPoolExecutor(max_workers=8) as ex:
@@ -578,7 +578,7 @@ def fetch_feed(interests, senator_bioguides, rep_bioguide, days_back=60, max_per
             for i in (interests or [])
         ]
         state_future = ex.submit(
-            get_recent_state_bills, state_code.upper(), 5
+            graph.state_recent_bills, state_code.lower(), 5
         ) if fetch_state else None
 
         rep_bills = rep_future.result()

@@ -32,7 +32,7 @@ uvicorn==0.46.0
 wrapt==2.1.2
 beautifulsoup4
 cachetools
-pypdf  # extract text from LegiScan bill-text PDFs (state bills)
+pypdf  # extract text from state bill PDFs (sources/lis.py)
 pyyaml  # the Open States people repo is YAML (sources/openstates.py); already installed by huggingface_hub
 google-auth-oauthlib
 google-api-python-client
