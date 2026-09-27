@@ -2588,9 +2588,13 @@ def build_state_bills(st, session, rec, person_ids, governor_holds, known_ids=fr
             if did and did in ids and did != iid and (session_key(rsid) or (0,)) <= (session_key(session) or (0,)):
                 _edge(g, iid, "related_to", did, None, None, "ingested", STATE_SOURCE, f"{st}/{session}/{key}/related",
                       sdiv, {"relationship": r["relation"]})
+    linked = sum(1 for e in g["edges"].values() if e["predicate"] == "sponsored")
     if name_only or unknown:
-        g["gaps"].append(f"{st.upper()} {session}: {name_only} sponsorship(s) named without a person id and "
-                         f"{unknown} by a person not in the roster; no edge")
+        # Some sessions' Open States rows carry no person id for most
+        # sponsors (2023: 2,571 links for 3,840 bills); say how thin it is.
+        g["gaps"].append(f"{st.upper()} {session}: {linked} sponsorship(s) linked for {len(rec['bills'])} bill(s); "
+                         f"{name_only} named without a person id and {unknown} by a person not in the roster, "
+                         f"no edge")
     if no_governor:
         g["gaps"].append(f"{st.upper()} {session}: {no_governor} Governor action(s) on a day with no single "
                          f"Governor on file; no edge")
@@ -3192,7 +3196,7 @@ def _pg_persons(cur, query):
     cur.execute(f"""
         SELECT id, name, props->'aliases' AS aliases, props->>'seat' AS seat,
                props->>'bioguide' AS bioguide, props->>'lis' AS lis,
-               props->>'openstates_id' AS openstates_id
+               props->>'openstates_id' AS openstates_id, props->>'jurisdiction' AS jurisdiction
         FROM graph_node
         WHERE kind = 'person'
           AND (({all_in("name")}) OR EXISTS (
@@ -3743,7 +3747,8 @@ def memory_backend(nodes, edges):
         has_all = lambda text: all(t in text.lower() for t in toks)  # noqa: E731
         return sorted(({"id": n["id"], "name": n["name"], "aliases": n["props"].get("aliases", []),
                         "seat": n["props"].get("seat"), "bioguide": n["props"].get("bioguide"),
-                        "lis": n["props"].get("lis"), "openstates_id": n["props"].get("openstates_id")}
+                        "lis": n["props"].get("lis"), "openstates_id": n["props"].get("openstates_id"),
+                        "jurisdiction": n["props"].get("jurisdiction")}
                        for n in nodes if n["kind"] == "person"
                        and (has_all(n["name"]) or any(has_all(a) for a in n["props"].get("aliases", [])))),
                       key=lambda p: p["name"])
@@ -4323,10 +4328,15 @@ def answer(parsed, backend, limit=200):
         year = parsed.get("year")
         loaded = current_session()[0]
         state_people = [p for p in persons if p.get("openstates_id")]
-        if scope and topic and state_people:
-            topic, place = f"{scope}:{topic}", None
+        # A state legislator's own legislature, from their node, when the
+        # question named none: "HR 2179" for a delegate is the House of
+        # Delegates' resolution, not H.R. 2179.
+        home = scope or next((code for code in LEGISLATURES for p in state_people
+                              if p.get("jurisdiction") == state_div(code)), None)
+        if home and topic and state_people:
+            topic, place = f"{home}:{topic}", None
         if year and state_people:
-            st = scope or next(iter(LEGISLATURES), None)
+            st = home
             files_rows = state_snapshot_votes(st, state_people, year, topic, limit) if st else None
             if files_rows is not None:
                 rows, total, truncated, files = files_rows

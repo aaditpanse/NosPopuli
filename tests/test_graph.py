@@ -2244,7 +2244,7 @@ class StateLayerTest(unittest.TestCase):
         # The chapter is recorded even when no single Governor is on file that day.
         self.assertEqual(preds, ["enacted_as", "sponsored"])
         self.assertIn("instrument/va/acts/2026/chap/350", {n["id"] for n in nodes})
-        self.assertIn("1 sponsorship(s) named without a person id", gaps[0])
+        self.assertIn("1 sponsorship(s) linked for 1 bill(s); 1 named without a person id", gaps[0])
         self.assertIn("1 Governor action(s) on a day with no single Governor", gaps[1])
         # A related bill in a later session is not linked: it is not a node yet when this session loads.
         self.assertNotIn("related_to", preds)
@@ -2327,3 +2327,11 @@ class StateAnswerTest(unittest.TestCase):
         a = graph.answer(graph.parse_question("who voted yes on HB 1 in Virginia"), backend)
         self.assertEqual([r["person"] for r in a["rows"]], ["Jeion A. Ward"])
         self.assertIsNone(a["place_ignored"])       # Virginia scoped the ask; it was not dropped
+        # HR for a delegate is the House of Delegates' resolution, found through her own legislature.
+        rec["bills"]["hr/9"] = {**rec["bills"]["hb/1"], "identifier": "HR 9", "openstates_id": "ocd-bill/9"}
+        bn, be, _ = graph.build_state_bills("va", "2026", rec, pid, [])
+        votes.append({**votes[0], "id": "ocd-vote/2", "bill": "hr/9"})
+        vn, ve, _ = graph.build_state_votes("va", "2026", votes, pid, roster)
+        backend = graph.memory_backend(sn + bn + vn, se + be + ve)
+        a = graph.answer(graph.parse_question("how did Jeion Ward vote on HR 9"), backend)
+        self.assertEqual([r["item_id"] for r in a["rows"]], ["instrument/va/2026/hr/9"])
