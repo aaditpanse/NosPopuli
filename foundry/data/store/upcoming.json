@@ -64,28 +64,28 @@
   "upcoming": [
    {
     "date": "2026-10-06",
-    "time": "14:00",
+    "time": "02:00 pm",
     "body": "Board of County Supervisors Meeting"
    },
    {
     "date": "2026-10-13",
-    "time": "14:00",
+    "time": "02:00 pm",
     "body": "Board of County Supervisors Meeting - Work Session"
    },
    {
     "date": "2026-10-13",
-    "time": "18:00",
+    "time": "06:00 pm",
     "body": "Board of County Supervisors - Joint Meeting with the School Board"
    },
    {
     "date": "2026-10-20",
-    "time": "14:00",
+    "time": "02:00 pm",
     "body": "Board of County Supervisors Meeting"
    }
   ],
   "next": {
    "date": "2026-10-06",
-   "time": "14:00",
+   "time": "02:00 pm",
    "body": "Board of County Supervisors Meeting"
   },
   "checked": "2026-09-27",
@@ -144,7 +144,7 @@
    {
     "date": "2026-10-27",
     "time": "17:00",
-    "body": "October 27, 2025 Board of Supervisors Meeting"
+    "body": "October 27, 2026 Board of Supervisors Meeting"
    },
    {
     "date": "2026-11-05",
@@ -203,28 +203,28 @@
    {
     "date": "2026-10-13",
     "time": null,
-    "body": "Board of Supervisors Meeting"
+    "body": "Full Board of Supervisors Meeting"
    },
    {
     "date": "2026-10-27",
     "time": null,
-    "body": "Board of Supervisors Meeting"
+    "body": "Full Board of Supervisors Meeting"
    },
    {
     "date": "2026-11-17",
     "time": null,
-    "body": "Board of Supervisors Meeting"
+    "body": "Full Board of Supervisors Meeting"
    },
    {
     "date": "2026-12-08",
     "time": null,
-    "body": "Board of Supervisors Meeting"
+    "body": "Full Board of Supervisors Meeting"
    }
   ],
   "next": {
    "date": "2026-10-13",
    "time": null,
-   "body": "Board of Supervisors Meeting"
+   "body": "Full Board of Supervisors Meeting"
   },
   "checked": "2026-09-27",
   "derived_by": "claude-haiku-4-5",
@@ -234,28 +234,28 @@
   "upcoming": [
    {
     "date": "2026-10-06",
-    "time": "14:00",
+    "time": "02:00 pm",
     "body": "Board of County Supervisors Meeting"
    },
    {
     "date": "2026-10-13",
-    "time": "14:00",
+    "time": "02:00 pm",
     "body": "Board of County Supervisors Meeting - Work Session"
    },
    {
     "date": "2026-10-13",
-    "time": "18:00",
+    "time": "06:00 pm",
     "body": "Board of County Supervisors - Joint Meeting with the School Board"
    },
    {
     "date": "2026-10-20",
-    "time": "14:00",
+    "time": "02:00 pm",
     "body": "Board of County Supervisors Meeting"
    }
   ],
   "next": {
    "date": "2026-10-06",
-   "time": "14:00",
+   "time": "02:00 pm",
    "body": "Board of County Supervisors Meeting"
   },
   "checked": "2026-09-27",
@@ -267,11 +267,6 @@
    {
     "date": "2026-09-29",
     "time": "15:00",
-    "body": "City Council"
-   },
-   {
-    "date": "2026-10-01",
-    "time": null,
     "body": "City Council"
    }
   ],
@@ -316,13 +311,13 @@
    {
     "date": "2026-09-29",
     "time": "15:00",
-    "body": "City Council meeting scheduled for 2026-09-29 at City Council Chamber, 2nd Floor, City Hall, 121 North LaSalle Street - Chicago, IL 60602"
+    "body": "City Council meeting scheduled for September 29, 2026 at 3:00 PM at City Council Chamber, 2nd Floor, City Hall, 121 North LaSalle Street - Chicago, IL 60602"
    }
   ],
   "next": {
    "date": "2026-09-29",
    "time": "15:00",
-   "body": "City Council meeting scheduled for 2026-09-29 at City Council Chamber, 2nd Floor, City Hall, 121 North LaSalle Street - Chicago, IL 60602"
+   "body": "City Council meeting scheduled for September 29, 2026 at 3:00 PM at City Council Chamber, 2nd Floor, City Hall, 121 North LaSalle Street - Chicago, IL 60602"
   },
   "checked": "2026-09-27",
   "derived_by": "claude-haiku-4-5",

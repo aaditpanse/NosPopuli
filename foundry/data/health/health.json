@@ -21,7 +21,7 @@
    "seattle-bos": "ok",
    "stafford-bos": "drift-or-skipped"
   },
-  "ts": "2026-09-27T01:23:09"
+  "ts": "2026-09-27T11:40:45"
  },
  "sources": {
   "chicago-bos": {
@@ -44,20 +44,6 @@
      "stage": "onboard",
      "ts": "2026-09-20T11:55:38",
      "verdict": "ok"
-    },
-    {
-     "detail": {
-      "oldest": "2026-05-20",
-      "repair_attempted": true,
-      "returned": 3,
-      "target": "2026-01-01",
-      "window": 13
-     },
-     "first_ts": "2026-09-20T11:55:39",
-     "repeats": 1,
-     "stage": "deepen",
-     "ts": "2026-09-20T11:55:39",
-     "verdict": "repaired"
     },
     {
      "detail": {
@@ -378,6 +364,38 @@
      "stage": "deepen",
      "ts": "2026-09-27T01:15:41",
      "verdict": "exhausted"
+    },
+    {
+     "detail": {
+      "added": 0,
+      "artifact": "extractors/chicago-bos/v1_attempt4.py",
+      "replaced": 0,
+      "row_counts": {
+       "agenda_items": 172,
+       "meetings": 3,
+       "members": 50,
+       "vote_events": 172
+      },
+      "unchanged": 397
+     },
+     "first_ts": "2026-09-27T11:33:05",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-09-27T11:33:05",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "oldest": "2026-05-20",
+      "returned": 3,
+      "target": "2026-01-01",
+      "window": 13
+     },
+     "first_ts": "2026-09-27T11:35:17",
+     "repeats": 1,
+     "stage": "deepen",
+     "ts": "2026-09-27T11:35:17",
+     "verdict": "exhausted"
     }
    ]
   },
@@ -527,9 +545,9 @@
       "unchanged": 349
      },
      "first_ts": "2026-09-22T15:38:45",
-     "repeats": 5,
+     "repeats": 6,
      "stage": "refresh",
-     "ts": "2026-09-27T01:11:28",
+     "ts": "2026-09-27T11:33:53",
      "verdict": "ok"
     }
    ]
@@ -580,9 +598,9 @@
       "total": 323
      },
      "first_ts": "2026-09-23T15:39:23",
-     "repeats": 4,
+     "repeats": 5,
      "stage": "recertify",
-     "ts": "2026-09-27T01:18:44",
+     "ts": "2026-09-27T11:36:29",
      "verdict": "ok"
     }
    ]
@@ -675,9 +693,9 @@
       "window": 52
      },
      "first_ts": "2026-09-27T01:16:44",
-     "repeats": 1,
+     "repeats": 2,
      "stage": "deepen",
-     "ts": "2026-09-27T01:16:44",
+     "ts": "2026-09-27T11:35:17",
      "verdict": "exhausted"
     }
    ]
@@ -740,9 +758,9 @@
       "total": 738
      },
      "first_ts": "2026-09-23T15:40:07",
-     "repeats": 4,
+     "repeats": 5,
      "stage": "recertify",
-     "ts": "2026-09-27T01:20:54",
+     "ts": "2026-09-27T11:38:40",
      "verdict": "ok"
     }
    ]
@@ -776,9 +794,9 @@
       "unchanged": 130
      },
      "first_ts": "2026-09-22T15:39:22",
-     "repeats": 5,
+     "repeats": 6,
      "stage": "refresh",
-     "ts": "2026-09-27T01:12:31",
+     "ts": "2026-09-27T11:34:56",
      "verdict": "ok"
     }
    ]
@@ -901,9 +919,9 @@
       ]
      },
      "first_ts": "2026-09-22T15:39:32",
-     "repeats": 5,
+     "repeats": 6,
      "stage": "refresh",
-     "ts": "2026-09-27T01:12:51",
+     "ts": "2026-09-27T11:35:16",
      "verdict": "drift"
     }
    ]
