@@ -2028,6 +2028,7 @@ def _state_bill_stream(page, st, session, key, user_context=None):
             return {"section": "meta", "identifier": bill["identifier"], "title": bill["title"], "state_code": st.upper(),
                     "state_name": state_name, "session": session, "chamber": bill.get("chamber"),
                     "is_state_bill": True, "source_url": lis_url, "sources": [{"url": u} for u in bill["sources"]],
+                    "stage": graph.state_stage(bill["actions"], page["newer_actions"]),
                     "sponsors": [sp for sp in sponsors if sp["primary"]], "record": {
                         "source": page["meta"].get("source"), "dump_month": page["meta"].get("dump_month"),
                         "certification": "ingested",
@@ -2634,6 +2635,7 @@ _SITE = "https://nospopuli.org"
 _META_BLOCK_RE = re.compile(r"<!-- meta:start.*?<!-- meta:end -->", re.S)
 _BILL_PATH_RE = re.compile(r"^bill/(\d{2,3})/([a-z]+)/(\d+)$")
 _LAW_PATH_RE = re.compile(r"^law/(\d{2,3})/(\d+)$")
+_STATE_BILL_PATH_RE = re.compile(r"^state/([a-z]{2})/([0-9A-Za-z]+)/([a-z]+)/(\d+)$")
 
 _TAB_META = {
     "trades": ("Congressional Stock Trades — NosPopuli",
@@ -2672,6 +2674,19 @@ async def _route_meta(path: str):
     """(title, description) for a route, or None to keep the default block."""
     if path in _TAB_META:
         return _TAB_META[path]
+    sm = _STATE_BILL_PATH_RE.match(path)
+    if sm:
+        import graph
+        st, session, btype, number = sm.groups()
+        page = await asyncio.to_thread(graph.state_bill_page, st, session, f"{btype}/{number}")
+        if not page:
+            return None
+        b = page["bill"]
+        name = STATE_NAMES.get(st.upper(), st.upper())
+        desc = f"{b['title']} — a {name} bill in plain English, with its votes and text."
+        if b.get("latest_action"):
+            desc += f" Latest action: {b['latest_action'][:140]}"
+        return (f"{name} {b['identifier']} ({session}): {b['title']} — NosPopuli", desc)
     m = _BILL_PATH_RE.match(path) or _LAW_PATH_RE.match(path)
     if not m:
         return None

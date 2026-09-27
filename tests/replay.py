@@ -728,6 +728,7 @@ CASES = (
     ("POST", "/state/bill", {"state_code": "va", "session": "2026", "bill_type": "hb", "number": 99999}, None,
      None, "a state bill not in the record: 404 naming the record read"),
     ("GET", "/api/state/bill/va/2026/hb/1/text", None, None, None, "a Virginia bill's stored text"),
+    ("GET", "/state/va/2026/hb/1", None, None, None, "the page shell for a state bill: its title and description from the files"),
     ("POST", "/state/search", {"question": "HB 1", "state_code": "VA", "max_results": 5}, None, None,
      "a Virginia bill number, from the bills files, newest session first"),
     ("POST", "/state/search", {"question": "Jeion Ward", "state_code": "VA", "max_results": 5}, None, None,

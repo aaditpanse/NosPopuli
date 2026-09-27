@@ -2390,7 +2390,8 @@ class StateSearchReadersTest(unittest.TestCase):
         self._write("state_bills", "2025", {"meta": {}, "bills": {"hb/1": bill("HB 1", [], "2025-03-01")}})
         self._write("state_bills", "2026", {"meta": {}, "bills": {
             "hb/1": bill("HB 1", [ward, dict(ward, primary=False)], "2026-04-08"),
-            "hb/7": bill("HB 7", [dict(ward, primary=False)], "2026-02-01")}})
+            "hb/7": bill("HB 7", [dict(ward, primary=False)], "2026-02-01"),
+            "hr/900": bill("HR 900", [ward], "2026-02-01")}})
 
     def tearDown(self):
         graph.DATA_DIR = self._old
@@ -2422,7 +2423,9 @@ class StateSearchReadersTest(unittest.TestCase):
 
     def test_sponsored_bills_once_each_primary_first(self):
         rows, read = graph.state_member_bills("va", "ocd-person/a", 10)
-        self.assertEqual([(r["identifier"], r["sponsorship"]) for r in rows], [("HB 1", "primary"), ("HB 7", "cosponsor")])
+        # A commending resolution comes after the member's bills, not before HB 1.
+        self.assertEqual([(r["identifier"], r["sponsorship"]) for r in rows],
+                         [("HB 1", "primary"), ("HR 900", "primary"), ("HB 7", "cosponsor")])
         self.assertEqual(read, ["2026", "2025"])
         self.assertEqual(rows[0]["path"], "/state/va/2026/hb/1")
 

@@ -133,6 +133,21 @@
   function memberPath(bioguide) {
     return "/member/" + encodeURIComponent(bioguide);
   }
+  // A state bill number is only unique within a session, so the path names both.
+  function stateBillPath(st, session, type, number) {
+    return "/state/" + String(st).toLowerCase() + "/" + session + "/" + type + "/" + number;
+  }
+  function stateMemberPath(st, id) {
+    return "/state/" + String(st).toLowerCase() + "/member/" + encodeURIComponent(String(id).replace(/^ocd-person\//, ""));
+  }
+  // The onclick for a bill row or card, federal or state. Quotes are escaped
+  // because the call sits inside a single-quoted attribute.
+  function billCall(s, title) {
+    const call = s.is_state_bill
+      ? `openStateBill(${JSON.stringify(s.state)},${JSON.stringify(s.session)},${JSON.stringify((s.type || "").toLowerCase())},${Number(s.number)},${JSON.stringify(title || "")})`
+      : `openBill(${Number(s.congress)},${JSON.stringify(s.type)},${Number(s.number)},${JSON.stringify(title || "")})`;
+    return call.replace(/'/g, "&#39;");
+  }
 
   function go(view) {
     // Scroll only when the reader actually moves to a different view. The
@@ -222,7 +237,7 @@
           const plate = msg.plate || "ledger";
           if (plate === "home") { pendingBill = { _home: true }; return; }
           if (plate === "watching") { pendingBill = { _watching: true }; return; }
-          if (plate === "bill") { pendingBill = msg; return; }
+          if (plate === "bill" || plate === "state_bill") { pendingBill = msg; return; }
           if (plate === "uncharted") {
             state.uncharted = msg;
             state.focusMeeting = 0;
@@ -252,6 +267,11 @@
             openMember(msg.member.bioguide_id, { seed: msg });
             return;
           }
+          if (personOnly && msg.member && msg.member.is_state_legislator) {
+            personHandled = true;
+            openStateMember(msg.member.state, msg.member.ocd_person_id);
+            return;
+          }
           if (state.view === "ledger") scheduleRender();
         }
         if (section === "shelves" && state.ledger) {
@@ -276,6 +296,10 @@
       if (pendingBill && pendingBill._view) { state.loading = false; go(pendingBill._view); return; }
       if (pendingBill && pendingBill.plate === "bill") {
         await openBill(pendingBill.congress, pendingBill.bill_type, pendingBill.number);
+        return;
+      }
+      if (pendingBill && pendingBill.plate === "state_bill") {
+        await openStateBill(pendingBill.state_code, pendingBill.session, pendingBill.bill_type, pendingBill.number);
         return;
       }
       state.loading = false;
@@ -377,6 +401,110 @@
       if (!seed) loadMemberMoney(state.member);
     } catch (e) {
       state.error = "We could not load that member.";
+    } finally {
+      state.loading = false;
+      scheduleRender();
+    }
+  }
+
+  // A state bill page reads /state/bill: the Open States record, the
+  // legislature's newer actions, roll calls and stored text, all from files
+  // on the server. Nothing here asks Congress.gov.
+  async function openStateBill(st, session, type, number, title, opts) {
+    st = String(st || "").toLowerCase();
+    type = String(type || "").toLowerCase();
+    number = Number(number);
+    state.loading = true;
+    state.bill = {
+      isState: true, state: st, session, type, number,
+      meta: { title: title || "" }, translation: "", sponsors: [], cosponsors: [], timeline_events: [],
+      votes: null, bill_text: null, versions: [], version: null, text_empty: null, text_truncated: false,
+      showAllEvents: false, pending: true, open: {},
+    };
+    if (!opts || !opts.fromHistory) history.pushState({}, "", stateBillPath(st, session, type, number));
+    go("bill");
+    try {
+      const res = await fetch("/state/bill", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ state_code: st, session: String(session), bill_type: type, number }),
+      });
+      if (res.status === 404) {
+        const d = await res.json().catch(() => ({}));
+        state.bill.missing = (d && d.detail) || "This bill is not on this server.";
+        state.bill.pending = false;
+        return;
+      }
+      if (!res.ok) throw new Error("state bill");
+      await readNdjson(res, (msg) => {
+        const B = state.bill;
+        if (!B || !B.isState || B.session !== session || B.number !== number || B.type !== type) return;
+        if (msg.section === "meta") B.meta = Object.assign({}, B.meta, msg);
+        if (msg.section === "sponsors") { B.sponsors = msg.sponsors || []; B.cosponsors = msg.cosponsors || []; }
+        if (msg.section === "translation") { B.translation = msg.translation || ""; B.pending = false; }
+        // The record lists actions oldest first; the page reads newest first.
+        if (msg.section === "timeline") B.timeline_events = (msg.timeline_events || []).slice().sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+        if (msg.section === "votes") { B.votes = msg.votes || {}; B.roll_calls = msg.roll_calls || 0; }
+        if (msg.section === "bill_text") {
+          B.bill_text = msg.bill_text || "";
+          B.text_truncated = !!msg.truncated;
+          B.versions = msg.versions || [];
+          B.version = msg.version;
+          B.text_empty = msg.empty_reason;
+        }
+        if (state.view === "bill") scheduleRender();
+      });
+    } catch (e) {
+      state.error = "This bill page could not be built.";
+      scheduleRender();
+    } finally {
+      state.loading = false;
+      if (state.bill && state.bill.pending) { state.bill.pending = false; scheduleRender(); }
+    }
+  }
+
+  // One text version, whole, from the stored copy.
+  async function loadStateVersion(name) {
+    const B = state.bill;
+    if (!B || !B.isState) return;
+    B.textLoading = true; render();
+    try {
+      const r = await fetch(`/api/state/bill/${B.state}/${B.session}/${B.type}/${B.number}/text?version=${encodeURIComponent(name)}`);
+      const d = await r.json();
+      if (state.bill === B) {
+        B.bill_text = d.text || "";
+        B.version = d.version || name;
+        B.text_truncated = false;
+        B.text_empty = d.empty_reason;
+      }
+    } catch (e) { /* keep what is shown */ }
+    finally { B.textLoading = false; render(); }
+  }
+
+  // A state legislator: the roster card and the bills they sponsored, both
+  // from files on the server. `id` is an Open States person id or a name.
+  async function openStateMember(st, id, opts) {
+    if (!st || !id) return;
+    state.loading = true;
+    state.member = { is_state_legislator: true, state: String(st).toUpperCase(), legislation: {}, pending: true };
+    if (!opts || !opts.fromHistory) history.pushState({}, "", stateMemberPath(st, id));
+    go("member");
+    try {
+      const res = await fetch("/state/member/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: String(id), state_code: String(st).toUpperCase() }),
+      });
+      const data = await res.json();
+      if (!data.found) {
+        state.error = data.reason || "We could not find that legislator.";
+        state.member = null;
+        go("home");
+        return;
+      }
+      state.member = Object.assign({}, data.member, { legislation: data.legislation || {}, pending: false });
+    } catch (e) {
+      state.error = "We could not load that legislator.";
     } finally {
       state.loading = false;
       scheduleRender();
@@ -760,6 +888,7 @@
   }
   function asStory(s) {
     return {
+      is_state_bill: !!s.is_state_bill, state: s.state, session: s.session,
       congress: s.congress,
       type: (s.type || "").toLowerCase(),
       number: s.number,
@@ -838,8 +967,8 @@
            ${act.detail ? `<div class="scard-detail">${esc(act.detail)}</div>` : ""}
          </div>`
       : "";
-    return `<article class="scard" data-stage="${esc(s.stage || "unknown")}" onclick='event.stopPropagation();openBill(${Number(s.congress)},${JSON.stringify(s.type)},${Number(s.number)},${JSON.stringify(title)})'>
-      <div class="scard-kick"><span style="color:var(--accent)">${esc(id)}</span><span>${chamber}</span>${s.policy_area ? `<span class="scard-area">${esc(s.policy_area)}</span>` : ""}</div>
+    return `<article class="scard" data-stage="${esc(s.stage || "unknown")}" onclick='event.stopPropagation();${billCall(s, title)}'>
+      <div class="scard-kick"><span style="color:var(--accent)">${esc(id)}</span><span>${chamber}</span>${s.is_state_bill ? `<span>${esc((s.state || "").toUpperCase() + " " + (s.session || ""))}</span>` : ""}${s.policy_area ? `<span class="scard-area">${esc(s.policy_area)}</span>` : ""}</div>
       <h2 class="h2 scard-title">${esc(title)}</h2>
       ${summary}
       <div class="scard-foot">${who}${status}</div>
@@ -858,10 +987,11 @@
   function memberShelf(m, legislation) {
     if (!m) return "";
     const bg = m.bioguide_id || "";
-    const photo = bg ? `/member/photo/${encodeURIComponent(bg)}` : "";
-    const sub = [m.party, m.state].filter(Boolean).join(" · ");
-    const sponsored = (legislation && legislation.sponsored || []).filter(s => s.congress && s.type && s.number).slice(0, 3).map(asStory);
-    const click = bg ? `onclick="event.stopPropagation();openMember(${JSON.stringify(bg)})"` : "";
+    const photo = bg ? `/member/photo/${encodeURIComponent(bg)}` : (m.photo_url || "");
+    const sub = [m.party, m.is_state_legislator ? m.chamber : "", m.state].filter(Boolean).join(" · ");
+    const sponsored = (legislation && legislation.sponsored || []).filter(s => (s.congress || s.is_state_bill) && s.type && s.number).slice(0, 3).map(asStory);
+    const click = bg ? `onclick="event.stopPropagation();openMember(${esc(JSON.stringify(bg))})"`
+      : m.is_state_legislator ? `onclick="event.stopPropagation();openStateMember(${esc(JSON.stringify(m.state))},${esc(JSON.stringify(m.ocd_person_id))})"` : "";
     return `<div class="shelf">
       <div class="kick" style="margin-bottom:8px">Person</div>
       <div class="member-shelf" ${click}>
@@ -1321,7 +1451,7 @@
     const bills = sponsored.map(b => {
       const s = asStory(b);
       const title = compactTitle(b.title);
-      return `<div class="mrow" style="grid-template-columns:5.2rem 1fr auto;cursor:pointer" onclick='openBill(${Number(s.congress)},${JSON.stringify(s.type)},${Number(s.number)},${JSON.stringify(title)})'>
+      return `<div class="mrow" style="grid-template-columns:5.2rem 1fr auto;cursor:pointer" onclick='${billCall(s, title)}'>
         <span class="fnum" style="font-size:11px;color:var(--accent);text-align:left">${esc(((b.type || "").toUpperCase() + " " + b.number).trim())}</span>
         <span style="font-family:var(--fb);font-size:14px;line-height:1.4">${esc(title)}</span>
         <span class="meta" style="margin:0;white-space:nowrap">${esc(b.date || "")}</span>
@@ -1527,7 +1657,7 @@
   function seatMap(label, data, w, h) {
     if (!data || !data.seats) return "";
     const s = data.summary || {};
-    const dots = data.seats.map(x => `<circle cx="${x.x}" cy="${x.y}" r="${w > 400 ? 3.6 : 4.6}" fill="${esc(x.color)}"><title>${esc(x.name)} (${esc(x.party)}-${esc(x.state)}): ${esc(x.vote)}</title></circle>`).join("");
+    const dots = data.seats.map(x => `<circle cx="${x.x}" cy="${x.y}" r="${data.dot_r || (w > 400 ? 3.6 : 4.6)}" fill="${esc(x.color)}"><title>${esc(x.name)} (${esc(x.party)}-${esc(x.state)}): ${esc(x.vote)}</title></circle>`).join("");
     const total = (s.yea || 0) + (s.nay || 0) || 1;
     return `<div class="vote-block">
       <div class="sub-lbl" style="margin-top:0;border:0;padding:0">${esc(label)}</div>
@@ -1545,7 +1675,7 @@
     if (!r || !r.number) return "";
     const type = (r.type || "").toLowerCase();
     const title = compactTitle(r.title || "");
-    const click = r.congress ? ` onclick='openBill(${Number(r.congress)},${JSON.stringify(type)},${Number(r.number)},${JSON.stringify(title)})' style="cursor:pointer"` : "";
+    const click = r.congress || r.is_state_bill ? ` onclick='${billCall(r, title)}' style="cursor:pointer"` : "";
     return `<div class="mrow" style="grid-template-columns:6rem 1fr"${click}>
       <span class="fnum" style="font-size:11px;color:var(--accent);text-align:left">${esc(type.toUpperCase() + " " + r.number)}</span>
       <span style="font-family:var(--fb);font-size:14px;line-height:1.4">${esc(title)}${r.latest_action ? `<span class="meta" style="display:block;margin:2px 0 0">${esc(compactTitle(r.latest_action).slice(0, 90))}</span>` : ""}</span>
@@ -1750,6 +1880,174 @@
         </div>
       </div>
       <div class="folio"><b>Sheet three</b> · one bill, in order</div>
+    </div>`;
+  }
+
+  // A state bill: the same reading order as a federal one, minus the
+  // sections whose records are federal only (lobbying, FEC money), which the
+  // page says rather than leaving out silently.
+  function stateBillView() {
+    const b = state.bill || {};
+    const meta = b.meta || {};
+    const idLabel = meta.identifier || ((b.type || "").toUpperCase() + " " + b.number);
+    const where = `${meta.state_name || (b.state || "").toUpperCase()} · ${b.session} session`;
+    if (b.missing) {
+      return `<div class="view wrap">${chromeBar({ search: true })}
+        <div class="kick" style="margin-bottom:10px">${esc(idLabel)} · ${esc(where)}</div>
+        <p class="body">${esc(b.missing)}</p></div>`;
+    }
+    const stage = meta.stage || "introduced";
+    const title = compactTitle(meta.title) || idLabel;
+    const sponsor = (b.sponsors || [])[0] || {};
+    const cos = b.cosponsors || [];
+    const nCo = cos.length;
+    const dCount = cos.filter(c => (c.party || "").startsWith("D")).length;
+    const rCount = cos.filter(c => (c.party || "").startsWith("R")).length;
+    const clip = (t, n) => { t = String(t || "").replace(/\*\*/g, ""); return t.length > n ? t.slice(0, n - 1).trimEnd() + "…" : t; };
+
+    const status = `<div class="status-strip ${stage === "law" ? "is-law" : ""}">
+      ${stageDots(stage)}
+      <div><div style="font-family:var(--fd);font-size:17px;font-weight:700;line-height:1.2">${esc(STAGE_WORDS[stage])}</div>
+      ${meta.latest_action || (b.timeline_events[0] || {}).text ? `<div style="font-family:var(--fb);font-size:14px;line-height:1.55;margin-top:3px">${esc(compactTitle((b.timeline_events[0] || {}).text || ""))}</div>` : ""}</div>
+    </div>`;
+
+    const secs = mdSections(b.translation);
+    const lead = secs.length ? secs[0].body : (b.translation ? mdLite(b.translation) : `<p class="meta">Writing the plain English…</p>`);
+    const explainFolds = secs.slice(1).filter(x => !/status|where it is|where it stands/i.test(x.title))
+      .map((x, i) => fold("x" + i, x.title, clip(x.plain, 70), x.body)).join("");
+
+    // Every action, newest first. The legislature's own newer rows are
+    // advisory: Open States' monthly record has not caught up with them.
+    const events = b.timeline_events || [];
+    const isMilestone = (e) => (e.classification || []).some(c => /introduction|referral|passage|signature|veto|became-law|enrolled/.test(c)) || e.certification === "advisory";
+    const shown = b.showAllEvents ? events : events.filter(isMilestone).slice(0, 8);
+    const advisory = events.filter(e => e.certification === "advisory").length;
+    const history = events.length ? fold("history", "How it got here", `${events.length} action${events.length === 1 ? "" : "s"} · last ${fmtDate((events[0] || {}).date)}`, `
+      <div class="tl">${shown.map(ev => `<div class="tl-row">
+          <span class="tl-date">${esc(fmtDate(ev.date))}</span>
+          <span class="tl-dot ${(ev.classification || []).some(c => /signature|became-law/.test(c)) ? "law" : (ev.classification || []).includes("passage") ? "passed" : ""}"></span>
+          <span class="tl-text">${esc(compactTitle(ev.text || ""))}${ev.chamber && !/^committee:/.test(ev.chamber) ? ` <span class="meta" style="margin:0">· ${esc(ev.chamber === "lower" ? "House" : ev.chamber === "upper" ? "Senate" : ev.chamber)}</span>` : ""}${ev.certification === "advisory" ? ` <span class="meta" style="margin:0">· the legislature's daily file, not yet in the record</span>` : ""}</span>
+        </div>`).join("")}</div>
+      ${events.length > shown.length || b.showAllEvents ? `<button class="act" type="button" onclick="state.bill.showAllEvents=!state.bill.showAllEvents;render()" style="margin-top:8px">${b.showAllEvents ? "Show milestones only" : "Show all " + events.length + " actions"}</button>` : ""}
+      ${advisory ? note(`${advisory} newer action${advisory === 1 ? "" : "s"} come from the legislature's own daily file and are shown as advisory until the next monthly record includes them.`) : ""}`) : "";
+
+    const v = b.votes || {};
+    const tally = (d) => d && d.summary ? `${d.summary.yea}–${d.summary.nay}` : "";
+    const voteFact = [v.house ? "House " + tally(v.house) : "", v.senate ? "Senate " + tally(v.senate) : ""].filter(Boolean).join(" · ");
+    const votes = (v.house || v.senate)
+      ? fold("votes", "How they voted", voteFact, `
+         <div class="vote-grid">${v.house ? seatMap("House" + (v.house.date ? " · " + fmtDate(v.house.date) : ""), v.house, v.house.svgW || 300, v.house.svgH || 160) : ""}${v.senate ? seatMap("Senate" + (v.senate.date ? " · " + fmtDate(v.senate.date) : ""), v.senate, v.senate.svgW || 260, v.senate.svgH || 150) : ""}</div>
+         ${note(`Each dot is one legislator, seated by party: the final floor vote in each chamber${b.roll_calls > 1 ? ", of " + b.roll_calls + " roll calls on this bill" : ""}. Green voted yes, red voted no, grey did not vote.`)}`)
+      : (b.votes ? fold("votes", "How they voted", "No floor roll call recorded", note("A bill that dies in committee, or passes by voice vote, leaves no individual record.")) : "");
+
+    // Text: one version at a time, furthest along first; each can be picked.
+    const vers = b.versions || [];
+    const cur = vers.find(x => x.name === b.version) || {};
+    const pick = vers.length > 1 ? `<div class="chips" style="margin:0 0 10px">${vers.map(x =>
+      `<button class="chip" type="button" ${x.text ? "" : "disabled"} style="${x.name === b.version ? "background:var(--ink);color:var(--paper)" : ""}" onclick='loadStateVersion(${JSON.stringify(x.name).replace(/'/g, "&#39;")})'>${esc(x.name)}${x.text ? "" : " · not stored"}</button>`).join("")}</div>` : "";
+    const pages = b.bill_text ? Math.max(1, Math.round(b.bill_text.length / 3200)) : 0;
+    const text = b.bill_text != null ? fold("text", "The actual text", b.bill_text ? `${b.version || "Text"} · about ${pages} page${pages === 1 ? "" : "s"}` : "Not on this server", `
+      ${pick}
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:8px">
+        ${b.text_truncated ? `<button class="act" type="button" onclick='loadStateVersion(${JSON.stringify(b.version || "").replace(/'/g, "&#39;")})' ${b.textLoading ? "disabled" : ""}>${b.textLoading ? "Loading the rest…" : "Load the whole bill here"}</button>` : ""}
+        ${cur.url ? `<a class="act" href="${esc(cur.url)}" target="_blank" rel="noopener" style="text-decoration:none">This version on the legislature's site ↗</a>` : ""}
+      </div>
+      <div class="billtext">${b.bill_text ? formatBillText(b.bill_text) : `<p class="bt-p">${esc(b.text_empty ? "No text: " + b.text_empty + "." : "No text is available yet.")}</p>`}</div>`) : "";
+
+    const rec = meta.record || {};
+    const glance = `<div class="stats" style="margin:18px 0 0">
+      <div class="stat"><div class="stat-n" style="font-size:22px">${esc(STAGE_WORDS[stage])}</div><div class="lbl">Where it is</div></div>
+      <div class="stat"><div class="stat-n">${nCo}</div><div class="lbl">Co-patrons${nCo ? ` · ${dCount}D ${rCount}R` : ""}</div></div>
+      <div class="stat"><div class="stat-n" style="font-size:${v.house || v.senate ? 26 : 16}px">${esc(v.house ? tally(v.house) : v.senate ? tally(v.senate) : (b.votes ? "No roll call" : "…"))}</div><div class="lbl">${v.house ? "House vote" + (v.senate ? " · Senate " + tally(v.senate) : "") : v.senate ? "Senate vote" : "Recorded vote"}</div></div>
+      <div class="stat"><div class="stat-n">${vers.length}</div><div class="lbl">Text version${vers.length === 1 ? "" : "s"}</div></div>
+    </div>`;
+
+    const split = nCo ? `<div class="policy-bar" style="display:flex;height:8px;margin:8px 0 4px"><span style="display:block;width:${(100 * dCount / nCo).toFixed(1)}%;background:#2457a0"></span><span style="display:block;width:${(100 * rCount / nCo).toFixed(1)}%;background:var(--accent)"></span></div>
+      <div class="meta" style="margin:0">${dCount} Democrats · ${rCount} Republicans${nCo - dCount - rCount ? " · " + (nCo - dCount - rCount) + " other" : ""}</div>` : "";
+    const sponsorClick = sponsor.openstates_id ? `onclick='openStateMember(${JSON.stringify(b.state)},${JSON.stringify(sponsor.openstates_id)})'` : "";
+
+    return `<div class="view wrap">
+      ${chromeBar({ search: true })}
+      <div class="cols">
+        <div class="read-col">
+          <div class="kick" style="margin-bottom:10px">${esc(idLabel)} · ${esc(where)}${sponsor.name ? " · " + esc(sponsor.name) : ""}</div>
+          <div class="h1" style="margin-bottom:12px">${esc(title)}</div>
+          ${meta.title && meta.title.replace(/\.$/, "") !== title.replace(/\.$/, "") ? `<div class="meta" style="margin-bottom:18px;font-style:italic;font-family:var(--fb);font-size:13px;text-transform:none;letter-spacing:0">${esc(meta.title)}</div>` : ""}
+          ${status}
+          ${glance}
+          <div style="margin-top:22px">${lead}</div>
+          <div class="folds">${explainFolds}${history}${votes}${text}</div>
+          ${note("No lobbying or campaign-money sections: the lobbying and donor records on this server are federal (Senate LDA, FEC), and this state's are not loaded yet.")}
+        </div>
+        <div>
+          <div class="railq">
+            <div class="lbl" style="border-bottom:1px solid var(--rule);padding-bottom:7px;margin-bottom:12px">Who is behind it</div>
+            ${sponsor.name ? `<div style="font-family:var(--fb);font-size:14.5px;line-height:1.5;${sponsorClick ? "cursor:pointer" : ""}" ${sponsorClick}>${esc(sponsor.name)} <span style="color:var(--muted)">introduced it</span>${sponsorClick ? ` <span class="meta" style="margin:0">›</span>` : ""}</div>
+            <div class="meta" style="margin:0 0 10px">${esc([sponsor.party, sponsor.state].filter(Boolean).join(" · "))}</div>` : `<div class="meta">Patron not listed</div>`}
+            <div style="font-family:var(--fb);font-size:14px;line-height:1.5">${nCo ? nCo + " others signed on" : "No co-patrons"}</div>
+            ${split}
+          </div>
+          <div style="border-top:1px solid var(--rule);padding-top:13px;margin-bottom:14px">
+            <div class="meta" style="line-height:1.6">The record: ${esc(rec.source || "Open States")}${rec.dump_month ? ", " + esc(rec.dump_month) : ""}. ${esc(rec.note || "")}.${meta.source_url ? ` <a href="${esc(meta.source_url)}" target="_blank" rel="noopener">The legislature's page</a> is one click away.` : ""} Watching a state bill is not built yet.</div>
+          </div>
+        </div>
+      </div>
+      <div class="folio"><b>Sheet three</b> · one state bill, in order</div>
+    </div>`;
+  }
+
+  // A state legislator: roster, terms and sponsored bills. No money or
+  // trades: FEC and the STOCK Act cover federal officeholders only.
+  function stateMemberView() {
+    const m = state.member || {};
+    const legis = m.legislation || {};
+    const kick = [m.party, m.chamber, m.current === false ? "Former member" : "Currently serving"].filter(Boolean).join(" · ");
+    const terms = m.terms || [];
+    const first = terms.length ? String(terms[terms.length - 1].start || "").slice(0, 4) : "";
+    const metaLine = [m.state, m.district ? "District " + m.district : "", first ? `${first}–present` : ""].filter(Boolean).join(" · ");
+    const sponsored = (legis.sponsored || []).filter(s => s.number && s.type);
+    const read = legis.sessions_read || [];
+    const stats = [
+      { n: legis.sponsored_count == null ? "n/a" : legis.sponsored_count, l: "Introduced" + (read.length ? ` · ${read[read.length - 1]}–${read[0]}` : "") },
+      { n: legis.cosponsored_count == null ? "n/a" : legis.cosponsored_count, l: "Co-patron" },
+      { n: terms.length, l: terms.length === 1 ? "Term on file" : "Terms on file" },
+    ].map(x => `<div class="stat"><div class="stat-n">${esc(String(x.n))}</div><div class="lbl" style="color:var(--muted);font-size:9px">${esc(x.l)}</div></div>`).join("");
+    const termRows = terms.map(t => `<div class="mrow" style="grid-template-columns:1fr auto">
+        <span style="font-family:var(--fb);font-size:14px">${esc(t.chamber || "")}${t.district ? ` · District ${esc(t.district)}` : ""}</span>
+        <span class="meta" style="margin:0">${esc(fmtDate(t.start))} – ${esc(t.end ? fmtDate(t.end) : "present")}</span></div>`).join("");
+    const bills = sponsored.map(b => {
+      const s = asStory(b);
+      const title = compactTitle(b.title);
+      return `<div class="mrow" style="grid-template-columns:5.2rem 1fr auto;cursor:pointer" onclick='${billCall(s, title)}'>
+        <span class="fnum" style="font-size:11px;color:var(--accent);text-align:left">${esc(b.identifier || "")}</span>
+        <span style="font-family:var(--fb);font-size:14px;line-height:1.4">${esc(title)}${b.sponsorship === "cosponsor" ? ` <span class="meta" style="margin:0">· co-patron</span>` : ""}</span>
+        <span class="meta" style="margin:0;white-space:nowrap">${esc(b.session || "")}</span>
+      </div>`;
+    }).join("");
+    return `<div class="view wrap">
+      ${chromeBar({ search: true })}
+      <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:22px;align-items:start;margin-bottom:22px">
+        ${m.photo_url ? `<img src="${esc(m.photo_url)}" alt="" style="width:120px;height:150px;object-fit:cover;background:var(--aged);border:1px solid var(--rule)" onerror="this.style.visibility='hidden'">` : `<div style="width:120px;height:150px;background:var(--aged)"></div>`}
+        <div>
+          <div class="kick" style="margin-bottom:8px">${esc(kick)}</div>
+          <div class="h1" style="margin-bottom:6px">${esc(m.name || "This legislator")}</div>
+          <div class="meta" style="font-size:12px;margin-bottom:10px">${esc(metaLine)}</div>
+        </div>
+      </div>
+      <div class="stats">${stats}</div>
+      <div class="cols" style="margin-top:26px">
+        <div>
+          ${sectionLbl("Recent bills", sponsored.length ? sponsored.length + " shown" : "")}
+          ${bills || `<p class="body">No bills on this server name this legislator as a patron.</p>`}
+          ${note(`Counts cover the sessions read: ${esc(read.join(", ") || "none")}. From Open States' copy of the legislature's record.`)}
+        </div>
+        <div>
+          ${sectionLbl("Seats held", "")}
+          ${termRows || `<p class="meta">No terms on file.</p>`}
+          ${note("No money or stock-trade sections: FEC filings and STOCK Act disclosures cover federal officeholders only, and this state's campaign-finance records are not loaded yet.")}
+        </div>
+      </div>
+      <div class="folio"><b>Sheet six</b> · a state legislator's record</div>
     </div>`;
   }
 
@@ -2442,14 +2740,16 @@
   }
 
   function render() {
-    const views = { home: homeView, ledger: ledgerView, bill: billView, uncharted: unchartedView, watching: watchingView, member: memberView, offtopic: offTopicView, elections: electionsView, graph: graphView };
+    const views = { home: homeView, ledger: ledgerView,
+      bill: () => (state.bill && state.bill.isState ? stateBillView() : billView()), uncharted: unchartedView, watching: watchingView,
+      member: () => (state.member && state.member.is_state_legislator ? stateMemberView() : memberView()), offtopic: offTopicView, elections: electionsView, graph: graphView };
     const key = renderKey();
     const fresh = key !== lastKey;
     lastKey = key;
     if (state.view !== "home") document.body.classList.remove("is-entering");
     let html;
     if (state.view === "ledger" && state.ledger && state.ledger.pending) html = loadingView(state.ledger.question, "You asked about");
-    else if (state.view === "member" && state.member && state.member.pending) html = loadingView(state.member.name || "A member of Congress", "Opening");
+    else if (state.view === "member" && state.member && state.member.pending) html = loadingView(state.member.name || (state.member.is_state_legislator ? "A state legislator" : "A member of Congress"), "Opening");
     else if (state.view === "bill" && state.bill && state.bill.pending) html = loadingView(compactTitle((state.bill.meta || {}).title) || ((state.bill.type || "").toUpperCase() + " " + state.bill.number), "Reading the bill");
     else html = (views[state.view] || homeView)();
     const app = document.getElementById("app");
@@ -2503,6 +2803,14 @@
       await openMember(segs[1], { fromHistory: true });
       return;
     }
+    if (segs[0] === "state" && segs.length === 5) {
+      await openStateBill(segs[1], segs[2], segs[3], segs[4], "", { fromHistory: true });
+      return;
+    }
+    if (segs[0] === "state" && segs[2] === "member" && segs.length === 4) {
+      await openStateMember(segs[1], decodeURIComponent(segs[3]), { fromHistory: true });
+      return;
+    }
     const congress = params.get("congress");
     const type = params.get("type");
     const number = params.get("number");
@@ -2528,6 +2836,9 @@
   window.setStage = setStage;
   window.openBill = openBill;
   window.openMember = openMember;
+  window.openStateBill = openStateBill;
+  window.openStateMember = openStateMember;
+  window.loadStateVersion = loadStateVersion;
   window.togglePerf = togglePerf;
   window.goElections = goElections;
   window.foldToggle = foldToggle;

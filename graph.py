@@ -2098,7 +2098,8 @@ def state_member_lookup(st, name):
     q = re.sub(r"^(?:del(?:egate)?|sen(?:ator)?|rep(?:resentative)?)\.?\s+", "", (name or "").strip(), flags=re.I).lower()
     if not q:
         return {}
-    hits = [p for p in people if q in _roster_names(p)]
+    # A deep link names the person by id (/state/va/member/<uuid>).
+    hits = [p for p in people if p["id"].lower() in (q, "ocd-person/" + q)] or [p for p in people if q in _roster_names(p)]
     if not hits:
         hits = [p for p in people if (p.get("family_name") or "").lower() == q.split()[-1]
                 and (len(q.split()) == 1 or (p.get("given_name") or "").lower().startswith(q.split()[0][0]))]
@@ -2126,9 +2127,14 @@ def state_member_card(st, p):
             "is_state_legislator": True, "source": "open states people"}
 
 
+# A simple resolution is mostly a commendation: after the bills in a
+# member's list, never hidden.
+_SIMPLE_RESOLUTIONS = {"hr", "sr"}
+
+
 def state_member_bills(st, person_id, n):
     """Bills a legislator sponsored, newest session first, primary before
-    co-sponsor within a session: (rows, sessions read). Reading stops once
+    co-sponsor within a session, bills before simple resolutions: (rows, sessions read). Reading stops once
     n are found and the current sessions are read (a prefiled next session
     alone is not the member's record), so a count covers those sessions only."""
     rows, read = [], []
@@ -2146,7 +2152,8 @@ def state_member_bills(st, person_id, n):
                     mine[k] = (min(mine.get(k, (True,))[0], not s["primary"]), k, b)
         mine = mine.values()
         rows += [dict(state_bill_row(st, sid, k, b), sponsorship="primary" if not co else "cosponsor")
-                 for co, k, b in sorted(mine, key=lambda t: (t[0], -int(t[1].split("/")[1])))]
+                 for co, k, b in sorted(mine, key=lambda t: (t[0], t[1].split("/")[0] in _SIMPLE_RESOLUTIONS,
+                                                             -int(t[1].split("/")[1])))]
         if len(rows) >= n and current <= set(read):
             break
     return rows, read

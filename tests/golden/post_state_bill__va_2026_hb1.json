@@ -1,7 +1,7 @@
 {
  "meta": {
-  "app_sha": "9865c8c",
-  "captured": "2026-09-27T06:33:01",
+  "app_sha": "73d8857",
+  "captured": "2026-09-27T10:21:08",
   "notes": "a Virginia bill from the Open States files: record, votes, timeline, stored text",
   "volatile": []
  },
@@ -44,6 +44,7 @@
       "state": "VA"
      }
     ],
+    "stage": "law",
     "state_code": "VA",
     "state_name": "Virginia",
     "title": "Minimum wage; increases incrementally to $15.00 per hour by January 1, 2028."

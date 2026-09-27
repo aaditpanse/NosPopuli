@@ -1,0 +1,16 @@
+{
+ "meta": {
+  "app_sha": "73d8857",
+  "captured": "2026-09-27T10:21:08",
+  "notes": "the page shell for a state bill: its title and description from the files",
+  "volatile": []
+ },
+ "request": {
+  "method": "GET",
+  "path": "/state/va/2026/hb/1"
+ },
+ "response": {
+  "status": 200,
+  "text": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>\n<!-- meta:start -->\n  <title>Virginia HB 1 (2026): Minimum wage; increases incrementally to $15.00 per hour by January 1, 2028. \u2014 NosPopuli</title>\n  <meta name=\"description\" content=\"Minimum wage; increases incrementally to $15.00 per hour by January 1, 2028. \u2014 a Virginia bill in plain English, with its votes and text. Latest action: Acts of Assembly Chapter text (CHAP0350)\">\n  <link rel=\"canonical\" href=\"https://nospopuli.org/state/va/2026/hb/1\">\n  <meta property=\"og:site_name\" content=\"NosPopuli\">\n  <meta property=\"og:type\" content=\"website\">\n  <meta property=\"og:title\" content=\"Virginia HB 1 (2026): Minimum wage; increases incrementally to $15.00 per hour by January 1, 2028. \u2014 NosPopuli\">\n  <meta property=\"og:description\" content=\"Minimum wage; increases incrementally to $15.00 per hour by January 1, 2028. \u2014 a Virginia bill in plain English, with its votes and text. Latest action: Acts of Assembly Chapter text (CHAP0350)\">\n  <meta property=\"og:url\" content=\"https://nospopuli.org/state/va/2026/hb/1\">\n  <meta property=\"og:image\" content=\"https://nospopuli.org/static/og-card.png\">\n  <meta name=\"twitter:card\" content=\"summary_large_image\">\n<!-- meta:end -->\n  <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n  <!-- the woff2 files come from gstatic; without this the browser only\n       discovers that origin after the stylesheet parses -->\n  <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>\n  <link href=\"https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap\" rel=\"stylesheet\">\n  <style>\n    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n    :root {\n      --ink: #0e0e0e; --paper: #f5f0e8; --card: #faf7f2; --aged: #e8e0cc;\n      --acc"
+ }
+}
