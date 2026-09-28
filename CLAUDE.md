@@ -58,8 +58,9 @@ By path, `sys.path[0]` becomes `scripts/` and every local import fails.
   people repo (`sources/openstates.py`); Virginia's own daily files (`sources/lis.py`)
   certify holds, downgrade disagreeing votes to advisory and show newer actions as
   advisory rows, and never write the record. A state is loaded by an entry under
-  `"legislatures"` in `foundry/data/store/_graph-sources.json`; only Virginia has one.
-  Any other state answers "not loaded on this server".
+  `"legislatures"` in `foundry/data/store/_graph-sources.json`; all 50 have one (since
+  2026-09-28), and only Virginia has an independent check: every other state's record is
+  `ingested`.
 - **`/ledger` sends a state question to the state layer only when the router says it is
   one.** The reader's home state alone does not: "housing bills" from a Virginian
   still searches Congress.

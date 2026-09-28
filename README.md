@@ -31,12 +31,13 @@ those files and the graph, not Congress.gov: a bill page's data is ready in 160�
 `/search` still asks GovInfo until the local search passes its evaluation (below).
 Railway and Supabase are paused, and are deleted after 2026-10-03.
 
-**The state layer is Virginia's General Assembly, from Open States.** Every session
-since 2017: bills, sponsors, actions, roll calls and every text version, with the
-legislature's own daily files (Virginia LIS) as the independent check. `/ledger` sends a
-state question there, and a state bill or legislator has its own page. The other 49
-states come from the same code by a config entry; until then they answer "not loaded on
-this server". LegiScan is gone: it never issued a key.
+**The state layer is all 50 legislatures, from Open States.** Every session since 2017
+(1.2 million bills): bills, sponsors, actions, roll calls and the text versions each
+legislature publishes. Virginia alone has an independent check, its own daily files
+(Virginia LIS); every other state's terms and votes are `ingested`, and each state's
+certification gap line says why. `/ledger` sends a state question there, and a state
+bill or legislator has its own page. A state is one entry under `"legislatures"` in the
+sidecar. LegiScan is gone: it never issued a key.
 
 Money, lobbying and stock trades are the same story: implemented, live endpoints, and
 unreachable by typing a question. Member finance and stocks at least open if you click
@@ -174,11 +175,11 @@ dispatcher, so extracting or tuning them spends effort on a dead end. What the
 classifier keeps is a smaller job — finding the node a graph walk starts from (a bill
 ID, a named act, a place).
 
-**2. Give the ask SPA a state plate.** *Done 2026-09-27, for Virginia.* `/ledger` sends
-a state question to the state layer; `ledger.js` has a state bill page and a state
-legislator page. The data is Open States (monthly dump and people repo) checked by
-Virginia LIS, loaded into the graph like Congress. Next: more states, one sidecar entry
-each, and a state-shaped map under a state answer.
+**2. Give the ask SPA a state plate.** *Done 2026-09-27 for Virginia, 2026-09-28 for all
+50.* `/ledger` sends a state question to the state layer; `ledger.js` has a state bill
+page and a state legislator page. The data is Open States (monthly dump and people repo),
+checked by Virginia LIS in Virginia only, loaded into the graph like Congress. Next: an
+independent check for more states, and a state-shaped map under a state answer.
 
 **3. Index the local corpus.** Postgres FTS over instrument titles and the 4,384 item
 summaries, scoped by jurisdiction. This is what makes "zoning in Fairfax" stop
@@ -496,8 +497,9 @@ Search        Voyage 4 — voyage-4-large for documents (API), voyage-4-nano for
 Federal       GovInfo bulk (BILLSTATUS, bill text, CRPT) · Voteview · clerk.house.gov +
               senate.gov XML · FEC bulk · lda.gov · Congress.gov (nominations; bills
               before 2003) · GovInfo search (/search, until it switches)
-State         Open States (monthly Postgres dump, people repo) · Virginia LIS daily
-              files and bill text (Virginia only, for now)
+State         Open States (monthly Postgres dump, people repo) for all 50 · bill text
+              from each version's own link · Virginia LIS daily files (the one
+              independent check)
 Local         Foundry — my own synthesized extractors, 9 sources
 Civic         Google Civic (elections) · Census geocoder (districts) · FEC · Senate LDA
 Storage       Postgres 17 on the server (psycopg3 pool, pgvector, PostGIS) — the graph,
@@ -527,13 +529,19 @@ derived/fec/              fec-<cycle>.json             FEC bulk (the graph's mem
 derived/nominations/      nominations-<congress>.json  Congress.gov
 derived/lobbying/         lobbying-<year>.json         lda.gov
 derived/states/<st>/      people.json                  Open States people repo
+                          sessions.json                the session index: order, years
+                                                       (ids like "88" carry neither)
                           bills-<session>.json         Open States dump: bills, actions,
                           votes-<session>.json         sponsors, versions; roll calls
                           lis-<session>.json           Virginia LIS: history, roll calls
                           member-session.json          certification from LIS roll calls
 raw/openstates/           the monthly dump (one kept, ~11 GB) and its manifest
 raw/openstates-people/    a sparse clone of the people repo
-raw/lis/<session>/        LIS CSVs; raw/lis/text/<session>/ each text version, gzipped
+raw/lis/<session>/        Virginia LIS CSVs
+raw/states/<st>/text/<session>/  each text version, gzipped, with its manifest; a PDF
+                          also has its text (.txt.gz). One fetch per state at a time
+                          (.lock). np-ca-bundle.pem: Python's roots plus the two
+                          intermediates Illinois' and Connecticut's servers omit
 derived/certification/    member-congress.json         from the older roll calls
 public/                   the unitedstates project's legislators, executive, committees
 raw/unitedstates-images/  member photos (a sparse git clone, pulled Mondays)
@@ -915,6 +923,39 @@ Live problems I know about and haven't fixed. Listed so nobody has to rediscover
   legislators serving then (3,716 links; ties refused, and the edge says how it was
   matched). About 440 stay unmatched, mostly 2017–2020 legislators missing from the
   roster; each session's gap line counts them.
+- **Every state but Virginia is `ingested` only.** No second publisher confirms a term
+  or a vote; the certification gap line says so. Open States itself is never used to
+  certify Open States (the same publisher for roster and votes).
+- **Term dates are sometimes inferred.** The people repo often gives a term's end and no
+  start (a start two years before the end is used, `bound_from: inferred`), or a sitting
+  member with no dates at all (the chamber's current term start is used: 13 in
+  Alabama's House, 32 in South Carolina's). For name matching an inferred start counts as
+  unknown. An inferred bound never closes anyone's term.
+- **Multi-member districts are one post with a seat count** (New Hampshire up to 14 over
+  the history of a reused district name,
+  Arizona, Maryland, New Jersey, North Dakota, South Dakota, Vermont, Washington, West
+  Virginia). A stale open record in such a district is not detected unless the person is
+  in the people repo's retired folder.
+- **Nebraska has one chamber**, `legislature`, shown on the seat map as the Legislature.
+- **Open States' own faults, handled and counted:** roll calls filed under the wrong
+  chamber (Colorado; read from the voters), tallies larger than the chamber (Texas
+  Senate; never the seat map), actions tagged as a signature that are not (New Hampshire
+  "Not Signed Off", Texas "Transmitted"), signatures recorded twice (West Virginia),
+  names as Python bytes ("b'Elliott, Josh'", Connecticut) or with a town ("of Saco",
+  Maine), one-day duplicate terms (Louisiana). Missouri's and Alaska's roll calls carry no
+  individual votes.
+- **One legislator can be several Open States records.** The sidecar's `identities`
+  joins the known ones (New Hampshire's Keith Murphy, Vermont's Kesha Ram Hinsdale);
+  others show as namesakes, and a lookup answers with the one who sits.
+- **Sponsor links are thin in some sessions** (below 90%: Mississippi's specials, West
+  Virginia, North Dakota, Maine, Florida, Iowa, Nevada, Maryland and a few more);
+  Georgia refuses 12% of its current voters as shared surnames. Each session's gap line
+  counts what was not linked.
+- **Some states' text is not on this server.** California's PDF links are HTML pages
+  that load the PDF by script; Indiana's are an app shell and Open States' Indiana proxy
+  refuses everyone. Nebraska, Idaho and Illinois refuse this server's address: their
+  text is fetched from another machine and copied in. A bill page says when its text is
+  missing.
 - **A carried-over bill appears in two sessions.** Open States lists a bill continued to
   the next session in both (2024 and 2025 HB 1122), so a topic search can show it twice.
 - **The current session moves in January.** Only the latest year with roll calls is
