@@ -576,6 +576,25 @@ def pdf_form(page):
                              "version": version.group(1), "javax.faces.ViewState": state.group(1)}
 
 
+# Text fetches name us in the form automated clients use (search engines'
+# too): Indiana's iga.in.gov serves its PDFs only to a user agent that
+# begins "Mozilla/5.0", and answers anything else with its app's page.
+_TEXT_UA = "Mozilla/5.0 (compatible; NosPopuli/1.0; +https://nospopuli.org)"
+_IN_PROXY = re.compile(r"in-proxy\.openstates\.org/(\d{4})/bills/(\w+)/versions/([\w.]+)")
+
+
+def indiana_api_url(url):
+    """Open States' Indiana proxy (in-proxy.openstates.org) refuses everyone;
+    the same version's PDF is named by Indiana's own API, which needs the key
+    in IGA_API_KEY. The API request for it, or None for any other link.
+    Pure."""
+    m = _IN_PROXY.search(url or "")
+    if not m:
+        return None
+    year, bill, version = m.groups()
+    return f"https://api.iga.in.gov/{year}/bills/{bill}/versions/{version}?format=pdf"
+
+
 def text_root(st, sid):
     return graph.data_path("state_text", state=st, session=sid, name="manifest.json").parent
 
@@ -594,7 +613,7 @@ def sync_text(st, sid, session_=None, gap=1.0, limit=None, failing=None):
     from urllib.parse import urlsplit
     if session_ is None:
         session_ = requests.Session()
-        session_.headers["User-Agent"] = _UA
+        session_.headers["User-Agent"] = _TEXT_UA
     bills = json.loads(graph.data_path("state_bills", state=st, session=sid).read_text())["bills"]
     root = text_root(st, sid)
     root.mkdir(parents=True, exist_ok=True)
@@ -626,7 +645,18 @@ def sync_text(st, sid, session_=None, gap=1.0, limit=None, failing=None):
                 if wait > 0:
                     time.sleep(wait)
                 try:
-                    r = session_.get(link["url"], timeout=(15, 60))
+                    url = link["url"]
+                    api = indiana_api_url(url)
+                    if api:
+                        key = os.environ.get("IGA_API_KEY")
+                        if not key:
+                            raise ValueError("Indiana's proxy link needs IGA_API_KEY for Indiana's API")
+                        hop = session_.get(api, headers={"x-api-key": key}, timeout=(15, 60), allow_redirects=False)
+                        if hop.status_code not in (301, 302, 303, 307, 308) or not hop.headers.get("Location"):
+                            raise ValueError(f"Indiana's API gave no document for {api.split('?')[0]}: {hop.status_code}")
+                        url = hop.headers["Location"]
+                        time.sleep(gaps.get(host, gap))
+                    r = session_.get(url, timeout=(15, 60))
                     if getattr(r, "status_code", 200) == 429:
                         retry = r.headers.get("Retry-After") or ""
                         time.sleep(min(300, int(retry)) if retry.isdigit() else 30)

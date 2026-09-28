@@ -2233,6 +2233,39 @@ class OpenStatesTest(unittest.TestCase):
         self.assertEqual(posted, [("https://leginfo.legislature.ca.gov/faces/billPdf.xhtml", "202520260AB1002")])
         self.assertEqual((got["fetched"], got["failed"]), (1, 0))
 
+    def test_indianas_proxy_links_go_through_indianas_api(self):
+        self.assertEqual(self.o.indiana_api_url("http://in-proxy.openstates.org/2017/bills/hb1001/versions/hb1001.01.intr"),
+                         "https://api.iga.in.gov/2017/bills/hb1001/versions/hb1001.01.intr?format=pdf")
+        self.assertIsNone(self.o.indiana_api_url("https://iga.in.gov/pdf-documents/124/2026/house/bills/HB1150/HB1150.01.INTR.pdf"))
+
+        class Resp:
+            def __init__(self, status, body=b"", headers=None):
+                self.status_code, self.content, self.headers = status, body, headers or {}
+
+            def raise_for_status(self):
+                pass
+
+        calls = []
+
+        class Session:
+            def get(self, url, timeout, headers=None, allow_redirects=True):
+                calls.append((url, (headers or {}).get("x-api-key")))
+                if "api.iga.in.gov" in url:
+                    return Resp(302, headers={"Location": "https://iga.in.gov/pdf-documents/120/2017/house/bills/HB1001/HB1001.01.INTR.pdf"})
+                return Resp(200, b"%PDF-1.7 x")
+
+        versions = [{"name": "Introduced", "links": [{"media_type": "application/pdf",
+                     "url": "http://in-proxy.openstates.org/2017/bills/hb1001/versions/hb1001.01.intr"}]}]
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)), \
+                mock.patch.object(self.o.time, "sleep"), mock.patch.dict(os.environ, {"IGA_API_KEY": "k"}):
+            path = graph.data_path("state_bills", state="in", session="2017")
+            path.parent.mkdir(parents=True)
+            path.write_text(json.dumps({"bills": {"hb/1001": {"versions": versions}}}))
+            got = self.o.sync_text("in", "2017", session_=Session(), gap=1.0)
+        self.assertEqual((got["fetched"], got["failed"]), (1, 0))
+        self.assertEqual(calls[0], ("https://api.iga.in.gov/2017/bills/hb1001/versions/hb1001.01.intr?format=pdf", "k"))
+        self.assertTrue(calls[1][0].startswith("https://iga.in.gov/pdf-documents/"))
+
     def test_the_daily_top_up_waits_for_a_backfill(self):
         with tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)), \
                 mock.patch.object(graph, "state_sessions", return_value=["2025", "2026"]):
