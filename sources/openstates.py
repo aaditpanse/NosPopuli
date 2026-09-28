@@ -583,6 +583,26 @@ _TEXT_UA = "Mozilla/5.0 (compatible; NosPopuli/1.0; +https://nospopuli.org)"
 _IN_PROXY = re.compile(r"in-proxy\.openstates\.org/(\d{4})/bills/(\w+)/versions/([\w.]+)")
 
 
+def robots_for(session_, host, scheme="https"):
+    """A host's robots.txt rules as a RobotFileParser, or None when it has
+    none we can read (no file, an error page, no answer): the convention is
+    that no rules allow. California's leginfo and Colorado's site disallow
+    automated fetches of their bill pages, and Vermont asks for 30 s between
+    requests; a fetch that ignored them would be the quickest way to get an
+    address banned."""
+    import urllib.robotparser
+    try:
+        r = session_.get(f"{scheme}://{host}/robots.txt", timeout=(15, 30))
+    except Exception:
+        return None
+    ctype = (getattr(r, "headers", {}) or {}).get("content-type", "")
+    if getattr(r, "status_code", 0) != 200 or "html" in ctype:
+        return None
+    rp = urllib.robotparser.RobotFileParser()
+    rp.parse(r.content.decode("utf-8", "replace").splitlines())
+    return rp
+
+
 def indiana_api_url(url):
     """Open States' Indiana proxy (in-proxy.openstates.org) refuses everyone;
     the same version's PDF is named by Indiana's own API, which needs the key
@@ -599,7 +619,7 @@ def text_root(st, sid):
     return graph.data_path("state_text", state=st, session=sid, name="manifest.json").parent
 
 
-def sync_text(st, sid, session_=None, gap=1.0, limit=None, failing=None):
+def sync_text(st, sid, session_=None, gap=None, limit=None, failing=None):
     """Fetch the text of every version of one session once, from the links
     the Open States record gives. Stored gzipped under
     raw/states/<st>/text/<session>/ with a manifest; a PDF also gets a
@@ -620,8 +640,11 @@ def sync_text(st, sid, session_=None, gap=1.0, limit=None, failing=None):
     manifest_path = root / "manifest.json"
     manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
     trust = os.environ.get("NOSPOPULI_TEXT_TRUST_MANIFEST") == "1"
-    fetched = failed = kept = none = skipped = 0
-    last, gaps = {}, {}
+    # Seconds between two requests to one host: 1 on the server; a helper
+    # machine on a home connection runs slower (NOSPOPULI_TEXT_GAP=2).
+    gap = gap if gap is not None else float(os.environ.get("NOSPOPULI_TEXT_GAP") or 1.0)
+    fetched = failed = kept = none = skipped = disallowed = 0
+    last, gaps, robots = {}, {}, {}
     failing = {} if failing is None else failing
     try:
         for key, b in sorted(bills.items()):
@@ -642,6 +665,17 @@ def sync_text(st, sid, session_=None, gap=1.0, limit=None, failing=None):
                 if limit is not None and fetched + failed >= limit:
                     raise StopIteration
                 host = urlsplit(link["url"]).netloc
+                if host not in robots:
+                    robots[host] = robots_for(session_, host, urlsplit(link["url"]).scheme or "https")
+                    delay = robots[host].crawl_delay(_TEXT_UA) if robots[host] else None
+                    if delay:
+                        gaps[host] = max(gap, float(delay))
+                if robots[host] and not robots[host].can_fetch(_TEXT_UA, link["url"]):
+                    manifest[name] = {"status": "error", "url": link["url"], "bill": key, "version": v["name"],
+                                      "error": "robots", "detail": "the site's robots.txt disallows this path",
+                                      "tried": datetime.date.today().isoformat()}
+                    disallowed += 1
+                    continue
                 if failing.get(host, 0) >= 10:
                     # Ten failures in a row: the host refuses us or is down.
                     # The rest of its links wait for the next run.
@@ -712,7 +746,8 @@ def sync_text(st, sid, session_=None, gap=1.0, limit=None, failing=None):
     finally:
         manifest_path.write_text(json.dumps(manifest, sort_keys=True))
     return {"state": st, "session": sid, "fetched": fetched, "failed": failed, "kept": kept, "no_link": none,
-            "host_skipped": skipped, "hosts_down": sorted(h for h, n in failing.items() if n >= 10)}
+            "host_skipped": skipped, "hosts_down": sorted(h for h, n in failing.items() if n >= 10),
+            "robots_disallowed": disallowed}
 
 
 def text_lock(st):

@@ -2256,7 +2256,8 @@ class OpenStatesTest(unittest.TestCase):
 
         versions = [{"name": "Introduced", "links": [{"media_type": "application/pdf",
                      "url": "http://in-proxy.openstates.org/2017/bills/hb1001/versions/hb1001.01.intr"}]}]
-        with tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)), \
+        with mock.patch.object(self.o, "robots_for", return_value=None), \
+                tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)), \
                 mock.patch.object(self.o.time, "sleep"), mock.patch.dict(os.environ, {"IGA_API_KEY": "k"}):
             path = graph.data_path("state_bills", state="in", session="2017")
             path.parent.mkdir(parents=True)
@@ -2283,6 +2284,35 @@ class OpenStatesTest(unittest.TestCase):
             self.assertIsNone(self.o.text_lock("wv"))
             first.close()
             self.assertIsNotNone(self.o.text_lock("wv"))
+
+    def test_a_sites_robots_txt_is_obeyed(self):
+        class Resp:
+            def __init__(self, code, body=b"", ctype="text/plain"):
+                self.status_code, self.content, self.headers = code, body, {"content-type": ctype}
+
+            def raise_for_status(self):
+                pass
+
+        fetched = []
+
+        class Session:
+            def get(self, url, timeout):
+                if url.endswith("/robots.txt"):
+                    return Resp(200, b"User-agent: *\nDisallow: /faces/\nCrawl-delay: 10\n")
+                fetched.append(url)
+                return Resp(200, b"<p>bill</p>", "text/html")
+
+        versions = [{"name": "v1", "links": [{"media_type": "text/html", "url": "https://site.example/faces/bill?x=1"}]},
+                    {"name": "v2", "links": [{"media_type": "text/html", "url": "https://site.example/text/bill2.html"}]}]
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)), \
+                mock.patch.object(self.o.time, "sleep") as slept:
+            path = graph.data_path("state_bills", state="ca", session="20252026")
+            path.parent.mkdir(parents=True)
+            path.write_text(json.dumps({"bills": {"ab/1": {"versions": versions}}}))
+            got = self.o.sync_text("ca", "20252026", session_=Session(), gap=1.0)
+        # The disallowed path is never requested; the allowed one waits the site's crawl delay.
+        self.assertEqual(fetched, ["https://site.example/text/bill2.html"])
+        self.assertEqual((got["fetched"], got["robots_disallowed"]), (1, 1))
 
     def test_dead_links_do_not_leave_a_host_that_is_up(self):
         import requests
@@ -2323,7 +2353,8 @@ class OpenStatesTest(unittest.TestCase):
 
         versions = [{"name": f"v{i}", "links": [{"media_type": "text/html", "url": f"https://busy.example/{i}"}]}
                     for i in range(2)]
-        with tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)), \
+        with mock.patch.object(self.o, "robots_for", return_value=None), \
+                tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)), \
                 mock.patch.object(self.o.time, "sleep") as slept:
             path = graph.data_path("state_bills", state="ak", session="34")
             path.parent.mkdir(parents=True)
@@ -2345,7 +2376,8 @@ class OpenStatesTest(unittest.TestCase):
 
         versions = [{"name": f"v{i}", "links": [{"media_type": "text/html", "url": f"https://down.example/{i}"}]}
                     for i in range(25)]
-        with tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)):
+        with mock.patch.object(self.o, "robots_for", return_value=None), \
+                tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)):
             path = graph.data_path("state_bills", state="ne", session="109")
             path.parent.mkdir(parents=True)
             path.write_text(json.dumps({"bills": {"lb/1": {"versions": versions}}}))
