@@ -150,6 +150,108 @@ are edges, and a wrong edge is worse than a wrong record because everything trav
 it inherits the error. An edge nobody independently affirms is still traversable, but
 every answer that crosses one says so and says which hop was weak.
 
+### The whole map
+
+Legislation is where this starts, because it was the easiest record to reach. It is not
+the product. The product is **every record American power leaves behind, in one
+place, joined**: every election, every NGO, every lobbying filing, every town-hall
+meeting. Almost all of it is public, and almost none of it is centralized. Each piece
+lives with its own publisher, in its own format, so the connections between them, which
+is where accountability lives, exist nowhere.
+
+What that covers, by what it tells you about power:
+
+- **Who holds it.** All ~520,000 elected offices, from Congress to soil and water
+  districts; appointed boards and commissions (zoning, parole, utilities, transit,
+  ports); agency heads, inspectors general, superintendents, police chiefs; judges and
+  who put them there; party officials; the ~40,000 special districts nobody can name the
+  board of; public payrolls.
+- **What they decided.** Laws and local ordinances; regulations and every public
+  comment on them; executive orders and emergency declarations; council and board
+  votes, agendas, minutes and meeting video; zoning and development approvals; school
+  board policies; pardons; court opinions and consent decrees.
+- **Money in.** Campaign finance at every level, super PACs and dark money, ballot
+  measure committees, inaugural and legal defence funds, bundlers followed across every
+  race they fund.
+- **Influence.** Federal, state and city lobbying; foreign agents (FARA); officials'
+  calendars; the revolving door; model legislation traced into the statutes that copy
+  it.
+- **Officials' own money.** Financial disclosures, stock trades, property, gifts and
+  paid travel, and votes on matters touching their own holdings.
+- **Money out.** Federal grants and contracts; state and municipal budgets line by line,
+  proposed against adopted against spent; procurement and the vendors who keep winning;
+  capital projects, promised against built; tax-break deals and the jobs they promised;
+  bonds, pensions, settlements, earmarks.
+- **Elections.** Every contest down to the precinct, candidate filings, ballot
+  questions, redistricting and who drew the lines, turnout, certification disputes.
+- **Organizations.** Nonprofits and their 990s, foundations and their grants,
+  corporations and their officers, shell companies where ownership is published,
+  unions, government contractors and what they give the officials who hire them.
+- **Oversight.** Inspector general and audit findings, ethics complaints, FOIA logs,
+  suits against governments, police misconduct and decertifications, recalls and
+  impeachments.
+- **Outcomes: what the decisions did.** School funding and results, 311 response times,
+  crime and clearance rates, bridges and water systems, permits and evictions,
+  affordable housing promised against built.
+- **Place.** Property and assessments, government land, zoning maps over time, and every
+  district boundary joined to every address.
+- **Words.** Floor speeches, statements, campaign promises checked against later votes.
+
+The joins no one has made are the point:
+
+- **Donor → vote → contract.** A company gives to a council member, the member votes on
+  a contract, the company wins it. Every step is public; the chain is visible nowhere.
+- **Promise → budget → outcome.** A candidate promises housing, votes a budget line;
+  were the units built?
+- **One person, one career.** School board, state house, Congress, lobbying firm: every
+  vote, donor and disclosure along the way, as one person.
+- **One address, everything.** Every official, every decision touching that parcel,
+  every dollar spent nearby.
+- **One template, twenty statutes.** Model legislation traced state by state.
+
+None of this needs a new shape. A town-hall vote, a state bill and a federal law are the
+same thing: a body, with seats, held by people, voting on an item on a date. An NGO is
+an organization; a grant or a contract is an edge. A new domain adds sources and edges,
+not a redesign. What limits the pace is sources and certification, not structure. So
+the order follows the joins: a domain comes in when it connects to what is already
+there (state money beside state legislators, contracts beside the councils that award
+them), and one region goes deep at every level before the map goes wide.
+
+### Making it legible
+
+Having the data is half the problem. A million correct facts can still make a page
+nobody can read. These are the rules the interface follows:
+
+- **Four doors, not a graph.** People arrive with a **place** ("what's going on where I
+  live"), a **person** ("who is this, what have they done"), a **decision** ("what is
+  this, who's behind it") or a **question** ("did my representative vote for it"). Those
+  are the entrances. The graph stays behind them; no one should need to know it exists.
+- **Answers are sentences; the path is a trail you can open.** "Your state senator voted
+  yes on SB 1 on 11 June. He took $12,000 from the teachers' union in 2024." Every
+  clause links to its record. Nodes and edges appear only when someone asks how the
+  answer was found.
+- **Trust is visible and quiet.** One mark per claim, certified or ingested or disputed,
+  with the sources a tap away. An answer carries the mark of its weakest step. A page
+  covered in badges is as unreadable as one with none.
+- **Time is in everything.** "Who represents me" has one answer today and another in
+  2019. A person's page is a career; a decision's page is its path through committees,
+  votes and signature.
+- **Disclose in layers.** The headline first ("passed 43–2, signed in May"), then who and
+  how, then money and influence, then the raw records. Most readers stop at the first
+  layer; a reporter goes to the fourth. One page serves both.
+- **Empty states explain themselves.** "No bill text for Nebraska yet: the legislature's
+  site blocks our server" earns more trust than a blank. A gap should look deliberate
+  and informative, never broken.
+- **Compare, so numbers mean something.** $12,000 beside "the median state senator took
+  $3,000"; "voted with her party 94% of the time" instead of 900 rows.
+- **Plain words, exact record one tap away.** Say what a motion, a budget code or an
+  agency does; keep the official term in reach.
+- **The newspaper look is the right one** (Styleguide.md): it reads as a record, not an
+  app. It has to work on a phone first, because that is where a resident arrives.
+- **Tested on people, not on me.** Five non-experts, a phone, one question each ("who is
+  your council member and how did they vote on the budget?"), and watch where they get
+  lost. A few rounds of that beat any principle on this list.
+
 ### Prior art I'm deliberately not reinventing
 
 Popolo and Open Civic Data already published essentially this ontology, and I'm already
