@@ -89,12 +89,14 @@ def state_doc(st, session, key, b, people_names=None, newer=()):
     if summary:
         parts.append(f"Summary: {summary}")
     doc = "\n".join(parts)
+    # A record with no date writes "" (a Massachusetts bill with no first
+    # action); the date columns take None.
     return {"instrument_id": graph.state_instrument_id(st, session, key), "congress": None,
-            "bill_type": itype, "number": number, "title": b["title"], "introduced": b.get("first_action_date"),
+            "bill_type": itype, "number": number, "title": b["title"], "introduced": b.get("first_action_date") or None,
             "policy_area": (b.get("subjects") or [None])[0], "subjects": b.get("subjects") or [],
             "is_law": bool(chapter), "law_numbers": [chapter] if chapter else [], "summary": summary, "doc": doc,
             "doc_sha": hashlib.sha1(doc.encode()).hexdigest(), "latest_action": b.get("latest_action"),
-            "latest_action_date": b.get("latest_action_date"), "sponsor_bioguide": None,
+            "latest_action_date": b.get("latest_action_date") or None, "sponsor_bioguide": None,
             "sponsor_name": primary["name"] if primary else None,
             "jurisdiction": graph.state_div(st), "session": session,
             "stage": graph.state_stage(b.get("actions"), newer)}

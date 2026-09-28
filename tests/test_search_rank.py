@@ -147,6 +147,9 @@ class StateSearchDocTest(unittest.TestCase):
         # The title abstract repeats the enacting clause; only the summary is kept.
         self.assertEqual(d["summary"], "Minimum wage. Increases the minimum wage to $15.00.")
         self.assertTrue(d["doc"].startswith("HB 1: Minimum wage"))
+        # A Massachusetts bill with no first action: no date, not "".
+        d = state_doc("ma", "194th", "h/1", {**b, "first_action_date": "", "latest_action_date": ""})
+        self.assertEqual((d["introduced"], d["latest_action_date"]), (None, None))
 
     def test_a_state_row_has_no_govinfo_package(self):
         import datetime
