@@ -2193,6 +2193,46 @@ class OpenStatesTest(unittest.TestCase):
         bad = next(e for e in manifest.values() if e["status"] == "error")
         self.assertIn("not a PDF", bad["detail"])
 
+    def test_californias_pdf_link_posts_its_form(self):
+        form_page = (b'<form id="downloadForm" name="downloadForm" method="post" action="/faces/billPdf.xhtml">'
+                     b'<input type="hidden" name="downloadForm" value="downloadForm" /><input id="pdf_link2" '
+                     b"onclick=\"mojarra.jsfcljs(document.getElementById('downloadForm'),{'pdf_link2':'pdf_link2',"
+                     b"'bill_id':'202520260AB1002','version':'20250AB100297AMD'},'');return false\" />"
+                     b'<input type="hidden" name="javax.faces.ViewState" id="j_id1" value="VS123" /></form>')
+        self.assertEqual(self.o.pdf_form(form_page),
+                         ("/faces/billPdf.xhtml", {"downloadForm": "downloadForm", "pdf_link2": "pdf_link2",
+                                                   "bill_id": "202520260AB1002", "version": "20250AB100297AMD",
+                                                   "javax.faces.ViewState": "VS123"}))
+        self.assertIsNone(self.o.pdf_form(b"<html>app shell</html>"))
+
+        class Resp:
+            def __init__(self, body):
+                self.content, self.headers, self.status_code = body, {}, 200
+
+            def raise_for_status(self):
+                pass
+
+        posted = []
+
+        class Session:
+            def get(self, url, timeout):
+                return Resp(form_page)
+
+            def post(self, url, data, timeout):
+                posted.append((url, data["bill_id"]))
+                return Resp(b"%PDF-1.4 not a real pdf")
+
+        versions = [{"name": "Amended", "links": [{"media_type": "application/pdf",
+                                                   "url": "https://leginfo.legislature.ca.gov/faces/billPdf.xhtml?x=1"}]}]
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)), \
+                mock.patch.object(self.o.time, "sleep"):
+            path = graph.data_path("state_bills", state="ca", session="20252026")
+            path.parent.mkdir(parents=True)
+            path.write_text(json.dumps({"bills": {"ab/1002": {"versions": versions}}}))
+            got = self.o.sync_text("ca", "20252026", session_=Session(), gap=1.0)
+        self.assertEqual(posted, [("https://leginfo.legislature.ca.gov/faces/billPdf.xhtml", "202520260AB1002")])
+        self.assertEqual((got["fetched"], got["failed"]), (1, 0))
+
     def test_one_process_fetches_a_states_text(self):
         with tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)):
             first = self.o.text_lock("wv")

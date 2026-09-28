@@ -560,6 +560,22 @@ def pdf_text(data):
     return text or None
 
 
+def pdf_form(page):
+    """California's "PDF" link (leginfo's billPdf.xhtml) answers with a page
+    whose script posts a form back for the PDF. The form's fields, or None
+    for any other page. Pure."""
+    text = page.decode("utf-8", "replace")
+    if 'name="downloadForm"' not in text:
+        return None
+    state = re.search(r'name="javax\.faces\.ViewState"[^>]*value="([^"]+)"', text)
+    bill, version = re.search(r"'bill_id':'([^']+)'", text), re.search(r"'version':'([^']+)'", text)
+    action = re.search(r'<form id="downloadForm"[^>]*action="([^"]+)"', text)
+    if not (state and bill and version and action):
+        return None
+    return action.group(1), {"downloadForm": "downloadForm", "pdf_link2": "pdf_link2", "bill_id": bill.group(1),
+                             "version": version.group(1), "javax.faces.ViewState": state.group(1)}
+
+
 def text_root(st, sid):
     return graph.data_path("state_text", state=st, session=sid, name="manifest.json").parent
 
@@ -616,9 +632,17 @@ def sync_text(st, sid, session_=None, gap=1.0, limit=None, failing=None):
                         time.sleep(min(300, int(retry)) if retry.isdigit() else 30)
                         gaps[host] = min(10.0, max(gap, gaps.get(host, gap)) * 2)
                     r.raise_for_status()
+                    form = pdf_form(r.content) if link["media_type"] == "application/pdf" and \
+                        not r.content.startswith(b"%PDF") else None
+                    if form:
+                        # California: the page posts a form for the PDF. A
+                        # second request to the same host, so it waits too.
+                        from urllib.parse import urljoin
+                        time.sleep(gaps.get(host, gap))
+                        r = session_.post(urljoin(link["url"], form[0]), data=form[1], timeout=(15, 60))
+                        r.raise_for_status()
                     if link["media_type"] == "application/pdf" and not r.content.startswith(b"%PDF"):
-                        # California's billPdf.xhtml answers with an HTML page
-                        # that loads the PDF by script: not the text.
+                        # Indiana's iga.in.gov answers with its app's page.
                         raise ValueError(f"not a PDF: {r.headers.get('content-type')}, {len(r.content)} bytes")
                     (root / (name + ".gz")).write_bytes(gzip.compress(r.content))
                     entry = {"status": "ok", "url": link["url"], "bill": key, "version": v["name"],
