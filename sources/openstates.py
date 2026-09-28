@@ -655,6 +655,22 @@ def sync_text(st, sid, session_=None, gap=1.0, limit=None, failing=None):
             "host_skipped": skipped, "hosts_down": sorted(h for h, n in failing.items() if n >= 10)}
 
 
+def text_lock(st):
+    """An open lock file holding this state's text, or None when another
+    process holds it: the daily sync's --latest skips a state whose
+    backfill unit is fetching, rather than write its manifests twice."""
+    import fcntl
+    path = graph.DATA_DIR / "raw" / "states" / st / "text" / ".lock"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fh = open(path, "w")
+    try:
+        fcntl.flock(fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        fh.close()
+        return None
+    return fh
+
+
 def text_sessions(st, latest=False):
     """The sessions to fetch text for, newest first: every one on disk, or
     with `latest` those of the last two years (the sitting session and the
@@ -682,15 +698,27 @@ if __name__ == "__main__":
     elif cmd == "drop":
         drop_scratch()
     elif cmd == "text":
+        # A stopped unit (SIGTERM) still writes its manifest: sync_text's
+        # finally runs on SystemExit.
+        import signal
+        signal.signal(signal.SIGTERM, lambda *_: sys.exit(143))
         # text <st> [session ...]: those sessions, or every one on disk,
         # newest first. text --latest: each text state's last two years.
         if args[:1] == ["--latest"]:
             for st in [k for k, v in graph.LEGISLATURES.items() if v.get("text")]:
+                lock = text_lock(st)
+                if lock is None:
+                    print(json.dumps({"state": st, "skipped": "another process is fetching this state's text"}))
+                    continue
                 failing = {}
                 for sid in text_sessions(st, latest=True):
                     print(json.dumps(sync_text(st, sid, failing=failing)), flush=True)
+                lock.close()
         else:
             st, sessions, failing = args[0], args[1:], {}
+            lock = text_lock(st)
+            if lock is None:
+                sys.exit(f"{st}: another process is fetching this state's text")
             for sid in sessions or text_sessions(st):
                 print(json.dumps(sync_text(st, sid, failing=failing)), flush=True)
     else:

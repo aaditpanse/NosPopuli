@@ -2193,6 +2193,14 @@ class OpenStatesTest(unittest.TestCase):
         bad = next(e for e in manifest.values() if e["status"] == "error")
         self.assertIn("not a PDF", bad["detail"])
 
+    def test_one_process_fetches_a_states_text(self):
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)):
+            first = self.o.text_lock("wv")
+            self.assertIsNotNone(first)
+            self.assertIsNone(self.o.text_lock("wv"))
+            first.close()
+            self.assertIsNotNone(self.o.text_lock("wv"))
+
     def test_dead_links_do_not_leave_a_host_that_is_up(self):
         import requests
 
