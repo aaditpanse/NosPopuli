@@ -2233,6 +2233,16 @@ class OpenStatesTest(unittest.TestCase):
         self.assertEqual(posted, [("https://leginfo.legislature.ca.gov/faces/billPdf.xhtml", "202520260AB1002")])
         self.assertEqual((got["fetched"], got["failed"]), (1, 0))
 
+    def test_the_daily_top_up_waits_for_a_backfill(self):
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)), \
+                mock.patch.object(graph, "state_sessions", return_value=["2025", "2026"]):
+            self.assertFalse(self.o.backfilled("wa"))
+            for sid in ("2025", "2026"):
+                root = self.o.text_root("wa", sid)
+                root.mkdir(parents=True)
+                (root / "manifest.json").write_text("{}")
+            self.assertTrue(self.o.backfilled("wa"))
+
     def test_one_process_fetches_a_states_text(self):
         with tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)):
             first = self.o.text_lock("wv")

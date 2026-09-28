@@ -695,6 +695,15 @@ def text_lock(st):
     return fh
 
 
+def backfilled(st):
+    """True when every session of the state has a text manifest: its full
+    fetch has run once. The daily --latest only tops these up; a state not
+    yet backfilled is its backfill unit's job (on 2026-09-28 the daily sync
+    spent four hours fetching Washington's and Wisconsin's first copies and
+    held the graph load behind them)."""
+    return all((text_root(st, sid) / "manifest.json").exists() for sid in graph.state_sessions(st))
+
+
 def text_sessions(st, latest=False):
     """The sessions to fetch text for, newest first: every one on disk, or
     with `latest` those of the last two years (the sitting session and the
@@ -730,6 +739,9 @@ if __name__ == "__main__":
         # newest first. text --latest: each text state's last two years.
         if args[:1] == ["--latest"]:
             for st in [k for k, v in graph.LEGISLATURES.items() if v.get("text")]:
+                if not backfilled(st):
+                    print(json.dumps({"state": st, "skipped": "not backfilled yet; its full fetch runs apart"}))
+                    continue
                 lock = text_lock(st)
                 if lock is None:
                     print(json.dumps({"state": st, "skipped": "another process is fetching this state's text"}))
