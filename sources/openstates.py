@@ -619,6 +619,7 @@ def sync_text(st, sid, session_=None, gap=1.0, limit=None, failing=None):
     root.mkdir(parents=True, exist_ok=True)
     manifest_path = root / "manifest.json"
     manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
+    trust = os.environ.get("NOSPOPULI_TEXT_TRUST_MANIFEST") == "1"
     fetched = failed = kept = none = skipped = 0
     last, gaps = {}, {}
     failing = {} if failing is None else failing
@@ -630,7 +631,12 @@ def sync_text(st, sid, session_=None, gap=1.0, limit=None, failing=None):
                     none += 1
                     continue
                 name = stored_name(manifest, link)
-                if manifest.get(name, {}).get("status") == "ok" and (root / (name + ".gz")).exists():
+                # A second machine fetching for the server (a legislature that
+                # blocks the server's address) starts from the server's
+                # manifest without its files: NOSPOPULI_TEXT_TRUST_MANIFEST=1
+                # trusts "ok" there, so it fetches only what the server lacks.
+                if manifest.get(name, {}).get("status") == "ok" and \
+                        (trust or (root / (name + ".gz")).exists()):
                     kept += 1
                     continue
                 if limit is not None and fetched + failed >= limit:
