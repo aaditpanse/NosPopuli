@@ -371,7 +371,8 @@ def _write_texts(cur, rows):
     n = 0
     with cur.copy("COPY stage_text FROM STDIN") as cp:
         for iid, version, text in rows:
-            text = text[:TEXT_CHARS]
+            # A NUL byte (a few GovInfo files carry one) cannot enter a text field.
+            text = text.replace("\x00", "")[:TEXT_CHARS]
             cp.write_row((iid, version, hashlib.sha1(text.encode()).hexdigest(), len(text), text))
             n += 1
     cur.execute("""

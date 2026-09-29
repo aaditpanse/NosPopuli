@@ -6,3 +6,6 @@
 # transformers.masking_utils (4.53+) and does not load under 5.x.
 sentence-transformers==5.0.0
 transformers==4.57.6
+# The relevance check (agents/result_validator_agent.rank_relevant), on the CPU.
+# Weights: MODEL_DIR/laya@<LAYA_REVISION>, fetched once with huggingface_hub.
+laya==0.3.21

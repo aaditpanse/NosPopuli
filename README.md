@@ -465,8 +465,12 @@ the newest rows (`bill_index.recent`); a question wholly before 2003 gets an hon
 empty (`empty_reason: "before_index"`), and one reaching back past it a note. A
 question with no time in it searches every Congress: the router's default window (the
 last two) cut recall@10 on the Tier 2 set from 0.35 to 0.22. Thirty candidates go through
-the Haiku relevance check (its output limit now scales with them; at a flat 800 tokens
-it failed open, unchecked, at 15 or more), and ten come back. The text of each bill's
+the relevance check, and ten come back. The check is Laya
+(`agents/result_validator_agent.rank_relevant`), a local decision model that rates each
+candidate's title against the question, at no cost a search (30 bills in about 3 s on 8
+CPU threads); it scores about 5% below the Haiku check on the Tier 2 set, which is its
+fallback when the model does not load. (The Haiku check's output limit now scales with
+its input; at a flat 800 tokens it failed open, unchecked, at 15 or more results.) The text of each bill's
 latest version is indexed too (`bill_index text`, its own unit, `bill_text_doc`); that
 list stays off (`with_text`) until the Tier 2 set shows it helps. It
 replaced GovInfo search without the planned blind evaluation, by my choice: the
@@ -610,7 +614,8 @@ no purple.
 
 ```
 Backend       Python · FastAPI · uvicorn · slowapi rate limiting
-Models        Haiku 4.5 — routing, validation, translation (most calls)
+Models        Haiku 4.5 — routing, translation (most calls)
+              Laya (local, CPU) — the search relevance check; Haiku is its fallback
               Sonnet 5.5 — web search: bill background, upcoming elections, polling
               Opus      — Foundry extractor synthesis only
 Search        Voyage 4 — voyage-4-large for documents (API), voyage-4-nano for
@@ -896,12 +901,16 @@ held-out, then all 218):
 
 | system | intent | entity links | recall@10 | nDCG@10 |
 |---|---|---|---|---|
-| baseline (before Phase 1) | 0.38 / 0.49 | 0.18 / 0.11 | 0.13 / 0.15 | 0.22 / 0.29 |
-| Phase 1 (2026-09-29) | 0.49 / 0.66 | 0.27 / 0.20 | 0.37 / 0.35 | 0.53 / 0.57 |
+| baseline (before Phase 1) | 0.49 / 0.66 | 0.27 / 0.20 | 0.25 / 0.23 | 0.38 / 0.41 |
+| Phase 1, Haiku check | 0.49 / 0.66 | 0.27 / 0.20 | 0.36 / 0.34 | 0.52 / 0.57 |
+| Phase 1, Laya check (live) | 0.49 / 0.66 | 0.27 / 0.20 | 0.33 / 0.31 | 0.50 / 0.56 |
 
 Scored on the labels after my review of 30 held-out rows (2026-09-29; those rows say
-`labelled_by: owner`). The baseline's numbers moved a little from their first
-recording as `--judge` rated bills later systems found.
+`labelled_by: owner`). An earlier table here was wrong: /ledger allows 20 requests a
+minute, the first runs went faster than that, and `--baseline` scored each 429 as an
+empty answer (the baseline lost about half its answers that way). It now waits and
+retries, and records any other failure as an error. Routing did not change in Phase
+1, so intent and entity links are the same for all three.
 
 Every phase of the graph search (Phases 1–6) must not lower the held-out numbers.
 

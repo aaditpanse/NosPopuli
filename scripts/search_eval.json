@@ -130,7 +130,8 @@
    "instrument/us/119/s/5238": "no",
    "instrument/us/119/s/5493": "yes",
    "instrument/us/119/hr/8881": "partly",
-   "instrument/us/119/s/4456": "partly"
+   "instrument/us/119/s/4456": "partly",
+   "instrument/us/119/hr/6875": "partly"
   }
  },
  {
@@ -281,7 +282,12 @@
    "instrument/co/2021A/hb/1046": "partly",
    "instrument/co/2021A/sb/189": "no",
    "instrument/co/2022A/sb/126": "partly",
-   "instrument/co/2026A/hjr/1017": "yes"
+   "instrument/co/2026A/hjr/1017": "yes",
+   "instrument/us/108/s/2605": "partly",
+   "instrument/us/110/s/2156": "partly",
+   "instrument/us/114/hr/5247": "partly",
+   "instrument/us/112/hr/2840": "no",
+   "instrument/us/114/hr/2983": "partly"
   }
  },
  {
@@ -440,7 +446,13 @@
    "instrument/us/119/s/266": "partly",
    "instrument/us/114/hr/34": "no",
    "instrument/us/119/hr/8319": "no",
-   "instrument/us/119/s/760": "no"
+   "instrument/us/119/s/760": "no",
+   "instrument/us/113/s/252": "no",
+   "instrument/us/114/s/1356": "no",
+   "instrument/us/114/s/2943": "no",
+   "instrument/us/118/hr/5074": "no",
+   "instrument/us/118/s/4510": "no",
+   "instrument/us/119/s/931": "no"
   }
  },
  {
@@ -662,7 +674,14 @@
    "instrument/us/118/hr/8816": "yes",
    "instrument/us/119/hr/2152": "no",
    "instrument/us/119/hr/6361": "yes",
-   "instrument/us/119/hr/6461": "partly"
+   "instrument/us/119/hr/6461": "partly",
+   "instrument/us/119/hr/4801": "no",
+   "instrument/us/119/hr/5351": "partly",
+   "instrument/us/119/hr/5584": "partly",
+   "instrument/us/119/hr/5764": "no",
+   "instrument/us/119/hr/5784": "no",
+   "instrument/us/119/hr/6996": "no",
+   "instrument/us/119/s/4214": "no"
   }
  },
  {
@@ -699,7 +718,10 @@
    "instrument/us/118/hr/3268": "partly",
    "instrument/us/119/hr/6644": "partly",
    "instrument/us/117/hr/5129": "partly",
-   "instrument/us/117/s/4978": "partly"
+   "instrument/us/117/s/4978": "partly",
+   "instrument/us/112/hr/904": "no",
+   "instrument/us/114/hr/1655": "partly",
+   "instrument/us/117/hr/3529": "partly"
   }
  },
  {
@@ -759,7 +781,9 @@
    "instrument/us/117/hr/5227": "no",
    "instrument/us/118/hr/1201": "no",
    "instrument/us/118/hr/4775": "no",
-   "instrument/us/119/s/3934": "no"
+   "instrument/us/119/s/3934": "no",
+   "instrument/us/117/s/958": "no",
+   "instrument/us/118/s/470": "no"
   }
  },
  {
@@ -808,7 +832,11 @@
    "instrument/us/115/hr/482": "yes",
    "instrument/us/119/hr/2710": "partly",
    "instrument/us/119/hr/7152": "partly",
-   "instrument/us/119/s/2720": "partly"
+   "instrument/us/119/s/2720": "partly",
+   "instrument/us/108/hr/4187": "no",
+   "instrument/us/113/hr/12": "no",
+   "instrument/us/113/s/123": "no",
+   "instrument/us/114/hr/12": "no"
   }
  },
  {
@@ -880,7 +908,8 @@
    "instrument/us/118/s/1026": "partly",
    "instrument/us/119/hr/4882": "partly",
    "instrument/us/119/hr/4883": "partly",
-   "instrument/us/119/hr/6743": "yes"
+   "instrument/us/119/hr/6743": "yes",
+   "instrument/us/117/hr/825": "partly"
   }
  },
  {
@@ -947,7 +976,9 @@
    "instrument/us/114/hr/4864": "yes",
    "instrument/us/115/hres/829": "yes",
    "instrument/us/117/s/4524": "yes",
-   "instrument/us/119/hr/395": "yes"
+   "instrument/us/119/hr/395": "yes",
+   "instrument/us/108/s/2292": "no",
+   "instrument/us/113/hres/707": "no"
   }
  },
  {
@@ -1006,7 +1037,9 @@
    "instrument/us/118/s/146": "yes",
    "instrument/us/119/hr/2636": "yes",
    "instrument/us/119/s/1818": "partly",
-   "instrument/us/119/s/4189": "yes"
+   "instrument/us/119/s/4189": "yes",
+   "instrument/us/118/hr/3134": "yes",
+   "instrument/us/118/s/1269": "yes"
   }
  },
  {
@@ -1058,7 +1091,8 @@
    "instrument/us/119/s/4567": "yes",
    "instrument/us/117/hr/2418": "partly",
    "instrument/us/114/hr/5899": "yes",
-   "instrument/us/116/hr/3448": "yes"
+   "instrument/us/116/hr/3448": "yes",
+   "instrument/us/112/hres/365": "yes"
   }
  },
  {
@@ -1122,7 +1156,11 @@
    "instrument/us/118/hr/3629": "yes",
    "instrument/us/118/hr/568": "yes",
    "instrument/us/118/hr/5713": "yes",
-   "instrument/us/118/s/1785": "yes"
+   "instrument/us/118/s/1785": "yes",
+   "instrument/us/116/hr/1542": "yes",
+   "instrument/us/117/hr/3269": "yes",
+   "instrument/us/115/s/3463": "yes",
+   "instrument/us/118/hr/3666": "yes"
   }
  },
  {
@@ -1168,7 +1206,9 @@
    "instrument/us/118/hres/156": "yes",
    "instrument/us/118/s/58": "yes",
    "instrument/us/119/hr/358": "partly",
-   "instrument/us/119/hr/1908": "yes"
+   "instrument/us/119/hr/1908": "yes",
+   "instrument/us/112/s/2038": "yes",
+   "instrument/us/119/hr/253": "yes"
   }
  },
  {
@@ -1217,7 +1257,9 @@
    "instrument/us/118/hr/57": "yes",
    "instrument/us/118/s/580": "no",
    "instrument/us/118/hr/231": "partly",
-   "instrument/us/119/hr/391": "yes"
+   "instrument/us/119/hr/391": "yes",
+   "instrument/us/118/hr/750": "partly",
+   "instrument/us/119/s/278": "partly"
   }
  },
  {
@@ -1568,7 +1610,10 @@
    "instrument/us/118/s/2280": "yes",
    "instrument/us/119/hr/904": "partly",
    "instrument/us/119/s/770": "yes",
-   "instrument/us/119/hr/9296": "yes"
+   "instrument/us/119/hr/9296": "yes",
+   "instrument/us/109/hres/168": "yes",
+   "instrument/us/109/s/3507": "yes",
+   "instrument/us/114/hres/393": "yes"
   }
  },
  {
@@ -1624,7 +1669,8 @@
    "instrument/us/111/hr/4853": "partly",
    "instrument/us/111/hr/793": "yes",
    "instrument/us/113/hr/769": "yes",
-   "instrument/us/114/hr/1286": "yes"
+   "instrument/us/114/hr/1286": "yes",
+   "instrument/us/118/hr/7360": "partly"
   }
  },
  {
@@ -1674,7 +1720,8 @@
    "instrument/us/118/hr/336": "yes",
    "instrument/us/118/s/332": "yes",
    "instrument/us/119/hr/163": "yes",
-   "instrument/us/117/hr/4059": "yes"
+   "instrument/us/117/hr/4059": "yes",
+   "instrument/us/117/hr/6648": "yes"
   }
  },
  {
@@ -1848,7 +1895,9 @@
    "instrument/us/119/s/1223": "no",
    "instrument/us/119/s/3428": "partly",
    "instrument/us/119/s/4157": "partly",
-   "instrument/us/118/hr/1747": "partly"
+   "instrument/us/118/hr/1747": "partly",
+   "instrument/us/118/s/3229": "partly",
+   "instrument/us/119/hr/148": "partly"
   }
  },
  {
@@ -1894,7 +1943,11 @@
    "instrument/us/119/hr/1672": "partly",
    "instrument/us/119/s/1186": "partly",
    "instrument/us/119/s/1818": "partly",
-   "instrument/us/115/hr/6574": "yes"
+   "instrument/us/115/hr/6574": "yes",
+   "instrument/us/108/hr/3299": "yes",
+   "instrument/us/109/hr/2685": "yes",
+   "instrument/us/115/s/1688": "yes",
+   "instrument/us/116/s/62": "yes"
   }
  },
  {
@@ -1945,7 +1998,9 @@
    "instrument/us/119/s/4744": "no",
    "instrument/us/114/hr/2237": "yes",
    "instrument/us/115/hr/1279": "yes",
-   "instrument/us/117/hr/2601": "yes"
+   "instrument/us/117/hr/2601": "yes",
+   "instrument/us/116/hr/663": "yes",
+   "instrument/us/112/hr/3337": "yes"
   }
  },
  {
@@ -2176,7 +2231,9 @@
    "instrument/us/118/hr/767": "yes",
    "instrument/us/118/s/237": "yes",
    "instrument/us/118/s/3983": "partly",
-   "instrument/us/118/hr/4303": "yes"
+   "instrument/us/118/hr/4303": "yes",
+   "instrument/us/118/hr/10545": "no",
+   "instrument/us/118/hr/7059": "partly"
   }
  },
  {
@@ -2305,7 +2362,10 @@
    "instrument/us/118/s/3350": "partly",
    "instrument/us/119/hr/6644": "partly",
    "instrument/us/108/s/811": "partly",
-   "instrument/us/114/hr/3700": "partly"
+   "instrument/us/114/hr/3700": "partly",
+   "instrument/us/117/hr/3172": "yes",
+   "instrument/us/118/hr/8285": "yes",
+   "instrument/us/118/s/4261": "yes"
   }
  },
  {
@@ -2609,7 +2669,8 @@
    "instrument/us/119/hr/4809": "partly",
    "instrument/us/112/hr/1268": "yes",
    "instrument/us/112/s/512": "partly",
-   "instrument/us/111/hr/5164": "partly"
+   "instrument/us/111/hr/5164": "partly",
+   "instrument/us/111/s/2812": "partly"
   }
  },
  {
@@ -2674,7 +2735,11 @@
    "instrument/us/119/hr/5857": "yes",
    "instrument/us/115/hr/5849": "partly",
    "instrument/us/115/s/2978": "partly",
-   "instrument/us/116/hr/1189": "no"
+   "instrument/us/116/hr/1189": "no",
+   "instrument/us/110/s/2903": "yes",
+   "instrument/us/118/s/2060": "partly",
+   "instrument/us/115/hr/4904": "partly",
+   "instrument/us/116/s/483": "no"
   }
  },
  {
@@ -2794,7 +2859,9 @@
    "instrument/us/119/hr/7748": "yes",
    "instrument/us/119/hr/928": "yes",
    "instrument/us/118/hr/8996": "yes",
-   "instrument/us/119/s/3903": "yes"
+   "instrument/us/119/s/3903": "yes",
+   "instrument/us/109/hr/153": "partly",
+   "instrument/us/114/s/2276": "no"
   }
  },
  {
@@ -2906,7 +2973,11 @@
    "instrument/us/118/hr/892": "yes",
    "instrument/us/118/hres/192": "partly",
    "instrument/us/117/hres/1057": "partly",
-   "instrument/us/117/sres/638": "partly"
+   "instrument/us/117/sres/638": "partly",
+   "instrument/us/114/hr/955": "yes",
+   "instrument/us/117/hr/6984": "partly",
+   "instrument/us/117/hr/6367": "yes",
+   "instrument/us/117/hr/7012": "yes"
   }
  },
  {
@@ -3006,7 +3077,8 @@
    "instrument/us/118/hr/4603": "partly",
    "instrument/us/119/s/4941": "yes",
    "instrument/us/115/hr/6110": "partly",
-   "instrument/us/117/hr/6279": "yes"
+   "instrument/us/117/hr/6279": "yes",
+   "instrument/us/119/hr/9790": "yes"
   }
  },
  {
@@ -3056,7 +3128,8 @@
    "instrument/us/119/s/1422": "no",
    "instrument/us/119/s/3385": "partly",
    "instrument/us/118/hjres/148": "partly",
-   "instrument/us/119/sjres/39": "partly"
+   "instrument/us/119/sjres/39": "partly",
+   "instrument/us/118/hr/3673": "no"
   }
  },
  {
@@ -3101,7 +3174,9 @@
    "instrument/us/119/s/1705": "partly",
    "instrument/us/119/s/3301": "partly",
    "instrument/us/117/hr/4521": "partly",
-   "instrument/us/118/hr/752": "partly"
+   "instrument/us/118/hr/752": "partly",
+   "instrument/us/118/hr/8673": "partly",
+   "instrument/us/118/hr/8826": "partly"
   }
  },
  {
@@ -3146,7 +3221,9 @@
    "instrument/us/119/hr/3160": "no",
    "instrument/us/118/hr/6906": "no",
    "instrument/us/119/s/1993": "no",
-   "instrument/us/119/s/2863": "no"
+   "instrument/us/119/s/2863": "no",
+   "instrument/us/119/hr/624": "no",
+   "instrument/us/119/hr/3591": "no"
   }
  },
  {
@@ -3197,7 +3274,10 @@
    "instrument/us/119/hr/1004": "no",
    "instrument/us/119/hr/1389": "partly",
    "instrument/us/119/s/73": "no",
-   "instrument/us/112/hconres/25": "partly"
+   "instrument/us/112/hconres/25": "partly",
+   "instrument/us/109/hr/1100": "no",
+   "instrument/us/110/hr/724": "no",
+   "instrument/us/113/hr/4664": "partly"
   }
  },
  {
@@ -3256,7 +3336,16 @@
    "instrument/us/119/s/343": "partly",
    "instrument/us/119/s/4554": "partly",
    "instrument/us/114/hr/2293": "partly",
-   "instrument/us/116/hr/2315": "partly"
+   "instrument/us/116/hr/2315": "partly",
+   "instrument/us/114/hr/2513": "no",
+   "instrument/us/110/hres/1443": "no",
+   "instrument/us/110/hres/271": "no",
+   "instrument/us/114/hres/505": "no",
+   "instrument/us/117/hres/1193": "no",
+   "instrument/us/117/hres/628": "no",
+   "instrument/us/117/hres/932": "no",
+   "instrument/us/119/hr/4490": "partly",
+   "instrument/us/119/hres/1082": "no"
   }
  },
  {
@@ -3352,7 +3441,9 @@
    "instrument/us/119/s/1318": "partly",
    "instrument/us/119/s/1874": "no",
    "instrument/us/119/s/2551": "no",
-   "instrument/us/119/s/3125": "no"
+   "instrument/us/119/s/3125": "no",
+   "instrument/us/112/hr/1805": "yes",
+   "instrument/us/113/hr/3880": "partly"
   }
  },
  {
@@ -3438,7 +3529,10 @@
    "instrument/us/119/hr/9250": "yes",
    "instrument/us/118/hr/1065": "partly",
    "instrument/us/115/hr/4489": "partly",
-   "instrument/us/118/s/448": "partly"
+   "instrument/us/118/s/448": "partly",
+   "instrument/us/118/hr/6128": "no",
+   "instrument/us/119/hr/3499": "no",
+   "instrument/us/111/hr/500": "no"
   }
  },
  {
@@ -3492,7 +3586,8 @@
    "instrument/us/119/hr/7753": "no",
    "instrument/us/119/s/668": "no",
    "instrument/us/109/hres/441": "no",
-   "instrument/us/115/hr/5682": "yes"
+   "instrument/us/115/hr/5682": "yes",
+   "instrument/us/109/hconres/284": "no"
   }
  },
  {
@@ -3536,7 +3631,14 @@
    "instrument/us/110/s/3197": "partly",
    "instrument/us/110/hr/6867": "partly",
    "instrument/us/110/hr/2638": "partly",
-   "instrument/us/110/hr/3648": "yes"
+   "instrument/us/110/hr/3648": "yes",
+   "instrument/us/110/hr/5813": "no",
+   "instrument/us/110/hr/5938": "no",
+   "instrument/us/110/hr/6849": "no",
+   "instrument/us/110/hr/6946": "no",
+   "instrument/us/110/s/2733": "no",
+   "instrument/us/110/s/2903": "no",
+   "instrument/us/110/s/2954": "no"
   }
  },
  {
@@ -3591,7 +3693,9 @@
    "instrument/us/119/hr/5366": "no",
    "instrument/us/109/hr/3697": "partly",
    "instrument/us/109/hr/3971": "yes",
-   "instrument/us/109/s/1647": "partly"
+   "instrument/us/109/s/1647": "partly",
+   "instrument/us/109/hr/3723": "yes",
+   "instrument/us/109/hr/3645": "yes"
   }
  },
  {
@@ -3667,7 +3771,9 @@
    "instrument/us/110/hr/648": "partly",
    "instrument/us/110/hr/6632": "partly",
    "instrument/us/110/s/562": "partly",
-   "instrument/us/111/s/3558": "partly"
+   "instrument/us/111/s/3558": "partly",
+   "instrument/us/117/s/3949": "no",
+   "instrument/us/118/s/1573": "no"
   }
  },
  {
@@ -3728,7 +3834,8 @@
    "instrument/us/110/hr/1062": "partly",
    "instrument/us/110/hr/787": "partly",
    "instrument/us/109/s/4046": "partly",
-   "instrument/us/110/hr/353": "partly"
+   "instrument/us/110/hr/353": "partly",
+   "instrument/us/110/hr/4020": "no"
   }
  },
  {
@@ -3794,7 +3901,14 @@
    "instrument/us/116/s/4209": "partly",
    "instrument/us/117/hr/1799": "yes",
    "instrument/us/117/hr/7334": "partly",
-   "instrument/us/118/hjres/7": "partly"
+   "instrument/us/118/hjres/7": "partly",
+   "instrument/us/110/hr/1424": "no",
+   "instrument/us/115/hr/2266": "no",
+   "instrument/us/115/hr/601": "no",
+   "instrument/us/117/hr/7939": "no",
+   "instrument/us/117/s/2089": "partly",
+   "instrument/us/118/hjres/26": "no",
+   "instrument/us/118/hr/815": "no"
   }
  },
  {
@@ -3913,7 +4027,12 @@
    "instrument/us/118/s/569": "yes",
    "instrument/us/119/hr/1968": "no",
    "instrument/us/119/hr/2483": "no",
-   "instrument/us/117/s/1511": "partly"
+   "instrument/us/117/s/1511": "partly",
+   "instrument/us/108/hr/3266": "partly",
+   "instrument/us/109/hr/1544": "partly",
+   "instrument/us/115/sres/694": "partly",
+   "instrument/us/118/hr/3671": "yes",
+   "instrument/us/119/hr/5339": "yes"
   }
  },
  {
@@ -3966,7 +4085,10 @@
    "instrument/us/110/s/163": "no",
    "instrument/us/113/hr/1727": "yes",
    "instrument/us/113/s/837": "yes",
-   "instrument/us/115/hr/4316": "yes"
+   "instrument/us/115/hr/4316": "yes",
+   "instrument/us/114/hr/4341": "no",
+   "instrument/us/114/hr/527": "no",
+   "instrument/us/109/hr/710": "yes"
   }
  },
  {
@@ -4140,7 +4262,9 @@
    "instrument/us/114/hr/359": "partly",
    "instrument/us/116/hr/1812": "partly",
    "instrument/us/116/hr/4305": "partly",
-   "instrument/us/117/hr/1448": "partly"
+   "instrument/us/117/hr/1448": "partly",
+   "instrument/us/118/s/2778": "partly",
+   "instrument/us/119/s/2615": "no"
   }
  },
  {
@@ -4207,7 +4331,11 @@
    "instrument/us/119/s/2257": "no",
    "instrument/us/110/hconres/13": "yes",
    "instrument/us/113/hres/711": "partly",
-   "instrument/us/115/hres/31": "partly"
+   "instrument/us/115/hres/31": "partly",
+   "instrument/us/112/hres/137": "partly",
+   "instrument/us/114/hres/12": "partly",
+   "instrument/us/115/hres/15": "partly",
+   "instrument/us/118/hr/6047": "yes"
   }
  },
  {
@@ -4485,7 +4613,11 @@
    "instrument/us/118/s/4184": "yes",
    "instrument/us/118/s/4454": "yes",
    "instrument/us/119/hr/8454": "partly",
-   "instrument/us/108/hr/3324": "yes"
+   "instrument/us/108/hr/3324": "yes",
+   "instrument/us/112/hr/3432": "yes",
+   "instrument/us/113/hr/2201": "yes",
+   "instrument/us/114/hr/3410": "yes",
+   "instrument/us/115/hr/3624": "yes"
   }
  },
  {
@@ -4558,7 +4690,9 @@
    "instrument/us/119/hr/833": "yes",
    "instrument/us/119/hr/9289": "partly",
    "instrument/us/119/s/292": "yes",
-   "instrument/us/117/s/1991": "partly"
+   "instrument/us/117/s/1991": "partly",
+   "instrument/us/116/hr/8150": "no",
+   "instrument/us/119/hres/94": "partly"
   }
  },
  {
@@ -4693,7 +4827,20 @@
    "instrument/us/116/hr/2476": "partly",
    "instrument/us/116/hr/5430": "yes",
    "instrument/us/116/hr/7440": "partly",
-   "instrument/us/119/s/254": "no"
+   "instrument/us/119/s/254": "no",
+   "instrument/us/115/hconres/47": "no",
+   "instrument/us/115/hres/479": "no",
+   "instrument/us/115/sconres/8": "no",
+   "instrument/us/117/hr/9578": "no",
+   "instrument/us/115/hconres/5": "no",
+   "instrument/us/116/hr/5663": "no",
+   "instrument/us/119/hr/42": "no",
+   "instrument/us/119/hr/4323": "no",
+   "instrument/us/119/hr/517": "no",
+   "instrument/us/119/hr/6938": "no",
+   "instrument/us/119/hr/7147": "no",
+   "instrument/us/119/hr/7148": "no",
+   "instrument/us/119/s/5": "no"
   }
  },
  {
@@ -4747,7 +4894,8 @@
    "instrument/us/119/hr/8684": "yes",
    "instrument/us/119/s/2497": "yes",
    "instrument/us/119/s/2681": "yes",
-   "instrument/us/119/hr/3657": "no"
+   "instrument/us/119/hr/3657": "no",
+   "instrument/us/119/hr/10615": "no"
   }
  },
  {
@@ -4859,7 +5007,10 @@
    "instrument/us/109/hr/278": "no",
    "instrument/us/115/s/3049": "no",
    "instrument/us/117/hr/1366": "no",
-   "instrument/us/118/hr/6242": "no"
+   "instrument/us/118/hr/6242": "no",
+   "instrument/us/110/hr/6625": "no",
+   "instrument/us/112/hr/5816": "no",
+   "instrument/us/109/s/2703": "no"
   }
  },
  {
@@ -4949,7 +5100,10 @@
    "instrument/us/119/hres/486": "no",
    "instrument/us/119/s/4738": "no",
    "instrument/us/116/s/4838": "no",
-   "instrument/us/109/hr/4838": "yes"
+   "instrument/us/109/hr/4838": "yes",
+   "instrument/us/111/hr/4832": "no",
+   "instrument/us/111/hres/1736": "no",
+   "instrument/us/108/hr/4838": "yes"
   }
  },
  {
@@ -5061,7 +5215,10 @@
    "instrument/us/119/hr/7024": "no",
    "instrument/us/119/s/3686": "no",
    "instrument/us/115/hr/941": "no",
-   "instrument/us/116/sres/441": "no"
+   "instrument/us/116/sres/441": "no",
+   "instrument/us/110/hr/3391": "no",
+   "instrument/us/110/s/1898": "no",
+   "instrument/us/117/hr/3047": "no"
   }
  },
  {
@@ -5120,7 +5277,9 @@
    "instrument/us/119/hres/436": "partly",
    "instrument/us/119/hres/976": "no",
    "instrument/us/117/hres/1333": "no",
-   "instrument/us/112/hres/1": "yes"
+   "instrument/us/112/hres/1": "yes",
+   "instrument/us/110/sres/1": "no",
+   "instrument/us/111/sres/1": "no"
   }
  },
  {
@@ -5211,7 +5370,9 @@
    "instrument/us/119/hr/6322": "no",
    "instrument/us/119/s/1473": "no",
    "instrument/us/118/hr/3249": "partly",
-   "instrument/us/118/hr/752": "partly"
+   "instrument/us/118/hr/752": "partly",
+   "instrument/us/114/hr/919": "no",
+   "instrument/us/113/hr/5364": "no"
   }
  },
  {
@@ -5403,7 +5564,10 @@
    "instrument/us/119/hr/6361": "yes",
    "instrument/us/119/hr/9125": "partly",
    "instrument/us/119/s/2367": "partly",
-   "instrument/us/119/s/4916": "yes"
+   "instrument/us/119/s/4916": "yes",
+   "instrument/us/119/hr/4801": "no",
+   "instrument/us/119/hr/5351": "no",
+   "instrument/us/119/s/4214": "no"
   }
  },
  {
@@ -5583,7 +5747,12 @@
    "instrument/us/118/hr/2635": "no",
    "instrument/us/118/hr/9004": "no",
    "instrument/us/118/s/2073": "no",
-   "instrument/us/118/s/4213": "partly"
+   "instrument/us/118/s/4213": "partly",
+   "instrument/us/118/hr/6928": "no",
+   "instrument/us/118/hr/7569": "no",
+   "instrument/us/118/s/3696": "no",
+   "instrument/us/118/s/4367": "no",
+   "instrument/us/118/s/5100": "no"
   }
  },
  {
@@ -5745,7 +5914,12 @@
    "instrument/us/119/hr/9995": "no",
    "instrument/us/119/sjres/99": "no",
    "instrument/us/118/hr/10014": "no",
-   "instrument/us/119/hr/9936": "no"
+   "instrument/us/119/hr/9936": "no",
+   "instrument/us/111/hr/3251": "no",
+   "instrument/us/111/hr/389": "no",
+   "instrument/us/115/hres/991": "no",
+   "instrument/us/118/hr/3499": "no",
+   "instrument/us/108/hr/992": "no"
   }
  },
  {
@@ -5934,7 +6108,8 @@
    "instrument/us/115/hr/1907": "no",
    "instrument/us/118/hr/8253": "partly",
    "instrument/us/118/s/4277": "partly",
-   "instrument/us/119/s/1480": "partly"
+   "instrument/us/119/s/1480": "partly",
+   "instrument/us/112/hr/2030": "no"
   }
  },
  {
@@ -6002,7 +6177,10 @@
    "instrument/us/119/s/2523": "no",
    "instrument/us/114/hr/12": "no",
    "instrument/us/118/s/661": "yes",
-   "instrument/us/118/s/4155": "partly"
+   "instrument/us/118/s/4155": "partly",
+   "instrument/us/118/hr/8266": "partly",
+   "instrument/us/118/hres/604": "partly",
+   "instrument/us/118/hr/8822": "partly"
   }
  },
  {
@@ -6059,7 +6237,8 @@
    "instrument/us/119/s/2523": "no",
    "instrument/us/119/sres/163": "no",
    "instrument/us/109/hjres/59": "no",
-   "instrument/us/116/hres/1209": "partly"
+   "instrument/us/116/hres/1209": "partly",
+   "instrument/us/109/s/2703": "no"
   }
  },
  {
@@ -6115,7 +6294,10 @@
    "instrument/us/108/hr/4187": "no",
    "instrument/us/109/hr/278": "no",
    "instrument/us/111/hr/3820": "no",
-   "instrument/us/118/hjres/148": "no"
+   "instrument/us/118/hjres/148": "no",
+   "instrument/us/118/hr/7595": "no",
+   "instrument/us/118/s/3445": "no",
+   "instrument/us/109/s/2703": "no"
   }
  },
  {
@@ -6322,7 +6504,14 @@
    "instrument/us/119/sres/17": "no",
    "instrument/us/113/s/123": "no",
    "instrument/us/119/s/2908": "no",
-   "instrument/us/119/s/3239": "no"
+   "instrument/us/119/s/3239": "no",
+   "instrument/us/112/sres/21": "no",
+   "instrument/us/118/s/2679": "no",
+   "instrument/us/119/s/1913": "no",
+   "instrument/us/119/s/2316": "partly",
+   "instrument/us/119/s/2687": "no",
+   "instrument/us/119/hr/624": "no",
+   "instrument/us/119/s/2863": "no"
   }
  },
  {
@@ -6419,7 +6608,9 @@
    "instrument/us/110/hres/1027": "partly",
    "instrument/us/111/hres/272": "partly",
    "instrument/us/117/hr/2547": "no",
-   "instrument/us/118/hjres/9": "partly"
+   "instrument/us/118/hjres/9": "partly",
+   "instrument/us/114/hr/3807": "yes",
+   "instrument/us/118/s/1190": "yes"
   }
  },
  {
@@ -6518,7 +6709,10 @@
    "instrument/us/117/hres/1228": "yes",
    "instrument/us/118/hr/428": "yes",
    "instrument/us/118/hconres/33": "yes",
-   "instrument/us/119/hr/272": "yes"
+   "instrument/us/119/hr/272": "yes",
+   "instrument/us/111/hr/227": "yes",
+   "instrument/us/118/hr/427": "yes",
+   "instrument/us/118/hr/372": "yes"
   }
  },
  {
@@ -6585,7 +6779,13 @@
    "instrument/va/2025/hb/1314": "no",
    "instrument/va/2025/hj/434": "no",
    "instrument/va/2026/hb/353": "no",
-   "instrument/va/2026/hj/20": "no"
+   "instrument/va/2026/hj/20": "no",
+   "instrument/us/110/s/1944": "no",
+   "instrument/us/114/hr/3858": "no",
+   "instrument/us/119/hr/1756": "no",
+   "instrument/us/119/hr/3760": "no",
+   "instrument/us/119/hr/5781": "no",
+   "instrument/us/119/s/1107": "no"
   }
  },
  {
@@ -6657,7 +6857,10 @@
    "instrument/va/2019/sb/1100": "yes",
    "instrument/va/2023S1/sb/6001": "yes",
    "instrument/va/2024S1/sb/6001": "yes",
-   "instrument/va/2024S1/sb/6002": "yes"
+   "instrument/va/2024S1/sb/6002": "yes",
+   "instrument/va/2020/hb/1210": "no",
+   "instrument/va/2026/sb/606": "partly",
+   "instrument/va/2027/sb/606": "partly"
   }
  },
  {
@@ -6786,7 +6989,8 @@
    "instrument/us/119/s/1473": "no",
    "instrument/us/119/s/3374": "partly",
    "instrument/us/116/hr/7178": "yes",
-   "instrument/us/118/hr/752": "no"
+   "instrument/us/118/hr/752": "no",
+   "instrument/us/110/hr/811": "no"
   }
  },
  {
@@ -6842,7 +7046,12 @@
    "instrument/us/119/hr/4916": "no",
    "instrument/us/119/hr/8286": "no",
    "instrument/us/119/hres/319": "no",
-   "instrument/us/119/s/2523": "no"
+   "instrument/us/119/s/2523": "no",
+   "instrument/us/111/hr/4430": "no",
+   "instrument/us/113/hr/3133": "no",
+   "instrument/us/113/hr/3829": "no",
+   "instrument/us/116/hres/1209": "partly",
+   "instrument/us/112/hconres/25": "no"
   }
  },
  {
@@ -6897,7 +7106,10 @@
    "instrument/us/119/hr/8286": "no",
    "instrument/us/119/s/2523": "no",
    "instrument/us/119/hr/5512": "no",
-   "instrument/us/119/s/3646": "no"
+   "instrument/us/119/s/3646": "no",
+   "instrument/us/109/s/2703": "no",
+   "instrument/us/113/hr/3899": "no",
+   "instrument/us/116/hr/4": "no"
   }
  },
  {
@@ -6952,7 +7164,9 @@
    "instrument/us/119/hr/6474": "partly",
    "instrument/us/118/hjres/148": "partly",
    "instrument/us/118/hjres/179": "partly",
-   "instrument/ca/20252026/sb/400": "no"
+   "instrument/ca/20252026/sb/400": "no",
+   "instrument/us/110/hr/811": "no",
+   "instrument/us/113/hr/5494": "no"
   }
  },
  {
@@ -7026,7 +7240,9 @@
    "instrument/us/119/hres/199": "no",
    "instrument/us/116/hres/802": "no",
    "instrument/us/117/hr/8955": "partly",
-   "instrument/us/118/s/541": "partly"
+   "instrument/us/118/s/541": "partly",
+   "instrument/us/113/hres/679": "no",
+   "instrument/us/113/sres/357": "no"
   }
  },
  {
@@ -7156,7 +7372,12 @@
    "instrument/va/2026/hb/1": "yes",
    "instrument/va/2026/sb/1": "yes",
    "instrument/va/2020/hb/333": "yes",
-   "instrument/va/2021/hb/2270": "yes"
+   "instrument/va/2021/hb/2270": "yes",
+   "instrument/va/2020/hb/325": "partly",
+   "instrument/va/2022/hb/171": "yes",
+   "instrument/va/2022/hb/296": "yes",
+   "instrument/va/2022/hb/320": "yes",
+   "instrument/va/2022/sb/173": "yes"
   }
  },
  {
@@ -7368,7 +7589,11 @@
    "instrument/va/2020/sb/708": "no",
    "instrument/wa/2017-2018/hb/2261": "no",
    "instrument/ca/20172018/ab/1156": "partly",
-   "instrument/ca/20192020/ab/1063": "yes"
+   "instrument/ca/20192020/ab/1063": "yes",
+   "instrument/ca/20172018/ajr/43": "partly",
+   "instrument/ca/20212022/sjr/6": "partly",
+   "instrument/ca/20252026/hr/76": "yes",
+   "instrument/ca/20252026/sr/71": "yes"
   }
  },
  {
@@ -7509,7 +7734,12 @@
    "instrument/us/118/hres/14": "no",
    "instrument/us/118/hres/15": "no",
    "instrument/us/119/sres/94": "no",
-   "instrument/us/117/hres/1035": "no"
+   "instrument/us/117/hres/1035": "no",
+   "instrument/us/109/hres/32": "no",
+   "instrument/us/109/hres/33": "no",
+   "instrument/us/110/sres/27": "partly",
+   "instrument/us/113/hres/115": "no",
+   "instrument/us/114/hres/132": "no"
   }
  },
  {
@@ -7961,7 +8191,9 @@
    "instrument/us/119/s/1473": "no",
    "instrument/us/119/s/3374": "no",
    "instrument/us/118/hr/752": "partly",
-   "instrument/us/119/s/97": "partly"
+   "instrument/us/119/s/97": "partly",
+   "instrument/us/109/hr/2412": "no",
+   "instrument/us/110/hr/3162": "no"
   }
  },
  {
@@ -8014,7 +8246,12 @@
    "instrument/us/112/hr/1379": "no",
    "instrument/us/112/hr/3479": "no",
    "instrument/us/113/hr/2132": "no",
-   "instrument/us/115/s/1768": "no"
+   "instrument/us/115/s/1768": "no",
+   "instrument/us/109/hr/2412": "no",
+   "instrument/us/109/hr/4575": "no",
+   "instrument/us/115/hr/3314": "no",
+   "instrument/us/108/hr/3980": "no",
+   "instrument/us/117/hr/3139": "partly"
   }
  },
  {
@@ -8078,7 +8315,10 @@
    "instrument/us/114/hr/5325": "no",
    "instrument/us/114/s/1881": "no",
    "instrument/us/114/hr/20": "partly",
-   "instrument/us/115/hr/20": "partly"
+   "instrument/us/115/hr/20": "partly",
+   "instrument/us/114/hr/2028": "no",
+   "instrument/us/112/hr/1473": "no",
+   "instrument/us/116/hr/4378": "no"
   }
  },
  {
@@ -8127,7 +8367,13 @@
    "instrument/us/118/hr/3961": "no",
    "instrument/us/118/s/3616": "no",
    "instrument/us/118/hr/8525": "no",
-   "instrument/us/118/hr/8668": "no"
+   "instrument/us/118/hr/8668": "no",
+   "instrument/us/118/hr/5894": "no",
+   "instrument/us/118/hr/6928": "no",
+   "instrument/us/118/s/2624": "no",
+   "instrument/us/118/s/3590": "no",
+   "instrument/us/119/hjres/131": "no",
+   "instrument/us/119/sjres/91": "no"
   }
  },
  {
@@ -8202,7 +8448,11 @@
    "instrument/us/116/hr/3": "yes",
    "instrument/us/118/s/1131": "yes",
    "instrument/us/118/s/935": "yes",
-   "instrument/us/119/hr/2214": "partly"
+   "instrument/us/119/hr/2214": "partly",
+   "instrument/us/113/hr/3204": "no",
+   "instrument/us/114/hr/6": "no",
+   "instrument/us/108/hr/2086": "no",
+   "instrument/us/108/hr/2657": "no"
   }
  },
  {
@@ -8246,7 +8496,13 @@
    "instrument/us/118/sconres/1": "no",
    "instrument/us/119/hr/9276": "no",
    "instrument/us/119/s/1223": "no",
-   "instrument/us/119/s/3428": "no"
+   "instrument/us/119/s/3428": "no",
+   "instrument/us/118/hr/1460": "no",
+   "instrument/us/118/s/661": "no",
+   "instrument/us/119/hr/3573": "no",
+   "instrument/us/119/hr/9173": "no",
+   "instrument/us/119/hres/849": "partly",
+   "instrument/us/119/s/1668": "partly"
   }
  },
  {
@@ -8294,7 +8550,13 @@
    "instrument/us/110/hr/2316": "no",
    "instrument/us/110/s/1": "no",
    "instrument/us/109/hr/2412": "no",
-   "instrument/us/118/hr/351": "no"
+   "instrument/us/118/hr/351": "no",
+   "instrument/us/109/hr/4575": "no",
+   "instrument/us/109/hr/5677": "no",
+   "instrument/us/118/hr/2635": "partly",
+   "instrument/us/119/s/865": "no",
+   "instrument/us/109/s/2180": "no",
+   "instrument/us/117/hr/1543": "no"
   }
  },
  {
@@ -8339,7 +8601,13 @@
    "instrument/us/114/hr/1487": "no",
    "instrument/us/114/s/791": "no",
    "instrument/us/117/hr/5376": "yes",
-   "instrument/us/118/hr/1743": "no"
+   "instrument/us/118/hr/1743": "no",
+   "instrument/us/111/hr/2693": "no",
+   "instrument/us/112/hr/1689": "no",
+   "instrument/us/115/hr/6087": "no",
+   "instrument/us/118/hres/1303": "no",
+   "instrument/us/119/hjres/57": "no",
+   "instrument/us/119/hr/383": "no"
   }
  },
  {
@@ -8401,7 +8669,18 @@
    "instrument/us/119/s/400": "no",
    "instrument/us/109/hr/2412": "partly",
    "instrument/us/109/hr/4575": "partly",
-   "instrument/us/115/hr/2": "partly"
+   "instrument/us/115/hr/2": "partly",
+   "instrument/us/115/hr/1625": "partly",
+   "instrument/us/116/hconres/88": "no",
+   "instrument/us/115/hr/4904": "partly",
+   "instrument/us/115/hr/5022": "partly",
+   "instrument/us/115/hr/5825": "partly",
+   "instrument/us/115/hr/5849": "partly",
+   "instrument/us/115/hr/7015": "no",
+   "instrument/us/115/hr/7330": "no",
+   "instrument/us/115/s/2749": "partly",
+   "instrument/us/115/s/3042": "yes",
+   "instrument/us/116/hr/1189": "no"
   }
  },
  {
@@ -8453,7 +8732,10 @@
    "instrument/us/119/hr/7868": "no",
    "instrument/us/119/s/957": "no",
    "instrument/us/109/hr/1689": "no",
-   "instrument/us/117/hr/1255": "no"
+   "instrument/us/117/hr/1255": "no",
+   "instrument/us/110/hr/3635": "no",
+   "instrument/us/118/s/4326": "no",
+   "instrument/us/119/hr/535": "partly"
   }
  },
  {
@@ -8501,7 +8783,8 @@
    "instrument/us/118/hr/6109": "no",
    "instrument/us/119/hr/890": "partly",
    "instrument/us/119/s/1587": "partly",
-   "instrument/us/119/s/705": "partly"
+   "instrument/us/119/s/705": "partly",
+   "instrument/us/118/hr/9096": "partly"
   }
  },
  {
@@ -8566,7 +8849,11 @@
    "instrument/us/119/hr/7502": "no",
    "instrument/us/119/s/4753": "no",
    "instrument/us/119/s/985": "partly",
-   "instrument/us/119/sconres/7": "no"
+   "instrument/us/119/sconres/7": "no",
+   "instrument/us/108/s/2270": "partly",
+   "instrument/us/117/hr/7550": "partly",
+   "instrument/us/116/hr/948": "yes",
+   "instrument/us/117/hr/2393": "yes"
   }
  },
  {
@@ -8606,7 +8893,16 @@
    "instrument/us/119/hres/1477": "no",
    "instrument/us/119/sres/342": "no",
    "instrument/us/119/sres/826": "no",
-   "instrument/us/110/s/1": "partly"
+   "instrument/us/110/s/1": "partly",
+   "instrument/us/118/hr/1614": "no",
+   "instrument/us/118/hr/3212": "partly",
+   "instrument/us/118/hr/5767": "partly",
+   "instrument/us/118/s/2911": "partly",
+   "instrument/us/119/hr/645": "partly",
+   "instrument/us/119/hres/622": "partly",
+   "instrument/us/119/s/4013": "partly",
+   "instrument/us/118/hr/351": "no",
+   "instrument/us/119/s/865": "partly"
   }
  },
  {
@@ -8675,7 +8971,11 @@
    "instrument/us/119/hr/7228": "partly",
    "instrument/us/119/hr/9187": "partly",
    "instrument/us/119/s/3078": "partly",
-   "instrument/us/110/sres/666": "no"
+   "instrument/us/110/sres/666": "no",
+   "instrument/us/118/s/2584": "partly",
+   "instrument/us/118/s/692": "no",
+   "instrument/us/114/sres/246": "partly",
+   "instrument/us/118/s/2804": "partly"
   }
  },
  {
@@ -8734,7 +9034,10 @@
    "instrument/us/118/s/1876": "partly",
    "instrument/us/119/hr/3209": "partly",
    "instrument/us/119/hr/6253": "yes",
-   "instrument/us/119/s/2153": "yes"
+   "instrument/us/119/s/2153": "yes",
+   "instrument/us/111/hr/2271": "partly",
+   "instrument/us/117/hr/8160": "no",
+   "instrument/us/118/hr/5495": "no"
   }
  },
  {
@@ -8773,7 +9076,12 @@
    "instrument/us/118/hres/30": "no",
    "instrument/us/118/s/5556": "no",
    "instrument/us/119/hr/3970": "no",
-   "instrument/us/119/s/2080": "no"
+   "instrument/us/119/s/2080": "no",
+   "instrument/us/110/sres/29": "no",
+   "instrument/us/119/hr/5086": "partly",
+   "instrument/us/119/s/2506": "partly",
+   "instrument/us/119/s/2075": "partly",
+   "instrument/us/113/hr/1960": "partly"
   }
  },
  {
@@ -8827,7 +9135,11 @@
    "instrument/us/118/s/2185": "no",
    "instrument/us/118/s/3169": "no",
    "instrument/us/109/hr/2412": "partly",
-   "instrument/us/118/s/936": "partly"
+   "instrument/us/118/s/936": "partly",
+   "instrument/us/118/hr/1730": "partly",
+   "instrument/us/118/hr/4513": "no",
+   "instrument/us/118/s/1370": "partly",
+   "instrument/us/118/s/2934": "partly"
   }
  },
  {
@@ -8875,7 +9187,9 @@
    "instrument/us/118/hr/7888": "no",
    "instrument/us/119/hr/271": "yes",
    "instrument/us/119/s/177": "yes",
-   "instrument/us/119/s/203": "yes"
+   "instrument/us/119/s/203": "yes",
+   "instrument/us/118/hres/28": "yes",
+   "instrument/us/119/hres/938": "yes"
   }
  },
  {
@@ -8929,7 +9243,8 @@
    "instrument/us/110/hr/2317": "partly",
    "instrument/us/110/hr/633": "partly",
    "instrument/us/114/hr/430": "no",
-   "instrument/us/110/hr/2316": "no"
+   "instrument/us/110/hr/2316": "no",
+   "instrument/us/119/hr/1887": "partly"
   }
  },
  {
@@ -8993,7 +9308,14 @@
    "instrument/us/116/hr/4230": "no",
    "instrument/us/118/hr/6532": "no",
    "instrument/us/118/s/1195": "no",
-   "instrument/us/119/s/433": "no"
+   "instrument/us/119/s/433": "no",
+   "instrument/us/108/s/1680": "no",
+   "instrument/us/111/s/1677": "no",
+   "instrument/us/113/s/2074": "no",
+   "instrument/us/113/s/2262": "no",
+   "instrument/us/114/s/720": "no",
+   "instrument/us/112/hr/2401": "partly",
+   "instrument/us/115/hr/792": "no"
   }
  },
  {
@@ -9054,7 +9376,9 @@
    "instrument/us/119/hr/1566": "yes",
    "instrument/us/119/hr/5039": "yes",
    "instrument/us/119/s/1379": "yes",
-   "instrument/us/114/s/565": "partly"
+   "instrument/us/114/s/565": "partly",
+   "instrument/us/109/hr/5122": "no",
+   "instrument/us/110/hr/3311": "no"
   }
  },
  {
@@ -9106,7 +9430,9 @@
    "instrument/us/118/hr/4453": "no",
    "instrument/us/118/hr/7521": "yes",
    "instrument/us/118/s/85": "yes",
-   "instrument/us/119/hr/1121": "no"
+   "instrument/us/119/hr/1121": "no",
+   "instrument/us/118/hr/5144": "yes",
+   "instrument/us/118/hr/57": "partly"
   }
  },
  {
@@ -9165,7 +9491,13 @@
    "instrument/us/116/hr/7988": "no",
    "instrument/us/118/hr/967": "partly",
    "instrument/wv/2018/hb/2751": "yes",
-   "instrument/wv/2018/sb/106": "yes"
+   "instrument/wv/2018/sb/106": "yes",
+   "instrument/us/108/hr/1474": "no",
+   "instrument/us/108/hr/361": "no",
+   "instrument/us/108/hr/5131": "no",
+   "instrument/us/108/s/2634": "no",
+   "instrument/us/109/hr/4902": "no",
+   "instrument/us/115/s/717": "no"
   }
  },
  {
@@ -9222,7 +9554,13 @@
    "instrument/us/119/hr/1424": "partly",
    "instrument/us/119/s/400": "partly",
    "instrument/va/2021/sb/1219": "partly",
-   "instrument/wa/2025-2026/sb/5935": "no"
+   "instrument/wa/2025-2026/sb/5935": "no",
+   "instrument/us/108/hr/743": "no",
+   "instrument/us/112/hr/2883": "no",
+   "instrument/us/115/hr/3759": "partly",
+   "instrument/us/116/s/1790": "no",
+   "instrument/us/118/hr/9076": "partly",
+   "instrument/us/118/s/2181": "partly"
   }
  },
  {
@@ -9285,7 +9623,10 @@
    "instrument/us/115/hr/624": "partly",
    "instrument/us/115/sjres/34": "partly",
    "instrument/us/118/hr/1568": "no",
-   "instrument/us/119/hr/2808": "partly"
+   "instrument/us/119/hr/2808": "partly",
+   "instrument/us/114/hr/1831": "no",
+   "instrument/us/114/hr/22": "no",
+   "instrument/us/119/hr/187": "no"
   }
  },
  {
@@ -9349,7 +9690,9 @@
    "instrument/va/2025/hb/658": "no",
    "instrument/wv/2025/hb/2683": "yes",
    "instrument/us/119/hr/2561": "partly",
-   "instrument/us/119/hr/4632": "no"
+   "instrument/us/119/hr/4632": "no",
+   "instrument/us/114/hr/885": "no",
+   "instrument/us/118/hr/4493": "partly"
   }
  },
  {
@@ -9402,7 +9745,17 @@
    "instrument/us/117/hr/603": "no",
    "instrument/us/117/s/53": "no",
    "instrument/us/118/hjres/59": "no",
-   "instrument/va/2020/hb/433": "partly"
+   "instrument/va/2020/hb/433": "partly",
+   "instrument/us/118/hr/1105": "no",
+   "instrument/us/118/hr/1722": "no",
+   "instrument/us/118/hr/3746": "partly",
+   "instrument/us/118/hr/5536": "no",
+   "instrument/us/118/hr/5799": "no",
+   "instrument/us/118/s/111": "no",
+   "instrument/us/118/s/2228": "no",
+   "instrument/us/118/s/3427": "partly",
+   "instrument/us/118/s/777": "no",
+   "instrument/us/118/s/992": "no"
   }
  },
  {
@@ -9462,7 +9815,12 @@
    "instrument/va/2021/sb/1433": "yes",
    "instrument/wa/2021-2022/sb/5205": "yes",
    "instrument/us/119/hr/3519": "yes",
-   "instrument/us/119/s/292": "yes"
+   "instrument/us/119/s/292": "yes",
+   "instrument/us/115/hr/4269": "partly",
+   "instrument/us/119/hres/94": "partly",
+   "instrument/us/118/hr/9926": "yes",
+   "instrument/us/119/hr/4534": "yes",
+   "instrument/us/119/s/1810": "yes"
   }
  },
  {
@@ -9596,7 +9954,10 @@
    "instrument/us/118/s/1269": "partly",
    "instrument/us/118/s/954": "yes",
    "instrument/us/119/hr/6255": "yes",
-   "instrument/us/119/s/4189": "partly"
+   "instrument/us/119/s/4189": "partly",
+   "instrument/us/118/hr/10438": "partly",
+   "instrument/us/119/hr/2553": "partly",
+   "instrument/us/119/s/529": "partly"
   }
  },
  {
@@ -9650,7 +10011,14 @@
    "instrument/us/119/hr/95": "partly",
    "instrument/us/119/s/55": "partly",
    "instrument/us/116/hr/3402": "no",
-   "instrument/us/119/hr/724": "no"
+   "instrument/us/119/hr/724": "no",
+   "instrument/us/108/hr/756": "no",
+   "instrument/us/117/hr/6784": "yes",
+   "instrument/us/117/hres/1269": "no",
+   "instrument/us/117/s/3108": "no",
+   "instrument/us/119/s/1297": "no",
+   "instrument/us/119/s/368": "no",
+   "instrument/us/119/sjres/198": "no"
   }
  },
  {
@@ -9711,7 +10079,13 @@
    "instrument/us/118/s/193": "partly",
    "instrument/us/118/s/4115": "partly",
    "instrument/us/118/s/558": "partly",
-   "instrument/us/119/hr/5474": "no"
+   "instrument/us/119/hr/5474": "no",
+   "instrument/us/108/hr/2933": "no",
+   "instrument/us/112/s/1113": "no",
+   "instrument/us/113/s/1600": "no",
+   "instrument/us/119/hr/755": "no",
+   "instrument/us/119/s/714": "no",
+   "instrument/us/118/hr/5328": "partly"
   }
  },
  {
@@ -9770,7 +10144,15 @@
    "instrument/us/119/hr/8673": "no",
    "instrument/us/119/s/4669": "no",
    "instrument/va/2025/hb/1697": "no",
-   "instrument/va/2025/sb/933": "no"
+   "instrument/va/2025/sb/933": "no",
+   "instrument/us/112/hr/2560": "no",
+   "instrument/us/115/hr/5278": "no",
+   "instrument/us/115/hr/554": "no",
+   "instrument/us/115/s/168": "no",
+   "instrument/us/118/hr/1310": "no",
+   "instrument/us/118/hr/2369": "no",
+   "instrument/us/119/hr/2332": "no",
+   "instrument/us/119/s/1101": "no"
   }
  },
  {
@@ -9830,7 +10212,10 @@
    "instrument/us/118/hr/1506": "yes",
    "instrument/us/118/s/1891": "yes",
    "instrument/us/118/s/3179": "yes",
-   "instrument/us/118/sjres/72": "partly"
+   "instrument/us/118/sjres/72": "partly",
+   "instrument/us/119/hr/4429": "no",
+   "instrument/us/118/s/973": "yes",
+   "instrument/us/119/hr/2988": "yes"
   }
  },
  {
@@ -9889,7 +10274,12 @@
    "instrument/us/114/hr/5275": "yes",
    "instrument/us/118/hr/10186": "yes",
    "instrument/us/118/hres/1579": "partly",
-   "instrument/us/119/hr/1016": "yes"
+   "instrument/us/119/hr/1016": "yes",
+   "instrument/us/111/hr/3101": "no",
+   "instrument/us/111/s/3304": "no",
+   "instrument/us/119/hr/2940": "no",
+   "instrument/us/119/hr/5440": "no",
+   "instrument/us/119/hr/7614": "no"
   }
  },
  {
@@ -9953,7 +10343,12 @@
    "instrument/us/118/s/1732": "partly",
    "instrument/us/119/hr/6333": "partly",
    "instrument/us/119/s/4349": "partly",
-   "instrument/us/119/s/4741": "partly"
+   "instrument/us/119/s/4741": "partly",
+   "instrument/us/119/hr/3209": "partly",
+   "instrument/us/119/hr/5313": "partly",
+   "instrument/us/119/s/2153": "partly",
+   "instrument/us/119/hr/6273": "partly",
+   "instrument/us/119/s/3062": "partly"
   }
  },
  {
@@ -10473,7 +10868,12 @@
    "instrument/us/118/hr/8070": "partly",
    "instrument/us/119/hr/3838": "partly",
    "instrument/us/119/hr/7613": "no",
-   "instrument/us/119/hr/8800": "partly"
+   "instrument/us/119/hr/8800": "partly",
+   "instrument/us/109/sres/29": "yes",
+   "instrument/us/111/hr/2193": "no",
+   "instrument/us/118/hr/6217": "no",
+   "instrument/us/119/hres/11": "partly",
+   "instrument/us/116/hr/491": "partly"
   }
  },
  {
@@ -10524,7 +10924,12 @@
    "instrument/us/119/sres/16": "partly",
    "instrument/us/119/sres/17": "partly",
    "instrument/us/119/sres/810": "partly",
-   "instrument/us/119/sres/94": "no"
+   "instrument/us/119/sres/94": "no",
+   "instrument/us/112/hr/2560": "no",
+   "instrument/us/110/hr/2686": "no",
+   "instrument/us/111/hr/311": "no",
+   "instrument/us/112/hr/3743": "no",
+   "instrument/us/112/hr/6688": "no"
   }
  },
  {
@@ -10644,7 +11049,11 @@
    "instrument/us/119/hr/9340": "no",
    "instrument/us/119/hr/9615": "no",
    "instrument/us/119/hr/9616": "no",
-   "instrument/us/119/hr/9617": "no"
+   "instrument/us/119/hr/9617": "no",
+   "instrument/us/108/hr/975": "no",
+   "instrument/us/109/hr/3058": "no",
+   "instrument/us/108/hr/2535": "no",
+   "instrument/us/110/hjres/52": "no"
   }
  },
  {
@@ -10694,7 +11103,13 @@
    "instrument/us/119/sres/17": "partly",
    "instrument/us/119/sres/38": "partly",
    "instrument/us/119/sres/73": "yes",
-   "instrument/us/111/hconres/299": "partly"
+   "instrument/us/111/hconres/299": "partly",
+   "instrument/us/118/hr/8512": "partly",
+   "instrument/us/118/s/2103": "partly",
+   "instrument/us/118/s/4443": "partly",
+   "instrument/us/119/s/2342": "partly",
+   "instrument/us/119/s/4615": "partly",
+   "instrument/us/114/sres/55": "partly"
   }
  },
  {
@@ -10779,7 +11194,18 @@
     "node_id": null
    }
   ],
-  "bills": {}
+  "bills": {
+   "instrument/us/111/hres/38": "partly",
+   "instrument/us/111/hres/40": "no",
+   "instrument/us/113/hres/504": "partly",
+   "instrument/us/114/hres/779": "no",
+   "instrument/us/115/hres/98": "no",
+   "instrument/us/116/hres/1037": "partly",
+   "instrument/us/116/hres/870": "partly",
+   "instrument/us/116/hres/995": "yes",
+   "instrument/us/118/hres/71": "no",
+   "instrument/us/119/hres/538": "partly"
+  }
  },
  {
   "question": "what bills did the Senate Banking Committee report",
@@ -10839,7 +11265,9 @@
    "instrument/us/119/s/4395": "partly",
    "instrument/us/119/s/875": "partly",
    "instrument/us/119/s/919": "partly",
-   "instrument/us/119/sres/58": "yes"
+   "instrument/us/119/sres/58": "yes",
+   "instrument/us/118/hr/8337": "partly",
+   "instrument/us/118/sjres/32": "partly"
   }
  },
  {
@@ -10968,7 +11396,8 @@
    "instrument/us/119/sres/785": "yes",
    "instrument/us/110/hres/406": "yes",
    "instrument/us/112/hres/694": "yes",
-   "instrument/us/112/sres/500": "yes"
+   "instrument/us/112/sres/500": "yes",
+   "instrument/us/114/hr/5148": "partly"
   }
  },
  {
@@ -11015,7 +11444,10 @@
    "instrument/us/119/s/5376": "no",
    "instrument/us/119/sres/537": "no",
    "instrument/us/119/hres/1336": "no",
-   "instrument/us/119/hres/977": "no"
+   "instrument/us/119/hres/977": "no",
+   "instrument/us/118/hr/5378": "no",
+   "instrument/us/115/hres/458": "no",
+   "instrument/us/117/sres/53": "no"
   }
  },
  {
@@ -11143,7 +11575,14 @@
    "instrument/us/112/hr/4348": "partly",
    "instrument/us/114/hr/22": "partly",
    "instrument/us/117/hr/468": "partly",
-   "instrument/us/119/hr/2066": "no"
+   "instrument/us/119/hr/2066": "no",
+   "instrument/us/117/hr/7339": "partly",
+   "instrument/us/110/hr/6532": "partly",
+   "instrument/us/115/hr/3359": "partly",
+   "instrument/us/117/hr/4346": "partly",
+   "instrument/us/117/s/3451": "partly",
+   "instrument/us/118/hr/6503": "partly",
+   "instrument/us/118/s/1608": "partly"
   }
  },
  {
@@ -11267,7 +11706,10 @@
    "instrument/us/117/s/1614": "partly",
    "instrument/us/118/hr/3145": "partly",
    "instrument/us/118/hr/3507": "partly",
-   "instrument/us/118/s/1688": "partly"
+   "instrument/us/118/s/1688": "partly",
+   "instrument/us/118/hr/10171": "partly",
+   "instrument/us/119/hr/1609": "partly",
+   "instrument/us/119/hr/9047": "no"
   }
  },
  {
@@ -11460,7 +11902,10 @@
    "instrument/us/117/hr/5385": "yes",
    "instrument/us/117/hr/9466": "yes",
    "instrument/us/118/hr/4233": "yes",
-   "instrument/us/119/hres/493": "yes"
+   "instrument/us/119/hres/493": "yes",
+   "instrument/us/117/hres/917": "no",
+   "instrument/us/119/hr/6337": "partly",
+   "instrument/us/119/s/4903": "partly"
   }
  },
  {
@@ -12031,7 +12476,8 @@
    "instrument/us/119/s/4113": "no",
    "instrument/us/119/s/4199": "no",
    "instrument/us/119/s/4855": "no",
-   "instrument/us/119/s/5061": "no"
+   "instrument/us/119/s/5061": "no",
+   "instrument/ca/20252026/ab/2487": "no"
   }
  },
  {
@@ -12162,7 +12608,9 @@
    "instrument/us/115/hr/784": "no",
    "instrument/us/116/hr/5502": "no",
    "instrument/us/118/hr/1661": "no",
-   "instrument/us/118/hr/967": "no"
+   "instrument/us/118/hr/967": "no",
+   "instrument/oh/136/hb/255": "no",
+   "instrument/oh/136/hb/732": "no"
   }
  },
  {

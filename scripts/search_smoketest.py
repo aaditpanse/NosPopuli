@@ -579,8 +579,15 @@ def baseline(labels, base, timeout=120):
     for row in labels:
         reader = row.get("reader") or {}
         try:
-            r = requests.post(f"{base}/ledger", json={"question": row["question"], "state_code": reader.get("state")},
-                              timeout=timeout)
+            # /ledger allows 20 a minute from one address; a fast system hit
+            # it and its 429s once scored as empty answers (2026-09-29).
+            for _ in range(6):
+                r = requests.post(f"{base}/ledger", json={"question": row["question"], "state_code": reader.get("state")},
+                                  timeout=timeout)
+                if r.status_code != 429:
+                    break
+                time.sleep(20)
+            r.raise_for_status()
             lines = [json.loads(ln) for ln in r.text.splitlines() if ln.strip()]
         except Exception as e:                                  # noqa: BLE001 - recorded as a miss
             preds[row["question"]] = {"intent": None, "entities": [], "bills": [], "error": str(e)[:200]}

@@ -383,6 +383,17 @@ def _install(monkeypatch, caches):
 
     monkeypatch.setattr(bill_index, "search", fake_search)
 
+    # 10. Laya, the relevance check's model, is off under the harness, in
+    #     record and replay alike: its weights are not in CI, and a model a
+    #     recording used but CI cannot run would make every such fixture a
+    #     miss. The fixtures pin its fallback, the Haiku check; Laya's own
+    #     ordering is unit-tested (test_search_rank.LayaRelevanceTest).
+    from agents import result_validator_agent
+
+    def no_laya():
+        raise ImportError("Laya is off under the replay harness")
+    monkeypatch.setattr(result_validator_agent, "_load_laya", no_laya)
+
     # 38 routes carry @limiter.limit over in-process storage on a module global
     # that never resets, and get_remote_address collapses every TestClient call
     # to one key — so a 10/min route 429s on the 11th test. RATELIMIT_ENABLED

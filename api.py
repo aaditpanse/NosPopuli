@@ -52,7 +52,7 @@ from agents.historian_agent import (
     structure_history,
 )
 from agents.documentor_agent import log_action
-from agents.result_validator_agent import validate_results, validate_results_batch, get_state_validator_floor
+from agents.result_validator_agent import rank_relevant, get_state_validator_floor
 from search.search_rank import rank_by_relevance
 from render.state_vote_mapper import select_floor_roll_call, map_roll_call
 from agents.ledger_agent import (
@@ -455,12 +455,9 @@ async def handle_bill_search(structured, question, loop):
         candidates.insert(0, {"package_id": f"BILLS-{hint['congress']}{hint['type']}{hint['number']}",
                               "title": f"{hint['type'].upper()} {hint['number']}", "date_issued": "",
                               "congress": hint["congress"], "type": hint["type"], "number": int(hint["number"])})
-    # Thirty candidates take the batched check (two calls, floor 4 of 10):
-    # the path the Tier 2 numbers were measured on (2026-09-29).
-    if len(candidates) > 20:
-        validated = await loop.run_in_executor(None, validate_results_batch, question, candidates, get_client(), 4)
-    else:
-        validated = await loop.run_in_executor(None, validate_results, question, candidates, get_client())
+    # Laya rates the candidates on this server; the Haiku check is its
+    # fallback (agents/result_validator_agent.rank_relevant).
+    validated = await loop.run_in_executor(None, rank_relevant, question, candidates, get_client)
     extra = (structured.get("keywords") or []) + ([named] if named else [])
     results = rank_by_relevance(validated, question, extra=extra)
     if named:
@@ -590,7 +587,7 @@ async def handle_state_search(structured, question, loop):
                                         with_salience=False))
     results = results[:target_count]
     results = await loop.run_in_executor(
-        None, validate_results, question, results, get_client(), get_state_validator_floor(state_code), True)
+        None, rank_relevant, question, results, get_client, get_state_validator_floor(state_code))
 
     log_search(query=question, query_type="state_legislation", expanded_terms=[],
                results_count=len(results), result_ids=[r.get("identifier", "") for r in results],

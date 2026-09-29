@@ -295,6 +295,37 @@ class BillTextTest(unittest.TestCase):
         self.assertEqual(got, [("instrument/us/119/hr/1", "enr", "enrolled"), ("instrument/us/119/hr/10", "ih", "ten")])
 
 
+class LayaRelevanceTest(unittest.TestCase):
+    """agents/result_validator_agent's Laya check, with a stand-in model."""
+
+    def test_the_input_and_the_order(self):
+        from agents.result_validator_agent import laya_order, laya_states
+        rows = [{"title": "A"}, {"title": "B"}, {"title": "C"}, {"identifier": "HB 1"}]
+        self.assertEqual(laya_states("tiktok ban", rows[:1]), ["Search: tiktok ban\nBill: A"])
+        self.assertEqual(laya_states("q", rows[3:]), ["Search: q\nBill: HB 1"])
+        got = laya_order(rows, [2.0, 0.4, 2.0, 2.9])
+        # Below the floor is dropped; ties keep their search order.
+        self.assertEqual([r.get("title") or r.get("identifier") for r in got], ["HB 1", "A", "C"])
+        self.assertEqual(got[0]["_laya"], 2.9)
+
+    def test_laya_answers_and_haiku_is_the_fallback(self):
+        from unittest import mock
+        from agents import result_validator_agent as v
+
+        class Agent:
+            def predict_batch(self, states, questions):
+                return [{"answers": {"rel": {"score": 3.0 if "tiktok" in s.split("Bill:")[1].lower() else 0.2}}}
+                        for s in states]
+
+        rows = [{"title": "Farm bill"}, {"title": "TikTok ban"}]
+        with mock.patch.object(v, "_load_laya", return_value=Agent()):
+            self.assertEqual([r["title"] for r in v.rank_relevant("tiktok", rows, lambda: None)], ["TikTok ban"])
+        with mock.patch.object(v, "_load_laya", side_effect=ImportError("no laya")), \
+                mock.patch.object(v, "validate_results", return_value=rows[:1]) as haiku:
+            self.assertEqual(v.rank_relevant("tiktok", rows, lambda: "client"), rows[:1])
+            haiku.assert_called_once_with("tiktok", rows, "client", 5, True)
+
+
 class StateSearchDocTest(unittest.TestCase):
     """State bills in bill_doc (plan step 11): a jurisdiction on every row,
     and a result that is not a GovInfo package."""

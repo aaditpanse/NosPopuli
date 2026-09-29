@@ -15,6 +15,82 @@ STATE_VALIDATOR_FLOOR = {
 def get_state_validator_floor(state_code: str) -> int:
     return STATE_VALIDATOR_FLOOR.get((state_code or "").upper(), _DEFAULT_STATE_VALIDATOR_FLOOR)
 
+# ---------------------------------------------------------------- Laya
+#
+# The relevance check at zero cost a search: Laya (Convai Innovations,
+# Apache 2.0), a 421M encoder that answers typed questions with calibrated
+# probabilities, on this server's CPU. Each candidate is one state ("Search:
+# ... Bill: <title>") rated on four levels, all in one batch. On the Tier 2
+# federal tuning rows (2026-09-29): nDCG@10 0.65 and recall@10 0.42, against
+# 0.69 / 0.48 for the Haiku check and 0.64 / 0.37 for title words alone;
+# titles beat titles with summaries (0.63). 30 bills take about 3 s on 8
+# threads. The weights are pinned and loaded from the local copy only.
+LAYA_REVISION = "55cf4c4ebb4ebe31b2550e8bdf3bd21b99753851"
+_LAYA_QUESTION = {"rel": {"type": "score", "instructions": "How well does the bill answer the search?",
+                          "criteria": ["unrelated", "mentions it", "partly about it", "directly about it"]}}
+# Below "mentions it" a bill is dropped, so a search for nothing relevant
+# still ends honestly empty, as the Haiku floor made it.
+LAYA_FLOOR = 1.0
+_laya = None
+_laya_error = None      # why Laya would not load; kept, so a search does not retry it until restart
+
+
+def _load_laya():
+    """Laya from MODEL_DIR/laya@<revision> (fetched once, as setup), never
+    from the network at query time. Imported lazily: torch and the weights
+    cost seconds and about 2 GB, and only a search needs them."""
+    global _laya, _laya_error
+    if _laya_error:
+        raise RuntimeError(_laya_error)
+    if _laya is None:
+        import os
+        os.environ.setdefault("HF_HUB_OFFLINE", "1")
+        try:
+            import laya
+            import torch
+        except ImportError as e:
+            _laya_error = f"ImportError: {e}"
+            raise
+        from search.bill_index import MODEL_DIR
+        torch.set_num_threads(int(os.environ.get("NOSPOPULI_LAYA_THREADS") or 8))
+        try:
+            _laya = laya.load(str(MODEL_DIR / f"laya@{LAYA_REVISION}"), device="cpu")
+        except Exception as e:
+            _laya_error = f"{type(e).__name__}: {e}"[:300]
+            raise
+    return _laya
+
+
+def laya_states(query, results):
+    """The Laya input for each result: the search and the bill's title. Pure."""
+    return [f"Search: {query}\nBill: {r.get('title') or r.get('identifier') or ''}" for r in results]
+
+
+def laya_order(results, scores, floor=LAYA_FLOOR):
+    """Results at or above the floor, best score first, ties in their search
+    order; each carries `_laya` (0-3). Pure."""
+    kept = [(s, i, r) for i, (r, s) in enumerate(zip(results, scores)) if s >= floor]
+    kept.sort(key=lambda t: (-t[0], t[1]))
+    return [{**r, "_laya": round(s, 3)} for s, _, r in kept]
+
+
+def rank_relevant(query, results, client_fn, min_score=5):
+    """The relevance check: Laya when it loads, else the Haiku check (logged,
+    fail-open like it). `client_fn` builds the Anthropic client only when
+    Haiku is needed."""
+    if not results:
+        return results
+    try:
+        agent = _load_laya()
+        scores = [o["answers"]["rel"]["score"] for o in agent.predict_batch(laya_states(query, results), _LAYA_QUESTION)]
+        return laya_order(results, scores)
+    except Exception as e:                                   # noqa: BLE001 - the fallback is the point
+        print(f"[VALIDATOR] Laya unavailable ({type(e).__name__}: {e}); the Haiku check instead")
+    if len(results) > 20:
+        return validate_results_batch(query, results, client_fn(), 4)
+    return validate_results(query, results, client_fn(), min_score, True)
+
+
 def validate_results_batch(query, results, client, min_score=5, batch_size=20):
     """
     Like validate_results but handles large result sets by batching.
