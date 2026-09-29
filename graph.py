@@ -4621,7 +4621,10 @@ def reps_on_bill(cur, iid, reps):
                           e.props->>'question' AS q, e.valid_from, e.certification
                    FROM graph_edge e JOIN graph_node p ON p.id = e.src
                    WHERE e.dst = %s AND e.src = ANY(%s) AND e.predicate IN ('voted_on', 'sponsored')
-                   ORDER BY e.valid_from DESC NULLS LAST""", (iid, list(reps)))
+                   -- The passage vote is the one a reader means ("how did my senators
+                   -- vote on it"), not an amendment taken the same day.
+                   ORDER BY (e.props->>'question') ILIKE '%%passage%%' DESC, e.valid_from DESC NULLS LAST""",
+                (iid, list(reps)))
     seen, rows = set(), []
     for r in cur.fetchall():
         k = (r["id"], r["predicate"])
