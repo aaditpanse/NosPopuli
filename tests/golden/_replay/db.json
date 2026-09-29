@@ -23,6 +23,10 @@
   "rowcount": 0,
   "rows": []
  },
+ "sql SELECT value, cached_at FROM disk_cache WHERE key=%s ('ledger:v2:4c0d036917912a69ff106a938f6d11c400f6a916',)": {
+  "rowcount": 0,
+  "rows": []
+ },
  "sql SELECT value, cached_at FROM disk_cache WHERE key=%s ('ledger:v2:60def499dfb2a54bf854abbebca2433b8ecb3385',)": {
   "_no_db": true,
   "rowcount": 0,

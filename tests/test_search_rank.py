@@ -114,11 +114,11 @@ class IndexFilterTest(unittest.TestCase):
         return index_filters(structured)
 
     def test_congresses_before_the_index_are_dropped_and_noted(self):
-        self.assertEqual(self.f(congress_numbers=[119, 118]), ([119, 118], False, False, False))
-        self.assertEqual(self.f(congress_numbers=[108, 107]), ([108], False, True, False))
+        self.assertEqual(self.f(congress_numbers=[119, 118], time_filter=True), ([119, 118], False, False, False))
+        self.assertEqual(self.f(congress_numbers=[108, 107], time_filter=True), ([108], False, True, False))
 
     def test_a_question_wholly_before_2003_is_an_honest_empty(self):
-        self.assertEqual(self.f(congress_numbers=[92]), (None, False, True, True))
+        self.assertEqual(self.f(congress_numbers=[92], time_filter=True), (None, False, True, True))
         self.assertEqual(self.f(full_history=True, before_congress=100), (None, False, True, True))
 
     def test_full_history_searches_every_indexed_congress_and_says_what_it_missed(self):
@@ -131,7 +131,12 @@ class IndexFilterTest(unittest.TestCase):
 
     def test_a_named_act_ignores_the_default_window_but_not_a_named_year(self):
         self.assertEqual(self.f(query_subtype="named_entity", congress_numbers=[119, 118])[0], None)
-        self.assertEqual(self.f(query_subtype="named_entity_with_date", congress_numbers=[117])[0], [117])
+        self.assertEqual(self.f(query_subtype="named_entity_with_date", congress_numbers=[117], time_filter=True)[0],
+                         [117])
+
+    def test_the_routers_default_window_is_not_a_time_the_reader_gave(self):
+        self.assertEqual(self.f(congress_numbers=[119, 118], time_filter=False)[0], None)
+        self.assertEqual(self.f(congress_numbers=[119, 118])[0], None)
 
     def test_either_enacted_mark_means_laws_only(self):
         self.assertTrue(self.f(query_subtype="enacted")[1])
@@ -265,6 +270,29 @@ class EvaluationTest(unittest.TestCase):
         s = score_eval(labels, preds)
         self.assertEqual((s["questions"], s["intent"], s["links"], s["recall@10"]), (1, (1.0, 1), (1.0, 1), (1.0, 1)))
         self.assertEqual(score_eval(labels, preds, only_held_out=False)["intent"], (0.5, 2))
+
+
+class BillTextTest(unittest.TestCase):
+    def test_govinfo_typescript_becomes_plain_words(self):
+        from search.bill_index import plain_text
+        self.assertEqual(plain_text("<html><body><pre>SEC. 2. &lt;DOC&gt;\n  Catalytic   converters.</pre>"),
+                         "SEC. 2. <DOC> Catalytic converters.")
+
+    def test_each_federal_bill_indexes_its_furthest_version(self):
+        import gzip
+        import pathlib
+        import tempfile
+        from unittest import mock
+        import graph
+        from search.bill_index import federal_texts
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)):
+            root = pathlib.Path(d) / "raw" / "govinfo" / "BILLS-htm" / "119"
+            root.mkdir(parents=True)
+            for name, body in (("BILLS-119hr1ih.htm.gz", "introduced"), ("BILLS-119hr1enr.htm.gz", "enrolled"),
+                               ("BILLS-119hr10ih.htm.gz", "ten"), ("notes.txt", "x")):
+                (root / name).write_bytes(gzip.compress(f"<pre>{body}</pre>".encode()))
+            got = list(federal_texts(119))
+        self.assertEqual(got, [("instrument/us/119/hr/1", "enr", "enrolled"), ("instrument/us/119/hr/10", "ih", "ten")])
 
 
 class StateSearchDocTest(unittest.TestCase):

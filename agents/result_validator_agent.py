@@ -91,7 +91,10 @@ Return ONLY this JSON:
     try:
         message = client.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=800,
+            # About 45 tokens a scored result with its reason. A flat 800 cut
+            # the JSON off at 15 or more results, and the parse error then
+            # failed open: every result kept, unchecked (found 2026-09-29).
+            max_tokens=200 + 60 * len(entries),
             temperature=0,
             messages=[{"role": "user", "content": prompt}]
         )

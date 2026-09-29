@@ -1,7 +1,7 @@
 {
  "meta": {
   "app_sha": "",
-  "captured": "2026-09-29T03:10:30",
+  "captured": "2026-09-29T08:15:09",
   "notes": "a Virginian's topic ask with no state named still searches Congress",
   "volatile": []
  },
@@ -23,29 +23,29 @@
      {
       "id": "all",
       "label": "Introduced",
-      "n": 5,
+      "n": 10,
       "width": "100%"
      },
      {
       "id": "committee",
       "label": "Waiting in committee",
-      "n": 1,
+      "n": 2,
       "width": "20%"
      },
      {
       "id": "passed",
       "label": "Passed one chamber",
-      "n": 1,
+      "n": 2,
       "width": "20%"
      },
      {
       "id": "law",
       "label": "Became law",
-      "n": 1,
+      "n": 2,
       "width": "20%"
      }
     ],
-    "headline": "5 bills matched. One passed a chamber. One became law.",
+    "headline": "10 bills matched. 2 passed a chamber. 2 became law.",
     "person_only": false,
     "place_name": "Virginia",
     "plate": "ledger",
@@ -56,30 +56,58 @@
     "stories": [
      {
       "_relevance": 5,
-      "congress": 119,
+      "congress": 114,
       "english_text": "",
-      "english_title": "Housing for US Act",
-      "id": "hr4266",
+      "english_title": "Native American Housing Assistance and Self-Determination Reauthorization Act of 2015",
+      "id": "hr360",
       "is_law": false,
       "latest_action": "",
-      "meta": "HR 4266",
-      "number": 4266,
+      "meta": "HR 360",
+      "number": 360,
       "stage": "introduced",
-      "title": "Housing for US Act",
+      "title": "Native American Housing Assistance and Self-Determination Reauthorization Act of 2015",
       "type": "hr"
      },
      {
       "_relevance": 5,
-      "congress": 119,
+      "congress": 117,
       "english_text": "",
-      "english_title": "Bring Down Housing Costs Act",
-      "id": "hr6008",
+      "english_title": "Ensuring a Long-Term Housing Recovery Act of 2021",
+      "id": "hr1947",
       "is_law": false,
       "latest_action": "",
-      "meta": "HR 6008",
-      "number": 6008,
+      "meta": "HR 1947",
+      "number": 1947,
       "stage": "introduced",
-      "title": "Bring Down Housing Costs Act",
+      "title": "Ensuring a Long-Term Housing Recovery Act of 2021",
+      "type": "hr"
+     },
+     {
+      "_relevance": 5,
+      "congress": 114,
+      "english_text": "",
+      "english_title": "Housing Opportunity Through Modernization Act of 2016",
+      "id": "hr3700",
+      "is_law": true,
+      "latest_action": "",
+      "meta": "HR 3700",
+      "number": 3700,
+      "stage": "law",
+      "title": "Housing Opportunity Through Modernization Act of 2016",
+      "type": "hr"
+     },
+     {
+      "_relevance": 5,
+      "congress": 113,
+      "english_text": "",
+      "english_title": "Native American Housing Assistance and Self-Determination Reauthorization Act of 2014",
+      "id": "hr4329",
+      "is_law": false,
+      "latest_action": "",
+      "meta": "HR 4329",
+      "number": 4329,
+      "stage": "introduced",
+      "title": "Native American Housing Assistance and Self-Determination Reauthorization Act of 2014",
       "type": "hr"
      },
      {
@@ -98,31 +126,73 @@
      },
      {
       "_relevance": 5,
-      "congress": 119,
+      "congress": 110,
       "english_text": "",
-      "english_title": "Housing Affordability Act",
-      "id": "s1527",
+      "english_title": "Homeless Emergency Assistance and Rapid Transition to Housing Act of 2008",
+      "id": "hr7221",
       "is_law": false,
       "latest_action": "",
-      "meta": "S 1527",
-      "number": 1527,
+      "meta": "HR 7221",
+      "number": 7221,
       "stage": "introduced",
-      "title": "Housing Affordability Act",
+      "title": "Homeless Emergency Assistance and Rapid Transition to Housing Act of 2008",
+      "type": "hr"
+     },
+     {
+      "_relevance": 5,
+      "congress": 114,
+      "english_text": "",
+      "english_title": "Native American Housing Assistance and Self-Determination Reauthorization Act of 2015",
+      "id": "s710",
+      "is_law": false,
+      "latest_action": "",
+      "meta": "S 710",
+      "number": 710,
+      "stage": "introduced",
+      "title": "Native American Housing Assistance and Self-Determination Reauthorization Act of 2015",
+      "type": "s"
+     },
+     {
+      "_relevance": 5,
+      "congress": 110,
+      "english_text": "",
+      "english_title": "Native American Housing Assistance and Self-Determination Reauthorization Act of 2007",
+      "id": "s2062",
+      "is_law": false,
+      "latest_action": "",
+      "meta": "S 2062",
+      "number": 2062,
+      "stage": "introduced",
+      "title": "Native American Housing Assistance and Self-Determination Reauthorization Act of 2007",
       "type": "s"
      },
      {
       "_relevance": 0,
-      "congress": 119,
+      "congress": 110,
       "english_text": "",
-      "english_title": "End Junk Fees for Renters Act",
-      "id": "hr4100",
+      "english_title": "Neighborhood Stabilization Act of 2008",
+      "id": "hr5818",
       "is_law": false,
       "latest_action": "",
-      "meta": "HR 4100",
-      "number": 4100,
+      "meta": "HR 5818",
+      "number": 5818,
       "stage": "introduced",
-      "title": "End Junk Fees for Renters Act",
+      "title": "Neighborhood Stabilization Act of 2008",
       "type": "hr"
+     },
+     {
+      "_relevance": 0,
+      "congress": 116,
+      "english_text": "",
+      "english_title": "Affirming the right of all renters to a safe, affordable, and decent home",
+      "id": "hres429",
+      "is_law": false,
+      "latest_action": "",
+      "meta": "HRES 429",
+      "number": 429,
+      "stage": "introduced",
+      "title": "Affirming the right of all renters to a safe, affordable, and decent home.",
+      "type": "hres"
      }
     ]
    },
@@ -132,11 +202,16 @@
      {
       "id": "all",
       "item_ids": [
-       "hr4266",
-       "hr6008",
+       "hr360",
+       "hr1947",
+       "hr3700",
+       "hr4329",
        "hr6644",
-       "s1527",
-       "hr4100"
+       "hr7221",
+       "s710",
+       "s2062",
+       "hr5818",
+       "hres429"
       ],
       "kind": "topic",
       "label": "These bills"

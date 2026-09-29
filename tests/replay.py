@@ -369,11 +369,17 @@ def _install(monkeypatch, caches):
     real_search = bill_index.search
 
     def fake_search(question, congresses=None, limit=10, laws_only=False,
-                    jurisdiction=bill_index.US_DIV, sessions=None):
-        key = _key("search", question, jurisdiction, {"congresses": congresses, "limit": limit,
-                                                      "laws_only": laws_only, "sessions": sessions})
+                    jurisdiction=bill_index.US_DIV, sessions=None, with_salience=True, with_text=False):
+        # Salience and bill text joined the ranking on 2026-09-29; recordings
+        # made before are without both, so the key names each only when on.
+        args = {"congresses": congresses, "limit": limit, "laws_only": laws_only, "sessions": sessions}
+        if with_salience:
+            args["with_salience"] = True
+        if with_text:
+            args["with_text"] = True
+        key = _key("search", question, jurisdiction, args)
         return caches["search"].fetch(key, lambda: real_search(
-            question, congresses, limit, laws_only, jurisdiction, sessions))
+            question, congresses, limit, laws_only, jurisdiction, sessions, with_salience, with_text))
 
     monkeypatch.setattr(bill_index, "search", fake_search)
 

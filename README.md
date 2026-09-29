@@ -453,13 +453,22 @@ models.
 policy area, the latest CRS summary) and one vector in Voyage 4's shared space:
 documents embedded by `voyage-4-large` through the API, questions by `voyage-4-nano` on
 the server's CPU, so a question never leaves the machine. `search.bill_index.search`
-fuses full-text and nearest-vector ranks (RRF, k=60), and every search uses it since
+fuses full-text and nearest-vector ranks (RRF, k=60), plus, for Congress, a third
+ranking of the same candidates by **salience**: each bill's weight from the graph (law,
+signature, cosponsors, roll calls, lobbying, related bills, referrals, reports;
+`bill_index salience`, run after the load). Every search uses it since
 2026-09-29: `api.handle_bill_search` for Congress, `handle_state_search` for the states,
 each with one Haiku relevance check after. A named act is searched by the router's
 canonical name, in any Congress ("obamacare" searches "Affordable Care Act"), and the
 law of that name goes first; "give me a bill" reads
 the newest rows (`bill_index.recent`); a question wholly before 2003 gets an honest
-empty (`empty_reason: "before_index"`), and one reaching back past it a note. It
+empty (`empty_reason: "before_index"`), and one reaching back past it a note. A
+question with no time in it searches every Congress: the router's default window (the
+last two) cut recall@10 on the Tier 2 set from 0.35 to 0.22. Thirty candidates go through
+the Haiku relevance check (its output limit now scales with them; at a flat 800 tokens
+it failed open, unchecked, at 15 or more), and ten come back. The text of each bill's
+latest version is indexed too (`bill_index text`, its own unit, `bill_text_doc`); that
+list stays off (`with_text`) until the Tier 2 set shows it helps. It
 replaced GovInfo search without the planned blind evaluation, by my choice: the
 question set is kept in `scripts/search_smoketest.py` (`EVAL_QUERIES`) for the eval
 that measures it.
@@ -885,9 +894,13 @@ python -m scripts.search_smoketest --score scripts/search_eval.json preds.json  
 bills the first pool held. Baseline (2026-09-29, /ledger before the graph search;
 held-out, then all 218):
 
-| intent | entity links | recall@10 | nDCG@10 |
-|---|---|---|---|
-| 0.38 / 0.49 | 0.19 / 0.11 | 0.14 / 0.18 | 0.23 / 0.30 |
+| system | intent | entity links | recall@10 | nDCG@10 |
+|---|---|---|---|---|
+| baseline (before Phase 1) | 0.38 / 0.49 | 0.19 / 0.11 | 0.12 / 0.15 | 0.23 / 0.29 |
+| Phase 1 (2026-09-29) | 0.49 / 0.66 | 0.29 / 0.20 | 0.40 / 0.35 | 0.55 / 0.58 |
+
+(The baseline's recall and nDCG moved a little after it was first recorded, as `--judge`
+rated bills later systems found.)
 
 Every phase of the graph search (Phases 1–6) must not lower the held-out numbers.
 

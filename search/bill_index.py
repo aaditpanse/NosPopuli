@@ -13,6 +13,8 @@ same space.
 
     python -m search.bill_index docs [congress ...]   # load changed documents
     python -m search.bill_index embed                  # embed new or changed documents
+    python -m search.bill_index salience               # each bill's weight from the graph
+    python -m search.bill_index text [us|st ...]       # index each bill's latest text
     python -m search.bill_index query "text"           # nearest bills
     python -m search.bill_index search "text"          # full-text + nearest, fused
     python -m search.bill_index latency                # query embedding time here
@@ -309,6 +311,184 @@ def knn(query, k=20):
         return cur.fetchall()
 
 
+# ---------------------------------------------------------------- bill text
+
+TEXT_VERSION = 1
+# A tsvector holds at most 1 MB of lexemes and positions; the first 300,000
+# characters of a bill hold its operative text, and an omnibus's tail is
+# lists of amounts. Positions are kept: a phrase ("catalytic converter")
+# needs them.
+TEXT_CHARS = 300_000
+_BILLS_HTM = re.compile(r"^BILLS-(\d+)([a-z]+)(\d+)([a-z]+)\.htm\.gz$")
+
+
+def plain_text(html):
+    """GovInfo's bill typescript (<pre> inside HTML) as plain words. Pure."""
+    import html as html_lib
+    return re.sub(r"\s+", " ", html_lib.unescape(re.sub(r"<[^>]+>", " ", html))).strip()
+
+
+def federal_texts(congress):
+    """(instrument_id, version, text) for the furthest stored version of each
+    bill of one Congress (sources.bill_fetcher's stage order)."""
+    import gzip
+    import graph
+    from sources.bill_fetcher import _LOCAL_STAGE_PRIORITY
+    d = graph.DATA_DIR / "raw" / "govinfo" / "BILLS-htm" / str(congress)
+    best = {}
+    rank = {s: i for i, s in enumerate(_LOCAL_STAGE_PRIORITY)}
+    for p in d.glob("BILLS-*.htm.gz"):
+        m = _BILLS_HTM.match(p.name)
+        if not m:
+            continue
+        key = (m.group(2), m.group(3))
+        r = rank.get(m.group(4), len(rank))
+        if key not in best or r < best[key][0]:
+            best[key] = (r, m.group(4), p)
+    for (itype, number), (_, stage, p) in sorted(best.items()):
+        yield (f"instrument/us/{congress}/{itype}/{number}", stage,
+               plain_text(gzip.decompress(p.read_bytes()).decode("utf-8", "replace")))
+
+
+def state_texts(st, session):
+    """(instrument_id, version, text) for each bill of one state session
+    whose furthest stored version has text (graph.default_version)."""
+    import graph
+    bills = json.loads(graph.data_path("state_bills", state=st, session=session).read_text())["bills"]
+    for key, b in bills.items():
+        v = graph.default_version(graph.state_versions(st, session, b))
+        if v and v["text"]:
+            text = graph.state_version_text(st, session, v)
+            if text:
+                yield graph.state_instrument_id(st, session, key), v["name"], re.sub(r"\s+", " ", text)
+
+
+def _write_texts(cur, rows):
+    """Stage texts and index the new or changed ones; unchanged texts are not
+    re-parsed. Returns (texts read, texts indexed)."""
+    cur.execute("""CREATE TEMP TABLE stage_text (instrument_id TEXT, version TEXT, text_sha TEXT,
+                   chars INT, body TEXT) ON COMMIT DROP""")
+    n = 0
+    with cur.copy("COPY stage_text FROM STDIN") as cp:
+        for iid, version, text in rows:
+            text = text[:TEXT_CHARS]
+            cp.write_row((iid, version, hashlib.sha1(text.encode()).hexdigest(), len(text), text))
+            n += 1
+    cur.execute("""
+        INSERT INTO bill_text_doc (instrument_id, version, text_sha, chars, tsv, updated_at)
+        SELECT s.instrument_id, s.version, s.text_sha, s.chars, to_tsvector('english', s.body), NOW()
+        FROM stage_text s JOIN bill_doc d USING (instrument_id)
+        WHERE NOT EXISTS (SELECT 1 FROM bill_text_doc b
+                          WHERE b.instrument_id = s.instrument_id AND b.text_sha = s.text_sha)
+        ON CONFLICT (instrument_id) DO UPDATE SET version = excluded.version, text_sha = excluded.text_sha,
+            chars = excluded.chars, tsv = excluded.tsv, updated_at = NOW()""")
+    indexed = cur.rowcount
+    cur.execute("DROP TABLE stage_text")
+    return n, indexed
+
+
+def load_texts(which=None, force=False):
+    """Index the latest text of every bill whose text files changed since the
+    last run (graph_scope rows text/us/<c> and text/<st>/<session>). `which`:
+    "us", state codes, or None for all. Prints a line per scope; returns
+    {scope: (read, indexed)}. Its own unit: the first build reads every
+    stored text and takes hours, so it stays out of the daily sync."""
+    import graph
+    from sources import govinfo
+    from correspondence.db import _get_pool, init_db
+    init_db()
+    which = which or ["us"] + sorted(graph.LEGISLATURES)
+    scopes = []
+    if "us" in which:
+        for c in range(govinfo.FIRST_CONGRESS, graph.current_session()[0] + 1):
+            d = graph.DATA_DIR / "raw" / "govinfo" / "BILLS-htm" / str(c)
+            if d.exists():
+                files = list(d.glob("BILLS-*.htm.gz"))
+                fp = f"{TEXT_VERSION}\n{len(files)} {max((f.stat().st_mtime_ns for f in files), default=0)}"
+                scopes.append((f"text/us/{c}", fp, lambda c=c: federal_texts(c)))
+    for st in [w for w in which if w != "us"]:
+        for sid in graph.state_sessions(st):
+            m = graph.data_path("state_text", state=st, session=sid, name="manifest.json")
+            if not m.exists():
+                continue
+            b = graph.data_path("state_bills", state=st, session=sid).stat()
+            fp = f"{TEXT_VERSION}\n{m.stat().st_size} {m.stat().st_mtime_ns}\n{b.st_size} {b.st_mtime_ns}"
+            scopes.append((f"text/{st}/{sid}", fp, lambda st=st, sid=sid: state_texts(st, sid)))
+    out = {}
+    with _get_pool().connection() as conn:
+        for scope, fp, rows in scopes:
+            with conn.transaction(), conn.cursor() as cur:
+                cur.execute("SELECT fingerprint FROM graph_scope WHERE scope = %s", (scope,))
+                row = cur.fetchone()
+                if row and row[0] == fp and not force:
+                    continue
+                t0 = time.time()
+                out[scope] = _write_texts(cur, rows())
+                cur.execute("""INSERT INTO graph_scope (scope, fingerprint, loaded_at, nodes, edges)
+                               VALUES (%s, %s, NOW(), %s, 0)
+                               ON CONFLICT (scope) DO UPDATE SET fingerprint = excluded.fingerprint,
+                                   loaded_at = NOW(), nodes = excluded.nodes""", (scope, fp, out[scope][0]))
+            print(json.dumps({"scope": scope, "read": out[scope][0], "indexed": out[scope][1],
+                              "secs": round(time.time() - t0)}), flush=True)
+    return out
+
+
+# ----------------------------------------------------------------- salience
+
+# How much each kind of edge says a bill matters. A law and a signature say
+# the most; counts are logged, so the 300th cosponsor adds little and one
+# roll call adds a lot. Hand-set, then checked on the Tier 2 set's tuning
+# rows (never the held-out ones).
+SALIENCE_WEIGHTS = {"law": 3.0, "signed": 1.0, "sponsors": 0.5, "rollcalls": 1.0, "lobbying": 1.0,
+                    "related": 0.5, "referrals": 0.3, "reported": 0.5}
+
+
+def salience_sql(w=SALIENCE_WEIGHTS):
+    """The one statement that sets bill_doc.salience from the graph's edges
+    into and out of each bill. Pure (it builds SQL)."""
+    return f"""
+        WITH inn AS (
+            SELECT dst AS id,
+                   count(*) FILTER (WHERE predicate = 'sponsored') AS sponsors,
+                   count(*) FILTER (WHERE predicate = 'considered') AS rollcalls,
+                   count(*) FILTER (WHERE predicate = 'signed') AS signed,
+                   coalesce(sum(coalesce((props->>'reports')::int, 1)) FILTER (WHERE predicate = 'lobbied_on'), 0) AS lobbying,
+                   count(*) FILTER (WHERE predicate = 'reported') AS reported,
+                   count(*) FILTER (WHERE predicate = 'related_to') AS related
+            FROM graph_edge
+            WHERE predicate IN ('sponsored', 'considered', 'signed', 'lobbied_on', 'reported', 'related_to')
+            GROUP BY dst),
+        out_ AS (
+            SELECT src AS id,
+                   count(*) FILTER (WHERE predicate = 'referred_to') AS referrals,
+                   count(*) FILTER (WHERE predicate IN ('related_to', 'enacted_as')) AS related
+            FROM graph_edge WHERE predicate IN ('referred_to', 'related_to', 'enacted_as')
+            GROUP BY src),
+        s AS (
+            SELECT d.instrument_id AS id,
+                   {w['law']} * (d.is_law)::int
+                   + {w['signed']} * least(coalesce(i.signed, 0), 1)
+                   + {w['sponsors']} * ln(1 + coalesce(i.sponsors, 0))
+                   + {w['rollcalls']} * ln(1 + coalesce(i.rollcalls, 0))
+                   + {w['lobbying']} * ln(1 + coalesce(i.lobbying, 0))
+                   + {w['related']} * ln(1 + coalesce(i.related, 0) + coalesce(o.related, 0))
+                   + {w['referrals']} * ln(1 + coalesce(o.referrals, 0))
+                   + {w['reported']} * ln(1 + coalesce(i.reported, 0)) AS salience
+            FROM bill_doc d LEFT JOIN inn i ON i.id = d.instrument_id LEFT JOIN out_ o ON o.id = d.instrument_id)
+        UPDATE bill_doc d SET salience = s.salience FROM s
+        WHERE d.instrument_id = s.id AND d.salience IS DISTINCT FROM s.salience"""
+
+
+def compute_salience():
+    """Set every bill's salience from the graph. Run after the graph load
+    and the documents (the daily sync). Returns rows changed."""
+    from correspondence.db import _get_pool, init_db
+    init_db()
+    with _get_pool().connection() as conn, conn.transaction(), conn.cursor() as cur:
+        cur.execute(salience_sql())
+        return cur.rowcount
+
+
 # ------------------------------------------------------------------- search
 
 # Cormack et al.'s constant. Fusion reads only ranks, so the two lists need
@@ -383,7 +563,31 @@ def _tsquery_sql(terms, op):
     return f" {op} ".join(one(t) for t in terms), [a for t in terms for a in t]
 
 
-def search(question, congresses=None, limit=10, laws_only=False, jurisdiction=US_DIV, sessions=None):
+def _text_hits(conn, cur, terms, where, args):
+    """Bills whose text holds every content word of the question, weightiest
+    first: the bill that only says "catalytic converter" in section 14.
+    Ranked by salience, not ts_rank: ranking would read every matching
+    text, and a common word matches a hundred thousand. Bounded at 1.5 s;
+    past it, no text list (fail-open: the other lists still answer)."""
+    import psycopg
+    expr, targs = _tsquery_sql(terms, "&&")
+    try:
+        with conn.transaction():
+            cur.execute("SET LOCAL statement_timeout = 1500")
+            cur.execute(f"""
+                SELECT t.instrument_id FROM bill_text_doc t JOIN bill_doc d USING (instrument_id),
+                       (SELECT {expr} AS q) q
+                WHERE t.tsv @@ q.q{where}
+                ORDER BY d.salience DESC NULLS LAST, t.instrument_id LIMIT %s""", [*targs, *args, _DEPTH])
+            hits = [r["instrument_id"] for r in cur.fetchall()]
+            cur.execute("SET LOCAL statement_timeout = 0")
+            return hits
+    except (psycopg.errors.QueryCanceled, psycopg.errors.UndefinedTable):
+        return []
+
+
+def search(question, congresses=None, limit=10, laws_only=False, jurisdiction=US_DIV, sessions=None,
+           with_salience=True, with_text=False):
     """Bills for a question: full-text and nearest-vector lists over
     bill_doc, fused by rank. Local only; nothing leaves the server.
 
@@ -394,7 +598,11 @@ def search(question, congresses=None, limit=10, laws_only=False, jurisdiction=US
     bills about the whole question. Every search is one jurisdiction's
     (federal by default), so a state bill never answers a federal question
     or the reverse. Fail-closed: a database or model error raises, and the
-    caller decides what the user sees."""
+    caller decides what the user sees.
+
+    with_text adds the bill-text list (_text_hits). Off until the Tier 2
+    set shows it helps: the text index was still building when salience
+    and the relevance check shipped (2026-09-29)."""
     from psycopg.rows import dict_row
     from correspondence.db import _get_pool
     terms = fts_terms(question)
@@ -431,7 +639,17 @@ def search(question, congresses=None, limit=10, laws_only=False, jurisdiction=US
             WHERE e.space = %s{where}
             ORDER BY e.embedding <=> %s::halfvec LIMIT %s""", [SPACE, *args, vec, _DEPTH])
         near = [r["instrument_id"] for r in cur.fetchall()]
-        ids = rrf(fts, near)[:limit]
+        lists = [fts, near]
+        if with_text and terms:
+            lists.append(_text_hits(conn, cur, terms, where, args))
+        if with_salience and (fts or near):
+            # The graph's weight, as a third ranking of the same candidates
+            # only: salience knows nothing of the question, so over every
+            # bill it would answer "housing" with the tax code.
+            cur.execute("""SELECT instrument_id FROM bill_doc WHERE instrument_id = ANY(%s)
+                           ORDER BY salience DESC NULLS LAST, instrument_id""", (list(set(fts) | set(near)),))
+            lists.append([r["instrument_id"] for r in cur.fetchall()])
+        ids = rrf(*lists)[:limit]
         cur.execute("""SELECT instrument_id, congress, bill_type, number, title, introduced,
                               policy_area, is_law, law_numbers, jurisdiction, session,
                               latest_action, latest_action_date, sponsor_name, stage
@@ -455,9 +673,13 @@ def index_filters(structured):
     if structured.get("full_history"):
         before = structured.get("before_congress")
         asked = list(range(1, before)) if before else None
-    elif structured.get("query_subtype") == "named_entity":
-        # A name picks out its bill in any Congress; the router's default
-        # window (the last two) would miss the 2022 Inflation Reduction Act.
+    elif structured.get("query_subtype") == "named_entity" or not structured.get("time_filter"):
+        # The router fills a window of Congresses for every question ("last 5
+        # years", in practice the last two); only a question that names a time
+        # (a year, a president, "recent") sets time_filter. Without one, every
+        # Congress: on the Tier 2 tuning rows the window cut nDCG@10 from 0.56
+        # to 0.51 and recall@10 from 0.35 to 0.22 (2026-09-29). A name picks
+        # out its bill in any Congress (the 2022 Inflation Reduction Act).
         asked = None
     else:
         asked = list(structured.get("congress_numbers") or []) or None
@@ -518,6 +740,11 @@ if __name__ == "__main__":
         import graph
         for st in ([] if args else sorted(graph.LEGISLATURES)):
             print(st, json.dumps(load_state_docs(st)))
+    elif cmd == "text":
+        load_texts(args or None)
+    elif cmd == "salience":
+        t0 = time.time()
+        print(f"{compute_salience()} bill(s) re-weighted in {time.time() - t0:.0f} s")
     elif cmd == "embed":
         n, t = embed_missing(int(args[0]) if args else None)
         print(f"{n} document(s) embedded, {t:,} token(s)")

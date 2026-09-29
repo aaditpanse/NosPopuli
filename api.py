@@ -410,7 +410,12 @@ async def handle_bill_search(structured, question, loop):
     canonical name ("Affordable Care Act" for "obamacare"), in any
     Congress. Fail-closed: an index error raises into the route."""
     from search import bill_index
-    target = structured.get("result_count", 5)
+    # The router writes 5 for "no number asked" and for "5"; a page of
+    # answers is 10 unless the question says five. Any other number the
+    # reader gave ("a bill", "a few", "20") stands.
+    target = structured.get("result_count") or 5
+    if target == 5 and not re.search(r"\b(5|five)\b", question, re.I):
+        target = 10
     if structured.get("full_history"):
         target = structured.get("max_results_override") or 50
     congresses, laws_only, partly, wholly = bill_index.index_filters(structured)
@@ -439,14 +444,19 @@ async def handle_bill_search(structured, question, loop):
     # "Affordable Care Act" finds the law.
     named = structured.get("named_entity")
     text = named or question
+    # Thirty candidates for the relevance check: on the Tier 2 tuning rows,
+    # 30 through the check scored nDCG@10 0.70 against 0.64 re-ranked by
+    # title words alone (2026-09-29).
     candidates = await loop.run_in_executor(
-        None, lambda: bill_index.search(text, congresses, max(target * 3, 12), laws_only))
+        None, lambda: bill_index.search(text, congresses, max(target * 3, 30), laws_only))
     hint = structured.get("known_bill_hint")
     if hint and not any((r["congress"], r["type"], r["number"]) == (hint["congress"], hint["type"], int(hint["number"]))
                         for r in candidates):
         candidates.insert(0, {"package_id": f"BILLS-{hint['congress']}{hint['type']}{hint['number']}",
                               "title": f"{hint['type'].upper()} {hint['number']}", "date_issued": "",
                               "congress": hint["congress"], "type": hint["type"], "number": int(hint["number"])})
+    # Thirty candidates take the batched check (two calls, floor 4 of 10):
+    # the path the Tier 2 numbers were measured on (2026-09-29).
     if len(candidates) > 20:
         validated = await loop.run_in_executor(None, validate_results_batch, question, candidates, get_client(), 4)
     else:
@@ -574,7 +584,10 @@ async def handle_state_search(structured, question, loop):
     from search import bill_index
     results = await loop.run_in_executor(
         None, lambda: bill_index.search(question, limit=20, jurisdiction=graph.state_div(st),
-                                        laws_only=structured.get("status") == "enacted"))
+                                        laws_only=structured.get("status") == "enacted",
+                                        # A state bill's edges are thinner (no lobbying, fewer
+                                        # roll calls): salience did not help the state tuning rows.
+                                        with_salience=False))
     results = results[:target_count]
     results = await loop.run_in_executor(
         None, validate_results, question, results, get_client(), get_state_validator_floor(state_code), True)

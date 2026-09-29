@@ -929,5 +929,337 @@
    "title": "End Junk Fees for Renters Act",
    "type": "hr"
   }
+ ],
+ "search housing bills ocd-division/country:us {\"congresses\": null, \"laws_only\": false, \"limit\": 30, \"sessions\": null, \"with_salience\": true}": [
+  {
+   "congress": 108,
+   "date_issued": "2003-04-08",
+   "is_law": true,
+   "law_number": "186",
+   "number": 811,
+   "package_id": "BILLS-108s811",
+   "policy_area": "Housing and Community Development",
+   "title": "American Dream Downpayment Act",
+   "type": "s"
+  },
+  {
+   "congress": 114,
+   "date_issued": "2015-10-07",
+   "is_law": true,
+   "law_number": "201",
+   "number": 3700,
+   "package_id": "BILLS-114hr3700",
+   "policy_area": "Housing and Community Development",
+   "title": "Housing Opportunity Through Modernization Act of 2016",
+   "type": "hr"
+  },
+  {
+   "congress": 119,
+   "date_issued": "2025-12-11",
+   "is_law": true,
+   "law_number": "101",
+   "number": 6644,
+   "package_id": "BILLS-119hr6644",
+   "policy_area": "Housing and Community Development",
+   "title": "21st Century ROAD to Housing Act",
+   "type": "hr"
+  },
+  {
+   "congress": 110,
+   "date_issued": "2007-06-20",
+   "is_law": true,
+   "law_number": "411",
+   "number": 2786,
+   "package_id": "BILLS-110hr2786",
+   "policy_area": "Native Americans",
+   "title": "Native American Housing Assistance and Self-Determination Reauthorization Act of 2008",
+   "type": "hr"
+  },
+  {
+   "congress": 108,
+   "date_issued": "2003-07-24",
+   "is_law": false,
+   "law_number": null,
+   "number": 2861,
+   "package_id": "BILLS-108hr2861",
+   "policy_area": "Economics and Public Finance",
+   "title": "Departments of Veterans Affairs and Housing and Urban Development, and Independent Agencies Appropriations Act, 2004",
+   "type": "hr"
+  },
+  {
+   "congress": 108,
+   "date_issued": "2003-09-05",
+   "is_law": false,
+   "law_number": null,
+   "number": 1584,
+   "package_id": "BILLS-108s1584",
+   "policy_area": "Economics and Public Finance",
+   "title": "Departments of Veterans Affairs and Housing and Urban Development, and Independent Agencies Appropriations Act, 2004",
+   "type": "s"
+  },
+  {
+   "congress": 110,
+   "date_issued": "2007-02-28",
+   "is_law": false,
+   "law_number": null,
+   "number": 1227,
+   "package_id": "BILLS-110hr1227",
+   "policy_area": "Housing and Community Development",
+   "title": "Gulf Coast Hurricane Housing Recovery Act of 2007",
+   "type": "hr"
+  },
+  {
+   "congress": 108,
+   "date_issued": "2004-09-09",
+   "is_law": false,
+   "law_number": null,
+   "number": 5041,
+   "package_id": "BILLS-108hr5041",
+   "policy_area": "Economics and Public Finance",
+   "title": "Departments of Veterans Affairs and Housing and Urban Development, and Independent Agencies Appropriations Act, 2005",
+   "type": "hr"
+  },
+  {
+   "congress": 109,
+   "date_issued": "2005-05-26",
+   "is_law": false,
+   "law_number": null,
+   "number": 2654,
+   "package_id": "BILLS-109hr2654",
+   "policy_area": "Housing and Community Development",
+   "title": "To provide for renewal of project-based assisted housing contracts at reimbursement levels that are sufficient to sustain operations, and for other purposes.",
+   "type": "hr"
+  },
+  {
+   "congress": 108,
+   "date_issued": "2004-09-21",
+   "is_law": false,
+   "law_number": null,
+   "number": 2825,
+   "package_id": "BILLS-108s2825",
+   "policy_area": "Economics and Public Finance",
+   "title": "Departments of Veterans Affairs and Housing and Urban Development, and Independent Agencies Appropriations Act, 2005",
+   "type": "s"
+  },
+  {
+   "congress": 108,
+   "date_issued": "2003-05-06",
+   "is_law": false,
+   "law_number": null,
+   "number": 1957,
+   "package_id": "BILLS-108hr1957",
+   "policy_area": "Housing and Community Development",
+   "title": "To provide for renewal of project-based assisted housing contracts at reimbursement levels that are sufficient to sustain operations, and for other purposes.",
+   "type": "hr"
+  },
+  {
+   "congress": 108,
+   "date_issued": "2004-05-20",
+   "is_law": false,
+   "law_number": null,
+   "number": 2467,
+   "package_id": "BILLS-108s2467",
+   "policy_area": "Housing and Community Development",
+   "title": "A bill to clarify the calculation of per-unit costs payable under expiring annual contributions contracts for tenant-based rental assistance that are renewed in fiscal year 2004.",
+   "type": "s"
+  },
+  {
+   "congress": 108,
+   "date_issued": "2003-03-18",
+   "is_law": false,
+   "law_number": null,
+   "number": 148,
+   "package_id": "BILLS-108hres148",
+   "policy_area": "Congress",
+   "title": "Providing for the expenses of certain committees of the House of Representatives in the One Hundred Eighth Congress.",
+   "type": "hres"
+  },
+  {
+   "congress": 110,
+   "date_issued": "2008-04-16",
+   "is_law": false,
+   "law_number": null,
+   "number": 5818,
+   "package_id": "BILLS-110hr5818",
+   "policy_area": "Housing and Community Development",
+   "title": "Neighborhood Stabilization Act of 2008",
+   "type": "hr"
+  },
+  {
+   "congress": 114,
+   "date_issued": "2015-03-11",
+   "is_law": false,
+   "law_number": null,
+   "number": 710,
+   "package_id": "BILLS-114s710",
+   "policy_area": "Native Americans",
+   "title": "Native American Housing Assistance and Self-Determination Reauthorization Act of 2015",
+   "type": "s"
+  },
+  {
+   "congress": 114,
+   "date_issued": "2015-01-14",
+   "is_law": false,
+   "law_number": null,
+   "number": 360,
+   "package_id": "BILLS-114hr360",
+   "policy_area": "Native Americans",
+   "title": "Native American Housing Assistance and Self-Determination Reauthorization Act of 2015",
+   "type": "hr"
+  },
+  {
+   "congress": 109,
+   "date_issued": "2005-04-05",
+   "is_law": false,
+   "law_number": null,
+   "number": 1461,
+   "package_id": "BILLS-109hr1461",
+   "policy_area": "Housing and Community Development",
+   "title": "Federal Housing Finance Reform Act of 2005",
+   "type": "hr"
+  },
+  {
+   "congress": 113,
+   "date_issued": "2014-03-27",
+   "is_law": false,
+   "law_number": null,
+   "number": 4329,
+   "package_id": "BILLS-113hr4329",
+   "policy_area": "Native Americans",
+   "title": "Native American Housing Assistance and Self-Determination Reauthorization Act of 2014",
+   "type": "hr"
+  },
+  {
+   "congress": 110,
+   "date_issued": "2007-09-18",
+   "is_law": false,
+   "law_number": null,
+   "number": 2062,
+   "package_id": "BILLS-110s2062",
+   "policy_area": "Native Americans",
+   "title": "Native American Housing Assistance and Self-Determination Reauthorization Act of 2007",
+   "type": "s"
+  },
+  {
+   "congress": 116,
+   "date_issued": "2019-06-05",
+   "is_law": false,
+   "law_number": null,
+   "number": 429,
+   "package_id": "BILLS-116hres429",
+   "policy_area": "Housing and Community Development",
+   "title": "Affirming the right of all renters to a safe, affordable, and decent home.",
+   "type": "hres"
+  },
+  {
+   "congress": 110,
+   "date_issued": "2007-02-06",
+   "is_law": false,
+   "law_number": null,
+   "number": 840,
+   "package_id": "BILLS-110hr840",
+   "policy_area": "Housing and Community Development",
+   "title": "Homeless Emergency Assistance and Rapid Transition to Housing Act of 2008",
+   "type": "hr"
+  },
+  {
+   "congress": 109,
+   "date_issued": "2005-04-28",
+   "is_law": false,
+   "law_number": null,
+   "number": 1999,
+   "package_id": "BILLS-109hr1999",
+   "policy_area": "Housing and Community Development",
+   "title": "State and Local Housing Flexibility Act of 2005",
+   "type": "hr"
+  },
+  {
+   "congress": 110,
+   "date_issued": "2007-03-09",
+   "is_law": false,
+   "law_number": null,
+   "number": 1427,
+   "package_id": "BILLS-110hr1427",
+   "policy_area": "Housing and Community Development",
+   "title": "Federal Housing Finance Reform Act of 2007",
+   "type": "hr"
+  },
+  {
+   "congress": 110,
+   "date_issued": "2008-09-29",
+   "is_law": false,
+   "law_number": null,
+   "number": 7221,
+   "package_id": "BILLS-110hr7221",
+   "policy_area": "Housing and Community Development",
+   "title": "Homeless Emergency Assistance and Rapid Transition to Housing Act of 2008",
+   "type": "hr"
+  },
+  {
+   "congress": 109,
+   "date_issued": "2005-04-13",
+   "is_law": false,
+   "law_number": null,
+   "number": 771,
+   "package_id": "BILLS-109s771",
+   "policy_area": "Housing and Community Development",
+   "title": "State and Local Housing Flexibility Act of 2005",
+   "type": "s"
+  },
+  {
+   "congress": 117,
+   "date_issued": "2022-12-02",
+   "is_law": false,
+   "law_number": null,
+   "number": 9416,
+   "package_id": "BILLS-117hr9416",
+   "policy_area": "Congress",
+   "title": "To establish an allowance to provide a housing stipend for Members of the House of Representatives.",
+   "type": "hr"
+  },
+  {
+   "congress": 108,
+   "date_issued": "2004-05-04",
+   "is_law": false,
+   "law_number": null,
+   "number": 4263,
+   "package_id": "BILLS-108hr4263",
+   "policy_area": "Housing and Community Development",
+   "title": "To clarify the calculation of per-unit costs payable under expiring annual contributions contracts for tenant-based rental assistance that are renewed in fiscal year 2004.",
+   "type": "hr"
+  },
+  {
+   "congress": 117,
+   "date_issued": "2021-03-16",
+   "is_law": false,
+   "law_number": null,
+   "number": 1947,
+   "package_id": "BILLS-117hr1947",
+   "policy_area": "Housing and Community Development",
+   "title": "Ensuring a Long-Term Housing Recovery Act of 2021",
+   "type": "hr"
+  },
+  {
+   "congress": 111,
+   "date_issued": "2009-05-07",
+   "is_law": false,
+   "law_number": null,
+   "number": 2336,
+   "package_id": "BILLS-111hr2336",
+   "policy_area": "Housing and Community Development",
+   "title": "GREEN Act of 2010",
+   "type": "hr"
+  },
+  {
+   "congress": 108,
+   "date_issued": "2003-01-08",
+   "is_law": false,
+   "law_number": null,
+   "number": 24,
+   "package_id": "BILLS-108hres24",
+   "policy_area": "Congress",
+   "title": "Electing chairmen of certain standing committees of the House.",
+   "type": "hres"
+  }
  ]
 }
