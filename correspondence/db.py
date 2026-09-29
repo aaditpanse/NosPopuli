@@ -33,7 +33,25 @@ def _cursor():
 
 
 def init_db():
+    """Create or migrate every table. Fail-open on a lock: the nightly
+    backup's pg_dump holds a share lock on every table for most of an hour,
+    an ALTER here waits for all of them, and the app (which calls this at
+    import) would not start until the dump ended — a deploy during the
+    backup took the site down (2026-09-29). Five seconds, then start without
+    the migrations: the tables exist, and a new column waits for the next
+    start, which says so in the log."""
+    import psycopg
+    try:
+        _init_db()
+    except psycopg.errors.LockNotAvailable:
+        print("[DB] init_db: a table is locked (the nightly backup?); started without migrations")
+
+
+def _init_db():
     with _cursor() as cur:
+        # LOCAL: the whole block is one transaction, and the pooled
+        # connection must not keep a 5 s limit for later work.
+        cur.execute("SET LOCAL lock_timeout = '5s'")
         cur.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 id TEXT PRIMARY KEY,
@@ -278,6 +296,19 @@ def init_db():
             ALTER TABLE bill_doc ADD COLUMN IF NOT EXISTS stage TEXT;
             ALTER TABLE bill_doc ALTER COLUMN congress DROP NOT NULL;
             CREATE INDEX IF NOT EXISTS idx_bill_doc_jurisdiction ON bill_doc (jurisdiction, session);
+            -- A bill's weight in the graph (search.bill_index.compute_salience).
+            ALTER TABLE bill_doc ADD COLUMN IF NOT EXISTS salience REAL;
+            -- The words of each bill's latest text, for search inside bills
+            -- (search.bill_index.load_texts). The text stays in its file.
+            CREATE TABLE IF NOT EXISTS bill_text_doc (
+                instrument_id TEXT PRIMARY KEY REFERENCES bill_doc(instrument_id) ON DELETE CASCADE,
+                version TEXT,
+                text_sha TEXT NOT NULL,
+                chars INTEGER,
+                tsv tsvector,
+                updated_at TIMESTAMPTZ DEFAULT NOW()
+            );
+            CREATE INDEX IF NOT EXISTS idx_bill_text_doc_tsv ON bill_text_doc USING gin (tsv);
         """)
         # One vector per bill and embedding space. Needs pgvector; without
         # it the table is not made and search keeps its full-text path.
