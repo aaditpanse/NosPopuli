@@ -896,11 +896,12 @@ held-out, then all 218):
 
 | system | intent | entity links | recall@10 | nDCG@10 |
 |---|---|---|---|---|
-| baseline (before Phase 1) | 0.38 / 0.49 | 0.19 / 0.11 | 0.12 / 0.15 | 0.23 / 0.29 |
-| Phase 1 (2026-09-29) | 0.49 / 0.66 | 0.29 / 0.20 | 0.40 / 0.35 | 0.55 / 0.58 |
+| baseline (before Phase 1) | 0.38 / 0.49 | 0.18 / 0.11 | 0.13 / 0.15 | 0.22 / 0.29 |
+| Phase 1 (2026-09-29) | 0.49 / 0.66 | 0.27 / 0.20 | 0.37 / 0.35 | 0.53 / 0.57 |
 
-(The baseline's recall and nDCG moved a little after it was first recorded, as `--judge`
-rated bills later systems found.)
+Scored on the labels after my review of 30 held-out rows (2026-09-29; those rows say
+`labelled_by: owner`). The baseline's numbers moved a little from their first
+recording as `--judge` rated bills later systems found.
 
 Every phase of the graph search (Phases 1–6) must not lower the held-out numbers.
 
