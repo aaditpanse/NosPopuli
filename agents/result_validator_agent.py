@@ -24,10 +24,16 @@ def validate_results_batch(query, results, client, min_score=5, batch_size=20):
     if not results:
         return results
 
+    # The batches are independent calls: run together, a 30-result check
+    # takes one Haiku round trip instead of two (federal search waited
+    # 10-16 s on them in series, 2026-09-29). Order is the batches' order.
+    from concurrent.futures import ThreadPoolExecutor
+    batches = [results[start:start + batch_size] for start in range(0, len(results), batch_size)]
+    with ThreadPoolExecutor(max_workers=len(batches)) as pool:
+        done = list(pool.map(lambda b: validate_results(query, b, client, min_score=min_score, fail_open=True),
+                             batches))
     scored_all = []
-    for start in range(0, len(results), batch_size):
-        batch = results[start:start + batch_size]
-        validated = validate_results(query, batch, client, min_score=min_score, fail_open=True)
+    for validated in done:
         # validate_results already sorts by score — preserve that order
         for r in validated:
             if r not in scored_all:
