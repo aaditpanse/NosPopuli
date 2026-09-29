@@ -266,7 +266,7 @@ PREDICATES = ("contains", "has_body", "has_seat", "holds", "represents",
               "sponsored", "voted_on", "considered", "elected_in", "for_seat",
               "signed", "vetoed", "enacted_as", "member_of", "referred_to", "reported",
               "related_to", "campaign_committee", "nominated", "lobbied_on", "lobbied_for",
-              "connected_committee")
+              "connected_committee", "contributed_to", "similar_text")
 
 # Ordered weakest → strongest. An answer reports the weakest hop it crossed.
 CERTIFICATION_RANK = {"advisory": 0, "ingested": 1, "certified": 2}
@@ -1945,6 +1945,21 @@ def build_money(fec_snapshots, person_ids):
                   "fec", f"fec/{cycle}/{rec['committee_id']}", US,
                   {"cycle": cycle, "candidate_id": rec.get("candidate_id"), **(rec.get("totals") or {}),
                    "pac_total": rec.get("pac_total"), "pac_receipts": rec.get("pac_receipts")})
+            # The PACs that gave most, as edges: what lets a lobbying
+            # organization's PAC (connected_committee) reach the members it
+            # funded. Only the snapshot's top FEC_TOP_PACS per member-cycle,
+            # which the edge says, so a small gift is absent, not zero.
+            for rank, pac in enumerate(rec.get("top_pacs") or [], 1):
+                if not pac.get("committee_id"):
+                    continue
+                pac_id = node_id("organization", f"fec/committee/{pac['committee_id']}")
+                _node(g, pac_id, "organization", pac.get("name") or pac["committee_id"],
+                      {"natural_key": f"fec/committee/{pac['committee_id']}", "fec_id": pac["committee_id"],
+                       "jurisdiction": US}, "fec", pac["committee_id"])
+                _edge(g, pac_id, "contributed_to", pid, f"{cycle - 1}-01-01", f"{cycle}-12-31", "ingested",
+                      "fec", f"fec/{cycle}/{pac['committee_id']}/to/{rec['committee_id']}", US,
+                      {"cycle": cycle, "amount": pac.get("amount"), "receipts": pac.get("receipts"), "rank": rank,
+                       "of_top": FEC_TOP_PACS, "derived_by": "FEC bulk pas2: the PAC's own 24K itemizations"})
     if missing:
         g["gaps"].append(f"{missing} member-cycle(s) have no FEC principal committee on disk")
     return list(g["nodes"].values()), list(g["edges"].values()), g["gaps"]
@@ -2246,12 +2261,14 @@ _VERSION_ORDER = ("chapter", "enrolled", "reenrolled", "engrossed", "substitute"
                   "printed", "introduced")
 
 
-def state_versions(st, session, bill):
+def state_versions(st, session, bill, manifest=None):
     """The bill's text versions with whether each is on disk: [{name, date,
     url, media_type, file, text}] in the record's order. Pure but for
-    reading the text manifest."""
-    manifest_path = data_path("state_text", state=st, session=session, name="manifest.json")
-    manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
+    reading the text manifest; a caller walking a whole session passes the
+    manifest it read once (a session's runs to megabytes)."""
+    if manifest is None:
+        manifest_path = data_path("state_text", state=st, session=session, name="manifest.json")
+        manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
     from sources.openstates import pick_link, stored_name
     out = []
     for v in bill.get("versions") or []:
@@ -4149,6 +4166,732 @@ def seat_holder(post_id, as_of):
     return holders_as_of(rows, as_of)
 
 
+# ------------------------------------------------------------------ names
+#
+# Every name a node goes by, as people type it: "Bernie Sanders" for Bernard
+# Sanders, "Senate Judiciary Committee" for the Senate Committee on the
+# Judiciary, "the CHIPS Act" for the CHIPS and Science Act, "Pfizer" for PFIZER
+# INC. build_aliases writes them to graph_alias after each load;
+# link_entities finds them in a question. No model: the table is the
+# gazetteer, and ambiguity is reported, never guessed away.
+
+_NAME_SUFFIXES = {"jr", "sr", "ii", "iii", "iv", "v"}
+_CORP_SUFFIXES = {"inc", "incorporated", "llc", "l l c", "corp", "corporation", "co", "company", "ltd", "lp",
+                  "llp", "plc", "the", "na", "n a", "pc", "com"}
+# Words that are never a name alone, however an organization or a surname
+# happens to be spelled: "Health", "Energy", "Rice", "Vote".
+_ALIAS_STOP = frozenset({
+    "the", "a", "an", "and", "or", "of", "to", "in", "on", "for", "about", "with", "from", "by", "at", "as", "is",
+    "be", "bill", "bills", "act", "acts", "law", "laws", "legislation", "congress", "federal", "state", "states",
+    "house", "senate", "committee", "vote", "votes", "voted", "who", "what", "how", "did", "does", "my", "our",
+    "health", "healthcare", "housing", "energy", "education", "tax", "taxes", "security", "bank", "banks", "labor",
+    "trade", "water", "rice", "young", "king", "may", "long", "rose", "hope", "grant", "price", "gun", "guns",
+    "black", "white", "brown", "green", "hill", "bush", "ford", "love", "cotton", "wood", "rich", "rush", "hunt",
+    "paid", "family", "leave", "police", "farm", "farms", "abortion", "crypto", "climate", "border",
+    "wall", "aid", "fund", "funds", "funding", "reform", "relief", "care", "medicare", "medicaid", "social",
+    "united", "national", "american", "america", "public", "new", "first", "safe", "fair", "free", "open",
+    "clean", "made", "made in", "government", "county", "city", "town", "district", "people", "work", "jobs",
+})
+
+
+def alias_norm(text):
+    """A name as the table keys it: ASCII, lower case, apostrophes dropped
+    (O'Rourke is orourke), other punctuation a space. Pure."""
+    import unicodedata
+    t = unicodedata.normalize("NFKD", text or "").encode("ascii", "ignore").decode().lower()
+    t = re.sub(r"['’`]", "", t)
+    return " ".join(re.sub(r"[^a-z0-9]+", " ", t).split())
+
+
+def person_aliases(name, legislator=None):
+    """[(alias, source)] for one person: the name as held, without middle
+    initials and suffixes, with a quoted nickname ("Ben" Chafin), and the
+    legislators file's names (first, nickname, official, Wikipedia's) for a
+    member of Congress; the surname alone is its own source. Pure."""
+    out = {alias_norm(name): "name"}
+    nick = re.search(r"[\"“]([^\"”]+)[\"”]", name or "")
+    bare = re.sub(r"[\"“][^\"”]+[\"”]|\([^)]*\)", " ", name or "")
+    toks = [t for t in alias_norm(bare).split() if len(t) > 1 and t not in _NAME_SUFFIXES]
+    if len(toks) >= 2:
+        out.setdefault(f"{toks[0]} {toks[-1]}", "name")
+        if nick:
+            out.setdefault(f"{alias_norm(nick.group(1))} {toks[-1]}", "nickname")
+    if legislator:
+        n = legislator.get("name") or {}
+        last = alias_norm(n.get("last"))
+        for first in (n.get("first"), n.get("nickname")):
+            if first and last:
+                out.setdefault(f"{alias_norm(first)} {last}", "legislators")
+        for full in (n.get("official_full"), re.sub(r"\s*\(.*\)$", "", (legislator.get("id") or {}).get("wikipedia") or "")):
+            if full:
+                out.setdefault(alias_norm(full), "legislators")
+    if toks and toks[-1] not in _ALIAS_STOP and len(toks[-1]) > 2:
+        out.setdefault(toks[-1], "surname")
+    return [(a, src) for a, src in out.items() if a]
+
+
+def org_aliases(name, props):
+    """[(alias, source)] for one organization: its name and LDA variants,
+    without corporate suffixes (PFIZER INC is pfizer); a committee also by
+    the names people use ("Senate Judiciary Committee"). Pure."""
+    out = {}
+    for n in [name] + list((props or {}).get("name_variants") or []):
+        a = alias_norm(n)
+        if not a:
+            continue
+        out.setdefault(a, "name")
+        toks = a.split()
+        while toks and toks[-1] in _CORP_SUFFIXES:
+            toks = toks[:-1]
+        while toks and toks[0] == "the":
+            toks = toks[1:]
+        if toks and " ".join(toks) != a:
+            out.setdefault(" ".join(toks), "name")
+    m = re.match(r"^(House|Senate|Joint) (?:Select |Special |Permanent Select )?Committee on (?:the )?([^:]+)$",
+                 name or "")
+    if m and str((props or {}).get("natural_key") or "").startswith("us/committee/"):
+        chamber, subject = m.group(1).lower(), alias_norm(m.group(2))
+        names = [f"{chamber} {subject} committee", f"{chamber} {subject}", f"{chamber} committee on {subject}",
+                 f"{subject} committee"]
+        if re.search(r",| and ", m.group(2)):
+            # "Senate Banking Committee" for Banking, Housing, and Urban Affairs.
+            first = alias_norm(re.split(r",| and ", m.group(2))[0])
+            names += [f"{chamber} {first} committee", f"{chamber} {first}"]
+        for a in names:
+            out.setdefault(a, "committee")
+    return [(a, src) for a, src in out.items() if a and a not in _ALIAS_STOP]
+
+
+_ACRONYM_SKIP = {"and", "of", "the", "for", "to", "in", "on", "a", "an"}
+
+
+def act_aliases(title, others=(), is_law=False):
+    """[(alias, source)] for a federal bill: its title and short titles when
+    they read as a name (at most 12 words), each also without its year
+    ("inflation reduction act of 2022" and "inflation reduction act"); a law
+    also by its initials ("ndaa" for the National Defense Authorization Act
+    for Fiscal Year 2026), a source of its own that weighs less. Pure."""
+    out = {}
+    for t in [title] + list(others):
+        a = alias_norm(t)
+        if not a or len(a.split()) > 12:
+            continue
+        out.setdefault(a, "title")
+        short = re.sub(r"\s+(of|for fiscal years?) (19|20)\d\d.*$", "", a)
+        if short != a:
+            out.setdefault(short, "title")
+        if is_law and short.endswith(" act"):
+            letters = "".join(w[0] for w in short.split() if w not in _ACRONYM_SKIP and not w.isdigit())
+            if 3 <= len(letters) <= 6:
+                out.setdefault(letters, "acronym")
+    return [(a, src) for a, src in out.items() if len(a.split()) >= 2 or a not in _ALIAS_STOP]
+
+
+# The names a law goes by that no record of it holds ("Obamacare"), each to
+# the bill that became it. Kept short: a title, a short title or a law's
+# initials cover the rest.
+_POPULAR_ACTS = {
+    "obamacare": "instrument/us/111/hr/3590", "aca": "instrument/us/111/hr/3590",
+    "affordable care act": "instrument/us/111/hr/3590",
+    "bipartisan infrastructure law": "instrument/us/117/hr/3684", "infrastructure bill": "instrument/us/117/hr/3684",
+    "big beautiful bill": "instrument/us/119/hr/1", "one big beautiful bill": "instrument/us/119/hr/1",
+    "farm bill": "instrument/us/115/hr/2", "dodd frank": "instrument/us/111/hr/4173",
+    "cares act": "instrument/us/116/hr/748", "american rescue plan": "instrument/us/117/hr/1319",
+    "chips act": "instrument/us/117/hr/4346", "ira": "instrument/us/117/hr/5376",
+}
+
+# How a source weighs against another for the same words: a full name
+# beats a surname, a law beats a bill that reuses its name.
+_ALIAS_SOURCE_WEIGHT = {"name": 1.0, "legislators": 1.0, "nickname": 0.9, "committee": 0.9, "title": 1.0,
+                        "surname": 0.3, "acronym": 0.5, "president": 1.5, "popular": 5.0}
+
+
+def build_aliases():
+    """Rewrite graph_alias from the graph and the search documents. Run
+    after the load (the daily sync). Returns rows written."""
+    from correspondence.db import _get_pool, init_db
+    init_db()
+    leg = {(x.get("id") or {}).get("bioguide"): x for x in legislators()}
+    rows = []
+    with _get_pool().connection() as conn, conn.cursor() as cur:
+        cur.execute("SELECT DISTINCT src FROM graph_edge WHERE predicate = 'holds' AND valid_to IS NULL")
+        sitting = {r[0] for r in cur.fetchall()}
+        # A president's surname is typed in lower case too ("under trump").
+        cur.execute("""SELECT DISTINCT e.src FROM graph_edge e JOIN graph_node p ON p.id = e.dst
+                       WHERE e.predicate = 'holds' AND p.props->>'natural_key' = 'us/president'""")
+        presidents = {r[0] for r in cur.fetchall()}
+        cur.execute("SELECT id, name, props FROM graph_node WHERE kind = 'person'")
+        for pid, name, props in cur.fetchall():
+            w = 2.0 if pid in sitting else 1.0
+            for a, src in person_aliases(name, leg.get((props or {}).get("bioguide"))):
+                if src == "surname" and pid in presidents:
+                    src = "president"
+                rows.append((a, pid, "person", w * _ALIAS_SOURCE_WEIGHT[src], src))
+        cur.execute("SELECT id, name, props FROM graph_node WHERE kind = 'organization'")
+        for oid, name, props in cur.fetchall():
+            kind = "committee" if str((props or {}).get("natural_key") or "").startswith("us/committee/") else "organization"
+            for a, src in org_aliases(name, props):
+                rows.append((a, oid, kind, _ALIAS_SOURCE_WEIGHT[src], src))
+        cur.execute("""SELECT id, name FROM graph_node WHERE kind = 'jurisdiction'
+                       AND props->>'level' IN ('state', 'county', 'country')""")
+        for jid, name in cur.fetchall():
+            rows.append((alias_norm(name), jid, "place", 1.0, "name"))
+        for a, iid in _POPULAR_ACTS.items():
+            rows.append((a, iid, "bill", _ALIAS_SOURCE_WEIGHT["popular"], "popular"))
+        cur.execute("""SELECT instrument_id, title, split_part(doc, E'\n', 2), is_law, coalesce(salience, 0)
+                       FROM bill_doc WHERE jurisdiction = 'ocd-division/country:us'""")
+        for iid, title, aka, is_law, sal in cur.fetchall():
+            others = aka[len("Also known as: "):].split("; ") if (aka or "").startswith("Also known as: ") else []
+            w = 1.0 + (2.0 if is_law else 0.0) + min(float(sal), 20.0) / 10.0
+            for a, src in act_aliases(title, others, is_law):
+                rows.append((a, iid, "bill", w, src))
+        with conn.transaction():
+            cur.execute("CREATE TEMP TABLE stage_alias (LIKE graph_alias) ON COMMIT DROP")
+            with cur.copy("COPY stage_alias FROM STDIN") as cp:
+                for r in rows:
+                    cp.write_row(r)
+            cur.execute("TRUNCATE graph_alias")
+            cur.execute("INSERT INTO graph_alias SELECT DISTINCT ON (alias_norm, node_id) * FROM stage_alias "
+                        "ORDER BY alias_norm, node_id, weight DESC")
+            n = cur.rowcount
+    return n
+
+
+_ALIAS_TOKEN = re.compile(r"[A-Za-z0-9][A-Za-z0-9'’.&-]*")
+
+
+def alias_spans(question, max_len=10):
+    """Every run of words in the question, normalized: [(start, end, alias,
+    capitalized, all_caps)], capitalized when its first word is typed with a
+    capital (a name typed as one, "Pfizer", not "pfizer"), all_caps when a
+    one-word run is typed in capitals ("NDAA", not "data"). Pure."""
+    # "Pelosi's record" names Pelosi.
+    toks = [re.sub(r"['’]s$", "", t) for t in _ALIAS_TOKEN.findall(question or "")]
+    out = []
+    for i in range(len(toks)):
+        for j in range(i + 1, min(len(toks), i + max_len) + 1):
+            a = alias_norm(" ".join(toks[i:j]))
+            if a:
+                word = re.sub(r"[^A-Za-z]", "", toks[i])
+                out.append((i, j, a, toks[i][:1].isupper(), j - i == 1 and len(word) > 1 and word.isupper()))
+    return out
+
+
+def choose_links(spans, hits):
+    """The names a question holds, from its spans and the alias rows that
+    match them ({alias: [(node_id, kind, weight, name)]}): longest first,
+    then the heaviest; no two overlap. A one-word match counts only when it
+    is no stop word and is typed with a capital or is long (seven letters);
+    a surname counts only with a capital. Each: {surface, kind, node_id, name,
+    weight, ambiguous, candidates}. Pure."""
+    found = []
+    for i, j, a, cap, caps in spans:
+        rows = hits.get(a) or []
+        if not rows:
+            continue
+        if j - i == 1:
+            if a in _ALIAS_STOP:
+                continue
+            # A law's initials count only typed in capitals: "data" is a
+            # word, "DATA" may be the DATA Act.
+            rows = [r for r in rows if r[1] == "place" or r[4] in ("president", "popular")
+                    or (r[4] == "acronym" and caps)
+                    or (r[4] != "acronym" and (cap or len(a) >= 7) and (r[4] != "surname" or cap))]
+            if not rows:
+                continue
+        rows = sorted(rows, key=lambda r: (-r[2], r[0]))
+        found.append((j - i, rows[0][2], i, j, a, rows))
+    found.sort(key=lambda f: (-f[0], -f[1], f[2]))
+    taken, out = set(), []
+    for size, w, i, j, a, rows in found:
+        if taken & set(range(i, j)):
+            continue
+        taken |= set(range(i, j))
+        top = rows[0]
+        close = [r for r in rows[1:] if r[2] >= 0.8 * top[2] and r[1] == top[1]]
+        out.append({"surface": a, "kind": top[1], "node_id": top[0], "name": top[3], "weight": round(top[2], 3),
+                    "source": top[4], "ambiguous": bool(close), "start": i,
+                    "candidates": [{"node_id": r[0], "kind": r[1], "name": r[3], "weight": round(r[2], 3)}
+                                   for r in rows[:5]]})
+    return sorted(out, key=lambda e: e["start"])
+
+
+def link_entities(question, cur=None):
+    """The graph nodes a question names, by the alias table: [{surface, kind,
+    node_id, name, ambiguous, candidates}] in the question's order. Empty when
+    the table is empty or missing (fail-open: a question with no names is
+    still a question)."""
+    spans = alias_spans(question)
+    if not spans:
+        return []
+
+    def run(c):
+        c.execute("""SELECT a.alias_norm, a.node_id, a.kind, a.weight, a.source, coalesce(n.name, d.title, a.node_id)
+                     FROM graph_alias a LEFT JOIN graph_node n ON n.id = a.node_id
+                     LEFT JOIN bill_doc d ON d.instrument_id = a.node_id
+                     WHERE a.alias_norm = ANY(%s)""", (list({s[2] for s in spans}),))
+        hits = {}
+        for row in c.fetchall():
+            # A caller's cursor may return dict rows (the lenses' does).
+            alias, nid, kind, w, src, name = tuple(row.values()) if isinstance(row, dict) else row
+            hits.setdefault(alias, []).append((nid, kind, w, name, src))
+        return hits
+    try:
+        if cur is not None:
+            hits = run(cur)
+        else:
+            from correspondence.db import _get_pool
+            with _get_pool().connection() as conn, conn.cursor() as c:
+                hits = run(c)
+    except Exception as e:                                   # noqa: BLE001 - fail-open, said once
+        print(f"[GRAPH] link_entities: {type(e).__name__}: {e}")
+        return []
+    return choose_links(spans, hits)
+
+
+# ------------------------------------------------------------------ lenses
+#
+# What an answer shows about the thing a question names: bounded walks from
+# one node, one section each, every row with its edge's certification and
+# every empty section with its reason. All sections of a lens share one
+# cursor (one pool checkout). The rows are plain dicts the page renders;
+# `link` says where a row opens (a bill page, a member page).
+
+def instrument_link(iid):
+    """Where a bill row opens, from its node id, or None. Pure."""
+    m = re.match(r"^instrument/us/(\d+)/([a-z]+)/(\d+)$", iid or "")
+    if m:
+        return {"type": "bill", "congress": int(m.group(1)), "bill_type": m.group(2), "number": int(m.group(3))}
+    m = re.match(r"^instrument/([a-z]{2})/([^/]+)/([a-z]+)/([^/]+)$", iid or "")
+    if m and m.group(1) != "us":
+        return {"type": "state_bill", "state": m.group(1).upper(), "session": m.group(2),
+                "bill_type": m.group(3), "number": m.group(4)}
+    return None
+
+
+def _person_link(props, name):
+    """Where a person row opens: a member of Congress's page by bioguide id,
+    a state legislator's by Open States id, else None. Pure."""
+    props = props or {}
+    if props.get("bioguide"):
+        return {"type": "member", "bioguide": props["bioguide"]}
+    st = str(props.get("jurisdiction") or "").rsplit("state:", 1)
+    if len(st) == 2 and props.get("openstates_id"):
+        return {"type": "state_member", "state": st[1][:2].upper(), "ocd_person_id": props["openstates_id"], "name": name}
+    return None
+
+
+def _section(sid, title, rows, source, empty, count=None):
+    """One lens section. Pure."""
+    certs = [r.get("certification") for r in rows if r.get("certification")]
+    weakest = min(certs, key=CERTIFICATION_RANK.get) if certs else None
+    return {"id": sid, "title": title, "rows": rows, "count": len(rows) if count is None else count,
+            "certification": weakest, "source": source, "empty_reason": None if rows else empty}
+
+
+# The party of the seat held on the edge's date (a switcher's old votes keep
+# the old party), else the latest.
+_PARTY_SQL = """(SELECT h.props->>'party' FROM graph_edge h WHERE h.src = {col} AND h.predicate = 'holds'
+                  ORDER BY ({date} IS NOT NULL AND h.valid_from <= {date}
+                            AND (h.valid_to IS NULL OR h.valid_to > {date})) DESC,
+                           h.valid_to IS NULL DESC, h.valid_from DESC NULLS LAST LIMIT 1)"""
+
+
+def _party_letter(party):
+    p = (party or "").lower()
+    return "D" if p.startswith("dem") else "R" if p.startswith("rep") else "I" if p else "?"
+
+
+def lens_bill(cur, iid, reps=()):
+    """A bill: who wrote it, where it went, how it was voted, who lobbied on
+    it, what it is related to, and how the reader's representatives voted."""
+    cur.execute("""SELECT n.name, n.props, d.title, d.is_law, d.latest_action, d.latest_action_date, d.stage,
+                          d.introduced, d.policy_area, d.salience
+                   FROM graph_node n LEFT JOIN bill_doc d ON d.instrument_id = n.id WHERE n.id = %s""", (iid,))
+    head = cur.fetchone()
+    if not head:
+        return None
+    focus = {"kind": "bill", "id": iid, "name": head["title"] or head["name"], "link": instrument_link(iid),
+             "facts": {k: (str(head[k]) if hasattr(head[k], "isoformat") else head[k])
+                       for k in ("is_law", "latest_action", "latest_action_date", "stage", "introduced", "policy_area")}}
+    sections = []
+    cur.execute(f"""SELECT p.name, p.props, e.props->>'role' AS role, e.valid_from, e.certification,
+                           {_PARTY_SQL.format(col='e.src', date='e.valid_from')} AS party
+                    FROM graph_edge e JOIN graph_node p ON p.id = e.src
+                    WHERE e.dst = %s AND e.predicate = 'sponsored'
+                    ORDER BY (e.props->>'role') <> 'sponsor', e.valid_from, p.name""", (iid,))
+    sp = cur.fetchall()
+    split = {}
+    for r in sp:
+        if r["role"] != "sponsor":
+            split[_party_letter(r["party"])] = split.get(_party_letter(r["party"]), 0) + 1
+    rows = [{"label": r["name"], "detail": f"{'Sponsor' if r['role'] == 'sponsor' else 'Cosponsor'} · {_party_letter(r['party'])}",
+             "date": str(r["valid_from"] or "") or None, "certification": r["certification"],
+             "link": _person_link(r["props"], r["name"])} for r in sp[:15]]
+    sections.append(_section("sponsors", "Sponsors" + (f" · {sum(split.values())} cosponsors (" + ", ".join(
+        f"{n} {k}" for k, n in sorted(split.items(), key=lambda kv: -kv[1])) + ")" if split else ""), rows,
+        "the bill's record (congress.gov BILLSTATUS / Open States)", "no sponsor on record", count=len(sp)))
+    cur.execute("""SELECT 'referred' AS step, o.name, e.valid_from, e.certification, NULL AS detail FROM graph_edge e
+                   JOIN graph_node o ON o.id = e.dst WHERE e.src = %s AND e.predicate = 'referred_to'
+                   UNION ALL
+                   SELECT 'reported', o.name, e.valid_from, e.certification, e.props->>'citation' FROM graph_edge e
+                   JOIN graph_node o ON o.id = e.src WHERE e.dst = %s AND e.predicate = 'reported'
+                   UNION ALL
+                   SELECT 'roll call', o.name, e.valid_from, e.certification,
+                          concat_ws(' · ', e.props->>'question', e.props->>'result',
+                                    CASE WHEN e.props ? 'counts' THEN (e.props->'counts'->>'yes') || '-' || (e.props->'counts'->>'no') END)
+                   FROM graph_edge e JOIN graph_node o ON o.id = e.src WHERE e.dst = %s AND e.predicate = 'considered'
+                   UNION ALL
+                   SELECT e.predicate, p.name, e.valid_from, e.certification, e.props->>'text' FROM graph_edge e
+                   JOIN graph_node p ON p.id = e.src WHERE e.dst = %s AND e.predicate IN ('signed', 'vetoed')
+                   UNION ALL
+                   SELECT 'became', l.name, e.valid_from, e.certification, e.props->>'law_type' FROM graph_edge e
+                   JOIN graph_node l ON l.id = e.dst WHERE e.src = %s AND e.predicate = 'enacted_as'
+                   ORDER BY 3 NULLS FIRST LIMIT 40""", (iid, iid, iid, iid, iid))
+    rows = [{"label": f"{r['step'].capitalize()}: {r['name']}", "detail": r["detail"],
+             "date": str(r["valid_from"] or "") or None, "certification": r["certification"]} for r in cur.fetchall()]
+    sections.append(_section("path", "Where it went", rows, "the bill's actions and roll calls",
+                             "no committee, roll call or signature on record for this bill"))
+    cur.execute(f"""WITH last AS (
+                        SELECT e.props->>'vote_id' AS vid FROM graph_edge e
+                        WHERE e.dst = %s AND e.predicate = 'voted_on'
+                        GROUP BY 1 ORDER BY max(e.valid_from) DESC NULLS LAST LIMIT 3),
+                    r AS (
+                        SELECT e.props->>'vote_id' AS vid, e.valid_from AS date, e.props->>'question' AS q,
+                               e.props->>'position' AS pos, {_PARTY_SQL.format(col='e.src', date='e.valid_from')} AS party,
+                               e.certification AS cert
+                        FROM graph_edge e JOIN last ON last.vid = e.props->>'vote_id'
+                        WHERE e.dst = %s AND e.predicate = 'voted_on')
+                    SELECT vid, max(date) AS date, max(q) AS q, pos, party, count(*) AS n, min(cert) AS cert
+                    FROM r GROUP BY vid, pos, party ORDER BY 2 DESC, 1""", (iid, iid))
+    tally = {}
+    for r in cur.fetchall():
+        t = tally.setdefault(r["vid"], {"date": r["date"], "q": r["q"], "cert": r["cert"], "by": {}})
+        t["by"].setdefault(r["pos"] or "?", {})[_party_letter(r["party"])] = r["n"]
+    rows = [{"label": t["q"] or vid, "date": str(t["date"] or "") or None, "certification": t["cert"],
+             "detail": " · ".join(f"{pos}: " + ", ".join(f"{n} {p}" for p, n in sorted(by.items(), key=lambda kv: -kv[1]))
+                                  for pos, by in sorted(t["by"].items(), key=lambda kv: -sum(kv[1].values())))}
+            for vid, t in tally.items()]
+    sections.append(_section("votes", "Recorded votes, by party", rows, "House and Senate clerks / Open States roll calls",
+                             "no recorded vote by members is loaded for this bill (only the current Congress's "
+                             "federal votes and each state's are)"))
+    cur.execute("""SELECT o.name, o.props, e.props->>'year' AS year, coalesce((e.props->>'reports')::int, 1) AS reports,
+                          e.props->'issues' AS issues, e.certification
+                   FROM graph_edge e JOIN graph_node o ON o.id = e.src
+                   WHERE e.dst = %s AND e.predicate = 'lobbied_on' ORDER BY 4 DESC, 3 DESC LIMIT 60""", (iid,))
+    lob = {}
+    for r in cur.fetchall():
+        x = lob.setdefault(r["name"], {"years": set(), "reports": 0, "cert": r["certification"]})
+        x["years"].add(r["year"])
+        x["reports"] += r["reports"]
+    rows = [{"label": n, "detail": f"{x['reports']} report(s), {', '.join(sorted(y for y in x['years'] if y))}",
+             "certification": x["cert"], "link": {"type": "organization", "name": n}}
+            for n, x in sorted(lob.items(), key=lambda kv: -kv[1]["reports"])[:15]]
+    sections.append(_section("lobbying", "Who lobbied on it", rows, "Senate LDA filings (the bill number read from each "
+                             "filing's activity text)", "no lobbying filing names this bill", count=len(lob)))
+    rel = []
+    # One query a predicate: an omnibus's dozens of related bills must not
+    # crowd its same-text matches out of a shared limit.
+    for pred in ("related_to", "similar_text"):
+        cur.execute("""(SELECT o.id, coalesce(d.title, o.name) AS name, e.props->>'relationship' AS rel, e.certification,
+                               e.predicate
+                        FROM graph_edge e JOIN graph_node o ON o.id = e.dst LEFT JOIN bill_doc d ON d.instrument_id = o.id
+                        WHERE e.src = %s AND e.predicate = %s LIMIT 15)
+                       UNION ALL
+                       (SELECT o.id, coalesce(d.title, o.name), e.props->>'relationship', e.certification, e.predicate
+                        FROM graph_edge e JOIN graph_node o ON o.id = e.src LEFT JOIN bill_doc d ON d.instrument_id = o.id
+                        WHERE e.dst = %s AND e.predicate = %s LIMIT 15)""", (iid, pred, iid, pred))
+        rel += cur.fetchall()
+    rows = [{"label": r["name"], "detail": (r["rel"] or "related") if r["predicate"] == "related_to" else "same text",
+             "certification": r["certification"], "link": instrument_link(r["id"])}
+            for r in rel if r["predicate"] == "related_to"][:15]
+    sections.append(_section("related", "Related bills", rows, "the bill's record", "no related bill on record"))
+    same = [{"label": r["name"], "detail": "near-identical text", "certification": r["certification"],
+             "link": instrument_link(r["id"])} for r in rel if r["predicate"] == "similar_text"][:15]
+    sections.append(_section("same_text", "The same text elsewhere", same,
+                             "each bill's latest text compared by sampled sentences (derived here: advisory)",
+                             "no near-identical bill text found in another legislature"))
+    return {"focus": focus, "sections": sections + ([reps_on_bill(cur, iid, reps)] if reps else [])}
+
+
+def reps_on_bill(cur, iid, reps):
+    """How the reader's representatives (person node ids) voted on a bill,
+    and whether they sponsored it."""
+    cur.execute("""SELECT p.id, p.name, p.props, e.predicate, e.props->>'position' AS pos, e.props->>'role' AS role,
+                          e.props->>'question' AS q, e.valid_from, e.certification
+                   FROM graph_edge e JOIN graph_node p ON p.id = e.src
+                   WHERE e.dst = %s AND e.src = ANY(%s) AND e.predicate IN ('voted_on', 'sponsored')
+                   ORDER BY e.valid_from DESC NULLS LAST""", (iid, list(reps)))
+    seen, rows = set(), []
+    for r in cur.fetchall():
+        k = (r["id"], r["predicate"])
+        if k in seen:
+            continue
+        seen.add(k)
+        rows.append({"label": r["name"], "date": str(r["valid_from"] or "") or None, "certification": r["certification"],
+                     "detail": (f"voted {r['pos']} · {r['q'] or ''}".strip(" ·") if r["predicate"] == "voted_on"
+                                else r["role"] or "sponsor"),
+                     "link": _person_link(r["props"], r["name"])})
+    return _section("your_reps", "Your representatives on this bill", rows, "roll calls and the bill's record",
+                    "none of your representatives has a recorded vote or sponsorship on this bill")
+
+
+def lens_person(cur, pid, topic=None, reps=()):
+    """A person: seats, the weightiest bills they sponsored, their votes on
+    the topic (or on the weightiest bills), committees, campaign money."""
+    cur.execute("SELECT id, name, props FROM graph_node WHERE id = %s AND kind = 'person'", (pid,))
+    head = cur.fetchone()
+    if not head:
+        return None
+    focus = {"kind": "person", "id": pid, "name": head["name"], "link": _person_link(head["props"], head["name"])}
+    sections = []
+    cur.execute("""SELECT o.name, e.valid_from, e.valid_to, e.props->>'party' AS party, e.certification
+                   FROM graph_edge e JOIN graph_node o ON o.id = e.dst
+                   WHERE e.src = %s AND e.predicate = 'holds' ORDER BY e.valid_to IS NULL DESC, e.valid_from DESC LIMIT 12""",
+                (pid,))
+    rows = [{"label": r["name"], "detail": " · ".join(x for x in (r["party"], f"{r['valid_from'] or '?'} – {r['valid_to'] or 'now'}") if x),
+             "certification": r["certification"]} for r in cur.fetchall()]
+    sections.append(_section("seats", "Offices held", rows, "Congress's legislators files / Open States people",
+                             "no office on record"))
+    cur.execute("""SELECT e.dst, d.title, d.is_law, d.salience, e.valid_from, e.certification,
+                          count(*) OVER () AS total
+                   FROM graph_edge e JOIN bill_doc d ON d.instrument_id = e.dst
+                   WHERE e.src = %s AND e.predicate = 'sponsored' AND e.props->>'role' = 'sponsor'
+                   ORDER BY d.salience DESC NULLS LAST, e.valid_from DESC LIMIT 10""", (pid,))
+    sp = cur.fetchall()
+    rows = [{"label": r["title"], "detail": "became law" if r["is_law"] else None, "date": str(r["valid_from"] or "") or None,
+             "certification": r["certification"], "link": instrument_link(r["dst"])} for r in sp]
+    sections.append(_section("sponsored", "Their weightiest bills", rows, "bills' records; ranked by salience",
+                             "no bill on record with this person as its sponsor", count=sp[0]["total"] if sp else 0))
+    terms = [t for t in re.findall(r"[a-z0-9]+", (topic or "").lower()) if len(t) > 2]
+    if terms:
+        cur.execute("""SELECT e.dst, d.title, e.props->>'position' AS pos, e.props->>'question' AS q, e.valid_from,
+                              e.certification
+                       FROM graph_edge e JOIN bill_doc d ON d.instrument_id = e.dst
+                       WHERE e.src = %s AND e.predicate = 'voted_on' AND d.tsv @@ plainto_tsquery('english', %s)
+                       ORDER BY e.valid_from DESC NULLS LAST LIMIT 15""", (pid, " ".join(terms)))
+        title = f"Votes on {' '.join(terms)}"
+    else:
+        cur.execute("""SELECT DISTINCT ON (d.salience, e.dst) e.dst, d.title, e.props->>'position' AS pos,
+                              e.props->>'question' AS q, e.valid_from, e.certification
+                       FROM graph_edge e JOIN bill_doc d ON d.instrument_id = e.dst
+                       WHERE e.src = %s AND e.predicate = 'voted_on'
+                       ORDER BY d.salience DESC NULLS LAST, e.dst, e.valid_from DESC LIMIT 12""", (pid,))
+        title = "Votes on the weightiest bills"
+    rows = [{"label": r["title"], "detail": f"{r['pos']} · {r['q'] or ''}".strip(" ·"), "date": str(r["valid_from"] or "") or None,
+             "certification": r["certification"], "link": instrument_link(r["dst"])} for r in cur.fetchall()]
+    sections.append(_section("votes", title, rows, "roll calls (House and Senate clerks, Open States)",
+                             "no recorded vote loaded for this person" + (" on that topic" if terms else "")
+                             + " (federal votes are loaded for the current Congress)"))
+    cur.execute("""SELECT o.name, e.props->>'role' AS role, e.certification FROM graph_edge e
+                   JOIN graph_node o ON o.id = e.dst WHERE e.src = %s AND e.predicate = 'member_of' AND e.valid_to IS NULL
+                   ORDER BY (e.props->>'rank')::int NULLS LAST LIMIT 15""", (pid,))
+    rows = [{"label": r["name"], "detail": r["role"], "certification": r["certification"]} for r in cur.fetchall()]
+    sections.append(_section("committees", "Committees", rows, "committee membership files",
+                             "no committee seat on record"))
+    cur.execute("""SELECT o.name, e.props FROM graph_edge e JOIN graph_node o ON o.id = e.dst
+                   WHERE e.src = %s AND e.predicate = 'campaign_committee' ORDER BY (e.props->>'cycle')::int DESC LIMIT 3""",
+                (pid,))
+    rows = [{"label": f"{r['props'].get('cycle')}: {r['name']}",
+             "detail": f"raised ${float(r['props'].get('receipts') or 0):,.0f} · from PACs ${float(r['props'].get('pac_total') or 0):,.0f}",
+             "certification": "ingested"} for r in cur.fetchall()]
+    cur.execute("""SELECT o.name, sum((e.props->>'amount')::numeric) AS amount, max(e.props->>'cycle') AS cycle,
+                          min(e.certification) AS cert
+                   FROM graph_edge e JOIN graph_node o ON o.id = e.src
+                   WHERE e.dst = %s AND e.predicate = 'contributed_to'
+                   GROUP BY o.name ORDER BY 2 DESC LIMIT 10""", (pid,))
+    rows += [{"label": r["name"], "detail": f"gave ${float(r['amount'] or 0):,.0f} (to {r['cycle']})", "certification": r["cert"],
+              "link": {"type": "organization", "name": r["name"]}} for r in cur.fetchall()]
+    sections.append(_section("money", "Campaign money", rows, "FEC bulk: candidate totals and PAC contributions (pas2)",
+                             "no FEC campaign committee on record for this person"))
+    return {"focus": focus, "sections": sections}
+
+
+def lens_org(cur, oid):
+    """An organization: the bills it lobbied on, its lobbying spending, its
+    PAC and whom that PAC funded, and how they voted on those bills."""
+    cur.execute("SELECT id, name, props FROM graph_node WHERE id = %s AND kind = 'organization'", (oid,))
+    head = cur.fetchone()
+    if not head:
+        return None
+    focus = {"kind": "organization", "id": oid, "name": head["name"], "link": {"type": "organization", "name": head["name"]}}
+    sections = []
+    cur.execute("""SELECT e.dst, d.title, d.is_law, array_agg(DISTINCT e.props->>'year') AS years,
+                          sum(coalesce((e.props->>'reports')::int, 1)) AS reports, min(e.certification) AS cert,
+                          count(*) OVER () AS total
+                   FROM graph_edge e LEFT JOIN bill_doc d ON d.instrument_id = e.dst
+                   WHERE e.src = %s AND e.predicate = 'lobbied_on'
+                   GROUP BY e.dst, d.title, d.is_law ORDER BY 5 DESC, 1 LIMIT 15""", (oid,))
+    lob = cur.fetchall()
+    rows = [{"label": r["title"] or r["dst"], "detail": f"{r['reports']} report(s), {', '.join(sorted(y for y in r['years'] if y))}"
+             + (" · became law" if r["is_law"] else ""), "certification": r["cert"], "link": instrument_link(r["dst"])}
+            for r in lob]
+    sections.append(_section("lobbied", "Bills it lobbied on", rows, "Senate LDA filings",
+                             "no lobbying filing by this organization names a bill", count=lob[0]["total"] if lob else 0))
+    cur.execute("""SELECT o.name AS other, e.src = %s AS as_registrant, e.props->>'year' AS year,
+                          sum((e.props->>'income')::numeric) AS income, min(e.certification) AS cert
+                   FROM graph_edge e JOIN graph_node o ON o.id = CASE WHEN e.src = %s THEN e.dst ELSE e.src END
+                   WHERE (e.src = %s OR e.dst = %s) AND e.predicate = 'lobbied_for'
+                   GROUP BY 1, 2, 3 ORDER BY 3 DESC, 4 DESC NULLS LAST LIMIT 20""", (oid, oid, oid, oid))
+    rows = [{"label": f"{r['year']}: {r['other']}", "detail": (f"${float(r['income']):,.0f} " if r["income"] else "")
+             + ("paid to it by this client" if r["as_registrant"] else "paid to this lobbying firm"),
+             "certification": r["cert"], "link": {"type": "organization", "name": r["other"]}} for r in cur.fetchall()]
+    sections.append(_section("spending", "Lobbying paid", rows, "Senate LDA filings (income reported by the registrant)",
+                             "no lobbying payment on record"))
+    cur.execute("""SELECT pac.id, pac.name, e.certification FROM graph_edge e JOIN graph_node pac ON pac.id = e.dst
+                   WHERE e.src = %s AND e.predicate = 'connected_committee'""", (oid,))
+    pacs = cur.fetchall()
+    rows = []
+    if pacs:
+        cur.execute("""SELECT p.id, p.name, p.props, sum((e.props->>'amount')::numeric) AS amount, max(e.props->>'cycle') AS cycle,
+                              min(e.certification) AS cert
+                       FROM graph_edge e JOIN graph_node p ON p.id = e.dst
+                       WHERE e.src = ANY(%s) AND e.predicate = 'contributed_to'
+                       GROUP BY p.id, p.name, p.props ORDER BY 4 DESC LIMIT 15""", ([x["id"] for x in pacs],))
+        funded = cur.fetchall()
+        ids = [f["id"] for f in funded]
+        votes = {}
+        if ids and lob:
+            cur.execute("""SELECT e.src, d.title, e.props->>'position' AS pos FROM graph_edge e
+                           JOIN bill_doc d ON d.instrument_id = e.dst
+                           WHERE e.src = ANY(%s) AND e.dst = ANY(%s) AND e.predicate = 'voted_on'
+                           ORDER BY e.valid_from DESC""", (ids, [r["dst"] for r in lob]))
+            for v in cur.fetchall():
+                votes.setdefault(v["src"], f"voted {v['pos']} on {v['title'][:60]}")
+        rows = [{"label": f["name"], "detail": f"got ${float(f['amount'] or 0):,.0f} from {pacs[0]['name']} (to {f['cycle']})"
+                 + (f" · {votes[f['id']]}" if f["id"] in votes else ""),
+                 "certification": "advisory" if pacs[0]["certification"] == "advisory" else f["cert"],
+                 "link": _person_link(f["props"], f["name"])} for f in funded]
+    sections.append(_section("pac", "Its PAC's money, and how the recipients voted on its bills", rows,
+                             "FEC committee file (the PAC's connected organization, matched by name: advisory) and pas2 "
+                             "contributions; a connection, not a cause",
+                             "no PAC connected to this organization in the FEC committee file" if not pacs
+                             else "its PAC gave to no member on record"))
+    return {"focus": focus, "sections": sections}
+
+
+def lens_committee(cur, cid):
+    """A committee: its members and roles, and the bills it reported."""
+    cur.execute("SELECT id, name, props FROM graph_node WHERE id = %s", (cid,))
+    head = cur.fetchone()
+    if not head:
+        return None
+    focus = {"kind": "committee", "id": cid, "name": head["name"]}
+    cur.execute("""SELECT p.name, p.props, e.props->>'role' AS role, e.props->>'side' AS side, e.certification
+                   FROM graph_edge e JOIN graph_node p ON p.id = e.src
+                   WHERE e.dst = %s AND e.predicate = 'member_of' AND e.valid_to IS NULL
+                   ORDER BY e.props->>'side' <> 'majority', (e.props->>'rank')::int NULLS LAST LIMIT 40""", (cid,))
+    rows = [{"label": r["name"], "detail": " · ".join(x for x in (r["role"], r["side"]) if x), "certification": r["certification"],
+             "link": _person_link(r["props"], r["name"])} for r in cur.fetchall()]
+    members = _section("members", "Members", rows, "committee membership files", "no member on record")
+    cur.execute("""SELECT e.dst, d.title, e.valid_from, e.certification FROM graph_edge e
+                   LEFT JOIN bill_doc d ON d.instrument_id = e.dst
+                   WHERE e.src = %s AND e.predicate = 'reported' ORDER BY e.valid_from DESC NULLS LAST LIMIT 15""", (cid,))
+    rows = [{"label": r["title"] or r["dst"], "date": str(r["valid_from"] or "") or None, "certification": r["certification"],
+             "link": instrument_link(r["dst"])} for r in cur.fetchall()]
+    reported = _section("reported", "Bills it reported", rows, "committee reports (GovInfo CRPT)",
+                        "no reported bill on record (only bills with a recorded vote are loaded)")
+    return {"focus": focus, "sections": [members, reported]}
+
+
+def lens_states(cur, text, laws_only=False):
+    """Which states have bills (and laws) on a topic: per state, how many,
+    how many became law, and the newest law's title. From the search
+    documents' full text, every state at once."""
+    from search.bill_index import fts_terms, _tsquery_sql
+    terms = fts_terms(text)
+    if not terms:
+        return _section("states", "Across the states", [], "state bills (Open States)", "no topic words to look for")
+    expr, targs = _tsquery_sql(terms, "&&")
+    cur.execute(f"""SELECT d.jurisdiction, count(*) AS bills, count(*) FILTER (WHERE d.is_law) AS laws,
+                           (array_agg(d.title ORDER BY d.is_law DESC, d.latest_action_date DESC NULLS LAST))[1] AS example,
+                           (array_agg(d.instrument_id ORDER BY d.is_law DESC, d.latest_action_date DESC NULLS LAST))[1] AS ex_id,
+                           max(d.latest_action_date) AS latest
+                    FROM bill_doc d, (SELECT {expr} AS q) q
+                    WHERE d.jurisdiction <> 'ocd-division/country:us' AND d.tsv @@ q.q
+                    GROUP BY d.jurisdiction HAVING {'count(*) FILTER (WHERE d.is_law) > 0' if laws_only else 'true'}
+                    ORDER BY 3 DESC, 2 DESC""", targs)
+    rows = [{"label": DIVISION_NAMES.get(r["jurisdiction"].rsplit(":", 1)[-1], r["jurisdiction"]),
+             "detail": f"{r['laws']} law(s) of {r['bills']} bill(s) · e.g. {r['example'][:80]}",
+             "date": str(r["latest"] or "") or None, "certification": "ingested", "link": instrument_link(r["ex_id"])}
+            for r in cur.fetchall()]
+    return _section("states", f"Across the states: {len(rows)} with bills, {sum(1 for r in rows if not r['detail'].startswith('0 law'))} with laws",
+                    rows, "state bills and their titles, subjects and summaries (Open States); a bill counts when its "
+                    "document holds every topic word", "no state bill on record holds every topic word")
+
+
+def reader_districts(reader):
+    """The reader's districts from what the page saved of /resolve-point or
+    /resolve-address: {"state": "VA", "geoid": "5108", "state_legislative":
+    {"upper": "51035", "lower": "51008"}} (Census GEOIDs: state FIPS, then
+    the district) → {"state": "VA", "cd": 8, "sldu": "35", "sldl": "8"}.
+    Explicit cd/sldu/sldl pass through. Pure."""
+    r = dict(reader or {})
+    out = {"state": (r.get("state") or "").upper() or None}
+    geoid = str(r.get("geoid") or "")
+    cd = r.get("cd") if r.get("cd") not in (None, "") else (geoid[2:] if len(geoid) >= 3 and geoid.isdigit() else None)
+    out["cd"] = int(cd) if str(cd or "").isdigit() else None
+    leg = r.get("state_legislative") or {}
+    for kind, side in (("sldu", "upper"), ("sldl", "lower")):
+        v = r.get(kind) or (str(leg.get(side) or "")[2:] if leg.get(side) else "")
+        out[kind] = str(v).lstrip("0") or None
+    return out
+
+
+def reps_for(cur, reader):
+    """The reader's representatives today (person node ids and names), from
+    their saved districts (reader_districts). Two senators by state, one
+    House member by district, and state legislators by district number. []
+    when no state is known."""
+    reader = reader_districts(reader)
+    st = reader.get("state")
+    if not st:
+        return []
+    st = st.lower()
+    keys = [f"us/senate/{st}/class:{c}" for c in (1, 2, 3)]
+    if reader.get("cd") is not None:
+        # Census writes an at-large district as 0; the graph's post is cd:1 (post_for).
+        keys.append(f"us/house/{st}/cd:{reader['cd'] or 1}")
+    for ch, kind in (("upper", "sldu"), ("lower", "sldl")):
+        d = str(reader.get(kind) or "").lstrip("0")
+        if d:
+            keys.append(f"{st}/{ch}/{kind}:{d.lower()}")
+    cur.execute("""SELECT DISTINCT ON (p.id) p.id, p.name, p.props, post.name AS seat
+                   FROM graph_node post JOIN graph_edge e ON e.dst = post.id AND e.predicate = 'holds' AND e.valid_to IS NULL
+                   JOIN graph_node p ON p.id = e.src
+                   WHERE post.kind = 'post' AND post.props->>'natural_key' = ANY(%s)""", (keys,))
+    return [{"id": r["id"], "name": r["name"], "seat": r["seat"], "link": _person_link(r["props"], r["name"])}
+            for r in cur.fetchall()]
+
+
+def answer_lenses(frame, reader=None, text=None, laws_only=False):
+    """The lens for a question's frame ({intent, entities}), on one pool
+    checkout: the first named node's lens, a topic's state comparison, and
+    the reader's representatives. Fail-open: no database, no lens."""
+    from psycopg.rows import dict_row
+    from correspondence.db import _get_pool
+    intent, ents = frame.get("intent"), frame.get("entities") or []
+    focus_ent = next((e for e in ents if e["kind"] in ("bill", "person", "organization", "committee")), None)
+    try:
+        with _get_pool().connection() as conn, conn.cursor(row_factory=dict_row) as cur:
+            reps = reps_for(cur, reader)
+            rep_ids = [r["id"] for r in reps]
+            out = {"reps": reps, "focus": None, "sections": []}
+            if focus_ent and intent not in ("compare_states", "copied_bills", "off_topic"):
+                kind, nid = focus_ent["kind"], focus_ent["node_id"]
+                got = (lens_bill(cur, nid, rep_ids) if kind == "bill" else
+                       lens_person(cur, nid, text) if kind == "person" else
+                       lens_org(cur, nid) if kind == "organization" else lens_committee(cur, nid))
+                if got:
+                    out.update(got)
+            if intent in ("compare_states", "copied_bills") and text:
+                out["sections"].append(lens_states(cur, text, laws_only))
+            return out
+    except Exception as e:                                   # noqa: BLE001 - the list still answers
+        print(f"[GRAPH] answer_lenses: {type(e).__name__}: {e}")
+        return {"reps": [], "focus": None, "sections": [], "error": "the graph did not answer"}
+
+
 # ------------------------------------------------------------------ search
 #
 # A typed question reaches the graph here. Same contract as
@@ -5198,6 +5941,9 @@ if __name__ == "__main__":
     sub.add_parser("certify-index", help="reduce older roll-call snapshots to member-congress.json")
     sub.add_parser("migrate-layout", help="move a flat data dir into the DATASETS layout (idempotent)")
     sub.add_parser("manifest", help="write datasets.json: sources, licences, coverage, sizes")
+    sub.add_parser("aliases", help="rewrite graph_alias, every name a node goes by (after the load)")
+    s = sub.add_parser("link", help="the graph nodes a question names")
+    s.add_argument("question")
     s = sub.add_parser("snapshot", help="fetch one session's roll calls to data/ (no args: the current session)")
     s.add_argument("congress", type=int, nargs="?")
     s.add_argument("session", type=int, nargs="?")
@@ -5235,6 +5981,11 @@ if __name__ == "__main__":
     elif a.cmd == "manifest":
         for kind, d in write_manifest()["datasets"].items():
             print(f"{kind:14} {d['files']:>6} file(s) {d['bytes'] / 2**20:>9.1f} MB  {d['coverage']}")
+    elif a.cmd == "aliases":
+        t0 = time.time()
+        print(f"{build_aliases():,} alias row(s) in {time.time() - t0:.0f} s")
+    elif a.cmd == "link":
+        print(json.dumps(link_entities(a.question), indent=1))
     elif a.cmd == "certify-index":
         members, files = write_member_congress(current_session()[0])
         print(f"{members:,} member id(s) from {len(files)} file(s) → {data_path('certification')}")

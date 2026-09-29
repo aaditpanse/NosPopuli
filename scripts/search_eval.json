@@ -2613,7 +2613,14 @@
    "instrument/us/119/hr/3218": "partly",
    "instrument/us/119/s/4211": "yes",
    "instrument/us/119/hr/6734": "yes",
-   "instrument/us/119/s/3494": "yes"
+   "instrument/us/119/s/3494": "yes",
+   "instrument/us/113/s/994": "no",
+   "instrument/us/116/s/1822": "no",
+   "instrument/us/119/hr/8400": "no",
+   "instrument/us/119/hr/8413": "yes",
+   "instrument/us/119/hr/9228": "partly",
+   "instrument/us/119/s/3570": "yes",
+   "instrument/us/119/s/3585": "no"
   }
  },
  {
@@ -3176,7 +3183,8 @@
    "instrument/us/117/hr/4521": "partly",
    "instrument/us/118/hr/752": "partly",
    "instrument/us/118/hr/8673": "partly",
-   "instrument/us/118/hr/8826": "partly"
+   "instrument/us/118/hr/8826": "partly",
+   "instrument/us/119/s/3374": "partly"
   }
  },
  {
@@ -3192,7 +3200,8 @@
    {
     "surface": "Laken Riley Act",
     "kind": "bill",
-    "node_id": "instrument/us/118/hr/3379"
+    "node_id": "instrument/us/119/s/5",
+    "fix": "was instrument/us/118/hr/3379; the law of this name is instrument/us/119/s/5 (2026-09-29)"
    }
   ],
   "bills": {
@@ -3345,7 +3354,8 @@
    "instrument/us/117/hres/628": "no",
    "instrument/us/117/hres/932": "no",
    "instrument/us/119/hr/4490": "partly",
-   "instrument/us/119/hres/1082": "no"
+   "instrument/us/119/hres/1082": "no",
+   "instrument/us/114/hr/4665": "no"
   }
  },
  {
@@ -3390,7 +3400,10 @@
    "instrument/us/117/hr/5127": "no",
    "instrument/us/114/hr/33": "no",
    "instrument/us/112/hr/1370": "partly",
-   "instrument/us/114/hr/928": "partly"
+   "instrument/us/114/hr/928": "partly",
+   "instrument/us/112/hr/5894": "partly",
+   "instrument/us/113/hr/763": "partly",
+   "instrument/us/115/hr/246": "partly"
   }
  },
  {
@@ -3548,7 +3561,8 @@
    {
     "surface": "First Step Act",
     "kind": "bill",
-    "node_id": "instrument/us/115/s/3649"
+    "node_id": "instrument/us/115/s/756",
+    "fix": "was instrument/us/115/s/3649; the law of this name is instrument/us/115/s/756 (2026-09-29)"
    }
   ],
   "bills": {
@@ -3587,7 +3601,12 @@
    "instrument/us/119/s/668": "no",
    "instrument/us/109/hres/441": "no",
    "instrument/us/115/hr/5682": "yes",
-   "instrument/us/109/hconres/284": "no"
+   "instrument/us/109/hconres/284": "no",
+   "instrument/us/115/hr/5860": "no",
+   "instrument/us/115/hres/789": "partly",
+   "instrument/us/115/s/2795": "yes",
+   "instrument/us/115/s/3353": "no",
+   "instrument/us/115/s/3747": "yes"
   }
  },
  {
@@ -3968,7 +3987,15 @@
    "instrument/us/119/hr/7930": "yes",
    "instrument/us/119/s/4100": "yes",
    "instrument/us/117/s/2896": "yes",
-   "instrument/us/119/s/874": "yes"
+   "instrument/us/119/s/874": "yes",
+   "instrument/us/114/hr/5790": "yes",
+   "instrument/us/114/s/795": "yes",
+   "instrument/us/115/s/1094": "yes",
+   "instrument/us/115/s/585": "yes",
+   "instrument/us/117/s/409": "partly",
+   "instrument/us/118/hr/1105": "no",
+   "instrument/us/118/s/474": "no",
+   "instrument/us/118/s/546": "no"
   }
  },
  {
@@ -4146,7 +4173,9 @@
    "instrument/us/114/hr/2962": "yes",
    "instrument/us/115/hr/3572": "yes",
    "instrument/us/115/s/718": "partly",
-   "instrument/us/118/hr/6951": "yes"
+   "instrument/us/118/hr/6951": "yes",
+   "instrument/us/109/hr/609": "partly",
+   "instrument/us/110/hr/2669": "yes"
   }
  },
  {
@@ -4210,7 +4239,10 @@
    "instrument/us/118/hr/553": "yes",
    "instrument/us/118/hr/7989": "yes",
    "instrument/us/119/hr/6137": "partly",
-   "instrument/us/119/s/3211": "partly"
+   "instrument/us/119/s/3211": "partly",
+   "instrument/us/108/hr/1350": "no",
+   "instrument/us/108/s/286": "no",
+   "instrument/us/119/hr/8884": "yes"
   }
  },
  {
@@ -4264,7 +4296,10 @@
    "instrument/us/116/hr/4305": "partly",
    "instrument/us/117/hr/1448": "partly",
    "instrument/us/118/s/2778": "partly",
-   "instrument/us/119/s/2615": "no"
+   "instrument/us/119/s/2615": "no",
+   "instrument/us/111/hr/1401": "no",
+   "instrument/us/116/hr/3598": "no",
+   "instrument/us/118/s/4365": "partly"
   }
  },
  {
@@ -4414,7 +4449,14 @@
    "instrument/va/2026/hb/1391": "yes",
    "instrument/va/2026/hb/184": "partly",
    "instrument/va/2026/hb/327": "yes",
-   "instrument/va/2026/sb/626": "partly"
+   "instrument/va/2026/sb/626": "partly",
+   "instrument/us/113/hr/3121": "partly",
+   "instrument/us/114/hr/3241": "partly",
+   "instrument/us/117/hr/3775": "partly",
+   "instrument/us/118/hr/5013": "no",
+   "instrument/us/118/s/3503": "no",
+   "instrument/us/119/hr/3864": "partly",
+   "instrument/us/119/hr/6703": "partly"
   }
  },
  {
@@ -5683,7 +5725,12 @@
    "instrument/us/118/hres/969": "no",
    "instrument/us/119/hres/674": "no",
    "instrument/us/119/s/1070": "no",
-   "instrument/va/2024/hj/81": "no"
+   "instrument/va/2024/hj/81": "no",
+   "instrument/us/108/sres/357": "no",
+   "instrument/us/109/sres/598": "no",
+   "instrument/us/110/hconres/224": "no",
+   "instrument/us/118/hres/1509": "no",
+   "instrument/us/119/hr/2104": "no"
   }
  },
  {
@@ -5861,7 +5908,9 @@
    "instrument/us/119/hr/5089": "yes",
    "instrument/us/119/s/1484": "yes",
    "instrument/us/119/s/322": "yes",
-   "instrument/us/119/s/324": "yes"
+   "instrument/us/119/s/324": "yes",
+   "instrument/us/119/hr/3816": "partly",
+   "instrument/us/119/s/3923": "partly"
   }
  },
  {
@@ -6438,7 +6487,8 @@
    {
     "surface": "Laken Riley Act",
     "kind": "bill",
-    "node_id": null
+    "node_id": "instrument/us/119/s/5",
+    "fix": "was None; the law of this name is instrument/us/119/s/5 (2026-09-29)"
    }
   ],
   "bills": {
@@ -6610,7 +6660,8 @@
    "instrument/us/117/hr/2547": "no",
    "instrument/us/118/hjres/9": "partly",
    "instrument/us/114/hr/3807": "yes",
-   "instrument/us/118/s/1190": "yes"
+   "instrument/us/118/s/1190": "yes",
+   "instrument/us/110/hr/2634": "no"
   }
  },
  {
@@ -6860,7 +6911,17 @@
    "instrument/va/2024S1/sb/6002": "yes",
    "instrument/va/2020/hb/1210": "no",
    "instrument/va/2026/sb/606": "partly",
-   "instrument/va/2027/sb/606": "partly"
+   "instrument/va/2027/sb/606": "partly",
+   "instrument/us/108/s/90": "partly",
+   "instrument/us/112/s/1936": "partly",
+   "instrument/us/112/sres/94": "partly",
+   "instrument/us/113/sres/8": "partly",
+   "instrument/us/115/s/1376": "partly",
+   "instrument/us/117/s/2823": "partly",
+   "instrument/us/118/s/6": "partly",
+   "instrument/us/118/s/743": "partly",
+   "instrument/us/119/hr/1092": "partly",
+   "instrument/us/119/sres/458": "partly"
   }
  },
  {
@@ -7067,7 +7128,8 @@
    {
     "surface": "Laken Riley Act",
     "kind": "bill",
-    "node_id": "instrument/us/118/hr/3379"
+    "node_id": "instrument/us/119/s/5",
+    "fix": "was instrument/us/118/hr/3379; the law of this name is instrument/us/119/s/5 (2026-09-29)"
    }
   ],
   "bills": {
@@ -7416,7 +7478,13 @@
    "instrument/us/117/hres/474": "yes",
    "instrument/us/117/hres/789": "partly",
    "instrument/us/117/sres/584": "no",
-   "instrument/us/118/hres/553": "no"
+   "instrument/us/118/hres/553": "no",
+   "instrument/us/110/s/2272": "no",
+   "instrument/us/116/hr/1968": "partly",
+   "instrument/us/116/hres/234": "partly",
+   "instrument/us/117/hr/8535": "partly",
+   "instrument/us/117/sres/135": "partly",
+   "instrument/us/118/s/4243": "partly"
   }
  },
  {
@@ -7593,7 +7661,15 @@
    "instrument/ca/20172018/ajr/43": "partly",
    "instrument/ca/20212022/sjr/6": "partly",
    "instrument/ca/20252026/hr/76": "yes",
-   "instrument/ca/20252026/sr/71": "yes"
+   "instrument/ca/20252026/sr/71": "yes",
+   "instrument/us/118/s/3350": "partly",
+   "instrument/us/118/s/4012": "partly",
+   "instrument/us/119/hr/4100": "partly",
+   "instrument/us/119/s/3600": "yes",
+   "instrument/us/119/s/4020": "yes",
+   "instrument/us/119/s/4266": "partly",
+   "instrument/us/119/s/890": "yes",
+   "instrument/us/119/s/943": "yes"
   }
  },
  {
@@ -7652,7 +7728,10 @@
    "instrument/us/118/sres/659": "no",
    "instrument/va/2020/hr/25": "no",
    "instrument/va/2024/sr/160": "no",
-   "instrument/va/2026/hj/279": "no"
+   "instrument/va/2026/hj/279": "no",
+   "instrument/us/115/hr/6780": "no",
+   "instrument/us/115/s/3525": "no",
+   "instrument/us/119/sres/644": "no"
   }
  },
  {
@@ -7691,7 +7770,9 @@
    "instrument/us/116/hres/784": "yes",
    "instrument/us/116/hres/788": "yes",
    "instrument/us/116/hres/832": "yes",
-   "instrument/us/116/hres/836": "yes"
+   "instrument/us/116/hres/836": "yes",
+   "instrument/us/110/hr/1255": "no",
+   "instrument/us/117/hres/834": "no"
   }
  },
  {
@@ -8067,7 +8148,16 @@
    "instrument/tx/88/hb/4759": "yes",
    "instrument/tx/88/sb/200": "yes",
    "instrument/tx/86/hb/2111": "yes",
-   "instrument/tx/88/sb/361": "yes"
+   "instrument/tx/88/sb/361": "yes",
+   "instrument/us/115/hres/14": "no",
+   "instrument/us/117/hr/8501": "no",
+   "instrument/us/117/hres/1228": "no",
+   "instrument/us/117/hres/502": "partly",
+   "instrument/us/118/hr/372": "no",
+   "instrument/us/118/hr/7074": "no",
+   "instrument/us/119/hr/272": "no",
+   "instrument/us/119/hr/8603": "no",
+   "instrument/us/119/s/1756": "no"
   }
  },
  {
@@ -8373,7 +8463,12 @@
    "instrument/us/118/s/2624": "no",
    "instrument/us/118/s/3590": "no",
    "instrument/us/119/hjres/131": "no",
-   "instrument/us/119/sjres/91": "no"
+   "instrument/us/119/sjres/91": "no",
+   "instrument/us/118/hr/7463": "no",
+   "instrument/us/118/hr/8113": "no",
+   "instrument/us/118/s/3950": "no",
+   "instrument/us/118/s/4004": "no",
+   "instrument/us/118/s/4017": "no"
   }
  },
  {
@@ -9315,7 +9410,9 @@
    "instrument/us/113/s/2262": "no",
    "instrument/us/114/s/720": "no",
    "instrument/us/112/hr/2401": "partly",
-   "instrument/us/115/hr/792": "no"
+   "instrument/us/115/hr/792": "no",
+   "instrument/us/113/hr/1616": "no",
+   "instrument/us/115/s/385": "no"
   }
  },
  {
@@ -9378,7 +9475,9 @@
    "instrument/us/119/s/1379": "yes",
    "instrument/us/114/s/565": "partly",
    "instrument/us/109/hr/5122": "no",
-   "instrument/us/110/hr/3311": "no"
+   "instrument/us/110/hr/3311": "no",
+   "instrument/us/119/hr/5155": "partly",
+   "instrument/us/119/s/2209": "partly"
   }
  },
  {
@@ -9497,7 +9596,8 @@
    "instrument/us/108/hr/5131": "no",
    "instrument/us/108/s/2634": "no",
    "instrument/us/109/hr/4902": "no",
-   "instrument/us/115/s/717": "no"
+   "instrument/us/115/s/717": "no",
+   "instrument/us/119/hr/4304": "partly"
   }
  },
  {
@@ -9560,7 +9660,11 @@
    "instrument/us/115/hr/3759": "partly",
    "instrument/us/116/s/1790": "no",
    "instrument/us/118/hr/9076": "partly",
-   "instrument/us/118/s/2181": "partly"
+   "instrument/us/118/s/2181": "partly",
+   "instrument/us/118/hr/856": "partly",
+   "instrument/us/118/hr/8860": "partly",
+   "instrument/us/119/hr/3089": "yes",
+   "instrument/us/119/hr/996": "partly"
   }
  },
  {
@@ -9626,7 +9730,9 @@
    "instrument/us/119/hr/2808": "partly",
    "instrument/us/114/hr/1831": "no",
    "instrument/us/114/hr/22": "no",
-   "instrument/us/119/hr/187": "no"
+   "instrument/us/119/hr/187": "no",
+   "instrument/us/113/s/1897": "partly",
+   "instrument/us/118/hr/1165": "partly"
   }
  },
  {
@@ -9755,7 +9861,17 @@
    "instrument/us/118/s/2228": "no",
    "instrument/us/118/s/3427": "partly",
    "instrument/us/118/s/777": "no",
-   "instrument/us/118/s/992": "no"
+   "instrument/us/118/s/992": "no",
+   "instrument/us/118/hr/3647": "no",
+   "instrument/us/118/hr/4260": "no",
+   "instrument/us/118/hr/4889": "partly",
+   "instrument/us/118/hr/5342": "no",
+   "instrument/us/118/hr/5810": "partly",
+   "instrument/us/118/hr/6722": "partly",
+   "instrument/us/118/s/2488": "partly",
+   "instrument/us/118/s/2785": "partly",
+   "instrument/us/118/s/3008": "partly",
+   "instrument/us/118/s/516": "partly"
   }
  },
  {
@@ -10538,7 +10654,13 @@
    "instrument/va/2025/hr/698": "no",
    "instrument/va/2026/hr/119": "no",
    "instrument/va/2026/hr/151": "no",
-   "instrument/va/2026/hr/39": "no"
+   "instrument/va/2026/hr/39": "no",
+   "instrument/us/115/hr/6064": "no",
+   "instrument/us/116/hr/263": "no",
+   "instrument/us/116/hr/828": "no",
+   "instrument/us/118/hr/4136": "no",
+   "instrument/us/119/hr/249": "no",
+   "instrument/us/119/hr/6332": "no"
   }
  },
  {
@@ -10605,7 +10727,13 @@
    "instrument/va/2023/hb/1518": "partly",
    "instrument/va/2023/hj/458": "no",
    "instrument/va/2024/hb/433": "partly",
-   "instrument/va/2026/sr/71": "no"
+   "instrument/va/2026/sr/71": "no",
+   "instrument/us/109/hres/1032": "no",
+   "instrument/us/109/hres/750": "no",
+   "instrument/us/111/hres/1498": "partly",
+   "instrument/us/112/hres/239": "partly",
+   "instrument/us/119/hr/151": "partly",
+   "instrument/us/119/hres/519": "partly"
   }
  },
  {
@@ -10703,7 +10831,10 @@
    "instrument/us/118/hres/2": "yes",
    "instrument/us/118/hres/757": "partly",
    "instrument/us/119/hres/1054": "no",
-   "instrument/us/119/hres/4": "yes"
+   "instrument/us/119/hres/4": "yes",
+   "instrument/us/116/hres/1194": "partly",
+   "instrument/us/116/hres/14": "partly",
+   "instrument/us/116/hres/780": "partly"
   }
  },
  {
@@ -11582,7 +11713,21 @@
    "instrument/us/117/hr/4346": "partly",
    "instrument/us/117/s/3451": "partly",
    "instrument/us/118/hr/6503": "partly",
-   "instrument/us/118/s/1608": "partly"
+   "instrument/us/118/s/1608": "partly",
+   "instrument/us/109/hr/3765": "no",
+   "instrument/us/109/hr/4826": "no",
+   "instrument/us/109/hr/6316": "no",
+   "instrument/us/111/hr/4165": "no",
+   "instrument/us/114/s/612": "no",
+   "instrument/us/117/hres/1412": "partly",
+   "instrument/us/118/hr/2694": "partly",
+   "instrument/us/118/hr/8253": "no",
+   "instrument/us/118/hr/9536": "partly",
+   "instrument/us/118/s/4277": "no",
+   "instrument/us/118/s/695": "partly",
+   "instrument/us/118/s/843": "partly",
+   "instrument/us/119/hr/2992": "partly",
+   "instrument/us/119/hr/4315": "no"
   }
  },
  {
@@ -12184,7 +12329,13 @@
    "instrument/us/119/hr/7296": "partly",
    "instrument/us/119/s/128": "partly",
    "instrument/us/119/s/3752": "partly",
-   "instrument/va/2017/hb/1598": "partly"
+   "instrument/va/2017/hb/1598": "partly",
+   "instrument/us/116/sres/719": "partly",
+   "instrument/us/117/sres/395": "partly",
+   "instrument/us/118/hr/487": "partly",
+   "instrument/us/118/hr/5290": "partly",
+   "instrument/us/118/hr/9727": "partly",
+   "instrument/us/119/s/2822": "partly"
   }
  },
  {
@@ -13190,7 +13341,15 @@
    "instrument/us/118/s/4975": "yes",
    "instrument/us/118/s/5599": "partly",
    "instrument/us/119/hr/5089": "yes",
-   "instrument/us/119/s/1484": "yes"
+   "instrument/us/119/s/1484": "yes",
+   "instrument/us/118/hr/1496": "partly",
+   "instrument/us/118/hr/1715": "partly",
+   "instrument/us/118/hr/4069": "partly",
+   "instrument/us/118/hr/6093": "partly",
+   "instrument/us/118/s/1414": "partly",
+   "instrument/us/119/hr/3816": "partly",
+   "instrument/us/119/s/2900": "partly",
+   "instrument/us/119/s/3923": "partly"
   }
  },
  {
@@ -13229,7 +13388,9 @@
    "instrument/us/116/hres/830": "yes",
    "instrument/us/117/hres/156": "yes",
    "instrument/us/117/sres/522": "yes",
-   "instrument/us/117/sres/62": "yes"
+   "instrument/us/117/sres/62": "yes",
+   "instrument/us/114/hres/614": "yes",
+   "instrument/us/118/sres/71": "yes"
   }
  },
  {
@@ -13283,7 +13444,13 @@
    "instrument/us/119/hr/8660": "no",
    "instrument/us/119/s/4796": "partly",
    "instrument/va/2017/hb/2130": "no",
-   "instrument/va/2020/hb/1291": "no"
+   "instrument/va/2020/hb/1291": "no",
+   "instrument/us/108/hr/4520": "no",
+   "instrument/us/118/hr/10364": "no",
+   "instrument/us/118/s/5364": "no",
+   "instrument/us/119/hr/3149": "no",
+   "instrument/us/119/s/1586": "no",
+   "instrument/us/119/s/2153": "no"
   }
  },
  {

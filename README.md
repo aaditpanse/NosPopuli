@@ -477,6 +477,44 @@ replaced GovInfo search without the planned blind evaluation, by my choice: the
 question set is kept in `scripts/search_smoketest.py` (`EVAL_QUERIES`) for the eval
 that measures it.
 
+*The graph search (2026-09-29, Phases 2–6 of the plan).* A question is understood and
+answered from the graph, at no model cost:
+
+- **Names.** `graph_alias` holds every name a node goes by — people with their nicknames
+  and the legislators file's names ("Bernie Sanders"), committees as people say them
+  ("Senate Banking Committee"), lobbying organizations without corporate suffixes
+  ("Pfizer"), federal bills by title, short title and a law's initials ("NDAA"), states,
+  and a short table of popular names ("Obamacare", "Bipartisan Infrastructure Law").
+  `graph.py aliases` rebuilds it after each load (the nightly sync); `graph.link_entities`
+  finds the longest, heaviest names in a question and says when one is ambiguous. On the
+  Tier 2 labels it links 0.86 of the named nodes (0.27 before).
+- **Intent.** `router_agent.question_intent`: the question's shape and its linked names
+  decide by rule (a person and a vote word is "how voted", a lobbying word is "money",
+  "which states" compares states); Laya answers only whether a question is about
+  government at all. `structure_free` then fills what the search handlers read (time
+  window, enacted, named act, jurisdiction) by rule — the Haiku router call is gone.
+  Intent accuracy on the Tier 2 labels: 0.77 held out (0.49 before).
+- **Answers.** `/ledger` streams an `answer` line after the plate: what was understood
+  (intent and names, with alternatives for an ambiguous one), a card for the first named
+  node, and its lens (`graph.lens_bill`, `lens_person`, `lens_org`, `lens_committee`,
+  `lens_states`) — sponsors with the party split, where the bill went, recorded votes by
+  party, who lobbied on it, related bills, the same text elsewhere; a person's seats,
+  weightiest bills, votes on the topic, committees and campaign money; an organization's
+  bills lobbied, payments and its PAC's recipients with their votes; which states have
+  bills and laws on a topic. Every section carries its source, its weakest
+  certification and, when empty, why.
+- **Your representatives.** The page sends the reader's saved districts (never the
+  address); `graph.reps_for` finds today's senators, House member and state legislators,
+  and a bill's lens shows how they voted.
+- **Money.** `contributed_to` edges (PAC → member) from the FEC snapshots' top 25 PACs a
+  member-cycle (81,515 edges, 3,903 PACs, 537 members). A lobbying organization reaches
+  its PAC through `connected_committee` (matched by name: advisory), so an organization's
+  lens shows whom its PAC funded and how they voted on the bills it lobbied — labelled a
+  connection, not a cause.
+- **The same text.** `bill_index same-text` compares every stored bill text by sampled
+  sentences (one in eight, by hash; boilerplate in more than 50 bills dropped) and writes
+  `similar_text` edges (advisory) between legislatures, older to newer.
+
 *Next for the graph:* the General Assembly.
 
 **5. Rebuild what `/newspaper` did.** See the next section — I deleted the old tabbed
@@ -546,9 +584,9 @@ Ask (production)     POST /ledger → NDJSON stream
                      frontend/test.html + js/ledger.js
 
 Search               POST /search, /state/search → JSON
-                     route: fast_route_state → fast_route → route_query (Haiku)
-                     → the hybrid index (bill_doc) → one Haiku relevance check
-                     the $0 regex paths answer first; the model is last resort
+                     route: fast_route_state → fast_route → names (graph_alias) →
+                     intent (rules + Laya) → the hybrid index (bill_doc) → Laya's
+                     relevance check → the graph's answer (lenses); no paid call
 
 Bill detail          POST /bill, /law → NDJSON
                      ~10 sections computed concurrently, flushed as each finishes
@@ -566,7 +604,8 @@ Logging              every agent action → agent_log.json
 
 Routing is one function, `router_agent.route`. On `/ledger` it runs the free checks
 (`classify_question` in `agents/ledger_agent.py`: watch, graph, elections, place, bill
-ID, local) and only then structures the question (fast paths, then the LLM).
+ID, local) and only then structures the question (fast paths, then the names, the
+intent and the rules; no model).
 `/search` and `/state/search` skip the free checks (`plates=False`) and keep their JSON
 shape, which is why `/search` still answers "LA County" as off-topic. That gap is left
 on purpose: `/search` has no user, and the graph replaces both steps.
@@ -614,7 +653,7 @@ no purple.
 
 ```
 Backend       Python · FastAPI · uvicorn · slowapi rate limiting
-Models        Haiku 4.5 — routing, translation (most calls)
+Models        Haiku 4.5 — translation, the relevance check's fallback
               Laya (local, CPU) — the search relevance check; Haiku is its fallback
               Sonnet 5.5 — web search: bill background, upcoming elections, polling
               Opus      — Foundry extractor synthesis only
@@ -903,14 +942,16 @@ held-out, then all 218):
 |---|---|---|---|---|
 | baseline (before Phase 1) | 0.49 / 0.66 | 0.27 / 0.20 | 0.25 / 0.23 | 0.38 / 0.41 |
 | Phase 1, Haiku check | 0.49 / 0.66 | 0.27 / 0.20 | 0.36 / 0.34 | 0.52 / 0.57 |
-| Phase 1, Laya check (live) | 0.49 / 0.66 | 0.27 / 0.20 | 0.33 / 0.31 | 0.50 / 0.56 |
+| Phase 1, Laya check | 0.49 / 0.66 | 0.27 / 0.20 | 0.33 / 0.31 | 0.50 / 0.56 |
+| Phases 2–6, the graph search (live) | 0.77 / 0.82 | 0.77 / 0.86 | 0.33 / 0.29 | 0.52 / 0.57 |
 
 Scored on the labels after my review of 30 held-out rows (2026-09-29; those rows say
 `labelled_by: owner`). An earlier table here was wrong: /ledger allows 20 requests a
 minute, the first runs went faster than that, and `--baseline` scored each 429 as an
 empty answer (the baseline lost about half its answers that way). It now waits and
 retries, and records any other failure as an error. Routing did not change in Phase
-1, so intent and entity links are the same for all three.
+1, so intent and entity links are the same for its rows; Phases 2–6 read the intent and
+the names from the answer line /ledger now streams.
 
 Every phase of the graph search (Phases 1–6) must not lower the held-out numbers.
 
@@ -1067,8 +1108,6 @@ Live problems I know about and haven't fixed. Listed so nobody has to rediscover
 - `Pat Herrity` and `Patrick S. Herrity` are duplicate members in that same store.
 - `topic:` subscriptions are written by the frontend but nothing on the server ever
   polls them. People can subscribe to a topic and will never hear anything.
-- The watchlist regex is anchored, so "show me what I'm watching" misses and falls
-  through to federal bill search.
 - Local search discards the topic (above).
 - **The Virginia record is up to a month old.** Open States publishes its dump monthly.
   During a session (January to March) the legislature's newer actions show on the bill

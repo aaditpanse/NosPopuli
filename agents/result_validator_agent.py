@@ -74,6 +74,13 @@ def laya_order(results, scores, floor=LAYA_FLOOR):
     return [{**r, "_laya": round(s, 3)} for s, _, r in kept]
 
 
+def laya_scores(query, results):
+    """Laya's 0-3 rating of each result for the query, in one batch. Raises
+    when the model does not load (rank_relevant falls back)."""
+    agent = _load_laya()
+    return [o["answers"]["rel"]["score"] for o in agent.predict_batch(laya_states(query, results), _LAYA_QUESTION)]
+
+
 def rank_relevant(query, results, client_fn, min_score=5):
     """The relevance check: Laya when it loads, else the Haiku check (logged,
     fail-open like it). `client_fn` builds the Anthropic client only when
@@ -81,9 +88,7 @@ def rank_relevant(query, results, client_fn, min_score=5):
     if not results:
         return results
     try:
-        agent = _load_laya()
-        scores = [o["answers"]["rel"]["score"] for o in agent.predict_batch(laya_states(query, results), _LAYA_QUESTION)]
-        return laya_order(results, scores)
+        return laya_order(results, laya_scores(query, results))
     except Exception as e:                                   # noqa: BLE001 - the fallback is the point
         print(f"[VALIDATOR] Laya unavailable ({type(e).__name__}: {e}); the Haiku check instead")
     if len(results) > 20:

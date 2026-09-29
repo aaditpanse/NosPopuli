@@ -435,11 +435,9 @@ class KnownDefects(unittest.TestCase):
         self.assertEqual(got["plate"], "uncharted")
         self.assertTrue(got["place"]["slug"], "routed local but to a nameless place")
 
-    @unittest.expectedFailure
     def test_watchlist_matches_a_sentence(self):
-        """ledger_agent.py:68 — `_WATCH_RE` is anchored ^...$, so bare
-        "watching" hits and any sentence form falls through to federal bill
-        search. Listed under README known defects."""
+        """Promoted 2026-09-29: `_WATCH_RE` was anchored ^...$, so bare
+        "watching" hit and any sentence form fell through to bill search."""
         self.assertEqual(classify_question("watching")["plate"], "watching")
         for q in ("show me what I'm watching", "what am I watching?",
                   "show me my watch list"):

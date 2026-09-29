@@ -1,7 +1,7 @@
 {
  "meta": {
   "app_sha": "",
-  "captured": "2026-09-29T03:10:33",
+  "captured": "2026-09-29T21:25:32",
   "notes": "a Virginia bill number, from the bills files, newest session first",
   "volatile": []
  },
@@ -20,7 +20,9 @@
    "confidence": 1.0,
    "query": {
     "_bypass_search_cache": false,
+    "_entities": [],
     "_fast_path": "state_bill_id",
+    "_intent": "explain_law",
     "ambiguity_reason": null,
     "confidence": 1.0,
     "entity_name": null,

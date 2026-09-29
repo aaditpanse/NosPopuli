@@ -186,6 +186,9 @@ class LedgerAsk(BaseModel):
     question: str
     state_code: Optional[str] = None
     max_results: int = 10
+    # The reader's saved districts ({"state": "VA", "cd": 8, "sldu": "35",
+    # "sldl": "8"}), for "your representatives"; never an address.
+    reader: Optional[dict] = None
 
 
 class BillRequest(BaseModel):
@@ -928,6 +931,19 @@ async def _ledger_member_and_search(structured, search_body, question, loop):
     return None, search_out
 
 
+def _answer_section(question, intent, entities, reader, text, laws_only=False, how=None):
+    """The graph's answer to a question: what was understood (the intent and
+    the names, as chips the page can offer to correct), the lens of the
+    first named node, a state comparison for a "which states" ask, and the
+    reader's representatives. Fail-open: without the graph it says so."""
+    import graph
+    lenses = graph.answer_lenses({"intent": intent, "entities": entities}, reader, text, laws_only)
+    return {"section": "answer", "intent": intent, "how": how,
+            "understood": [{k: e.get(k) for k in ("surface", "kind", "node_id", "name", "ambiguous", "candidates")}
+                           for e in entities or []],
+            **lenses}
+
+
 def _graph_plate(ask):
     """Run a parsed graph question. None means 'fall through': the graph
     is unavailable, empty, or does not know the person or seat named, and
@@ -968,8 +984,13 @@ async def ledger_ask(request: Request, body: LedgerAsk):
     if plate == "graph":
         answer = await asyncio.to_thread(_graph_plate, classified["ask"])
         if answer is not None:
+            from agents.router_agent import rule_intent
+            entities = await asyncio.to_thread(graph.link_entities, body.question)
+            intent = rule_intent(body.question, entities, "graph", classified["ask"])
+            lens = await asyncio.to_thread(_answer_section, body.question, intent, entities, body.reader,
+                                           classified["ask"].get("topic"))
             return _ndjson_lines({"section": "plate", "plate": "graph",
-                                  "question": body.question, **answer}, {"section": "done"})
+                                  "question": body.question, **answer}, lens, {"section": "done"})
         # The graph parsed the shape but knows neither the person nor the
         # seat (or is not there at all): answer the way we did before.
         classified = await asyncio.to_thread(routed, False)
@@ -1158,8 +1179,17 @@ async def ledger_ask(request: Request, body: LedgerAsk):
         "cached": search_out.get("cached"),
     }
 
+    answer_line = None
+    if structured:
+        answer_line = await asyncio.to_thread(
+            _answer_section, body.question, structured.get("_intent"), structured.get("_entities") or [], body.reader,
+            " ".join(structured.get("keywords") or []) or body.question, structured.get("status") == "enacted",
+            structured.get("_intent_how"))
+
     async def gen():
         yield json.dumps(plate_payload) + "\n"
+        if answer_line:
+            yield json.dumps(answer_line, default=str) + "\n"
         if member:
             yield json.dumps({
                 "section": "member",

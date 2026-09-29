@@ -1,7 +1,7 @@
 {
  "meta": {
-  "app_sha": "33e5b54",
-  "captured": "2026-09-20T22:37:32",
+  "app_sha": "",
+  "captured": "2026-09-29T21:24:42",
   "notes": "federal bill-id fast path \u2014 the $0 regex route",
   "volatile": []
  },
@@ -19,7 +19,9 @@
    "confidence": 1.0,
    "query": {
     "_bypass_search_cache": false,
+    "_entities": [],
     "_fast_path": "bill_id",
+    "_intent": "explain_law",
     "ambiguity_reason": null,
     "confidence": 1.0,
     "congress_numbers": [

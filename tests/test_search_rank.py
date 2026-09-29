@@ -326,6 +326,32 @@ class LayaRelevanceTest(unittest.TestCase):
             haiku.assert_called_once_with("tiktok", rows, "client", 5, True)
 
 
+class SameTextTest(unittest.TestCase):
+    """search/bill_index's same-text detection (model legislation), pure parts."""
+
+    TEXT = ("A dealer shall not sell a vehicle without a repair manual available to the owner at fair cost. "
+            "The attorney general shall enforce this act against any manufacturer who violates it. "
+            "A manufacturer shall provide diagnostic tools to independent repair shops on fair and reasonable terms.")
+
+    def test_sentences_hash_stably_and_ignore_numbering(self):
+        from search.bill_index import sentence_hashes
+        a = sentence_hashes("Section 1. " + self.TEXT, sample=1)
+        self.assertEqual(a, sentence_hashes("Sec. 12. " + self.TEXT.replace("fair cost", "fair cost"), sample=1))
+        self.assertEqual(len(a), 3)
+        self.assertEqual(sentence_hashes("Too short to count.", sample=1), [])
+
+    def test_only_other_legislatures_count(self):
+        from search.bill_index import same_text_pairs, sentence_hashes
+        h = sentence_hashes(self.TEXT, sample=1)
+        other = sentence_hashes("An act concerning fishing licenses for residents of the county and the fees charged.",
+                                sample=1)
+        bills = [("va1", "va", h), ("co9", "co", h), ("co10", "co", other), ("va2", "va", h)]
+        got = same_text_pairs(bills, min_shared=2, min_containment=0.5)
+        self.assertEqual([(a, b) for a, b, _, _ in got], [("va1", "co9"), ("co9", "va2")])
+        # A sentence in too many bills is boilerplate and says nothing.
+        self.assertEqual(same_text_pairs(bills, min_shared=2, min_containment=0.5, max_df=2), [])
+
+
 class StateSearchDocTest(unittest.TestCase):
     """State bills in bill_doc (plan step 11): a jurisdiction on every row,
     and a result that is not a GovInfo package."""

@@ -1537,7 +1537,10 @@ class VocabularyTest(unittest.TestCase):
             "contains", "has_body", "has_seat", "holds", "represents", "sponsored", "voted_on",
             "considered", "elected_in", "for_seat", "signed", "vetoed", "enacted_as", "member_of",
             "referred_to", "reported", "related_to", "campaign_committee", "nominated", "lobbied_on",
-            "lobbied_for", "connected_committee"})
+            "lobbied_for", "connected_committee",
+            # 2026-09-29, the graph search: PAC -> member (FEC pas2) and
+            # near-identical bill text (derived).
+            "contributed_to", "similar_text"})
 
 
 class ParseInstrumentTest(unittest.TestCase):
@@ -3170,3 +3173,65 @@ class StateSplitRecordTest(unittest.TestCase):
                 self.assertIn("Alex Q. Askew", ask[0]["props"]["aliases"])
                 holds = [e for e in edges if e["predicate"] == "holds" and e["src"] == ask[0]["id"]]
                 self.assertEqual(len(holds), 2)
+
+
+class NamesTest(unittest.TestCase):
+    """The name table (graph_alias) and the linker's choice, pure parts."""
+
+    def test_the_forms_people_type(self):
+        self.assertEqual(graph.alias_norm("O'Rourke, Beto!"), "orourke beto")
+        self.assertIn(("ben chafin", "nickname"), graph.person_aliases('A. Benton "Ben" Chafin'))
+        leg = {"name": {"first": "Bernard", "last": "Sanders", "nickname": "Bernie", "official_full": "Bernard Sanders"},
+               "id": {"wikipedia": "Bernie Sanders"}}
+        got = dict(graph.person_aliases("Bernard Sanders", leg))
+        self.assertEqual((got["bernie sanders"], got["sanders"]), ("legislators", "surname"))
+        cm = dict(graph.org_aliases("Senate Committee on Banking, Housing, and Urban Affairs",
+                                    {"natural_key": "us/committee/ssbk00"}))
+        self.assertEqual(cm["senate banking committee"], "committee")
+        self.assertIn(("pfizer", "name"), graph.org_aliases("PFIZER INC", {}))
+        acts = dict(graph.act_aliases("National Defense Authorization Act for Fiscal Year 2026", (), True))
+        self.assertEqual((acts["national defense authorization act"], acts["ndaa"]), ("title", "acronym"))
+        self.assertNotIn("ndaa", dict(graph.act_aliases("National Defense Authorization Act", (), False)))
+
+    def test_the_longest_heaviest_name_wins_and_ambiguity_is_said(self):
+        spans = graph.alias_spans("how did Bernie Sanders vote on the Inflation Reduction Act")
+        hits = {"bernie sanders": [("p1", "person", 2.0, "Bernard Sanders", "legislators")],
+                "sanders": [("p1", "person", 0.6, "Bernard Sanders", "surname")],
+                "inflation reduction act": [("b1", "bill", 3.5, "IRA 2022", "title"), ("b2", "bill", 3.0, "IRA 2025", "title")]}
+        got = graph.choose_links(spans, hits)
+        self.assertEqual([(e["surface"], e["node_id"]) for e in got],
+                         [("bernie sanders", "p1"), ("inflation reduction act", "b1")])
+        self.assertTrue(got[1]["ambiguous"])
+        # A lower-case surname and a stop word alone are no names; a state is.
+        self.assertEqual(graph.choose_links(graph.alias_spans("sanders"), {"sanders": hits["sanders"]}), [])
+        self.assertEqual(graph.choose_links(graph.alias_spans("texas"), {"texas": [("j", "place", 1.0, "Texas", "name")]})[0]["kind"],
+                         "place")
+        self.assertEqual(graph.alias_spans("Pelosi's record")[0][2], "pelosi")
+        # A law's initials count typed in capitals only: "data" is a word.
+        acro = {"data": [("b9", "bill", 2.0, "DATA Act", "acronym")]}
+        self.assertEqual(graph.choose_links(graph.alias_spans("data privacy law"), acro), [])
+        self.assertEqual(graph.choose_links(graph.alias_spans("the DATA act"), acro)[0]["node_id"], "b9")
+
+    def test_where_a_row_opens(self):
+        self.assertEqual(graph.instrument_link("instrument/us/117/hr/5376")["number"], 5376)
+        self.assertEqual(graph.instrument_link("instrument/va/2026/hb/1")["type"], "state_bill")
+        self.assertIsNone(graph.instrument_link("ocd-person/x"))
+        self.assertEqual(graph._person_link({"bioguide": "K000384"}, "Tim Kaine"), {"type": "member", "bioguide": "K000384"})
+        self.assertEqual(graph._person_link({"jurisdiction": "ocd-division/country:us/state:va", "openstates_id": "ocd-person/1"},
+                                            "Dave Marsden")["ocd_person_id"], "ocd-person/1")
+
+    def test_the_readers_districts(self):
+        self.assertEqual(graph.reader_districts({"state": "va", "geoid": "5108",
+                                                 "state_legislative": {"upper": "51035", "lower": "51008"}}),
+                         {"state": "VA", "cd": 8, "sldu": "35", "sldl": "8"})
+        self.assertEqual(graph.reader_districts({}), {"state": None, "cd": None, "sldu": None, "sldl": None})
+        self.assertEqual(graph.reader_districts({"state": "WY", "geoid": "5600"})["cd"], 0)
+
+    def test_a_pac_reaches_the_members_it_funded(self):
+        snap = {"meta": {"cycle": 2026}, "members": {"W000805": {
+            "committee_id": "C1", "committee_name": "WARNER", "totals": {}, "pac_total": 5000,
+            "top_pacs": [{"name": "DUKEPAC", "committee_id": "C00083535", "amount": 2500.0, "receipts": 1}]}}}
+        nodes, edges, _ = graph.build_money([snap], {"W000805": "p1"})
+        c = [e for e in edges if e["predicate"] == "contributed_to"]
+        self.assertEqual((c[0]["src"], c[0]["dst"], c[0]["props"]["amount"], c[0]["props"]["of_top"]),
+                         (graph.node_id("organization", "fec/committee/C00083535"), "p1", 2500.0, graph.FEC_TOP_PACS))

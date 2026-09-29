@@ -15,6 +15,7 @@ same space.
     python -m search.bill_index embed                  # embed new or changed documents
     python -m search.bill_index salience               # each bill's weight from the graph
     python -m search.bill_index text [us|st ...]       # index each bill's latest text
+    python -m search.bill_index same-text [us|st ...]  # near-identical texts across legislatures
     python -m search.bill_index query "text"           # nearest bills
     python -m search.bill_index search "text"          # full-text + nearest, fused
     python -m search.bill_index latency                # query embedding time here
@@ -355,8 +356,12 @@ def state_texts(st, session):
     whose furthest stored version has text (graph.default_version)."""
     import graph
     bills = json.loads(graph.data_path("state_bills", state=st, session=session).read_text())["bills"]
+    mpath = graph.data_path("state_text", state=st, session=session, name="manifest.json")
+    manifest = json.loads(mpath.read_text()) if mpath.exists() else {}
+    if not any(e.get("status") == "ok" for e in manifest.values()):
+        return
     for key, b in bills.items():
-        v = graph.default_version(graph.state_versions(st, session, b))
+        v = graph.default_version(graph.state_versions(st, session, b, manifest))
         if v and v["text"]:
             text = graph.state_version_text(st, session, v)
             if text:
@@ -432,6 +437,108 @@ def load_texts(which=None, force=False):
             print(json.dumps({"scope": scope, "read": out[scope][0], "indexed": out[scope][1],
                               "secs": round(time.time() - t0)}), flush=True)
     return out
+
+
+# ------------------------------------------------------------ same text
+#
+# Model legislation: the same bill text in two legislatures. Every bill's
+# latest text becomes sentences, normalized to its words (digits dropped, so
+# renumbered sections still agree), hashed, and sampled one in eight by the
+# hash itself (every copy of a sentence is kept or dropped alike). Two bills
+# of different legislatures that share at least SAME_MIN_SHARED sampled
+# sentences, covering at least SAME_MIN_CONTAINMENT of the shorter one, are
+# the same text. A sentence in more than SAME_MAX_DF bills is boilerplate
+# (enacting clauses, severability) and says nothing. The edges are
+# similar_text, advisory: derived here, confirmed by no source.
+
+SAME_SAMPLE, SAME_MIN_WORDS = 8, 8
+SAME_MIN_SHARED, SAME_MIN_CONTAINMENT, SAME_MAX_DF = 4, 0.5, 50
+
+
+def sentence_hashes(text, sample=SAME_SAMPLE, min_words=SAME_MIN_WORDS):
+    """The sampled sentence hashes of one bill text, as a sorted unique
+    list of ints. Stable across runs (blake2b, not Python's salted hash).
+    Pure."""
+    out = set()
+    for sent in re.split(r"[.;:!?]\s+|\s{2,}", text or ""):
+        words = re.findall(r"[a-z]+", sent.lower())
+        if len(words) < min_words:
+            continue
+        h = int.from_bytes(hashlib.blake2b(" ".join(words).encode(), digest_size=8).digest(), "big", signed=True)
+        if h % sample == 0:
+            out.add(h)
+    return sorted(out)
+
+
+def same_text_pairs(bills, min_shared=SAME_MIN_SHARED, min_containment=SAME_MIN_CONTAINMENT,
+                    max_df=SAME_MAX_DF):
+    """Pairs of bills from different jurisdictions with the same text, from
+    [(instrument_id, jurisdiction, [hashes])]: [(a, b, shared, containment)]
+    with a before b in the list. Plain dicts: the one-in-eight sample keeps
+    a million bills to about 16 million entries. Pure."""
+    by_hash = {}
+    for i, (_, _, hashes) in enumerate(bills):
+        for h in hashes:
+            by_hash.setdefault(h, []).append(i)
+    shared = {}
+    for members in by_hash.values():
+        if not 2 <= len(members) <= max_df:
+            continue
+        for x in range(len(members)):
+            for y in range(x + 1, len(members)):
+                i, j = members[x], members[y]
+                if bills[i][1] != bills[j][1]:
+                    shared[(i, j)] = shared.get((i, j), 0) + 1
+    out = []
+    for (i, j), k in sorted(shared.items()):
+        contain = k / min(len(bills[i][2]), len(bills[j][2]))
+        if k >= min_shared and contain >= min_containment:
+            out.append((bills[i][0], bills[j][0], k, round(contain, 3)))
+    return out
+
+
+def load_same_text(which=None):
+    """Compute the same-text pairs over every stored bill text (or `which`:
+    "us" and state codes) and replace the derived/similar_text scope. Its own
+    unit: it reads every text once. Returns the number of edges."""
+    import graph
+    from sources import govinfo
+    from correspondence.db import _get_pool, init_db
+    init_db()
+    which = which or ["us"] + sorted(graph.LEGISLATURES)
+    bills, dates = [], {}
+    if "us" in which:
+        for c in range(govinfo.FIRST_CONGRESS, graph.current_session()[0] + 1):
+            for iid, _, text in federal_texts(c):
+                bills.append((iid, US_DIV, sentence_hashes(text)))
+    for st in [w for w in which if w != "us"]:
+        for sid in graph.state_sessions(st):
+            for iid, _, text in state_texts(st, sid):
+                bills.append((iid, graph.state_div(st), sentence_hashes(text)))
+    print(json.dumps({"bills": len(bills), "sampled_sentences": sum(len(h) for _, _, h in bills)}), flush=True)
+    pairs = same_text_pairs(bills)
+    with _get_pool().connection() as conn, conn.cursor() as cur:
+        cur.execute("SELECT instrument_id, coalesce(introduced, latest_action_date) FROM bill_doc WHERE instrument_id = ANY(%s)",
+                    (list({p[0] for p in pairs} | {p[1] for p in pairs}),))
+        dates = {i: d for i, d in cur.fetchall()}
+        edges = []
+        for a, b, shared, contain in pairs:
+            # The older points at the newer: who had the text first.
+            first, then = (a, b) if (dates.get(a) or datetime_max()) <= (dates.get(b) or datetime_max()) else (b, a)
+            edges.append({"src": first, "predicate": "similar_text", "dst": then, "valid_from": None, "valid_to": None,
+                          "certification": "advisory", "source_id": "nospopuli", "source_ref": f"same-text/{first}/{then}",
+                          "props": {"jurisdiction": US_DIV, "shared_sentences": shared, "containment": contain,
+                                    "method": f"sampled sentence hashes (1 in {SAME_SAMPLE}), at least {SAME_MIN_SHARED} "
+                                              f"shared covering {SAME_MIN_CONTAINMENT:.0%} of the shorter bill"}})
+        with conn.transaction():
+            graph.load_scope(cur, "derived/similar_text", [], edges)
+    print(json.dumps({"pairs": len(pairs), "edges": len(edges)}), flush=True)
+    return len(edges)
+
+
+def datetime_max():
+    import datetime
+    return datetime.date.max
 
 
 # ----------------------------------------------------------------- salience
@@ -743,6 +850,8 @@ if __name__ == "__main__":
             print(st, json.dumps(load_state_docs(st)))
     elif cmd == "text":
         load_texts(args or None)
+    elif cmd == "same-text":
+        load_same_text(args or None)
     elif cmd == "salience":
         t0 = time.time()
         print(f"{compute_salience()} bill(s) re-weighted in {time.time() - t0:.0f} s")

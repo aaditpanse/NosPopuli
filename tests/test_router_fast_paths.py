@@ -198,3 +198,62 @@ class StateFastRoute(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class IntentTest(unittest.TestCase):
+    """router_agent's intent rules and the structured question without a model."""
+
+    def ent(self, kind, surface="x", name="X", source="name"):
+        return {"kind": kind, "surface": surface, "name": name, "source": source, "node_id": kind + "1",
+                "ambiguous": False, "candidates": []}
+
+    def test_the_shape_decides(self):
+        from agents.router_agent import rule_intent
+        p, b, o = self.ent("person"), self.ent("bill", "chips act"), self.ent("organization")
+        cases = [("which states passed right to repair", [], "compare_states"),
+                 ("copycat bills on bathroom access", [], "copied_bills"),
+                 ("who represents Virginia's 8th district", [], "seat_holder"),
+                 ("who voted against the CHIPS Act", [b], "who_voted"),
+                 ("how did Tim Kaine vote on the NDAA", [p], "how_voted"),
+                 ("how did my senators vote on the budget", [], "how_voted"),
+                 ("who lobbied on the CHIPS Act", [b], "money"),
+                 ("Pfizer", [o], "organization"),
+                 ("Jeion Ward", [p], "person_record"),
+                 ("chips act", [b], "explain_law"),
+                 ("tiktok ban", [], None)]
+        for q, ents, want in cases:
+            self.assertEqual(rule_intent(q, ents), want, q)
+        pres = self.ent("person", "trump", "Donald J. Trump", "president")
+        self.assertEqual(rule_intent("laws passed under trump", [pres]), "find_bills")
+        self.assertEqual(rule_intent("anything", [], "graph", {"ask": "votes"}), "how_voted")
+        self.assertEqual(rule_intent("anything", [], "elections"), "elections")
+
+    def test_structured_without_a_model(self):
+        from agents.router_agent import structure_free
+        s = structure_free("healthcare bills in virginia", "find_bills", [])
+        self.assertEqual((s["jurisdiction"], s["state_code"], s["query_type"], s["time_filter"]),
+                         ("state", "VA", "legislation", False))
+        s = structure_free("laws signed in 2019", "find_bills", [])
+        self.assertEqual((s["status"], s["time_filter"], s["congress_numbers"]), ("enacted", True, [116]))
+        b = self.ent("bill", "inflation reduction act", "H.R. 5376: Inflation Reduction Act of 2022")
+        s = structure_free("Inflation Reduction Act", "explain_law", [b])
+        self.assertEqual((s["query_subtype"], s["named_entity"]), ("named_entity", "Inflation Reduction Act of 2022"))
+        k = self.ent("person", "tim kaine", "Tim Kaine")
+        s = structure_free("how did Tim Kaine vote on defense", "how_voted", [k])
+        self.assertEqual([i["kind"] for i in s["intents"]], ["member", "topic"])
+        self.assertEqual(structure_free("Tim Kaine", "person_record", [k])["query_type"], "member")
+        self.assertEqual(structure_free("give me a bill", "find_bills", [])["query_subtype"], "browse")
+        self.assertEqual(structure_free("best pizza", "off_topic", [])["query_type"], "off_topic")
+
+    def test_the_losses_the_tier2_tuning_rows_found(self):
+        # 2026-09-29: rules that cost the graph search bills on the tuning rows.
+        from agents.router_agent import near_state, rule_intent, structure_free
+        self.assertEqual(near_state("HealthCare bill in Viriginia"), "VA")
+        self.assertIsNone(near_state("healthcare bills"))
+        self.assertEqual(structure_free("Florida abortion laws", "find_bills", [])["status"], "any")
+        self.assertEqual(structure_free("laws passed under trump", "find_bills", [])["status"], "enacted")
+        law = self.ent("bill", "bipartisan infrastructure law")
+        self.assertEqual(rule_intent("what did the Bipartisan Infrastructure Law fund", [law]), "explain_law")
+        cruz, bill = self.ent("person", "ted cruz", "Ted Cruz"), self.ent("bill", "infrastructure bill")
+        s = structure_free("did Ted Cruz vote for the infrastructure bill", "how_voted", [cruz, bill])
+        self.assertEqual((s["query_type"], "infrastructure" in s["keywords"]), ("legislation", True))

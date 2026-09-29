@@ -1,7 +1,7 @@
 {
  "meta": {
-  "app_sha": "33e5b54",
-  "captured": "2026-09-20T22:37:33",
+  "app_sha": "",
+  "captured": "2026-09-29T21:28:31",
   "notes": "correctly off_topic \u2014 the control for the LA County defect",
   "volatile": []
  },
@@ -20,8 +20,11 @@
    "confidence": 1.0,
    "query": {
     "_bypass_search_cache": false,
+    "_entities": [],
+    "_intent": "off_topic",
+    "_intent_how": "laya 0.00",
     "ambiguity_reason": null,
-    "bill_type": null,
+    "bill_type": "all",
     "confidence": 1.0,
     "congress_numbers": [
      119,
@@ -30,19 +33,23 @@
     "entity_name": null,
     "full_history": false,
     "intents": [],
-    "jurisdiction": null,
-    "keywords": [],
+    "jurisdiction": "federal",
+    "keywords": [
+     "best",
+     "pizza",
+     "brooklyn"
+    ],
     "max_results_override": null,
     "named_entity": null,
-    "query_subtype": null,
+    "query_subtype": "concept",
     "query_type": "off_topic",
-    "result_count": null,
+    "result_count": 5,
     "specific_bill": null,
     "state_code": null,
-    "status": null,
+    "status": "any",
     "time_filter": false,
-    "time_range": null,
-    "topic": "restaurant recommendation"
+    "time_range": "last 5 years",
+    "topic": "best pizza brooklyn"
    },
    "query_type": "off_topic",
    "results": []

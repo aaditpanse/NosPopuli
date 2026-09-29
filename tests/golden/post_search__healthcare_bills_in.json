@@ -1,7 +1,7 @@
 {
  "meta": {
   "app_sha": "",
-  "captured": "2026-09-27T14:09:48",
+  "captured": "2026-09-29T21:28:34",
   "notes": "state query via /search",
   "volatile": []
  },
@@ -16,12 +16,34 @@
  "response": {
   "json": {
    "ambiguity_reason": null,
-   "confidence": 0.9,
+   "confidence": 1.0,
    "query": {
     "_bypass_search_cache": false,
+    "_entities": [
+     {
+      "ambiguous": false,
+      "candidates": [
+       {
+        "kind": "place",
+        "name": "Virginia",
+        "node_id": "ocd-division/country:us/state:va",
+        "weight": 1.0
+       }
+      ],
+      "kind": "place",
+      "name": "Virginia",
+      "node_id": "ocd-division/country:us/state:va",
+      "source": "name",
+      "start": 3,
+      "surface": "virginia",
+      "weight": 1.0
+     }
+    ],
+    "_intent": "find_bills",
+    "_intent_how": "laya 0.17",
     "ambiguity_reason": null,
     "bill_type": "all",
-    "confidence": 0.9,
+    "confidence": 1.0,
     "congress_numbers": [
      119,
      118
@@ -48,30 +70,12 @@
     "status": "any",
     "time_filter": false,
     "time_range": "last 5 years",
-    "topic": "healthcare legislation Virginia"
+    "topic": "healthcare"
    },
    "query_type": "state_legislation",
    "results": [
     {
-     "chapter": null,
-     "date_issued": "2026-01-14",
-     "identifier": "HB 1245",
-     "is_law": false,
-     "is_state_bill": true,
-     "jurisdiction": "ocd-division/country:us/state:va",
-     "latest_action": "Stricken from docket by Appropriations (22-Y 0-N)",
-     "latest_action_date": "2026-02-13",
-     "number": 1245,
-     "path": "/state/va/2026/hb/1245",
-     "policy_area": null,
-     "session": "2026",
-     "sponsor": "Rozia A. Henson, Jr.",
-     "stage": "committee",
-     "state": "va",
-     "title": "Virginia Health Care Fund; additional funding and uses.",
-     "type": "hb"
-    },
-    {
+     "_laya": 1.713,
      "chapter": null,
      "date_issued": "2018-01-19",
      "identifier": "SB 956",
@@ -91,6 +95,7 @@
      "type": "sb"
     },
     {
+     "_laya": 1.678,
      "chapter": null,
      "date_issued": "2018-01-19",
      "identifier": "HB 1549",
@@ -110,6 +115,27 @@
      "type": "hb"
     },
     {
+     "_laya": 1.624,
+     "chapter": null,
+     "date_issued": "2026-01-14",
+     "identifier": "HB 1245",
+     "is_law": false,
+     "is_state_bill": true,
+     "jurisdiction": "ocd-division/country:us/state:va",
+     "latest_action": "Stricken from docket by Appropriations (22-Y 0-N)",
+     "latest_action_date": "2026-02-13",
+     "number": 1245,
+     "path": "/state/va/2026/hb/1245",
+     "policy_area": null,
+     "session": "2026",
+     "sponsor": "Rozia A. Henson, Jr.",
+     "stage": "committee",
+     "state": "va",
+     "title": "Virginia Health Care Fund; additional funding and uses.",
+     "type": "hb"
+    },
+    {
+     "_laya": 1.536,
      "chapter": "372",
      "date_issued": "2022-01-11",
      "identifier": "HB 642",
@@ -129,6 +155,7 @@
      "type": "hb"
     },
     {
+     "_laya": 1.536,
      "chapter": "373",
      "date_issued": "2022-01-21",
      "identifier": "SB 719",
@@ -146,63 +173,6 @@
      "state": "va",
      "title": "Health care coverage; premium payments for certain service members.",
      "type": "sb"
-    },
-    {
-     "chapter": null,
-     "date_issued": "2025-01-06",
-     "identifier": "HB 1903",
-     "is_law": false,
-     "is_state_bill": true,
-     "jurisdiction": "ocd-division/country:us/state:va",
-     "latest_action": "Left in Appropriations",
-     "latest_action_date": "2025-02-04",
-     "number": 1903,
-     "path": "/state/va/2025/hb/1903",
-     "policy_area": null,
-     "session": "2025",
-     "sponsor": "Rodney T. Willett",
-     "stage": "committee",
-     "state": "va",
-     "title": "Virginia Health Workforce Development Authority; Virginia Nursing Workforce Center established; reporting and monitoring of health care workforce programs; residency slots; work group; report.",
-     "type": "hb"
-    },
-    {
-     "chapter": "251",
-     "date_issued": "2022-01-11",
-     "identifier": "SB 469",
-     "is_law": true,
-     "is_state_bill": true,
-     "jurisdiction": "ocd-division/country:us/state:va",
-     "latest_action": "Approved by Governor-Chapter 251 (effective 7/1/22)",
-     "latest_action_date": "2022-04-08",
-     "number": 469,
-     "path": "/state/va/2022/sb/469",
-     "policy_area": null,
-     "session": "2022",
-     "sponsor": "Jennifer L. McClellan",
-     "stage": "law",
-     "state": "va",
-     "title": "Virginia Health Benefit Exchange; annual marketing plan.",
-     "type": "sb"
-    },
-    {
-     "chapter": "250",
-     "date_issued": "2022-01-11",
-     "identifier": "HB 312",
-     "is_law": true,
-     "is_state_bill": true,
-     "jurisdiction": "ocd-division/country:us/state:va",
-     "latest_action": "Approved by Governor-Chapter 250 (effective 7/1/22)",
-     "latest_action_date": "2022-04-08",
-     "number": 312,
-     "path": "/state/va/2022/hb/312",
-     "policy_area": null,
-     "session": "2022",
-     "sponsor": "Sam Rasoul",
-     "stage": "law",
-     "state": "va",
-     "title": "Virginia Health Benefit Exchange; annual marketing plan.",
-     "type": "hb"
     }
    ],
    "state_code": "VA"

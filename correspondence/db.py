@@ -309,6 +309,17 @@ def _init_db():
                 updated_at TIMESTAMPTZ DEFAULT NOW()
             );
             CREATE INDEX IF NOT EXISTS idx_bill_text_doc_tsv ON bill_text_doc USING gin (tsv);
+            -- Every name a graph node goes by, normalized (graph.build_aliases),
+            -- for finding the people, acts, committees and organizations a
+            -- question names (graph.link_entities).
+            CREATE TABLE IF NOT EXISTS graph_alias (
+                alias_norm TEXT NOT NULL,
+                node_id TEXT NOT NULL,
+                kind TEXT NOT NULL,
+                weight REAL NOT NULL,
+                source TEXT NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS idx_graph_alias_norm ON graph_alias (alias_norm);
         """)
         # One vector per bill and embedding space. Needs pgvector; without
         # it the table is not made and search keeps its full-text path.

@@ -344,6 +344,9 @@
       border-bottom: 1px solid var(--rule); min-width: 0;
     }
     .mrow > * { min-width: 0; }
+    /* The graph answer's rows: name and detail, then the date or seat; stacked on a phone. */
+    .ans-row { grid-template-columns: 1fr auto; }
+    @media (max-width: 600px) { .ans-row { grid-template-columns: 1fr; row-gap: 4px; } }
     .mrow[onclick]:hover { background: var(--aged); }
     .sub-lbl {
       font-family: var(--fm); font-size: 9.5px; letter-spacing: .16em; text-transform: uppercase;

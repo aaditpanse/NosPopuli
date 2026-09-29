@@ -22,6 +22,7 @@
     placeSource: "",
     district: "",
     geoid: "",
+    stateLegislative: null,
     rep: "",
     placeBusy: false,
     placeError: "",
@@ -60,6 +61,7 @@
         state.placeSource = raw.placeSource || "typed";
         state.district = raw.district || "";
         state.geoid = raw.geoid || "";
+        state.stateLegislative = raw.stateLegislative || null;
         state.rep = raw.rep || "";
       }
       if (typeof raw.notifyMoves === "boolean") state.notifyMoves = raw.notifyMoves;
@@ -72,7 +74,7 @@
       watching: state.watching, email: state.email,
       placeName: state.placeName, stateCode: state.stateCode,
       placeConfirmed: state.placeConfirmed, placeSource: state.placeSource,
-      district: state.district, geoid: state.geoid, rep: state.rep,
+      district: state.district, geoid: state.geoid, stateLegislative: state.stateLegislative, rep: state.rep,
       notifyMoves: state.notifyMoves,
       notifyWeekly: state.notifyWeekly, searchCount: state.searchCount,
     }));
@@ -207,6 +209,7 @@
     if (!q) return goHome();
     if (!opts || !opts.fromHistory) history.pushState({}, "", askPath(q));
     state.loading = true;
+    state.answer = null;
     state.ledger = {
       question: q,
       pending: true,
@@ -225,10 +228,15 @@
     let personOnly = false;
     let personHandled = false;
     try {
+      const body = { question: q, state_code: state.stateCode || null, max_results: 10 };
+      // Only a confirmed place is sent — a guess is not the reader saying so.
+      if (state.placeConfirmed) {
+        body.reader = { state: state.stateCode, geoid: state.geoid, state_legislative: state.stateLegislative || null };
+      }
       const res = await fetch("/ledger", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: q, state_code: state.stateCode || null, max_results: 10 }),
+        body: JSON.stringify(body),
       });
       if (!res.ok) throw new Error("Ask failed");
       await readNdjson(res, (msg) => {
@@ -257,6 +265,10 @@
           if (state.view !== "ledger") go("ledger");
           else render();
           loadElections(msg.state_code);
+        }
+        if (section === "answer") {
+          state.answer = msg;
+          if (state.view === "ledger") scheduleRender();
         }
         if (personHandled) return;
         if (section === "member" && state.ledger) {
@@ -599,6 +611,7 @@
     state.placeName = NAME_BY_STATE[code] || code;
     state.district = data.district_label || "";
     state.geoid = data.geoid || "";
+    state.stateLegislative = data.state_legislative || null;
     state.rep = (data.representative && data.representative.name) || "";
     state.placeSource = source;
     state.placeConfirmed = true;
@@ -645,6 +658,7 @@
     state.placeSource = "";
     state.district = "";
     state.geoid = "";
+    state.stateLegislative = null;
     state.rep = "";
     state.placeConfirmed = false;
     state.placeError = "";
@@ -1061,6 +1075,136 @@
     </div>`;
   }
 
+  // The "answer" section the router streams right after the plate line, for
+  // plate "ledger" and plate "graph": what the question was understood to
+  // mean, the one entity it centers on if any, and up to a handful of
+  // certified/ingested/advisory sections. Rendered the same way in both views.
+  const INTENT_LABELS = {
+    find_bills: "Bills on a topic",
+    person_record: "A person's record",
+    how_voted: "How someone voted",
+    who_voted: "Who voted",
+    money: "Money and lobbying",
+    compare_states: "Across the states",
+    copied_bills: "The same bill elsewhere",
+    seat_holder: "Who holds a seat",
+    committee: "A committee",
+    organization: "An organization",
+    explain_law: "One bill or law",
+    local_place: "A place",
+    elections: "Elections",
+    off_topic: "Not about government",
+  };
+  const CERT_TIP = {
+    certified: "Confirmed by an independent source.",
+    ingested: "From the source, not independently confirmed.",
+    advisory: "Derived by NosPopuli, not confirmed.",
+  };
+  // Mirrors billCall(): builds the onclick for whichever opener a row's link
+  // names. An unrecognized or missing link leaves the row as plain text.
+  function answerLinkCall(link) {
+    if (!link) return null;
+    if (link.type === "bill") return `openBill(${Number(link.congress)},${JSON.stringify(link.bill_type)},${Number(link.number)})`;
+    if (link.type === "state_bill") return `openStateBill(${JSON.stringify(link.state)},${JSON.stringify(link.session)},${JSON.stringify(link.bill_type)},${JSON.stringify(link.number)})`;
+    if (link.type === "member") return `openMember(${JSON.stringify(link.bioguide)})`;
+    if (link.type === "state_member") return `openStateMember(${JSON.stringify(link.state)},${JSON.stringify(link.ocd_person_id)})`;
+    if (link.type === "organization") return `ask(${JSON.stringify(link.name)})`;
+    return null;
+  }
+  function answerLinkText(text, link) {
+    const call = answerLinkCall(link);
+    if (!call) return esc(text);
+    return `<a href="javascript:void(0)" onclick='${esc(call)}' style="color:var(--accent);text-decoration:none">${esc(text)}</a>`;
+  }
+  function certPill(level) {
+    if (!level) return "";
+    const color = level === "certified" ? "#2f5d2a" : level === "advisory" ? "var(--muted)" : "var(--accent)";
+    return `<span class="chip" title="${esc(CERT_TIP[level] || "")}" style="color:${color};border-color:currentColor;flex:none">${esc(level)}</span>`;
+  }
+  function understoodBlock(A) {
+    const label = INTENT_LABELS[A.intent] || A.intent || "";
+    const entities = (A.understood || []).map(u => {
+      const chip = `<span class="chip">${esc(u.name)} · ${esc(u.kind)}</span>`;
+      if (!u.ambiguous) return chip;
+      const others = (u.candidates || []).filter(c => c.node_id !== u.node_id);
+      if (!others.length) return chip;
+      // Escaped like answerLinkText's onclick: a lobbying org's name comes
+      // from public filings and may hold a quote.
+      const btns = others.map(c => `<button class="sbtn" type="button" onclick="ask(${esc(JSON.stringify(c.name))})">${esc(c.name)}</button>`).join("");
+      return `${chip} <span class="meta" style="margin:0">or</span> ${btns}`;
+    }).join(" ");
+    return `<div style="margin-bottom:18px">
+      <div class="lbl" style="margin-bottom:8px">Understood as</div>
+      <div style="font-family:var(--fb);font-size:15px;color:var(--ink);margin-bottom:${entities ? "8px" : "0"}">${esc(label)}</div>
+      ${entities ? `<div class="chips" style="align-items:center">${entities}</div>` : ""}
+    </div>`;
+  }
+  function answerFocusBlock(A) {
+    const f = A.focus;
+    if (!f) return "";
+    const facts = f.facts || {};
+    const bits = [];
+    if (facts.is_law) bits.push("Became law");
+    if (facts.latest_action) bits.push(esc(facts.latest_action) + (facts.latest_action_date ? " · " + esc(fmtDate(facts.latest_action_date)) : ""));
+    if (facts.introduced) bits.push("Introduced " + esc(fmtDate(facts.introduced)));
+    if (facts.policy_area) bits.push(esc(facts.policy_area));
+    return `<div style="border:1px solid var(--ink);background:var(--card);padding:14px 16px;margin-bottom:20px">
+      <div class="kick" style="margin-bottom:4px">${esc(f.kind || "")}</div>
+      <div class="h2" style="margin-bottom:${bits.length ? "6px" : "0"}">${f.link ? answerLinkText(f.name, f.link) : esc(f.name)}</div>
+      ${bits.length ? `<div class="meta" style="margin:0">${bits.join(" · ")}</div>` : ""}
+    </div>`;
+  }
+  function answerSectionBlock(s) {
+    const rows = s.rows || [];
+    const shown = rows.slice(0, 5);
+    const rest = rows.slice(5);
+    const rowHtml = (r) => `<div class="mrow ans-row">
+        <span style="font-family:var(--fb);font-size:14px">${r.link ? answerLinkText(r.label, r.link) : esc(r.label)}${r.detail ? ` <span class="meta" style="margin:0">· ${esc(r.detail)}</span>` : ""}</span>
+        <span style="display:flex;gap:8px;align-items:center;white-space:nowrap">${r.date ? `<span class="meta" style="margin:0">${esc(fmtDate(r.date))}</span>` : ""}${certPill(r.certification)}</span>
+      </div>`;
+    const body = rows.length
+      ? shown.map(rowHtml).join("") + (rest.length
+          ? `<details style="margin-top:6px"><summary class="sbtn" style="display:inline-block;width:auto;cursor:pointer">Show all ${s.count != null ? s.count : rows.length}</summary><div style="margin-top:8px">${rest.map(rowHtml).join("")}</div></details>`
+          : "")
+      : `<p class="meta" style="margin:0">${esc(s.empty_reason || "Nothing here.")}</p>`;
+    return `<div style="margin-bottom:22px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--ink);padding-bottom:7px;margin-bottom:10px">
+        <span class="lbl">${esc(s.title)}${s.count != null ? " · " + s.count : ""}</span>
+        ${certPill(s.certification)}
+      </div>
+      ${body}
+      ${s.source ? `<div class="meta" style="margin-top:8px">Source: ${esc(s.source)}</div>` : ""}
+    </div>`;
+  }
+  function repsBlock(A) {
+    const reps = A.reps || [];
+    if (!reps.length) {
+      if (state.placeConfirmed) return "";
+      return `<p class="meta" style="margin:0 0 20px">Set your exact place and we show how your own representatives voted. <button class="sbtn" type="button" onclick="useMyLocation()">Use my location</button> <button class="sbtn" type="button" onclick="goWatching()">Type a place</button></p>`;
+    }
+    const rows = reps.map(r => `<div class="mrow ans-row">
+        <span style="font-family:var(--fb);font-size:14px">${r.link ? answerLinkText(r.name, r.link) : esc(r.name)}</span>
+        <span class="meta" style="margin:0">${esc(r.seat)}</span>
+      </div>`).join("");
+    return `<div style="margin-bottom:22px">
+      <div class="lbl" style="border-bottom:1px solid var(--ink);padding-bottom:7px;margin-bottom:10px">Your representatives</div>
+      ${rows}
+    </div>`;
+  }
+  function answerBlock() {
+    const A = state.answer;
+    if (!A) return "";
+    // A graph that did not answer says so; it is not the same as no data.
+    const failed = A.error ? `<p class="meta" style="margin:0 0 20px">${esc(A.error)} — the connections are missing from this answer, not from the record.</p>` : "";
+    return `<div style="margin-bottom:24px">
+      ${understoodBlock(A)}
+      ${failed}
+      ${answerFocusBlock(A)}
+      ${(A.sections || []).map(answerSectionBlock).join("")}
+      ${repsBlock(A)}
+    </div>`;
+  }
+
   function ledgerView() {
     const L = state.ledger || { stories: [], funnel: [], headline: "", deck: "" };
     const personOnly = !!L.person_only;
@@ -1126,6 +1270,7 @@
         </div>`;
     return `<div class="view wrap">
       ${chromeBar({ search: true })}
+      ${answerBlock()}
       <div class="kick" style="margin-bottom:9px">${kick}</div>
       <div class="h1" style="max-width:20em;margin-bottom:10px">${esc(L.headline)}</div>
       ${deck}
@@ -1223,6 +1368,7 @@
         <div style="margin-top:14px">${body}</div>
         <div class="lbl" style="margin:26px 0 10px">Ask the graph something else</div>
         <div style="display:flex;flex-wrap:wrap;gap:10px">${tries.map(askBtn).join("")}</div>
+        ${state.answer ? `<div style="margin-top:26px;border-top:1px solid var(--rule);padding-top:20px">${answerBlock()}</div>` : ""}
       </div>
       <div class="folio"><b>The graph</b> · walked, not classified</div>
     </div>`;
@@ -1349,7 +1495,7 @@
     const pacCyc = fin.cycle ? `${fin.cycle - 3}–${String(fin.cycle).slice(-2)}` : "recent cycles";
     const pacs = (fin.top_pacs || []).filter(p => p.amount > 0);
     const pacList = pacs.length ? `<div class="sub-lbl">Top PAC contributors <span>${esc(pacCyc)}</span></div>
-      ${pacs.map(p => `<div class="mrow" style="grid-template-columns:1fr auto"><span style="font-family:var(--fb);font-size:13.5px">${esc(p.name)}</span><span class="fnum" style="font-size:12px;color:var(--accent)">${money(p.amount)}</span></div>`).join("")}` : "";
+      ${pacs.map(p => `<div class="mrow ans-row"><span style="font-family:var(--fb);font-size:13.5px">${esc(p.name)}</span><span class="fnum" style="font-size:12px;color:var(--accent)">${money(p.amount)}</span></div>`).join("")}` : "";
     const pi = (M.pacs && M.pacs.interests || []).filter(i => i.total > 0);
     const piList = pi.length ? `<div class="sub-lbl">Funded by these interests <span>PAC money · recent cycles</span></div>
       ${shareRows(pi, "interest", "#8b6a1a", true)}
@@ -1796,7 +1942,7 @@
     if ((c.identical || []).length) conn.push(`<div class="sub-lbl">Same bill in the other chamber</div>${c.identical.map(billRow).join("")}`);
     if ((c.related || []).length) conn.push(`<div class="sub-lbl">Related bills</div>${c.related.slice(0, 6).map(billRow).join("")}`);
     if ((c.amended_by || []).length) conn.push(`<div class="sub-lbl">Amendments offered · ${c.amended_by.length}</div>${c.amended_by.slice(0, 5).map(a => `<div class="mrow" style="grid-template-columns:6rem 1fr"><span class="fnum" style="font-size:11px;color:var(--muted);text-align:left">${esc((a.type || "").toUpperCase() + " " + a.number)}</span><span style="font-family:var(--fb);font-size:14px;line-height:1.4">${esc(compactTitle(a.title || ""))}${a.latest_action ? `<span class="meta" style="display:block;margin:2px 0 0">${esc(a.latest_action.slice(0, 90))}</span>` : ""}</span></div>`).join("")}`);
-    if ((c.committee_reports || []).length) conn.push(`<div class="sub-lbl">Committee reports</div>${c.committee_reports.map(r => `<div class="mrow" style="grid-template-columns:1fr auto"><span style="font-family:var(--fb);font-size:14px">${esc(r.committee || "")}${r.chamber ? ` <span class="meta" style="margin:0">· ${esc(r.chamber)}</span>` : ""}<span class="meta" style="display:block;margin:0">${esc(r.citation || "")}${r.issue_date ? " · " + esc(fmtDate(r.issue_date)) : ""}</span></span>${r.full_url ? `<a class="act" href="${esc(r.full_url)}" target="_blank" rel="noopener" style="text-decoration:none">Read ↗</a>` : ""}</div>`).join("")}`);
+    if ((c.committee_reports || []).length) conn.push(`<div class="sub-lbl">Committee reports</div>${c.committee_reports.map(r => `<div class="mrow ans-row"><span style="font-family:var(--fb);font-size:14px">${esc(r.committee || "")}${r.chamber ? ` <span class="meta" style="margin:0">· ${esc(r.chamber)}</span>` : ""}<span class="meta" style="display:block;margin:0">${esc(r.citation || "")}${r.issue_date ? " · " + esc(fmtDate(r.issue_date)) : ""}</span></span>${r.full_url ? `<a class="act" href="${esc(r.full_url)}" target="_blank" rel="noopener" style="text-decoration:none">Read ↗</a>` : ""}</div>`).join("")}`);
     if ((c.superseded || []).length) conn.push(`<div class="sub-lbl">Superseded by</div>${c.superseded.map(billRow).join("")}`);
     const connFact = [
       (c.identical || []).length ? "same bill in other chamber" : "",
@@ -2015,7 +2161,7 @@
       { n: legis.cosponsored_count == null ? "n/a" : legis.cosponsored_count, l: "Co-patron" },
       { n: terms.length, l: terms.length === 1 ? "Term on file" : "Terms on file" },
     ].map(x => `<div class="stat"><div class="stat-n">${esc(String(x.n))}</div><div class="lbl" style="color:var(--muted);font-size:9px">${esc(x.l)}</div></div>`).join("");
-    const termRows = terms.map(t => `<div class="mrow" style="grid-template-columns:1fr auto">
+    const termRows = terms.map(t => `<div class="mrow ans-row">
         <span style="font-family:var(--fb);font-size:14px">${esc(t.chamber || "")}${t.district ? ` · District ${esc(t.district)}` : ""}</span>
         <span class="meta" style="margin:0">${esc(fmtDate(t.start))} – ${esc(t.end ? fmtDate(t.end) : "present")}</span></div>`).join("");
     const bills = sponsored.map(b => {

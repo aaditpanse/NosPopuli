@@ -1,7 +1,7 @@
 {
  "meta": {
   "app_sha": "",
-  "captured": "2026-09-29T08:15:09",
+  "captured": "2026-09-29T21:27:49",
   "notes": "a Virginian's topic ask with no state named still searches Congress",
   "volatile": []
  },
@@ -140,6 +140,20 @@
      },
      {
       "_relevance": 5,
+      "congress": 117,
+      "english_text": "",
+      "english_title": "Establish an allowance to provide a housing stipend for Members of the House of Representatives",
+      "id": "hr9416",
+      "is_law": false,
+      "latest_action": "",
+      "meta": "HR 9416",
+      "number": 9416,
+      "stage": "introduced",
+      "title": "To establish an allowance to provide a housing stipend for Members of the House of Representatives.",
+      "type": "hr"
+     },
+     {
+      "_relevance": 5,
       "congress": 114,
       "english_text": "",
       "english_title": "Native American Housing Assistance and Self-Determination Reauthorization Act of 2015",
@@ -153,31 +167,17 @@
       "type": "s"
      },
      {
-      "_relevance": 5,
-      "congress": 110,
-      "english_text": "",
-      "english_title": "Native American Housing Assistance and Self-Determination Reauthorization Act of 2007",
-      "id": "s2062",
-      "is_law": false,
-      "latest_action": "",
-      "meta": "S 2062",
-      "number": 2062,
-      "stage": "introduced",
-      "title": "Native American Housing Assistance and Self-Determination Reauthorization Act of 2007",
-      "type": "s"
-     },
-     {
       "_relevance": 0,
-      "congress": 110,
+      "congress": 111,
       "english_text": "",
-      "english_title": "Neighborhood Stabilization Act of 2008",
-      "id": "hr5818",
+      "english_title": "GREEN Act of 2010",
+      "id": "hr2336",
       "is_law": false,
       "latest_action": "",
-      "meta": "HR 5818",
-      "number": 5818,
+      "meta": "HR 2336",
+      "number": 2336,
       "stage": "introduced",
-      "title": "Neighborhood Stabilization Act of 2008",
+      "title": "GREEN Act of 2010",
       "type": "hr"
      },
      {
@@ -197,6 +197,15 @@
     ]
    },
    {
+    "focus": null,
+    "how": "laya 0.29",
+    "intent": "find_bills",
+    "reps": [],
+    "section": "answer",
+    "sections": [],
+    "understood": []
+   },
+   {
     "section": "shelves",
     "shelves": [
      {
@@ -208,9 +217,9 @@
        "hr4329",
        "hr6644",
        "hr7221",
+       "hr9416",
        "s710",
-       "s2062",
-       "hr5818",
+       "hr2336",
        "hres429"
       ],
       "kind": "topic",

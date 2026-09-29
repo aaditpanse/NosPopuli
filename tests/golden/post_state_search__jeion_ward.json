@@ -1,7 +1,7 @@
 {
  "meta": {
   "app_sha": "",
-  "captured": "2026-09-27T14:09:33",
+  "captured": "2026-09-29T21:25:35",
   "notes": "a Virginia legislator from the roster file, with what they sponsored",
   "volatile": []
  },
@@ -18,7 +18,7 @@
   "json": {
    "ambiguity_reason": null,
    "candidates": [],
-   "confidence": 0.85,
+   "confidence": 1.0,
    "member": {
     "chamber": "Virginia House of Delegates",
     "current": true,

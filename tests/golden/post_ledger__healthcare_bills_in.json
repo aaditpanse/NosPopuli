@@ -1,7 +1,7 @@
 {
  "meta": {
-  "app_sha": "cadd4dc",
-  "captured": "2026-09-27T10:29:45",
+  "app_sha": "",
+  "captured": "2026-09-29T21:27:35",
   "notes": "a state question on /ledger: Virginia's bills (it was forced federal until 2026-09-27)",
   "volatile": []
  },
@@ -22,29 +22,29 @@
      {
       "id": "all",
       "label": "Introduced",
-      "n": 8,
+      "n": 5,
       "width": "100%"
      },
      {
       "id": "committee",
       "label": "Waiting in committee",
-      "n": 8,
+      "n": 5,
       "width": "100%"
      },
      {
       "id": "passed",
       "label": "Passed one chamber",
-      "n": 4,
-      "width": "50%"
+      "n": 2,
+      "width": "40%"
      },
      {
       "id": "law",
       "label": "Became law",
-      "n": 4,
-      "width": "50%"
+      "n": 2,
+      "width": "40%"
      }
     ],
-    "headline": "8 bills matched. 4 passed a chamber. 4 became law.",
+    "headline": "5 bills matched. 2 passed a chamber. 2 became law.",
     "person_only": false,
     "place_name": "Virginia",
     "plate": "ledger",
@@ -53,25 +53,6 @@
     "section": "plate",
     "state_code": "VA",
     "stories": [
-     {
-      "_relevance": 11,
-      "english_text": "Left in Appropriations",
-      "english_title": "Virginia Health Workforce Development Authority; Virginia Nursing Workforce Center established; reporting and monitoring of health care",
-      "id": "va-2025-hb1903",
-      "is_law": false,
-      "is_state_bill": true,
-      "latest_action": "Left in Appropriations",
-      "latest_action_date": "2025-02-04",
-      "meta": "HB 1903 (2025) \u00b7 Left in Appropriations",
-      "number": 1903,
-      "path": "/state/va/2025/hb/1903",
-      "session": "2025",
-      "sponsor": "Rodney T. Willett",
-      "stage": "committee",
-      "state": "va",
-      "title": "Virginia Health Workforce Development Authority; Virginia Nursing Workforce Center established; reporting and monitoring of health care workforce programs; residency slots; work group; report.",
-      "type": "hb"
-     },
      {
       "_relevance": 7,
       "english_text": "Stricken from docket by Appropriations (22-Y 0-N)",
@@ -166,44 +147,31 @@
       "state": "va",
       "title": "Health care coverage; premium payments for certain service members.",
       "type": "sb"
-     },
+     }
+    ]
+   },
+   {
+    "focus": null,
+    "how": "laya 0.17",
+    "intent": "find_bills",
+    "reps": [],
+    "section": "answer",
+    "sections": [],
+    "understood": [
      {
-      "_relevance": 2,
-      "english_text": "Approved by Governor-Chapter 250 (effective 7/1/22)",
-      "english_title": "Virginia Health Benefit Exchange; annual marketing plan",
-      "id": "va-2022-hb312",
-      "is_law": true,
-      "is_state_bill": true,
-      "latest_action": "Approved by Governor-Chapter 250 (effective 7/1/22)",
-      "latest_action_date": "2022-04-08",
-      "meta": "HB 312 (2022) \u00b7 Approved by Governor-Chapter 250 (effective 7/1/22)",
-      "number": 312,
-      "path": "/state/va/2022/hb/312",
-      "session": "2022",
-      "sponsor": "Sam Rasoul",
-      "stage": "law",
-      "state": "va",
-      "title": "Virginia Health Benefit Exchange; annual marketing plan.",
-      "type": "hb"
-     },
-     {
-      "_relevance": 2,
-      "english_text": "Approved by Governor-Chapter 251 (effective 7/1/22)",
-      "english_title": "Virginia Health Benefit Exchange; annual marketing plan",
-      "id": "va-2022-sb469",
-      "is_law": true,
-      "is_state_bill": true,
-      "latest_action": "Approved by Governor-Chapter 251 (effective 7/1/22)",
-      "latest_action_date": "2022-04-08",
-      "meta": "SB 469 (2022) \u00b7 Approved by Governor-Chapter 251 (effective 7/1/22)",
-      "number": 469,
-      "path": "/state/va/2022/sb/469",
-      "session": "2022",
-      "sponsor": "Jennifer L. McClellan",
-      "stage": "law",
-      "state": "va",
-      "title": "Virginia Health Benefit Exchange; annual marketing plan.",
-      "type": "sb"
+      "ambiguous": false,
+      "candidates": [
+       {
+        "kind": "place",
+        "name": "Virginia",
+        "node_id": "ocd-division/country:us/state:va",
+        "weight": 1.0
+       }
+      ],
+      "kind": "place",
+      "name": "Virginia",
+      "node_id": "ocd-division/country:us/state:va",
+      "surface": "virginia"
      }
     ]
    },
@@ -213,14 +181,11 @@
      {
       "id": "all",
       "item_ids": [
-       "va-2025-hb1903",
        "va-2026-hb1245",
        "va-2018-hb1549",
        "va-2018-sb956",
        "va-2022-hb642",
-       "va-2022-sb719",
-       "va-2022-hb312",
-       "va-2022-sb469"
+       "va-2022-sb719"
       ],
       "kind": "topic",
       "label": "These bills"

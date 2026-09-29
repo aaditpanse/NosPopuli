@@ -1,8 +1,8 @@
 {
  "meta": {
-  "app_sha": "ad4adf2",
-  "captured": "2026-09-26T19:12:17",
-  "notes": "member route \u2014 20 of the 73 logged searches were this",
+  "app_sha": "",
+  "captured": "2026-09-29T21:31:31",
+  "notes": "member route \u2014 20 of the 73 logged searches were this. Since the graph search: the recording database has no Ted Cruz node, so the name links only 'cruz', ambiguously (production links him)",
   "volatile": []
  },
  "request": {
@@ -15,59 +15,225 @@
  },
  "response": {
   "json": {
-   "ambiguity_reason": null,
-   "confidence": 1.0,
-   "found": true,
-   "legislation": {
-    "cosponsored_count": null,
-    "empty_reason": "the bill graph is not reachable from this server",
-    "policy_areas": {},
-    "sponsored": [],
-    "sponsored_count": null
-   },
-   "member": {
-    "bioguide_id": "C001098",
-    "birth_year": "1970",
-    "chamber": "Senate",
-    "chambers": [
-     "Senate"
-    ],
-    "congress_url": "https://www.congress.gov/member/ted-cruz/C001098",
-    "current": true,
-    "end_year": null,
-    "name": "Ted Cruz",
-    "official_url": "https://www.cruz.senate.gov",
-    "party": "Republican",
-    "photo_url": "",
-    "start_year": 2013,
-    "state": "Texas",
-    "terms": [
+   "ambiguity_reason": "'cruz' could name more than one: Cherie Cruz, Manny Cruz, Art De La Cruz.",
+   "cached": false,
+   "confidence": 0.6,
+   "query": {
+    "_bypass_search_cache": false,
+    "_entities": [
      {
-      "chamber": "Senate",
-      "endYear": 2019,
-      "partyName": "Republican",
-      "startYear": 2013,
-      "stateCode": "TX"
-     },
-     {
-      "chamber": "Senate",
-      "endYear": 2025,
-      "partyName": "Republican",
-      "startYear": 2019,
-      "stateCode": "TX"
-     },
-     {
-      "chamber": "Senate",
-      "endYear": 2031,
-      "partyName": "Republican",
-      "startYear": 2025,
-      "stateCode": "TX"
+      "ambiguous": true,
+      "candidates": [
+       {
+        "kind": "person",
+        "name": "Cherie Cruz",
+        "node_id": "ocd-person/487e4db2-9502-558e-abd5-750afcb4106d",
+        "weight": 0.6
+       },
+       {
+        "kind": "person",
+        "name": "Manny Cruz",
+        "node_id": "ocd-person/577b3822-1699-5382-87b2-951099299247",
+        "weight": 0.6
+       },
+       {
+        "kind": "person",
+        "name": "Art De La Cruz",
+        "node_id": "ocd-person/5df176df-5e73-5b78-8560-cc1996227f52",
+        "weight": 0.6
+       },
+       {
+        "kind": "person",
+        "name": "Jessica de la Cruz",
+        "node_id": "ocd-person/69c787c9-5583-58dd-8542-2dbc9b1e4e02",
+        "weight": 0.6
+       },
+       {
+        "kind": "person",
+        "name": "Donovan Dela Cruz",
+        "node_id": "ocd-person/769023f9-af05-5501-a581-43093177dfed",
+        "weight": 0.6
+       }
+      ],
+      "kind": "person",
+      "name": "Cherie Cruz",
+      "node_id": "ocd-person/487e4db2-9502-558e-abd5-750afcb4106d",
+      "source": "surname",
+      "start": 1,
+      "surface": "cruz",
+      "weight": 0.6
      }
     ],
-    "url": null,
-    "years_served": 13
+    "_intent": "person_record",
+    "_intent_how": "rule",
+    "ambiguity_reason": "'cruz' could name more than one: Cherie Cruz, Manny Cruz, Art De La Cruz.",
+    "bill_type": "all",
+    "confidence": 0.6,
+    "congress_numbers": [
+     119,
+     118
+    ],
+    "entity_name": "Cherie Cruz",
+    "full_history": false,
+    "intents": [
+     {
+      "kind": "member",
+      "name": "Cherie Cruz"
+     },
+     {
+      "kind": "topic",
+      "label": "ted"
+     }
+    ],
+    "jurisdiction": "federal",
+    "keywords": [
+     "ted"
+    ],
+    "max_results_override": null,
+    "named_entity": null,
+    "query_subtype": "concept",
+    "query_type": "legislation",
+    "result_count": 5,
+    "specific_bill": null,
+    "state_code": null,
+    "status": "any",
+    "time_filter": false,
+    "time_range": "last 5 years",
+    "topic": "ted"
    },
-   "query_type": "member"
+   "query_type": "legislation",
+   "results": [
+    {
+     "_laya": 2.244,
+     "_relevance": 11,
+     "congress": 116,
+     "date_issued": "2020-01-16",
+     "is_law": false,
+     "law_number": null,
+     "number": 474,
+     "package_id": "BILLS-116sres474",
+     "policy_area": "Congress",
+     "title": "A resolution to authorize representation by the Senate Legal Counsel in the case of Martin F. McMahon v. Senator Ted Cruz, et al.",
+     "type": "sres"
+    },
+    {
+     "_laya": 1.065,
+     "_relevance": 6,
+     "congress": 117,
+     "date_issued": "2021-11-05",
+     "is_law": true,
+     "law_number": "283",
+     "number": 5900,
+     "package_id": "BILLS-117hr5900",
+     "policy_area": "Government Operations and Politics",
+     "title": "To designate the facility of the United States Postal Service located at 2016 East 1st Street in Los Angeles, California, as the \"Marine Corps Reserve PVT Jacob Cruz Post Office\".",
+     "type": "hr"
+    },
+    {
+     "_laya": 1.295,
+     "_relevance": 2,
+     "congress": 115,
+     "date_issued": "2018-07-25",
+     "is_law": false,
+     "law_number": null,
+     "number": 6522,
+     "package_id": "BILLS-115hr6522",
+     "policy_area": "Public Lands and Natural Resources",
+     "title": "Santa Cruz Valley National Heritage Area Act",
+     "type": "hr"
+    },
+    {
+     "_laya": 1.295,
+     "_relevance": 2,
+     "congress": 114,
+     "date_issued": "2015-06-25",
+     "is_law": false,
+     "law_number": null,
+     "number": 2925,
+     "package_id": "BILLS-114hr2925",
+     "policy_area": "Public Lands and Natural Resources",
+     "title": "Santa Cruz Valley National Heritage Area Act",
+     "type": "hr"
+    },
+    {
+     "_laya": 1.616,
+     "_relevance": 2,
+     "congress": 114,
+     "date_issued": "2015-04-30",
+     "is_law": true,
+     "law_number": "136",
+     "number": 1172,
+     "package_id": "BILLS-114s1172",
+     "policy_area": "Government Operations and Politics",
+     "title": "Edward \"Ted\" Kaufman and Michael Leavitt Presidential Transitions Improvements Act of 2015",
+     "type": "s"
+    },
+    {
+     "_laya": 1.295,
+     "_relevance": 2,
+     "congress": 113,
+     "date_issued": "2013-03-21",
+     "is_law": false,
+     "law_number": null,
+     "number": 1349,
+     "package_id": "BILLS-113hr1349",
+     "policy_area": "Public Lands and Natural Resources",
+     "title": "Santa Cruz Valley National Heritage Area Act",
+     "type": "hr"
+    },
+    {
+     "_laya": 1.295,
+     "_relevance": 2,
+     "congress": 112,
+     "date_issued": "2011-05-26",
+     "is_law": false,
+     "law_number": null,
+     "number": 2037,
+     "package_id": "BILLS-112hr2037",
+     "policy_area": "Public Lands and Natural Resources",
+     "title": "Santa Cruz Valley National Heritage Area Act",
+     "type": "hr"
+    },
+    {
+     "_laya": 1.058,
+     "_relevance": 2,
+     "congress": 111,
+     "date_issued": "2010-09-23",
+     "is_law": false,
+     "law_number": null,
+     "number": 6197,
+     "package_id": "BILLS-111hr6197",
+     "policy_area": "Public Lands and Natural Resources",
+     "title": "Mount Stevens and Ted Stevens Icefield Designation Act",
+     "type": "hr"
+    },
+    {
+     "_laya": 1.058,
+     "_relevance": 2,
+     "congress": 111,
+     "date_issued": "2010-09-20",
+     "is_law": true,
+     "law_number": "284",
+     "number": 3802,
+     "package_id": "BILLS-111s3802",
+     "policy_area": "Public Lands and Natural Resources",
+     "title": "Mount Stevens and Ted Stevens Icefield Designation Act",
+     "type": "s"
+    },
+    {
+     "_laya": 1.295,
+     "_relevance": 2,
+     "congress": 111,
+     "date_issued": "2009-01-08",
+     "is_law": false,
+     "law_number": null,
+     "number": 324,
+     "package_id": "BILLS-111hr324",
+     "policy_area": "Public Lands and Natural Resources",
+     "title": "Santa Cruz Valley National Heritage Area Act",
+     "type": "hr"
+    }
+   ]
   },
   "status": 200
  }

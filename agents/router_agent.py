@@ -1,9 +1,5 @@
-import anthropic
-import os
 import re
-import json
 from dotenv import load_dotenv
-from agents.documentor_agent import log_action
 
 load_dotenv()
 
@@ -441,326 +437,6 @@ def intents_from_structured(structured):
     return out
 
 
-def route_query(user_question, client, full_history=False):
-    """
-    Takes a plain English question and returns a structured search query.
-    This agent never fetches bills - it only extracts intent.
-    """
-    
-    prompt = f"""
-You are a query router for a legislative search system.
-Extract search intent from a plain English question.
-Return ONLY valid JSON, no markdown, no explanation.
-
-CURRENT DATE CONTEXT (authoritative — do not use training-data assumptions):
-- Today is 2026. Donald Trump is the current U.S. President (second term, began January 2025).
-- The current Congress is the 119th (2025–2026).
-- Biden served 2021–2025 (117th and 118th Congresses).
-- Trump's first term was 2017–2021 (115th and 116th Congresses).
-- When the user says "recently" or "now" in relation to Trump, they mean his CURRENT second term (119th Congress), not his first.
-
-User question: {user_question}
-
-Rules for query_type:
-- A person's name, "Senator X", "Representative X", "what did X do", "X's record", "X's votes", "who is X" → "member"
-- "X Committee", "committee on X", "House/Senate committee" → "committee"
-- Queries that CLEARLY have nothing to do with US legislation, government policy, public law, or civic topics — e.g. "weather forecast tomorrow", "best pizza near me", "stock price of AAPL", "who won the game last night" → "off_topic". When in doubt, choose "legislation" — any phrase that could plausibly be the subject of a bill, regulation, or congressional hearing is on-topic.
-- Short, ambiguous-sounding phrases that ARE active policy debates default to "legislation", not "off_topic". Examples that look tech-flavored but are real legislative topics: "age verification", "content moderation", "deepfakes", "facial recognition", "encryption backdoors", "data privacy", "section 230", "right to repair", "noncompetes", "PBMs", "surprise billing", "robocalls", "TikTok ban", "AI safety", "crypto regulation", "stablecoins".
-- Everything else (any plausible civic / policy / legislative / governmental topic, even if broad like "marijuana" or "abortion") → "legislation"
-
-Rules for jurisdiction:
-- "Virginia bill", "Virginia legislature", "Richmond", "General Assembly", "Virginia delegate", "Virginia senator" → jurisdiction: "state", state_code: "VA"
-- Any other US state name + bill/legislature/assembly → jurisdiction: "state", state_code: [2-letter code]
-- Everything else → jurisdiction: "federal", state_code: null
-
-Rules for query_subtype (legislation queries only):
-- Proper noun law name, named act, roman numerals, known acronym → "named_entity"
-- Trailing words like "bill", "legislation", "vote", "law", "act of congress" do NOT change the subtype. "Bipartisan Transparency for American Taxpayers Act bill" is still named_entity — extract "Bipartisan Transparency for American Taxpayers Act" as named_entity and strip the trailing word.
-- Proper noun law name + specific year, president, or era → "named_entity_with_date"
-- General topic + specific year, president, or era → "concept_with_date"
-- "give me a bill", "show me something", "any bill", no specific topic → "browse"
-- "laws", "enacted", "signed into law", "passed into law", "became law" → "enacted"
-- Everything else → "concept"
-
-Rules for time_filter:
-- true if query contains: specific year, president name, era, "recent", "latest", "oldest"
-- false otherwise
-
-Rules for named_entity:
-- If query_subtype is named_entity or named_entity_with_date: extract the official/formal name if you know it, otherwise extract as written
-- "big beautiful bill" or "one big beautiful bill" → "One Big Beautiful Bill Act"
-- "obamacare" → "Affordable Care Act"
-- "chips act" → "CHIPS and Science Act"
-- "save act" → "Safeguard American Voter Eligibility (SAVE) Act"
-- "pact act" → "Honoring our PACT Act of 2022" (veterans toxic exposure, by far the most-discussed PACT Act today; cigarette trafficking PACT Act 2010 is rarely meant)
-- "farm bill" → "Agriculture Improvement Act of 2018" (most recent enacted farm bill)
-- "dodd frank" or "dodd-frank" → "Dodd-Frank Wall Street Reform and Consumer Protection Act"
-- "patriot act" or "usa patriot act" → "USA PATRIOT Act" (the original 2001 statute — extensions and amendments are rarely what users mean)
-- "freedom act" or "usa freedom act" → "USA FREEDOM Act of 2015"
-- Otherwise: null
-
-Rules for confidence (0.0 to 1.0):
-- 1.0 → completely unambiguous. "HR 3590", "Ted Kennedy", "Senate Judiciary Committee"
-- 0.8 → clear intent with minor uncertainty. "healthcare bills", "Bernie Sanders record"
-- 0.6 → some ambiguity. "Kennedy healthcare" could be member or legislation
-- 0.4 → significant ambiguity. Mixed signals, unclear intent
-- 0.2 → very unclear. Could mean many things
-- Always explain low confidence (below 0.7) in ambiguity_reason
-
-Rules for ambiguity_reason:
-- null if confidence >= 0.7
-- One sentence explaining the ambiguity if confidence < 0.7
-
-Rules for entity_name:
-- For member queries: extract the person's name only
-- For committee queries: extract the committee name
-- For mixed person + topic (e.g. "Kennedy healthcare"): extract the person's name even when query_type stays "legislation"
-- For legislation with no person: null
-
-Rules for intents:
-- Always return 1–3 objects. kind is member | topic | committee.
-- A person plus a subject → BOTH a member intent and a topic intent. Keep query_type as "legislation" (the primary path) and still set entity_name to the person.
-- Only a person → query_type "member", intents: [{{"kind": "member", "name": "..."}}]
-- Only a subject → intents: [{{"kind": "topic", "label": "..."}}]
-- A named committee → intents: [{{"kind": "committee", "name": "..."}}]
-
-Rules for result_count:
-- "a bill", "one bill", "a law", "an example" → 1
-- "a few", "some" → 3
-- No quantity mentioned → 5
-- "many", "lots", explicit number → that number
-- Maximum: 20
-
-Rules for specific_bill:
-- If user mentions a bill number like "HR 3590", "S 1234" → extract it
-- Otherwise → null
-
-Rules for status:
-- "passed", "became law", "signed", "enacted", "a law", "laws" → "enacted"
-- "failed", "rejected" → "failed"
-- No status mentioned → "any"
-
-Rules for keywords (legislation only):
-- Extract ONLY subject matter nouns
-- NEVER include: show, me, bills, find, a, one, some, what, has, done, about, related, to, from, the, give, senator, representative, laws, passed, signed, enacted
-
-Rules for time_range:
-- "in [year]", "from [year]", "[year] bill" → "year:YYYY"
-- "this Congress", "current Congress", "this session" → "year:2025"
-- "recent", "recently" → "last 2 years"
-- "last 5 years" or nothing → "last 5 years"
-- "last 10 years" → "last 10 years"
-- Presidential terms handled separately
-
-Examples:
-"Title IX" →
-{{"query_type": "legislation", "query_subtype": "named_entity", "named_entity": "Title IX", "time_filter": false, "confidence": 0.95, "ambiguity_reason": null, "entity_name": null, "keywords": ["Title IX"], "topic": "Title IX education legislation", "time_range": "last 5 years", "bill_type": "all", "result_count": 4, "specific_bill": null, "status": "any"}}
-
-"Title IX in 1972" →
-{{"query_type": "legislation", "query_subtype": "named_entity_with_date", "named_entity": "Title IX", "time_filter": true, "confidence": 0.95, "ambiguity_reason": null, "entity_name": null, "keywords": ["Title IX"], "topic": "Title IX 1972", "time_range": "year:1972", "bill_type": "all", "result_count": 4, "specific_bill": null, "status": "any"}}
-
-"healthcare bills from 2017" →
-{{"query_type": "legislation", "query_subtype": "concept_with_date", "named_entity": null, "time_filter": true, "confidence": 0.9, "ambiguity_reason": null, "entity_name": null, "keywords": ["healthcare"], "topic": "healthcare legislation 2017", "time_range": "year:2017", "bill_type": "all", "result_count": 5, "specific_bill": null, "status": "any"}}
-
-"give me a bill" →
-{{"query_type": "legislation", "query_subtype": "browse", "named_entity": null, "time_filter": false, "confidence": 0.8, "ambiguity_reason": null, "entity_name": null, "keywords": [], "topic": "recent legislation", "time_range": "last 2 years", "bill_type": "all", "result_count": 5, "specific_bill": null, "status": "any"}}
-
-"laws passed under trump" →
-{{"query_type": "legislation", "query_subtype": "enacted", "named_entity": null, "time_filter": true, "confidence": 0.9, "ambiguity_reason": null, "entity_name": null, "keywords": [], "topic": "enacted legislation trump", "time_range": "last 5 years", "bill_type": "all", "result_count": 5, "specific_bill": null, "status": "enacted"}}
-
-"gun control bills" →
-{{"query_type": "legislation", "query_subtype": "concept", "named_entity": null, "time_filter": false, "confidence": 0.9, "ambiguity_reason": null, "entity_name": null, "keywords": ["gun", "control"], "topic": "gun control legislation", "time_range": "last 5 years", "bill_type": "all", "result_count": 5, "specific_bill": null, "status": "any"}}
-
-"HR 3590" →
-{{"query_type": "legislation", "query_subtype": "concept", "named_entity": null, "time_filter": false, "confidence": 1.0, "ambiguity_reason": null, "entity_name": null, "keywords": [], "topic": "specific bill HR 3590", "time_range": "last 5 years", "bill_type": "hr", "result_count": 1, "specific_bill": {{"type": "hr", "number": 3590, "congress": null}}, "status": "any"}}
-
-"Kennedy healthcare" →
-{{"query_type": "legislation", "query_subtype": "concept", "named_entity": null, "time_filter": false, "confidence": 0.5, "ambiguity_reason": "Kennedy could refer to Senator Ted Kennedy or legislation named after Kennedy", "entity_name": "Ted Kennedy", "keywords": ["healthcare"], "topic": "Kennedy healthcare legislation", "time_range": "last 5 years", "bill_type": "all", "result_count": 5, "specific_bill": null, "status": "any", "intents": [{{"kind": "member", "name": "Ted Kennedy"}}, {{"kind": "topic", "label": "healthcare"}}]}}
-
-"Ted Kennedy" →
-{{"query_type": "member", "query_subtype": "concept", "named_entity": null, "time_filter": false, "confidence": 0.95, "ambiguity_reason": null, "entity_name": "Ted Kennedy", "keywords": [], "topic": "", "time_range": "last 5 years", "bill_type": "all", "result_count": 5, "specific_bill": null, "status": "any", "intents": [{{"kind": "member", "name": "Ted Kennedy"}}]}}
-
-"Senate Judiciary Committee" →
-{{"query_type": "committee", "query_subtype": "concept", "named_entity": null, "time_filter": false, "confidence": 1.0, "ambiguity_reason": null, "entity_name": "Senate Judiciary Committee", "keywords": [], "topic": "", "time_range": "last 5 years", "bill_type": "all", "result_count": 5, "specific_bill": null, "status": "any", "intents": [{{"kind": "committee", "name": "Senate Judiciary Committee"}}]}}
-
-Return ONLY this JSON structure:
-{{
-    "query_type": "legislation",
-    "query_subtype": "concept",
-    "named_entity": null,
-    "time_filter": false,
-    "confidence": 0.9,
-    "ambiguity_reason": null,
-    "entity_name": null,
-    "keywords": ["keyword1"],
-    "topic": "description",
-    "time_range": "last 5 years",
-    "bill_type": "all",
-    "result_count": 5,
-    "specific_bill": null,
-    "status": "any",
-    "jurisdiction": "federal",
-    "state_code": null,
-    "intents": [{{"kind": "topic", "label": "keyword1"}}]
-}}
-"""
-    
-    message = client.messages.create(
-        model="claude-haiku-4-5-20251001",
-        max_tokens=400,
-        temperature=0,
-        messages=[
-            {"role": "user", "content": prompt}
-        ]
-    )
-
-    raw = message.content[0].text.strip()
-    raw = raw.replace("```json", "").replace("```", "").strip()
-    
-    try:
-        structured = json.loads(raw)
-    except json.JSONDecodeError:
-        # Fallback if AI returns malformed JSON
-        structured = {
-            "keywords": user_question.split()[:3],
-            "topic": user_question,
-            "time_range": "last 5 years",
-            "bill_type": "all",
-            "query_subtype": "concept",
-            "named_entity": None,
-        }
-    
-    # Known bills table: tight match only → hint, not bypass.
-    # Sets known_bill_hint so the hinted bill is prepended to candidates
-    # and ranked by the validator alongside search results.
-    known = check_known_bills(user_question)
-    if known:
-        structured["known_bill_hint"] = known
-        structured["query_type"] = "legislation"
-
-    # Add congress numbers based on time range
-    structured["congress_numbers"] = years_to_congress_numbers(structured.get("time_range", "last 5 years"), all_congresses=full_history)
-
-    # Override: "this Congress" / "current Congress" → lock to 119th only
-    import datetime as _dt
-    _current_congress = year_to_congress(_dt.datetime.now().year)
-    _THIS_CONGRESS_PATTERNS = [
-        "this congress", "current congress", "119th congress",
-        "this session", "current session", "this legislative session",
-    ]
-    if any(p in user_question.lower() for p in _THIS_CONGRESS_PATTERNS):
-        structured["congress_numbers"] = [_current_congress]
-        structured["time_range"] = f"year:{_dt.datetime.now().year}"
-
-    # Override congress_numbers if a president was mentioned
-    president_congresses = extract_president_congress(user_question)
-    if president_congresses:
-        structured["congress_numbers"] = president_congresses
-        structured["time_range"] = "presidential term"
-
-    # When user lists multiple explicit mechanisms/topics, boost result_count
-    # so we can surface bills across all of them rather than collapsing to one.
-    _MECHANISM_SIGNALS = [
-        "negotiation", "price cap", "importation", "import", "transparency",
-        "340b", "rebate", "formulary", "out-of-pocket", "out of pocket",
-        "copay", "deductible", "competitive", "generic", "biosimilar",
-    ]
-    _mechanism_count = sum(1 for s in _MECHANISM_SIGNALS if s in user_question.lower())
-    if _mechanism_count >= 3 and structured.get("result_count", 5) < 10:
-        structured["result_count"] = 10
-
-    # Detect invalid Roman numeral in "Title X" citations and suggest corrections.
-    # "IIX" is not a real Roman numeral — user likely meant VIII or IX.
-    import re as _re_roman
-    _VALID_ROMAN = {
-        "I","II","III","IV","V","VI","VII","VIII","IX","X",
-        "XI","XII","XIII","XIV","XV","XVI","XVII","XVIII","XIX","XX",
-    }
-    _title_match = _re_roman.search(r'\bTitle\s+([IVXivx]+)\b', user_question)
-    if _title_match:
-        cited = _title_match.group(1).upper()
-        if cited not in _VALID_ROMAN:
-            # Find closest valid alternatives
-            _COMMON_TITLES = {
-                "VIII": "Title VIII — Fair Housing Act",
-                "IX":   "Title IX — Education Amendments (sex discrimination)",
-                "VII":  "Title VII — Civil Rights Act (employment discrimination)",
-                "XI":   "Title XI",
-            }
-            suggestions = []
-            for roman, desc in _COMMON_TITLES.items():
-                if cited.replace("I","").replace("X","").replace("V","") == "" :
-                    # crude proximity — both share characters
-                    if set(cited) & set(roman):
-                        suggestions.append(desc)
-            suggestion_str = " or ".join(suggestions[:2]) if suggestions else "Title VIII or Title IX"
-            structured["confidence"] = min(structured.get("confidence", 1.0), 0.4)
-            structured["ambiguity_reason"] = (
-                f'"{_title_match.group(0)}" doesn\'t match a standard Title citation '
-                f'("{cited}" is not a valid Roman numeral). Did you mean {suggestion_str}?'
-            )
-
-    PRESIDENTS = ["trump", "biden", "obama", "bush", "clinton", "reagan", "carter"]
-
-    question_lower = user_question.lower()
-
-    presidential_signals = ["signed", "passed", "under", "era",
-                            "administration", "presidency", "president",
-                            "white house"]
-
-    congressional_signals = ["voted", "sponsored", "senator",
-                             "representative", "voting record",
-                             "cosponsored", "introduced"]
-
-    entity = (structured.get("entity_name") or "").lower()
-
-    if structured.get("query_type") == "member":
-        if any(p in entity for p in PRESIDENTS):
-            has_presidential = any(s in question_lower for s in presidential_signals)
-            has_congressional = any(s in question_lower for s in congressional_signals)
-
-            if has_presidential and not has_congressional:
-                structured["query_type"] = "legislation"
-                structured["entity_name"] = None
-
-                stop_words = {"what", "are", "the", "latest", "bills", "that",
-                              "has", "passed", "signed", "under", "laws", "legislation",
-                              "trump", "biden", "obama", "bush", "clinton", "reagan"}
-
-                words = user_question.lower().split()
-                meaningful = [w for w in words if w not in stop_words and len(w) > 3]
-
-                if meaningful:
-                    structured["keywords"] = meaningful
-                else:
-                    structured["keywords"] = ["enacted", "signed"]
-            elif has_congressional and not has_presidential:
-                pass  # Keep as member — they were in Congress
-            else:
-                # Ambiguous — Trump defaults to legislation; Biden/Obama stay as member
-                if "trump" in entity:
-                    structured["query_type"] = "legislation"
-                    structured["entity_name"] = None
-
-    structured["intents"] = intents_from_structured(structured)
-
-    log_action(
-    agent_name="router",
-    action="route_query",
-    input_data={"question": user_question},
-    output_data={
-        "query_type": structured.get("query_type"),
-        "confidence": structured.get("confidence"),
-        "ambiguity_reason": structured.get("ambiguity_reason"),
-        "keywords": structured.get("keywords"),
-        "entity_name": structured.get("entity_name"),
-        "intents": structured.get("intents"),
-    }
-)
-    
-    return structured
-
-
 # ── One routing decision for /ledger, /search and /state/search ──
 #
 # route() is the only entry. The free checks (ledger_agent.classify_question)
@@ -790,9 +466,15 @@ def structure_question(question, state_code=None, *, full_history=False,
     if structured is None:
         structured = fast_route(question)
     if structured is None:
-        structured = route_query(question, get_client(), full_history=full_history)
+        import graph
+        entities = graph.link_entities(question)
+        intent, how = question_intent(question, entities)
+        structured = structure_free(question, intent, entities, full_history=full_history)
+        structured["_intent_how"] = how
     else:
         print(f"[ROUTER] fast-path hit: {structured.get('_fast_path')}")
+        structured.setdefault("_intent", "explain_law")
+        structured.setdefault("_entities", [])
     structured["intents"] = intents_from_structured(structured)
 
     structured["full_history"] = full_history
@@ -803,6 +485,254 @@ def structure_question(question, state_code=None, *, full_history=False,
 
     _apply_presidential_term_filter(structured, question)
     _disambiguate_president_query(structured, question)
+    return structured
+
+
+# ── What a question asks for (the graph search's intent) ──
+#
+# One of INTENTS, from the question's shape and the graph nodes it names
+# (graph.link_entities), by rule; Laya answers only whether a question is
+# about government at all. Laya alone read the intent right half the time on
+# the Tier 2 tuning rows, mostly calling a bare topic ("healthcare") off
+# topic; the rules decide what they can, and a bare topic is find_bills.
+
+INTENTS = ("find_bills", "person_record", "how_voted", "who_voted", "money", "compare_states",
+           "copied_bills", "seat_holder", "committee", "organization", "explain_law", "local_place",
+           "elections", "off_topic")
+_GRAPH_ASK_INTENT = {"votes": "how_voted", "voters": "who_voted", "holder": "seat_holder", "committee": "committee",
+                     "reported": "committee", "referrals": "committee", "lobbied_on": "money", "funds": "money",
+                     "org_lobbied": "organization", "sponsored": "person_record", "nominated": "person_record",
+                     "signed_by": "person_record", "law": "explain_law", "sponsors": "find_bills",
+                     "related": "find_bills"}
+_VOTE_WORDS = re.compile(r"\bvot(e|es|ed|ing)\b", re.I)
+_WHO_VOTED = re.compile(r"\b(who|which\b.*?)\s+(\w+\s+){0,3}vot(ed|e)\b|\bvoted (for|against|no|yes) on\b", re.I)
+# "Fund" alone is a verb as often as money ("what did the law fund");
+# "funded by", "who funds" and "funders" are money.
+_MONEY = re.compile(r"\b(lobb\w*|donors?|donat\w*|pacs?|money|contribut\w*|raised?|raising|spen[dt]\w*|"
+                    r"paid for|funders?|funded by|who funds|funds (him|her|them))\b", re.I)
+_COMPARE_STATES = re.compile(r"\b(which|what) states\b|\bstates (that|with|where|banning|passed|have)\b|"
+                             r"\bother states\b|\bacross (the )?states\b|\b(many|several|all) states\b", re.I)
+_COPIED = re.compile(r"\b(copied|copycat|copy|model (bill|legislation)|same bill|identical)\b", re.I)
+_SEAT = re.compile(r"\bwho (is|was|are|were) (my|the|our)\b|\bwho represents\b|\bwho held\b|\bwho chairs\b|"
+                   r"\b(speaker|ranking member|chair(man|woman)?) of\b|\bwho (is|was) (the )?(governor|president|"
+                   r"speaker|senator|mayor)\b|\bwho are my\b", re.I)
+ABOUT_ME = re.compile(r"\b(my|our)\s+(reps?|representatives?|senators?|congress(wo)?man|congress(wo)?men|delegates?|"
+                      r"state (senators?|legislators?|delegates?|representatives?)|county|district|legislators?)\b", re.I)
+_EXPLAIN = re.compile(r"\b(what (does|did|is|was)|explain|tell me about)\b", re.I)
+
+
+_PRESIDENTIAL = re.compile(r"\b(signed|passed|under|era|administration|presidency|white house|laws?|enacted)\b",
+                           re.I)
+
+
+def presidential(question, entities):
+    """True when the question names a president for what passed in their
+    time ("laws passed under trump"), not for the person's own record. Pure."""
+    return any(e["kind"] == "person" and e.get("source") == "president" for e in entities or []) \
+        and bool(_PRESIDENTIAL.search(question or ""))
+
+
+def rule_intent(question, entities, plate=None, ask=None):
+    """The intent the question's shape and named nodes decide, or None when
+    they do not (a bare topic). `plate` and `ask` are classify_question's.
+    Pure."""
+    if plate == "graph" and ask:
+        return _GRAPH_ASK_INTENT.get(ask.get("ask"), "find_bills")
+    fixed = {"elections": "elections", "uncharted": "local_place", "home": "off_topic", "bill": "explain_law",
+             "state_bill": "explain_law"}
+    if plate in fixed:
+        return fixed[plate]
+    q = question or ""
+    kinds = {e["kind"] for e in entities or []}
+    if presidential(q, entities):
+        return "find_bills"
+    if plate is None:
+        # /search and /state/search skip the free checks; a county or city
+        # government is still no federal or state topic ("LA County").
+        from agents.ledger_agent import _looks_local, match_foundry_place
+        if match_foundry_place(q) or _looks_local(q):
+            return "local_place"
+    if _COPIED.search(q):
+        return "copied_bills"
+    if _COMPARE_STATES.search(q):
+        return "compare_states"
+    if _SEAT.search(q) and "bill" not in kinds:
+        return "seat_holder"
+    if _WHO_VOTED.search(q):
+        return "who_voted"
+    if ("person" in kinds or ABOUT_ME.search(q)) and _VOTE_WORDS.search(q):
+        return "how_voted"
+    if _MONEY.search(q):
+        return "organization" if "organization" in kinds and "bill" not in kinds and not re.search(
+            r"\b(donors?|pacs?|funds?|funders?|funded|raised?)\b", q, re.I) else "money"
+    if "organization" in kinds:
+        return "organization"
+    if "committee" in kinds:
+        return "committee"
+    if "person" in kinds:
+        return "person_record"
+    if "bill" in kinds:
+        named = sum(len(e["surface"].split()) for e in entities if e["kind"] == "bill")
+        words = len(re.findall(r"[A-Za-z0-9]+", q))
+        if _EXPLAIN.search(q) or named >= max(1, words - 2):
+            return "explain_law"
+    if "place" in kinds and re.search(r"\bcounty\b|\bcity\b|\btown\b", q, re.I):
+        return "local_place"
+    return None
+
+
+# Below this, Laya's "is this about government" says off topic. Its
+# probabilities run low: on the Tier 2 tuning rows real policy topics scored
+# 0.04-0.17 and the one plainly off-topic ask 0.00 (2026-09-29).
+OFF_TOPIC_FLOOR = 0.03
+_GOV_QUESTION = {"gov": {"type": "noul",
+                         "instructions": "Is this question about government, laws, politics, elections or public policy?"}}
+
+
+def on_topic(question):
+    """Laya's probability that a question is about government, or None when
+    Laya does not load (the caller then assumes it is)."""
+    from agents.result_validator_agent import _load_laya
+    try:
+        return _load_laya().predict(f"Question: {question}", _GOV_QUESTION)["answers"]["gov"]["noul"]
+    except Exception as e:                                   # noqa: BLE001 - no model, no verdict
+        print(f"[ROUTER] Laya unavailable for the topic check: {type(e).__name__}: {e}")
+        return None
+
+
+def question_intent(question, entities, plate=None, ask=None):
+    """One of INTENTS: the rules, else off_topic when Laya says so, else
+    find_bills. Returns (intent, how) where how names what decided."""
+    got = rule_intent(question, entities, plate, ask)
+    if got:
+        return got, "rule"
+    p = on_topic(question)
+    if p is not None and p < OFF_TOPIC_FLOOR:
+        return "off_topic", f"laya {p:.2f}"
+    return "find_bills", "default" if p is None else f"laya {p:.2f}"
+
+
+# ── The question structured without a model ──
+#
+# What the search handlers read (query_type, keywords, Congress window,
+# enacted, named act, result count, jurisdiction, intents), from the rules,
+# the linked names and the intent. It replaced the Haiku router (route_query)
+# on 2026-09-29: a question costs nothing to understand.
+
+# "Laws" alone means legislation as often as enacted law ("Florida abortion
+# laws"); a law that passed is said so.
+_ENACTED = re.compile(r"\b(enacted|signed( into law)?|became laws?|passed into law|laws? (that )?(passed|signed|enacted)"
+                      r"|new laws?)\b", re.I)
+_RECENT = re.compile(r"\b(recent(ly)?|latest|newest|this (year|congress|session)|current (congress|session))\b",
+                     re.I)
+_BROWSE = re.compile(r"^\s*(give me|show me|find me|find)?\s*(a|any|some|random)\s+(bill|law)s?\s*[?.!]*$|"
+                     r"^\s*show me something\s*$", re.I)
+_TOPIC_STOP = {"vote", "votes", "voted", "voting", "how", "did", "does", "who", "what", "which", "my", "our", "reps",
+               "rep", "representative", "representatives", "senator", "senators", "congressman", "record",
+               "sponsored", "lobbied", "lobbying", "lobby", "donors", "funds", "funded", "pacs", "pac", "money",
+               "spend", "spent", "raised", "states", "state", "passed", "against", "for", "no", "yes", "on", "about",
+               "do", "doing", "is", "are", "was", "were", "has", "have", "bills", "bill", "laws", "law", "under",
+               "signed", "tell", "me", "explain", "the", "a", "an", "of", "in", "to", "and", "or", "that", "this",
+               "trying", "anyone", "anything", "something", "stuff", "give", "show", "find"}
+
+
+def _count(question):
+    q = question.lower()
+    if re.search(r"\b(a|one|single) (bill|law)\b|\ban example\b", q):
+        return 1
+    if re.search(r"\b(a few|some|several)\b", q):
+        return 3
+    m = re.search(r"\b(\d{1,2}) (bills|laws|results)\b", q)
+    return min(int(m.group(1)), 20) if m else 5
+
+
+def near_state(question):
+    """A state name typed a letter or two off ("Viriginia"), or None: one
+    long word against the one-word state names. Pure."""
+    import difflib
+    from agents.ledger_agent import US_STATES
+    names = [n for n in US_STATES if " " not in n]
+    for w in re.findall(r"[a-z]{6,}", (question or "").lower()):
+        hit = difflib.get_close_matches(w, names, n=1, cutoff=0.85)
+        if hit:
+            return US_STATES[hit[0]]
+    return None
+
+
+def structure_free(question, intent, entities, full_history=False):
+    """The structured question the search handlers read, by rule. Pure but
+    for the clock (the current Congress)."""
+    import datetime as _dt
+    from agents.ledger_agent import extract_state
+    q = question or ""
+    person = next((e for e in entities if e["kind"] == "person"), None)
+    committee = next((e for e in entities if e["kind"] == "committee"), None)
+    bill = next((e for e in entities if e["kind"] == "bill"), None)
+    # A bill's name is the topic ("vote for the infrastructure bill"); a
+    # person's, committee's or organization's is not.
+    covered = " ".join(e["surface"] for e in entities if e["kind"] != "bill")
+    keywords = [w for w in re.findall(r"[a-z0-9][a-z0-9'-]+", q.lower())
+                if w not in _TOPIC_STOP and w not in covered.split() and len(w) > 2 and not w.isdigit()]
+    current = year_to_congress(_dt.datetime.now().year)
+    years = sorted({int(y) for y in re.findall(r"\b((?:19|20)\d\d)\b", q)})
+    pres = presidential(q, entities)
+    if pres:
+        congresses, time_filter, time_range = extract_president_congress(q) or [current], True, "presidential term"
+    elif years:
+        congresses, time_filter, time_range = sorted({year_to_congress(y) for y in years}), True, f"year:{years[0]}"
+    elif _RECENT.search(q):
+        congresses, time_filter, time_range = [current, current - 1], True, "last 2 years"
+    else:
+        congresses, time_filter, time_range = [current, current - 1], False, "last 5 years"
+    if full_history:
+        congresses = years_to_congress_numbers("last 5 years", all_congresses=True)
+    status = "enacted" if _ENACTED.search(q) and intent != "explain_law" else "any"
+    named = re.sub(r"^[A-Z][A-Za-z. ]*\d+: ", "", bill["name"]) if bill and intent == "explain_law" else None
+    st = extract_state(q) or near_state(q)
+    if intent in ("off_topic", "local_place"):
+        # A local government this search has no source for is answered as
+        # outside it, never with federal bills that mention "county".
+        qtype = "off_topic"
+    elif intent == "committee" and committee:
+        qtype = "committee"
+    elif person and not pres and intent in ("person_record", "how_voted") and not keywords and not bill:
+        qtype = "member"
+    else:
+        qtype = "legislation"
+    subtype = ("named_entity" if named else "browse" if _BROWSE.search(q) else
+               "concept_with_date" if time_filter and not pres else "enacted" if status == "enacted" else "concept")
+    ambiguous = [e for e in entities if e.get("ambiguous")]
+    structured = {
+        "query_type": qtype, "query_subtype": subtype, "named_entity": named, "time_filter": time_filter,
+        "confidence": 0.6 if ambiguous else 1.0,
+        "ambiguity_reason": (f"{ambiguous[0]['surface']!r} could name more than one: "
+                             + ", ".join(c["name"] for c in ambiguous[0]["candidates"][:3]) + ".") if ambiguous else None,
+        "entity_name": (person["name"] if person and not pres else committee["name"] if committee else None),
+        "keywords": keywords, "topic": " ".join(keywords), "time_range": time_range, "bill_type": "all",
+        "result_count": _count(q), "specific_bill": None, "status": status,
+        "jurisdiction": "state" if st else "federal", "state_code": st, "congress_numbers": congresses,
+        "_intent": intent, "_entities": entities,
+    }
+    # A bill number inside a longer question ("Virginia HB 1", "tell me about
+    # HR 1234"): the fast paths match only a question that is the number.
+    import graph
+    sm = graph.find_state_bill(st.lower(), q) if st else None
+    if sm:
+        ident = re.sub(r"\s+", " ", sm.group(1).upper())
+        structured.update(specific_bill={"identifier": ident}, _fast_path="state_bill_id", query_type="legislation")
+    elif not st:
+        from agents.ledger_agent import parse_bill_id
+        fb = parse_bill_id(q)
+        if fb:
+            structured.update(specific_bill={"type": fb["bill_type"], "number": fb["number"],
+                                             "congress": fb.get("congress")}, query_type="legislation")
+    known = check_known_bills(q)
+    if known:
+        structured["known_bill_hint"] = known
+    if person and not pres and keywords and intent in ("person_record", "how_voted"):
+        structured["intents"] = [{"kind": "member", "name": person["name"]}, {"kind": "topic", "label": " ".join(keywords)}]
+    else:
+        structured["intents"] = intents_from_structured(structured)
     return structured
 
 
@@ -862,11 +792,3 @@ def _disambiguate_president_query(structured, question):
     if (has_pres and not has_cong) or (not has_cong and "trump" in entity):
         structured["query_type"] = "legislation"
         structured["entity_name"] = None
-
-
-if __name__ == "__main__":
-    import anthropic
-    client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-    result = route_query("senate judiciary committee", client)
-    print(result['query_type'])
-    print(result['entity_name'])

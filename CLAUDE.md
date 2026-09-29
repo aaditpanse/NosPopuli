@@ -67,12 +67,16 @@ By path, `sys.path[0]` becomes `scripts/` and every local import fails.
 - **Routing is one function in two steps.** `router_agent.route` runs
   `classify_question` in `agents/ledger_agent.py` (the $0 regex step: watch, graph,
   elections, place, bill ID, local) and then `structure_question` (state and federal
-  fast paths, then the LLM). `/ledger` runs both steps; `/search` and `/state/search`
+  fast paths, then the names, the intent and the rules; no LLM). `/ledger` runs both steps; `/search` and `/state/search`
   run only the second, so `/search` still calls "LA County" off-topic. Don't polish
   either step: the graph replaces both.
-- **Search is local.** Federal and state bills both come from the hybrid index
-  (`search/bill_index.py`, `bill_doc`); there is no GovInfo or Congress.gov search call.
-  Its federal coverage starts in 2003, and a question before that is an honest empty.
+- **Search is local and costs no model call.** Federal and state bills both come from
+  the hybrid index (`search/bill_index.py`, `bill_doc`); there is no GovInfo or
+  Congress.gov search call. Its federal coverage starts in 2003, and a question before
+  that is an honest empty. Names come from `graph_alias` (`graph.link_entities`), the
+  intent from rules plus Laya (`router_agent.question_intent`), and the answer's sections
+  from the graph (`graph.answer_lenses`). The Haiku router is gone; Haiku remains only as
+  the relevance check's fallback when Laya does not load.
 - **Lots of capability is built but unreachable by typing.** Member finance, stock
   trades, lobbying, the geo resolvers — all live endpoints, all click-only. "It doesn't
   work" usually means "nothing routes to it."

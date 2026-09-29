@@ -594,6 +594,7 @@ def baseline(labels, base, timeout=120):
             continue
         plate = next((ln for ln in lines if ln.get("section") == "plate"), {})
         member = next((ln for ln in lines if ln.get("section") == "member"), {})
+        answer = next((ln for ln in lines if ln.get("section") == "answer"), {})
         ents, bills = [], [bill_key(s) for s in plate.get("stories") or []]
         if plate.get("plate") == "bill":
             bills = [bill_key({"congress": plate.get("congress"), "type": plate.get("bill_type"), "number": plate.get("number")})]
@@ -605,7 +606,11 @@ def baseline(labels, base, timeout=120):
         bio = ((member.get("member") or {}).get("bioguide_id"))
         if bio:
             ents.append(graph.node_id("person", f"bioguide/{bio}"))
-        preds[row["question"]] = {"intent": intent_of(plate), "entities": ents,
+        # The graph search says what it understood; before it, the plate's
+        # kind was the only intent there was.
+        if answer.get("intent"):
+            ents += [e["node_id"] for e in answer.get("understood") or [] if e.get("node_id")]
+        preds[row["question"]] = {"intent": answer.get("intent") or intent_of(plate), "entities": ents,
                                   "bills": list(dict.fromkeys(b for b in bills if b))[:10]}
         print(f"  {preds[row['question']]['intent']:<14} {len(preds[row['question']]['bills']):2d}  {row['question']}", flush=True)
     return preds

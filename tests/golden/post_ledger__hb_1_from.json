@@ -1,7 +1,7 @@
 {
  "meta": {
-  "app_sha": "3ec8869",
-  "captured": "2026-09-27T10:14:11",
+  "app_sha": "",
+  "captured": "2026-09-29T21:27:14",
   "notes": "a year the store has no HB 1 for: the other sessions, and a note that says so",
   "volatile": []
  },
@@ -71,6 +71,31 @@
       "state": "va",
       "title": "Minimum wage; increases incrementally to $15.00 per hour by January 1, 2028.",
       "type": "hb"
+     }
+    ]
+   },
+   {
+    "focus": null,
+    "how": "laya 0.81",
+    "intent": "find_bills",
+    "reps": [],
+    "section": "answer",
+    "sections": [],
+    "understood": [
+     {
+      "ambiguous": false,
+      "candidates": [
+       {
+        "kind": "place",
+        "name": "Virginia",
+        "node_id": "ocd-division/country:us/state:va",
+        "weight": 1.0
+       }
+      ],
+      "kind": "place",
+      "name": "Virginia",
+      "node_id": "ocd-division/country:us/state:va",
+      "surface": "virginia"
      }
     ]
    },

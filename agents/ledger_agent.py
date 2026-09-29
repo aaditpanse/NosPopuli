@@ -65,7 +65,11 @@ _BILL_ID_RE = re.compile(
     r"\b(?:h\.?\s*r\.?|hr)\s*\.?\s*(\d+)\b|\b(s)\s*\.?\s*(\d+)\b",
     re.I,
 )
-_WATCH_RE = re.compile(r"^\s*(watch(?:ing)?|following|my watch list)\s*$", re.I)
+# The bare words, or a sentence about the reader's own watch list ("show me
+# what I'm watching"); anchored alone, every sentence form once fell through
+# to bill search (the README's defect until 2026-09-29).
+_WATCH_RE = re.compile(r"^\s*(watch(?:ing)?|following|my watch ?list)\s*[?.!]?\s*$|"
+                       r"\bwhat (am i|i'?m|i am) (watching|following)\b|\bmy watch ?list\b", re.I)
 
 
 def compact_title(raw, limit=140):
@@ -168,7 +172,7 @@ def classify_question(question, state_code=None, allow_graph=True):
     q = (question or "").strip()
     if not q:
         return {"plate": "home"}
-    if _WATCH_RE.match(q):
+    if _WATCH_RE.search(q):
         return {"plate": "watching"}
     # The graph answers three question shapes ("how did X vote on Y", "who
     # voted no on Y", "who held SEAT on DATE") and says "not mine" to the

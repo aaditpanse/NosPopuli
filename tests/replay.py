@@ -383,16 +383,26 @@ def _install(monkeypatch, caches):
 
     monkeypatch.setattr(bill_index, "search", fake_search)
 
-    # 10. Laya, the relevance check's model, is off under the harness, in
-    #     record and replay alike: its weights are not in CI, and a model a
-    #     recording used but CI cannot run would make every such fixture a
-    #     miss. The fixtures pin its fallback, the Haiku check; Laya's own
-    #     ordering is unit-tested (test_search_rank.LayaRelevanceTest).
-    from agents import result_validator_agent
+    # 10. The graph search's own reads — the name table (link_entities) and
+    #     the answer's lenses (answer_lenses) — open their own pool, as the
+    #     index does: the seam is the function, keyed by its arguments.
+    real_link, real_lenses = graph.link_entities, graph.answer_lenses
+    monkeypatch.setattr(graph, "link_entities", lambda question, cur=None: caches["graph"].fetch(
+        _key("link", question), lambda: real_link(question)))
+    monkeypatch.setattr(graph, "answer_lenses", lambda frame, reader=None, text=None, laws_only=False: caches["graph"].fetch(
+        _key("lenses", frame, reader, text, laws_only), lambda: real_lenses(frame, reader, text, laws_only)))
 
-    def no_laya():
-        raise ImportError("Laya is off under the replay harness")
-    monkeypatch.setattr(result_validator_agent, "_load_laya", no_laya)
+    # 11. Laya, the local model behind the relevance check and the "is this
+    #     about government" check: its answers are recorded like any model
+    #     call, keyed by what it was asked. Recording runs it for real (on the
+    #     server, where the weights are); CI replays and never loads it.
+    from agents import result_validator_agent, router_agent
+    real_scores, real_on_topic = result_validator_agent.laya_scores, router_agent.on_topic
+    monkeypatch.setattr(result_validator_agent, "laya_scores", lambda query, results: caches["graph"].fetch(
+        _key("laya_rel", query, [r.get("title") or r.get("identifier") for r in results]),
+        lambda: real_scores(query, results)))
+    monkeypatch.setattr(router_agent, "on_topic", lambda question: caches["graph"].fetch(
+        _key("on_topic", question), lambda: real_on_topic(question)))
 
     # 38 routes carry @limiter.limit over in-process storage on a module global
     # that never resets, and get_remote_address collapses every TestClient call
@@ -564,7 +574,7 @@ def build_app(monkeypatch):
     """Returns (api module, TestClient) with every boundary closed."""
     from starlette.testclient import TestClient
     prepare_env()
-    caches = {n: Cache(n) for n in ("llm", "http", "db", "search")}
+    caches = {n: Cache(n) for n in ("llm", "http", "db", "search", "graph")}
     api = _install(monkeypatch, caches)
     # global_exception_handler turns everything into a generic 500, so asserting
     # on that body is the only stable behaviour available.
@@ -775,13 +785,14 @@ CASES = (
 
     # --- search / ledger variants ---------------------------------------
     ("POST", "/search", {"question": "Ted Cruz", "max_results": 5}, None, None,
-     "member route — 20 of the 73 logged searches were this"),
+     "member route — 20 of the 73 logged searches were this. Since the graph search: the recording "
+     "database has no Ted Cruz node, so the name links only 'cruz', ambiguously (production links him)"),
     ("POST", "/search", {"question": "best pizza in brooklyn", "max_results": 5}, None,
      None, "correctly off_topic — the control for the LA County defect"),
     ("POST", "/search", {"question": "Radnor County", "max_results": 5}, None, None,
      "off_topic @0.95 on a local-government ask"),
     ("POST", "/ledger", {"question": "show me what I'm watching"}, None, None,
-     "the anchored _WATCH_RE defect, end to end"),
+     "a sentence about the watch list opens it (the anchored _WATCH_RE defect, fixed 2026-09-29)"),
     ("POST", "/ledger", {"question": ""}, None, None, "empty is the home plate"),
     ("POST", "/state/search", {"question": "healthcare", "state_code": "VA",
                                "max_results": 5}, None, None,
@@ -853,7 +864,7 @@ def record(argv):
 
     mp = pytest.MonkeyPatch()
     prepare_env()
-    caches = {n: Cache(n) for n in ("llm", "http", "db", "search")}
+    caches = {n: Cache(n) for n in ("llm", "http", "db", "search", "graph")}
     api = _install(mp, caches)
     client = TestClient(api.app, raise_server_exceptions=False)
     GOLDEN.mkdir(parents=True, exist_ok=True)
