@@ -762,5 +762,172 @@
    "title": "Declaration of disaster; health care providers, immunity from civil liability.",
    "type": "hb"
   }
+ ],
+ "search housing bills ocd-division/country:us {\"congresses\": [119, 118], \"laws_only\": false, \"limit\": 15, \"sessions\": null}": [
+  {
+   "congress": 119,
+   "date_issued": "2026-05-19",
+   "is_law": false,
+   "law_number": null,
+   "number": 1299,
+   "package_id": "BILLS-119hres1299",
+   "policy_area": "Housing and Community Development",
+   "title": "Providing for the concurrence by the House in the Senate amendment to H.R. 6644, with amendment.",
+   "type": "hres"
+  },
+  {
+   "congress": 118,
+   "date_issued": "2023-06-21",
+   "is_law": false,
+   "law_number": null,
+   "number": 4233,
+   "package_id": "BILLS-118hr4233",
+   "policy_area": "Housing and Community Development",
+   "title": "Housing Crisis Response Act of 2023",
+   "type": "hr"
+  },
+  {
+   "congress": 118,
+   "date_issued": "2023-03-22",
+   "is_law": false,
+   "law_number": null,
+   "number": 1708,
+   "package_id": "BILLS-118hr1708",
+   "policy_area": "Housing and Community Development",
+   "title": "Housing Is a Human Right Act of 2023",
+   "type": "hr"
+  },
+  {
+   "congress": 119,
+   "date_issued": "2025-04-30",
+   "is_law": false,
+   "law_number": null,
+   "number": 1527,
+   "package_id": "BILLS-119s1527",
+   "policy_area": "Finance and Financial Sector",
+   "title": "Housing Affordability Act",
+   "type": "s"
+  },
+  {
+   "congress": 118,
+   "date_issued": "2023-04-25",
+   "is_law": false,
+   "law_number": null,
+   "number": 1267,
+   "package_id": "BILLS-118s1267",
+   "policy_area": "Housing and Community Development",
+   "title": "Fair Housing Improvement Act of 2023",
+   "type": "s"
+  },
+  {
+   "congress": 118,
+   "date_issued": "2023-04-25",
+   "is_law": false,
+   "law_number": null,
+   "number": 2846,
+   "package_id": "BILLS-118hr2846",
+   "policy_area": "Housing and Community Development",
+   "title": "Fair Housing Improvement Act of 2023",
+   "type": "hr"
+  },
+  {
+   "congress": 118,
+   "date_issued": "2023-11-28",
+   "is_law": false,
+   "law_number": null,
+   "number": 3350,
+   "package_id": "BILLS-118s3350",
+   "policy_area": "Housing and Community Development",
+   "title": "Keeping Housing Affordable in Forgotten Communities Act",
+   "type": "s"
+  },
+  {
+   "congress": 119,
+   "date_issued": "2025-06-30",
+   "is_law": false,
+   "law_number": null,
+   "number": 4266,
+   "package_id": "BILLS-119hr4266",
+   "policy_area": "Housing and Community Development",
+   "title": "Housing for US Act",
+   "type": "hr"
+  },
+  {
+   "congress": 119,
+   "date_issued": "2025-12-11",
+   "is_law": true,
+   "law_number": "101",
+   "number": 6644,
+   "package_id": "BILLS-119hr6644",
+   "policy_area": "Housing and Community Development",
+   "title": "21st Century ROAD to Housing Act",
+   "type": "hr"
+  },
+  {
+   "congress": 119,
+   "date_issued": "2025-03-06",
+   "is_law": false,
+   "law_number": null,
+   "number": 198,
+   "package_id": "BILLS-119hres198",
+   "policy_area": "Congress",
+   "title": "Providing for the expenses of certain committees of the House of Representatives in the One Hundred Nineteenth Congress.",
+   "type": "hres"
+  },
+  {
+   "congress": 118,
+   "date_issued": "2023-03-07",
+   "is_law": false,
+   "law_number": null,
+   "number": 197,
+   "package_id": "BILLS-118hres197",
+   "policy_area": "Congress",
+   "title": "Providing for the expenses of certain committees of the House of Representatives in the One Hundred Eighteenth Congress.",
+   "type": "hres"
+  },
+  {
+   "congress": 119,
+   "date_issued": "2025-11-10",
+   "is_law": false,
+   "law_number": null,
+   "number": 6008,
+   "package_id": "BILLS-119hr6008",
+   "policy_area": "Housing and Community Development",
+   "title": "Bring Down Housing Costs Act",
+   "type": "hr"
+  },
+  {
+   "congress": 118,
+   "date_issued": "2023-02-01",
+   "is_law": false,
+   "law_number": null,
+   "number": 702,
+   "package_id": "BILLS-118hr702",
+   "policy_area": "Housing and Community Development",
+   "title": "HOME Act of 2023",
+   "type": "hr"
+  },
+  {
+   "congress": 118,
+   "date_issued": "2023-01-10",
+   "is_law": false,
+   "law_number": null,
+   "number": 15,
+   "package_id": "BILLS-118hres15",
+   "policy_area": "Congress",
+   "title": "Electing Members to certain standing committees of the House of Representatives.",
+   "type": "hres"
+  },
+  {
+   "congress": 119,
+   "date_issued": "2025-06-24",
+   "is_law": false,
+   "law_number": null,
+   "number": 4100,
+   "package_id": "BILLS-119hr4100",
+   "policy_area": "Housing and Community Development",
+   "title": "End Junk Fees for Renters Act",
+   "type": "hr"
+  }
  ]
 }

@@ -1,7 +1,7 @@
 {
  "meta": {
   "app_sha": "",
-  "captured": "2026-09-27T14:09:33",
+  "captured": "2026-09-29T03:10:33",
   "notes": "a Virginia bill number, from the bills files, newest session first",
   "volatile": []
  },
@@ -25,8 +25,16 @@
     "confidence": 1.0,
     "entity_name": null,
     "expanded_terms": [],
+    "full_history": false,
+    "intents": [
+     {
+      "kind": "topic",
+      "label": "legislation"
+     }
+    ],
     "jurisdiction": "state",
     "keywords": [],
+    "max_results_override": null,
     "named_entity": null,
     "query_subtype": "specific_bill",
     "query_type": "legislation",

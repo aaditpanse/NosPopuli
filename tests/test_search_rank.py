@@ -106,25 +106,88 @@ class FusionTest(unittest.TestCase):
 
 
 
-class EvaluationTest(unittest.TestCase):
-    def test_the_pool_order_is_blind_and_stable(self):
-        from scripts.search_smoketest import blind_order
-        a = blind_order("ai regulation", ["119-s-1", "118-hr-2", "119-s-1"])
-        self.assertEqual(sorted(a), ["118-hr-2", "119-s-1"])
-        self.assertEqual(a, blind_order("ai regulation", ["118-hr-2", "119-s-1"]))
+class IndexFilterTest(unittest.TestCase):
+    """The router's question as the index's filters (api.handle_bill_search)."""
 
-    def test_recall_counts_only_yes_and_skips_half_judged_queries(self):
-        from scripts.search_smoketest import score
-        pool = [{"query": "q1", "old": ["a", "b"], "new": ["b", "c"], "pool": ["a", "b", "c"]},
-                {"query": "q2", "old": ["x"], "new": ["y"], "pool": ["x", "y"]},
-                {"query": "q3", "old": ["m"], "new": [], "pool": ["m"]}]
-        judged = {"q1": {"a": "no", "b": "yes", "c": "yes"},
-                  "q2": {"x": "partly"},                       # y unjudged
-                  "q3": {"m": "no"}}                           # nothing relevant
-        s = score(pool, judged)
-        self.assertEqual((s["queries"], s["unjudged"], s["partly"]), (1, 1, 0))
-        self.assertEqual((s["old"], s["new"]), (0.5, 1.0))
-        self.assertIsNone(s["per_query"][1]["old"])
+    def f(self, **structured):
+        from search.bill_index import index_filters
+        return index_filters(structured)
+
+    def test_congresses_before_the_index_are_dropped_and_noted(self):
+        self.assertEqual(self.f(congress_numbers=[119, 118]), ([119, 118], False, False, False))
+        self.assertEqual(self.f(congress_numbers=[108, 107]), ([108], False, True, False))
+
+    def test_a_question_wholly_before_2003_is_an_honest_empty(self):
+        self.assertEqual(self.f(congress_numbers=[92]), (None, False, True, True))
+        self.assertEqual(self.f(full_history=True, before_congress=100), (None, False, True, True))
+
+    def test_full_history_searches_every_indexed_congress_and_says_what_it_missed(self):
+        self.assertEqual(self.f(full_history=True, congress_numbers=[119]), (None, False, True, False))
+        congresses, _, partly, wholly = self.f(full_history=True, before_congress=112)
+        self.assertEqual((congresses, partly, wholly), ([108, 109, 110, 111], True, False))
+
+    def test_no_congress_named_is_every_indexed_one(self):
+        self.assertEqual(self.f(), (None, False, False, False))
+
+    def test_a_named_act_ignores_the_default_window_but_not_a_named_year(self):
+        self.assertEqual(self.f(query_subtype="named_entity", congress_numbers=[119, 118])[0], None)
+        self.assertEqual(self.f(query_subtype="named_entity_with_date", congress_numbers=[117])[0], [117])
+
+    def test_either_enacted_mark_means_laws_only(self):
+        self.assertTrue(self.f(query_subtype="enacted")[1])
+        self.assertTrue(self.f(query_subtype="concept", status="enacted")[1])
+        self.assertFalse(self.f(query_subtype="concept", status="any")[1])
+
+
+class LocalQueryTest(unittest.TestCase):
+    """The index's two plain queries, over a fake cursor that keeps the SQL."""
+
+    def run_query(self, fn):
+        from unittest import mock
+        from search import bill_index
+        seen = {}
+
+        class Cur:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *a):
+                return False
+
+            def execute(self, sql, args):
+                seen["sql"], seen["args"] = " ".join(sql.split()), args
+
+            def fetchall(self):
+                return [{"congress": 119, "bill_type": "hr", "number": "5", "title": "A bill", "introduced": None,
+                         "law_numbers": None, "jurisdiction": bill_index.US_DIV}]
+
+        class Conn:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *a):
+                return False
+
+            def cursor(self, **kw):
+                return Cur()
+
+        with mock.patch("correspondence.db._get_pool", return_value=mock.Mock(connection=lambda: Conn())):
+            rows = fn(bill_index)
+        return rows, seen
+
+    def test_newest_first_with_undated_bills_last(self):
+        rows, seen = self.run_query(lambda b: b.recent(congresses=[119], laws_only=True, limit=3))
+        self.assertIn("ORDER BY latest_action_date DESC NULLS LAST, instrument_id LIMIT %s", seen["sql"])
+        self.assertIn("AND congress = ANY(%s) AND is_law", seen["sql"])
+        self.assertEqual(seen["args"][1:], [[119], 3])
+        self.assertEqual((rows[0]["type"], rows[0]["number"]), ("hr", 5))
+
+    def test_the_law_of_a_name_is_a_title_match_with_the_wildcards_escaped(self):
+        _, seen = self.run_query(lambda b: b.laws_named(" CHIPS_and 100% Act "))
+        self.assertIn("is_law AND title ILIKE %s", seen["sql"])
+        self.assertEqual(seen["args"][1:], [r"%CHIPS\_and 100 Act%", 3])
+        rows, seen = self.run_query(lambda b: b.laws_named("  "))
+        self.assertEqual((rows, seen), ([], {}))
 
 
 class StateSearchDocTest(unittest.TestCase):

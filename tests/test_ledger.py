@@ -103,6 +103,59 @@ class ClassifyTests(unittest.TestCase):
         self.assertEqual(out["place"]["slug"], "fairfax-bos")
 
 
+class RouteTests(unittest.TestCase):
+    """router_agent.route: the one routing decision for /ledger, /search and
+    /state/search."""
+
+    def route(self, q, *args, structure=None, **kw):
+        from unittest import mock
+        from agents import router_agent
+        calls = []
+
+        def fake_structure(question, state_code=None, **k):
+            calls.append((question, state_code))
+            if structure:
+                return structure()
+            return {"query_type": "legislation", "jurisdiction": "federal"}
+
+        def no_client():
+            raise AssertionError("a free plate must not build a model client")
+
+        with mock.patch.object(router_agent, "structure_question", fake_structure):
+            out = router_agent.route(q, *args, get_client=no_client, **kw)
+        return out, calls
+
+    def test_a_free_plate_never_structures(self):
+        for q, plate in (("HR 4218", "bill"), ("watching", "watching"), ("Stafford County", "uncharted"),
+                         ("when is the election in Texas", "elections"), ("", "home")):
+            out, calls = self.route(q)
+            self.assertEqual((out["plate"], calls), (plate, []), q)
+
+    def test_the_ledger_plate_structures_for_the_questions_own_state(self):
+        # The reader's home decides the free plates; the question's state
+        # (or none) decides the search.
+        out, calls = self.route("voting rights bills", None, home_state="VA")
+        self.assertEqual(out["plate"], "ledger")
+        self.assertEqual(calls, [("voting rights bills", None)])
+        self.assertEqual(out["structured"]["jurisdiction"], "federal")
+
+    def test_a_router_failure_leaves_the_ledger_plate_empty(self):
+        def boom():
+            raise RuntimeError("model down")
+        out, _ = self.route("voting rights bills", structure=boom)
+        self.assertEqual(out["plate"], "ledger")
+        self.assertIsNone(out["structured"])
+
+    def test_without_plates_only_the_structuring_runs_and_fails_closed(self):
+        out, calls = self.route("watching", "VA", plates=False)
+        self.assertEqual((out["plate"], calls), ("ledger", [("watching", "VA")]))
+
+        def boom():
+            raise RuntimeError("model down")
+        with self.assertRaises(RuntimeError):
+            self.route("housing", plates=False, structure=boom)
+
+
 class FunnelTests(unittest.TestCase):
     def test_stage_from_action(self):
         self.assertEqual(funnel_stage("Introduced in House"), "introduced")

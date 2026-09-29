@@ -1,7 +1,7 @@
 {
  "meta": {
-  "app_sha": "3ec8869",
-  "captured": "2026-09-27T10:13:42",
+  "app_sha": "",
+  "captured": "2026-09-29T03:10:30",
   "notes": "a Virginian's topic ask with no state named still searches Congress",
   "volatile": []
  },
@@ -23,29 +23,29 @@
      {
       "id": "all",
       "label": "Introduced",
-      "n": 0,
+      "n": 5,
       "width": "100%"
      },
      {
       "id": "committee",
       "label": "Waiting in committee",
-      "n": 0,
-      "width": "0%"
+      "n": 1,
+      "width": "20%"
      },
      {
       "id": "passed",
       "label": "Passed one chamber",
-      "n": 0,
-      "width": "0%"
+      "n": 1,
+      "width": "20%"
      },
      {
       "id": "law",
       "label": "Became law",
-      "n": 0,
-      "width": "0%"
+      "n": 1,
+      "width": "20%"
      }
     ],
-    "headline": "Nothing in Congress matched that ask.",
+    "headline": "5 bills matched. One passed a chamber. One became law.",
     "person_only": false,
     "place_name": "Virginia",
     "plate": "ledger",
@@ -53,11 +53,95 @@
     "question": "housing bills",
     "section": "plate",
     "state_code": "VA",
-    "stories": []
+    "stories": [
+     {
+      "_relevance": 5,
+      "congress": 119,
+      "english_text": "",
+      "english_title": "Housing for US Act",
+      "id": "hr4266",
+      "is_law": false,
+      "latest_action": "",
+      "meta": "HR 4266",
+      "number": 4266,
+      "stage": "introduced",
+      "title": "Housing for US Act",
+      "type": "hr"
+     },
+     {
+      "_relevance": 5,
+      "congress": 119,
+      "english_text": "",
+      "english_title": "Bring Down Housing Costs Act",
+      "id": "hr6008",
+      "is_law": false,
+      "latest_action": "",
+      "meta": "HR 6008",
+      "number": 6008,
+      "stage": "introduced",
+      "title": "Bring Down Housing Costs Act",
+      "type": "hr"
+     },
+     {
+      "_relevance": 5,
+      "congress": 119,
+      "english_text": "",
+      "english_title": "21st Century ROAD to Housing Act",
+      "id": "hr6644",
+      "is_law": true,
+      "latest_action": "",
+      "meta": "HR 6644",
+      "number": 6644,
+      "stage": "law",
+      "title": "21st Century ROAD to Housing Act",
+      "type": "hr"
+     },
+     {
+      "_relevance": 5,
+      "congress": 119,
+      "english_text": "",
+      "english_title": "Housing Affordability Act",
+      "id": "s1527",
+      "is_law": false,
+      "latest_action": "",
+      "meta": "S 1527",
+      "number": 1527,
+      "stage": "introduced",
+      "title": "Housing Affordability Act",
+      "type": "s"
+     },
+     {
+      "_relevance": 0,
+      "congress": 119,
+      "english_text": "",
+      "english_title": "End Junk Fees for Renters Act",
+      "id": "hr4100",
+      "is_law": false,
+      "latest_action": "",
+      "meta": "HR 4100",
+      "number": 4100,
+      "stage": "introduced",
+      "title": "End Junk Fees for Renters Act",
+      "type": "hr"
+     }
+    ]
    },
    {
     "section": "shelves",
-    "shelves": []
+    "shelves": [
+     {
+      "id": "all",
+      "item_ids": [
+       "hr4266",
+       "hr6008",
+       "hr6644",
+       "s1527",
+       "hr4100"
+      ],
+      "kind": "topic",
+      "label": "These bills"
+     }
+    ]
    },
    {
     "section": "done"

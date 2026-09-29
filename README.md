@@ -28,7 +28,8 @@ app, Postgres 17 (with pgvector and PostGIS) and the federal bulk data under
 commits the small tracked files back to `main`; a timer deploys `main` every five
 minutes. The bill page, member pages, campaign money, member photos and the feed read
 those files and the graph, not Congress.gov: a bill page's data is ready in 160–320 ms.
-`/search` still asks GovInfo until the local search passes its evaluation (below).
+Search answers from this server too (since 2026-09-29): federal and state bills from the
+same hybrid index, with no GovInfo or Congress.gov search call.
 Railway and Supabase are paused, and are deleted after 2026-10-03.
 
 **The state layer is all 50 legislatures, from Open States.** Every session since 2017
@@ -270,12 +271,12 @@ actually mine.
 
 In order. Each step is independently useful, so none of it is wasted if I stop partway.
 
-**1. Unify the two routers.** *Done as far as it is worth doing.* Both routes now call
-one `structure_question`, so there is one routing path for the graph to replace. The
-rest is dropped on purpose: the graph replaces the bucket classifier and the `handle_*`
-dispatcher, so extracting or tuning them spends effort on a dead end. What the
-classifier keeps is a smaller job — finding the node a graph walk starts from (a bill
-ID, a named act, a place).
+**1. Unify the two routers.** *Done 2026-09-29.* `router_agent.route` is the one
+routing decision for `/ledger`, `/search` and `/state/search`: the free checks first
+(on `/ledger`), then the fast paths, then Haiku. The six federal `handle_*` search
+handlers became one, `handle_bill_search`, over the index. What the classifier keeps is
+a smaller job — finding the node a graph walk starts from (a bill ID, a named act, a
+place).
 
 **2. Give the ask SPA a state plate.** *Done 2026-09-27 for Virginia, 2026-09-28 for all
 50.* `/ledger` sends a state question to the state layer; `ledger.js` has a state bill
@@ -373,7 +374,7 @@ means today). A county or state name inside a topic is treated as scope and drop
 five lookups over the lists `build` returns that `pg_backend` runs as SQL, which is
 the harness `tests/test_graph.py` asks its questions through.
 
-`/ledger` routes into it: `classify_question` tries `graph.parse_question` before the
+`/ledger` routes into it: `route` runs `classify_question`, which tries `graph.parse_question` before the
 place and topic guesses, so "how did Herrity vote on zoning" streams a `graph` plate
 instead of going to Congress. The graph declines every other shape, and the caller
 falls back with `allow_graph=False` when it parses a shape but knows neither the
@@ -452,9 +453,16 @@ models.
 policy area, the latest CRS summary) and one vector in Voyage 4's shared space:
 documents embedded by `voyage-4-large` through the API, questions by `voyage-4-nano` on
 the server's CPU, so a question never leaves the machine. `search.bill_index.search`
-fuses full-text and nearest-vector ranks (RRF, k=60). `/search` switches to it when it
-finds at least as many relevant bills as today's search on a hand-judged set
-(`scripts/search_smoketest.py --pool` / `--score`).
+fuses full-text and nearest-vector ranks (RRF, k=60), and every search uses it since
+2026-09-29: `api.handle_bill_search` for Congress, `handle_state_search` for the states,
+each with one Haiku relevance check after. A named act is searched by the router's
+canonical name, in any Congress ("obamacare" searches "Affordable Care Act"), and the
+law of that name goes first; "give me a bill" reads
+the newest rows (`bill_index.recent`); a question wholly before 2003 gets an honest
+empty (`empty_reason: "before_index"`), and one reaching back past it a note. It
+replaced GovInfo search without the planned blind evaluation, by my choice: the
+question set is kept in `scripts/search_smoketest.py` (`EVAL_QUERIES`) for the eval
+that measures it.
 
 *Next for the graph:* the General Assembly.
 
@@ -521,11 +529,12 @@ Edit a file, hit save, reload the browser.
 
 ```
 Ask (production)     POST /ledger → NDJSON stream
-                     classify → plate → stream plate, member, shelves
+                     route: classify → plate → stream plate, member, shelves
                      frontend/test.html + js/ledger.js
 
-Search               POST /search → JSON
-                     fast_route → fast_route_state → route_query (Haiku)
+Search               POST /search, /state/search → JSON
+                     route: fast_route_state → fast_route → route_query (Haiku)
+                     → the hybrid index (bill_doc) → one Haiku relevance check
                      the $0 regex paths answer first; the model is last resort
 
 Bill detail          POST /bill, /law → NDJSON
@@ -542,11 +551,12 @@ Logging              every agent action → agent_log.json
                      all three feed the analyst at /monitor
 ```
 
-Routing is two layers that both routes share: `classify_question` in
-`agents/ledger_agent.py` (regex, $0), then `structure_question` in `agents/router_agent.py`
-(fast paths, then the LLM). `/ledger` runs both; `/search` runs only the second, which
-is why it still answers "LA County" as off-topic. That gap is left on purpose: `/search`
-has no user, and the graph replaces both layers.
+Routing is one function, `router_agent.route`. On `/ledger` it runs the free checks
+(`classify_question` in `agents/ledger_agent.py`: watch, graph, elections, place, bill
+ID, local) and only then structures the question (fast paths, then the LLM).
+`/search` and `/state/search` skip the free checks (`plates=False`) and keep their JSON
+shape, which is why `/search` still answers "LA County" as off-topic. That gap is left
+on purpose: `/search` has no user, and the graph replaces both steps.
 
 ---
 
@@ -591,14 +601,14 @@ no purple.
 
 ```
 Backend       Python · FastAPI · uvicorn · slowapi rate limiting
-Models        Haiku 4.5 — routing, expansion, validation, translation (most calls)
+Models        Haiku 4.5 — routing, validation, translation (most calls)
               Sonnet 5.5 — web search: bill background, upcoming elections, polling
               Opus      — Foundry extractor synthesis only
 Search        Voyage 4 — voyage-4-large for documents (API), voyage-4-nano for
               questions (on the server CPU, requirements-embed.txt)
 Federal       GovInfo bulk (BILLSTATUS, bill text, CRPT) · Voteview · clerk.house.gov +
               senate.gov XML · FEC bulk · lda.gov · Congress.gov (nominations; bills
-              before 2003) · GovInfo search (/search, until it switches)
+              before 2003)
 State         Open States (monthly Postgres dump, people repo) for all 50 · bill text
               from each version's own link · Virginia LIS daily files (the one
               independent check)

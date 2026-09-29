@@ -761,12 +761,13 @@ Return ONLY this JSON structure:
     return structured
 
 
-# ── One routing decision for /search and /ledger ──
+# ── One routing decision for /ledger, /search and /state/search ──
 #
-# Both routes used to run this sequence as their own copy of five calls in
-# api.py. /ledger runs classify_question (ledger_agent) first and then this;
-# /search now does the same, so the two cannot disagree about what a
-# question is — only about how they render the answer.
+# route() is the only entry. The free checks (ledger_agent.classify_question)
+# go first on /ledger, and a page that needs no search returns there, before
+# any model call; everything else is structured here, the same way for all
+# three routes, so they cannot disagree about what a question is — only
+# about how they render the answer.
 
 _PRESIDENTS = ("trump", "biden", "obama", "bush", "clinton", "reagan")
 _PRESIDENTIAL_SIGNALS = ("signed", "passed", "under", "era", "administration", "presidency", "white house")
@@ -803,6 +804,38 @@ def structure_question(question, state_code=None, *, full_history=False,
     _apply_presidential_term_filter(structured, question)
     _disambiguate_president_query(structured, question)
     return structured
+
+
+def route(question, state_code=None, *, get_client, home_state=None, plates=True, allow_graph=True,
+          full_history=False, before_congress=None, max_results=None, fresh=False):
+    """The routing decision: {"plate": ..., ...}.
+
+    With `plates` (/ledger), classify_question's free checks run first —
+    the watch list, the graph's question shapes, elections, a Foundry
+    place, a bill number, a local place we have no source for — against
+    the reader's `home_state`; any plate but "ledger" is the answer and no
+    model is asked. The ledger plate then carries "structured": the
+    question structured for `state_code` (the question's own state, when it
+    is loaded), by the state fast path, the federal fast path, then Haiku.
+    Without `plates` (/search, /state/search) only that last step runs.
+
+    Fail-open on /ledger (a router error leaves "structured" None and the
+    page shows an empty ledger); fail-closed without plates, where the
+    route turns the error into its own 500."""
+    kw = dict(full_history=full_history, before_congress=before_congress, max_results=max_results,
+              fresh=fresh, get_client=get_client)
+    if not plates:
+        return {"plate": "ledger", "structured": structure_question(question, state_code, **kw)}
+    from agents.ledger_agent import classify_question
+    routed = classify_question(question, home_state, allow_graph=allow_graph)
+    if routed.get("plate") != "ledger":
+        return routed
+    try:
+        routed["structured"] = structure_question(question, state_code, **kw)
+    except Exception as e:
+        print(f"[ROUTER] structuring failed: {type(e).__name__}: {e}")
+        routed["structured"] = None
+    return routed
 
 
 def _apply_presidential_term_filter(structured, question):

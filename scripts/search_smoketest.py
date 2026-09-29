@@ -11,13 +11,10 @@ Usage:
     python search_smoketest.py --base http://localhost:8000
     python search_smoketest.py --out report.json
 
-The evaluation gate for the local /search (plan step 40) is here too: pool
-both systems' top 10 for EVAL_QUERIES, have the owner judge the pool blind,
-then score recall@10. Pooling calls the router and expander (Haiku) and
-GovInfo once a query; run it on the server, where the index is.
-
-    python -m scripts.search_smoketest --pool pool.json
-    python -m scripts.search_smoketest --score pool.json judgments.json
+EVAL_QUERIES is the question set for a quality eval of the local search
+(README, Tier 2). It once pooled the old GovInfo search against the index for
+a blind judgment; the index replaced GovInfo on 2026-09-29 without it, by the
+owner's choice, and the set is kept for the eval that measures it next.
 """
 
 import argparse
@@ -150,105 +147,7 @@ EVAL_QUERIES = (
 )
 
 
-def _bill_key(r):
-    return f"{r.get('congress')}-{(r.get('type') or '').lower()}-{r.get('number')}"
-
-
-def blind_order(query, keys):
-    """The pool in an order that says nothing about which system found a
-    bill, and is the same on every run. Pure."""
-    import hashlib
-    return sorted(set(keys), key=lambda k: hashlib.sha1(f"{query}|{k}".encode()).hexdigest())
-
-
-def recall_at(found, relevant, k=10):
-    """Share of the judged-relevant bills in the first k found; None when
-    nothing was judged relevant, since then there is nothing to recall. Pure."""
-    if not relevant:
-        return None
-    return len(set(found[:k]) & set(relevant)) / len(relevant)
-
-
-def score(pool_rows, judgments, k=10):
-    """Mean recall@k per system over the queries with a relevant bill.
-    judgments: {query: {bill_key: "yes" | "partly" | "no"}}. "partly" counts
-    as not relevant here and is reported apart. Pure."""
-    out = {"queries": 0, "unjudged": 0, "old": 0.0, "new": 0.0, "partly": 0, "per_query": []}
-    for row in pool_rows:
-        marks = judgments.get(row["query"]) or {}
-        if any(c not in marks for c in row["pool"]):
-            out["unjudged"] += 1
-            continue
-        relevant = [c for c, m in marks.items() if m == "yes"]
-        out["partly"] += sum(1 for m in marks.values() if m == "partly")
-        old, new = recall_at(row["old"], relevant, k), recall_at(row["new"], relevant, k)
-        out["per_query"].append({"query": row["query"], "relevant": len(relevant), "old": old, "new": new})
-        if old is not None:
-            out["queries"] += 1
-            out["old"] += old
-            out["new"] += new
-    if out["queries"]:
-        out["old"] /= out["queries"]
-        out["new"] /= out["queries"]
-    return out
-
-
-def build_pool(queries, k=10):
-    """Both systems' top k for each query, at the same point: search_bills'
-    output. Today's side runs the router and expander as /search does; the
-    local side gets the router's Congress filter and enacted flag, so the
-    comparison is the retrieval alone."""
-    import os
-    import anthropic
-    from agents.router_agent import structure_question
-    from agents.query_expander_agent import expand_query
-    from agents.search_agent import search_bills
-    from search import bill_index
-    from correspondence.db import _get_pool
-    client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-    rows = []
-    for q in queries:
-        row = {"query": q, "old": [], "new": [], "error": None}
-        try:
-            s = structure_question(q, get_client=lambda: client)
-            s.setdefault("congress_numbers", [119, 118])
-            row.update(route=s.get("query_type"), congresses=s["congress_numbers"],
-                       full_history=bool(s.get("full_history")), laws_only=s.get("status") == "enacted")
-            s["expanded_terms"] = expand_query(s.get("keywords") or [], s.get("topic") or "", client) or []
-            s["original_question"] = q
-            # A law hit with no bill behind it has no key to judge.
-            row["old"] = [_bill_key(r) for r in search_bills(s, k) if r.get("type") and r.get("number")][:k]
-            row["new"] = [_bill_key(r) for r in bill_index.search(
-                q, None if row["full_history"] else row["congresses"], k, row["laws_only"])]
-        except Exception as e:                              # noqa: BLE001 - recorded, not hidden
-            row["error"] = f"{type(e).__name__}: {e}"
-        row["pool"] = blind_order(q, row["old"] + row["new"])
-        rows.append(row)
-        print(f"{len(row['old']):2d} old  {len(row['new']):2d} new  {len(row['pool']):2d} pool  {q}", flush=True)
-    # What the judge reads: title, policy area and the opening of the CRS
-    # summary, from the same bill_doc rows for both systems.
-    keys = sorted({c for r in rows for c in r["pool"]})
-    ids = ["instrument/us/" + k.replace("-", "/") for k in keys]
-    with _get_pool().connection() as conn, conn.cursor() as cur:
-        cur.execute("""SELECT instrument_id, title, policy_area, is_law, introduced, left(summary, 600)
-                       FROM bill_doc WHERE instrument_id = ANY(%s)""", (ids,))
-        bills = {i.removeprefix("instrument/us/").replace("/", "-"):
-                 {"title": t, "policy_area": p, "is_law": bool(l), "introduced": str(d or ""), "summary": s}
-                 for i, t, p, l, d, s in cur.fetchall()}
-    return {"k": k, "queries": rows, "bills": bills}
-
-
 def main():
-    if len(sys.argv) > 2 and sys.argv[1] == "--pool":
-        out = build_pool(EVAL_QUERIES)
-        with open(sys.argv[2], "w") as f:
-            json.dump(out, f, indent=1)
-        print(f"wrote {sys.argv[2]}: {len(out['queries'])} queries, {len(out['bills'])} bills")
-        return
-    if len(sys.argv) > 3 and sys.argv[1] == "--score":
-        pool, judgments = (json.load(open(p)) for p in sys.argv[2:4])
-        print(json.dumps(score(pool["queries"], judgments, pool["k"]), indent=1))
-        return
     ap = argparse.ArgumentParser()
     ap.add_argument("groups", nargs="*", default=list(GROUPS.keys()))
     ap.add_argument("--base", default="http://localhost:8000")

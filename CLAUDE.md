@@ -25,7 +25,7 @@ import system are not worth the tree.
 api.py          the server: every route, the streaming, the routing seams
 graph.py        the property graph: build, load, traverse
 
-agents/         the LLM agents — router, ledger, search, feed, translator,
+agents/         the LLM agents — router, ledger, validator, feed, translator,
                 the vote trio, documentor. If it prompts a model, it lives here
 sources/        external data in: congress.gov, GovInfo bulk, Voteview, district
                 shapes, nominations, Open States, Virginia LIS, FEC (API and bulk), Senate LDA,
@@ -64,11 +64,15 @@ By path, `sys.path[0]` becomes `scripts/` and every local import fails.
 - **`/ledger` sends a state question to the state layer only when the router says it is
   one.** The reader's home state alone does not: "housing bills" from a Virginian
   still searches Congress.
-- **Routing is two layers.** `classify_question` in `agents/ledger_agent.py` is the $0
-  regex layer (watch, graph, elections, place, bill ID, local). `structure_question` in
-  `agents/router_agent.py` is the second layer (state and federal fast paths, then the
-  LLM). `/ledger` runs both; `/search` runs only the second, so it still calls "LA
-  County" off-topic. Don't polish either layer: the graph replaces both.
+- **Routing is one function in two steps.** `router_agent.route` runs
+  `classify_question` in `agents/ledger_agent.py` (the $0 regex step: watch, graph,
+  elections, place, bill ID, local) and then `structure_question` (state and federal
+  fast paths, then the LLM). `/ledger` runs both steps; `/search` and `/state/search`
+  run only the second, so `/search` still calls "LA County" off-topic. Don't polish
+  either step: the graph replaces both.
+- **Search is local.** Federal and state bills both come from the hybrid index
+  (`search/bill_index.py`, `bill_doc`); there is no GovInfo or Congress.gov search call.
+  Its federal coverage starts in 2003, and a question before that is an honest empty.
 - **Lots of capability is built but unreachable by typing.** Member finance, stock
   trades, lobbying, the geo resolvers — all live endpoints, all click-only. "It doesn't
   work" usually means "nothing routes to it."

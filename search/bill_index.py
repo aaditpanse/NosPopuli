@@ -438,6 +438,77 @@ def search(question, congresses=None, limit=10, laws_only=False, jurisdiction=US
     return [as_result(rows[i]) for i in ids if i in rows]
 
 
+# The index holds every bill from the 108th Congress (2003) on; before it
+# only GovInfo and Congress.gov do, and search no longer asks them. A bill
+# number still opens its page from Congress.gov.
+FIRST_INDEXED_CONGRESS = 108
+BEFORE_INDEX = ("Bill search covers the 108th Congress (2003) on; earlier bills are not "
+                "searchable here yet. A bill number still opens that bill's page.")
+
+
+def index_filters(structured):
+    """The router's question as the index's filters: (congresses, laws_only,
+    partly_before, wholly_before). Congresses before the index are dropped,
+    and None means every Congress in it (a full-history ask). Pure."""
+    if structured.get("full_history"):
+        before = structured.get("before_congress")
+        asked = list(range(1, before)) if before else None
+    elif structured.get("query_subtype") == "named_entity":
+        # A name picks out its bill in any Congress; the router's default
+        # window (the last two) would miss the 2022 Inflation Reduction Act.
+        asked = None
+    else:
+        asked = list(structured.get("congress_numbers") or []) or None
+    congresses = [c for c in asked if c >= FIRST_INDEXED_CONGRESS] if asked else None
+    partly = bool(structured.get("full_history")) or any(c < FIRST_INDEXED_CONGRESS for c in asked or [])
+    wholly = asked is not None and not congresses
+    # The router marks an enacted ask with either field; one alone is enough.
+    laws_only = structured.get("query_subtype") == "enacted" or structured.get("status") == "enacted"
+    return congresses or None, laws_only, partly, wholly
+
+
+def laws_named(name, jurisdiction=US_DIV, limit=3):
+    """The laws whose title contains an act's name, oldest first: the
+    answer to "the Affordable Care Act". The ranked search cannot promise
+    it — a landmark law's document is long (H.R. 3590 lists hundreds of
+    subjects), and both lists discount length, so for its own name it
+    ranks below thirty bills that only mention it. Local; fail-closed."""
+    from psycopg.rows import dict_row
+    from correspondence.db import _get_pool
+    if not (name or "").strip():
+        return []
+    with _get_pool().connection() as conn, conn.cursor(row_factory=dict_row) as cur:
+        cur.execute("""SELECT instrument_id, congress, bill_type, number, title, introduced,
+                              policy_area, is_law, law_numbers, jurisdiction, session,
+                              latest_action, latest_action_date, sponsor_name, stage
+                       FROM bill_doc WHERE jurisdiction = %s AND is_law AND title ILIKE %s
+                       ORDER BY introduced NULLS LAST, instrument_id LIMIT %s""",
+                    [jurisdiction, "%" + name.strip().replace("%", "").replace("_", r"\_") + "%", limit])
+        return [as_result(r) for r in cur.fetchall()]
+
+
+def recent(jurisdiction=US_DIV, congresses=None, laws_only=False, limit=10):
+    """The newest bills of one jurisdiction by their latest action, for a
+    question with no topic ("give me a bill"). A bill with no action date
+    goes last, not first (Postgres sorts NULL first in DESC). Local only;
+    fail-closed like search."""
+    from psycopg.rows import dict_row
+    from correspondence.db import _get_pool
+    where, args = "jurisdiction = %s", [jurisdiction]
+    if congresses:
+        where += " AND congress = ANY(%s)"
+        args.append(list(congresses))
+    if laws_only:
+        where += " AND is_law"
+    with _get_pool().connection() as conn, conn.cursor(row_factory=dict_row) as cur:
+        cur.execute(f"""SELECT instrument_id, congress, bill_type, number, title, introduced,
+                               policy_area, is_law, law_numbers, jurisdiction, session,
+                               latest_action, latest_action_date, sponsor_name, stage
+                        FROM bill_doc WHERE {where}
+                        ORDER BY latest_action_date DESC NULLS LAST, instrument_id LIMIT %s""", [*args, limit])
+        return [as_result(r) for r in cur.fetchall()]
+
+
 if __name__ == "__main__":
     cmd, args = (sys.argv[1] if len(sys.argv) > 1 else ""), sys.argv[2:]
     if cmd == "docs":

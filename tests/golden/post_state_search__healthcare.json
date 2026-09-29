@@ -1,7 +1,7 @@
 {
  "meta": {
   "app_sha": "",
-  "captured": "2026-09-27T14:09:38",
+  "captured": "2026-09-29T03:10:35",
   "notes": "the state layer directly: the Virginia search index on this server",
   "volatile": []
  },
@@ -28,6 +28,7 @@
      118
     ],
     "entity_name": null,
+    "full_history": false,
     "intents": [
      {
       "kind": "topic",
@@ -38,6 +39,7 @@
     "keywords": [
      "healthcare"
     ],
+    "max_results_override": null,
     "named_entity": null,
     "query_subtype": "concept",
     "query_type": "legislation",

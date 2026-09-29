@@ -27,7 +27,6 @@ from agents.member_search_agent import (
     fetch_member_profile,
     fetch_member_legislation,
 )
-from agents.query_expander_agent import expand_query
 from search.search_logger import log_search, log_bill_opened, log_member_opened
 from agents.analyst_agent import analyze
 from search.flag_logger import log_search_flag, log_bill_flag, get_flags
@@ -44,10 +43,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from agents.router_agent import (route_query, fast_route_state, intents_from_structured, structure_question,
-                                 _extract_state_session)
-from agents.search_agent import search_bills, search_summaries
-from agents.title_search_agent import search_by_title
+from agents.router_agent import route, intents_from_structured, _extract_state_session
 from sources.bill_fetcher import fetch_bill
 from agents.translator_agent import translate_bill, translate_state_bill, translate_bill_core, resolve_bill_background
 from agents.historian_agent import (
@@ -60,7 +56,6 @@ from agents.result_validator_agent import validate_results, validate_results_bat
 from search.search_rank import rank_by_relevance
 from render.state_vote_mapper import select_floor_roll_call, map_roll_call
 from agents.ledger_agent import (
-    classify_question,
     build_funnel,
     stories_from_results,
     enrich_stories,
@@ -344,115 +339,44 @@ async def handle_member_search(structured, question, loop):
 
 
 async def handle_committee_search(structured, question, loop):
+    """A committee and the bills it reported, newest first, from the graph
+    on this server. Only bills with a recorded vote are loaded, so a quiet
+    committee has fewer; the graph's empty reason says so and is passed on
+    as it is. Fail-open to "not found": no database, no answer."""
+    import graph
     entity = structured.get("entity_name", "")
 
-    def fetch():
-        import requests
+    def ask():
+        if not os.getenv("DATABASE_URL"):
+            return None, {}
+        out = graph.answer({"ask": "reported", "committee": entity}, graph.pg_backend(), limit=10)
+        ids = [r["item_id"] for r in out.get("rows") or [] if r.get("item_id")]
+        if not ids:
+            return out, {}
+        # A bill node's name is "H.R. 1234: title"; its Congress is a prop.
+        from correspondence.db import _get_pool
+        with _get_pool().connection() as conn, conn.cursor() as cur:
+            cur.execute("SELECT id, props FROM graph_node WHERE id = ANY(%s)", (ids,))
+            return out, {i: p for i, p in cur.fetchall()}
 
-        all_committees = []
-
-        for chamber in ["senate", "house"]:
-            url = "https://api.congress.gov/v3/committee"
-            params = {
-                "api_key": os.getenv("CONGRESS_API_KEY"),
-                "format": "json",
-                "limit": 250,
-                "chamber": chamber,
-            }
-            r = requests.get(url, params=params, timeout=10)
-            if r.status_code == 200:
-                all_committees.extend(r.json().get("committees", []))
-
-        name_lower = entity.lower()
-        distinctive_words = [
-            w
-            for w in name_lower.split()
-            if len(w) > 4
-            and w
-            not in {
-                "committee",
-                "senate",
-                "house",
-                "joint",
-                "select",
-                "special",
-                "standing",
-            }
-        ]
-
-        best = None
-        best_score = 0
-
-        for c in all_committees:
-            cname = (c.get("name") or "").lower()
-            score = sum(len(w) for w in distinctive_words if w in cname)
-            if score > best_score:
-                best_score = score
-                best = c
-
-        if not best:
-            return None, []
-
-        committee_name = best.get("name", "")
-        search_payload = {
-            "query": f'"{committee_name}" collection:BILLS congress:119 OR congress:118',
-            "pageSize": 10,
-            "offsetMark": "*",
-            "sorts": [{"field": "publishdate", "sortOrder": "DESC"}],
-        }
-
-        import re
-
-        search_r = requests.post(
-            "https://api.govinfo.gov/search",
-            json=search_payload,
-            params={"api_key": os.getenv("GovInfo_API_KEY")},
-            timeout=10,
-        )
-
-        bills = []
-        if search_r.status_code == 200:
-            for item in search_r.json().get("results", []):
-                package_id = item.get("packageId", "")
-                raw = package_id.replace("BILLS-", "")
-                m = re.match(r"(\d+)([a-z]+)(\d+)", raw)
-                if m:
-                    bills.append(
-                        {
-                            "congress": int(m.group(1)),
-                            "type": m.group(2),
-                            "number": int(m.group(3)),
-                            "title": item.get("title", ""),
-                            "latest_action": "",
-                            "date": item.get("dateIssued", "")[:10],
-                        }
-                    )
-
-        return best, bills
-
-    committee, bills = await loop.run_in_executor(None, fetch)
-
-    if not committee:
-        return {
-            "query_type": "committee",
-            "found": False,
-            "confidence": structured.get("confidence"),
-            "ambiguity_reason": structured.get("ambiguity_reason"),
-        }
-
-    return {
-        "query_type": "committee",
-        "found": True,
-        "confidence": structured.get("confidence"),
-        "ambiguity_reason": structured.get("ambiguity_reason"),
-        "committee": {
-            "name": committee.get("name"),
-            "chamber": committee.get("chamber"),
-            "system_code": committee.get("systemCode"),
-            "url": committee.get("url"),
-        },
-        "bills": [b for b in bills if b.get("number")],
-    }
+    try:
+        out, props = await loop.run_in_executor(None, ask)
+    except Exception as e:
+        print(f"[COMMITTEE] graph error: {e}")
+        out, props = None, {}
+    base = {"query_type": "committee", "confidence": structured.get("confidence"),
+            "ambiguity_reason": structured.get("ambiguity_reason")}
+    if not out or not out.get("committees"):
+        return {**base, "found": False, "empty_reason": (out or {}).get("empty_reason")}
+    bills = []
+    for r in out["rows"]:
+        p = props.get(r.get("item_id")) or {}
+        if p.get("congress") and p.get("instrument_type") and str(p.get("number") or "").isdigit():
+            bills.append({"congress": int(p["congress"]), "type": p["instrument_type"], "number": int(p["number"]),
+                          "title": (r.get("title") or "").split(": ", 1)[-1], "latest_action": "",
+                          "date": r.get("date") or ""})
+    return {**base, "found": True, "committee": {"name": out["committees"][0], "chamber": None},
+            "bills": bills, "empty_reason": out.get("empty_reason")}
 
 
 async def handle_specific_bill(structured, question):
@@ -479,400 +403,65 @@ async def handle_specific_bill(structured, question):
     }
 
 
-async def handle_named_entity_search(structured, question, loop):
-    named_entity = structured.get("named_entity") or question
-
-    sc_key = None
-    if not (structured.get("_bypass_search_cache") or search_cache.is_freshness_query(structured, question)):
-        sc_key = search_cache.cache_key(
-            {**structured, "keywords": [named_entity]},
-            question,
-            structured.get("result_count", 5),
-        )
-        cached = search_cache.get(sc_key)
-        if cached:
-            results = await loop.run_in_executor(None, search_cache.rehydrate, cached)
-            log_search(
-                query=question,
-                query_type="named_entity",
-                expanded_terms=[],
-                results_count=len(results),
-                result_ids=[f"{r.get('type', '')}{r.get('number', '')}" for r in results],
-                confidence=structured.get("confidence", 1.0),
-            )
-            return {
-                "query_type": "legislation",
-                "confidence": structured.get("confidence", 1.0),
-                "ambiguity_reason": structured.get("ambiguity_reason"),
-                "query": structured,
-                "results": results,
-                "cached": True,
-            }
-
-    title_results = await loop.run_in_executor(None, search_by_title, named_entity, 3)
-
-    if len(title_results) < 2:
-        structured["expanded_terms"] = [named_entity]
-        structured["original_question"] = question
-        govinfo_results = await loop.run_in_executor(None, search_bills, structured)
-        seen = {f"{r['congress']}{r['type']}{r['number']}" for r in title_results}
-        for r in govinfo_results:
-            key = f"{r['congress']}{r['type']}{r['number']}"
-            if key not in seen:
-                title_results.append(r)
-                seen.add(key)
-                if len(title_results) >= 4:
-                    break
-
-    # If the title search pinned an authoritative hit (hardcoded popular-names
-    # table or scraped popular-names cache), the user typed a known short name —
-    # surface that result first and let the validator only re-rank the rest.
-    pinned = None
-    pinned_sources = {"popular_names_hardcoded", "popular_names_cache"}
-    if title_results and title_results[0].get("source") in pinned_sources:
-        pinned = title_results[0]
-
-    validated = await loop.run_in_executor(
-        None, validate_results, question, title_results, get_client()
-    )
-    final = validated if validated else title_results
-    if pinned:
-        final = [pinned] + [r for r in final if not (
-            r.get("congress") == pinned.get("congress")
-            and r.get("type") == pinned.get("type")
-            and r.get("number") == pinned.get("number")
-        )]
-
-    # Common-name disambiguation: when the same act name exists across 3+ different
-    # congresses, surface the ambiguity rather than silently leading with the most recent.
-    distinct_congresses = list({r.get("congress") for r in final if r.get("congress")})
+async def handle_bill_search(structured, question, loop):
+    """Federal bills for a question, from the index on this server, as
+    state search already does: one hybrid search, one relevance check.
+    Browse is the newest bills. A named act is searched by the router's
+    canonical name ("Affordable Care Act" for "obamacare"), in any
+    Congress. Fail-closed: an index error raises into the route."""
+    from search import bill_index
+    target = structured.get("result_count", 5)
+    if structured.get("full_history"):
+        target = structured.get("max_results_override") or 50
+    congresses, laws_only, partly, wholly = bill_index.index_filters(structured)
     confidence = structured.get("confidence", 1.0)
-    ambiguity_reason = structured.get("ambiguity_reason")
-    if len(distinct_congresses) >= 3:
-        from agents.router_agent import congress_to_years
-        years = sorted(
-            [congress_to_years(c)[0] for c in distinct_congresses if c],
-            reverse=True
-        )[:4]
-        year_list = ", ".join(str(y) for y in years)
-        ambiguity_reason = (
-            f"Multiple bills share this name across different Congresses "
-            f"({year_list}). Showing the most relevant — add a year to your "
-            f"search (e.g. \"{named_entity} {years[0]}\") to target a specific version."
-        )
-        confidence = min(confidence, 0.55)
+    note = structured.get("ambiguity_reason")
 
-    log_search(
-        query=question,
-        query_type="named_entity",
-        expanded_terms=[],
-        results_count=len(final),
-        result_ids=[f"{r.get('type', '')}{r.get('number', '')}" for r in final],
-        confidence=confidence,
-    )
+    def reply(results, note, **extra):
+        log_search(query=question, query_type="legislation", expanded_terms=[], results_count=len(results),
+                   result_ids=[f"{r.get('type', '')}{r.get('number', '')}" for r in results],
+                   confidence=confidence)
+        return {"query_type": "legislation", "confidence": confidence, "ambiguity_reason": note,
+                "query": structured, "results": results, "cached": False, **extra}
 
-    if sc_key and final:
-        await loop.run_in_executor(None, search_cache.store, sc_key, final)
+    if wholly:
+        return reply([], bill_index.BEFORE_INDEX, empty_reason="before_index")
+    if partly:
+        note = " ".join(x for x in (note, bill_index.BEFORE_INDEX) if x)
 
-    return {
-        "query_type": "legislation",
-        "confidence": confidence,
-        "ambiguity_reason": ambiguity_reason,
-        "query": structured,
-        "results": final,
-        "cached": False,
-    }
+    if structured.get("query_subtype") == "browse":
+        results = await loop.run_in_executor(
+            None, bill_index.recent, bill_index.US_DIV, congresses, laws_only, target)
+        return reply(results, note)
 
-
-async def handle_legislation_search(structured, question, loop):
-    full_history = structured.get("full_history", False)
-    max_results_override = structured.get("max_results_override")
-
-    # Tier-1 cache: skip the expander + fetch + validator if we've seen this
-    # query recently and it's not freshness-sensitive.
-    cache_target = structured.get("result_count", 5)
-    bypass = (
-        full_history
-        or structured.get("_bypass_search_cache")
-        or search_cache.is_freshness_query(structured, question)
-    )
-    sc_key = None
-    if not bypass:
-        sc_key = search_cache.cache_key(structured, question, cache_target)
-        cached = search_cache.get(sc_key)
-        if cached:
-            results = await loop.run_in_executor(None, search_cache.rehydrate, cached)
-            log_search(
-                query=question,
-                query_type="legislation",
-                expanded_terms=[],
-                results_count=len(results),
-                result_ids=[f"{r.get('type', '')}{r.get('number', '')}" for r in results],
-                confidence=structured.get("confidence", 1.0),
-            )
-            return {
-                "query_type": "legislation",
-                "confidence": structured.get("confidence", 1.0),
-                "ambiguity_reason": structured.get("ambiguity_reason"),
-                "query": structured,
-                "results": results,
-                "cached": True,
-            }
-
-    expanded = await loop.run_in_executor(
-        None,
-        expand_query,
-        structured.get("keywords", []),
-        structured.get("topic", ""),
-        get_client(),
-    )
-    structured["expanded_terms"] = expanded or []
-    structured["original_question"] = question
-
-    if full_history:
-        max_results = max_results_override or 50
-        govinfo_results = await loop.run_in_executor(
-            None, search_bills, structured, max_results
-        )
-        summary_results = []
-    elif structured.get("status") == "enacted":
-        govinfo_results = await loop.run_in_executor(None, search_bills, structured)
-        summary_results = []
-    else:
-        # Fetch 2× target so the validator has enough headroom without dropping below target
-        fetch_count = min(structured.get("result_count", 5) * 2, 20)
-        # Run a second keyword pass using the original (pre-expansion) keywords so that
-        # explicitly named terms (like "340B") can't be lost if the expander drifts.
-        orig_keywords = structured.get("keywords", [])
-        keyword_structured = {**structured, "expanded_terms": orig_keywords}
-        govinfo_results, govinfo_keyword, summary_results = await asyncio.gather(
-            loop.run_in_executor(None, search_bills, structured, fetch_count),
-            loop.run_in_executor(None, search_bills, keyword_structured, fetch_count // 2 or 3),
-            loop.run_in_executor(
-                None,
-                search_summaries,
-                " ".join(orig_keywords),
-                structured.get("congress_numbers", [119, 118]),
-            ),
-        )
-        # merge keyword pass into govinfo_results
-        govinfo_results = govinfo_results + govinfo_keyword
-
-    seen = set()
-    merged = []
-    for r in summary_results:
-        key = f"{r.get('congress')}{r.get('type')}{r.get('number')}"
-        if key not in seen and r.get("number"):
-            seen.add(key)
-            r["source"] = "summary"
-            merged.append(r)
-    for r in govinfo_results:
-        key = f"{r.get('congress')}{r.get('type')}{r.get('number')}"
-        if key not in seen and r.get("number"):
-            seen.add(key)
-            r["source"] = "govinfo"
-            merged.append(r)
-
-    # If a known-bill hint exists, prepend it to candidates so the validator
-    # ranks it fairly — it gets a head start but can still lose to a better match.
+    # A named act is searched by the router's canonical name alone:
+    # "obamacare" as a word finds the bills that repeal it, the name
+    # "Affordable Care Act" finds the law.
+    named = structured.get("named_entity")
+    text = named or question
+    candidates = await loop.run_in_executor(
+        None, lambda: bill_index.search(text, congresses, max(target * 3, 12), laws_only))
     hint = structured.get("known_bill_hint")
-    if hint and not full_history:
-        hint_key = f"{hint.get('congress')}{hint.get('type')}{hint.get('number')}"
-        if hint_key not in seen:
-            hint_candidate = {
-                "package_id": f"BILLS-{hint['congress']}{hint['type']}{hint['number']}",
-                "title": f"{hint['type'].upper()} {hint['number']}",
-                "date_issued": "",
-                "congress": hint["congress"],
-                "type": hint["type"],
-                "number": hint["number"],
-                "source": "hint",
-            }
-            merged.insert(0, hint_candidate)
-
-    if full_history:
-        # Run validator on history batch too — relaxed threshold (4 vs 5) so
-        # "somewhat related" older bills pass, but tuna acts and impeachment
-        # resolutions don't. Batched in groups of 20 to stay within token limits.
-        ranked = rank_by_relevance(
-            merged, question,
-            extra=(structured.get("keywords") or []) + (structured.get("expanded_terms") or []),
-        )
-        raw_results = await loop.run_in_executor(
-            None, validate_results_batch, question, ranked, get_client(), 4
-        )
-        raw_results = rank_by_relevance(
-            raw_results, question,
-            extra=(structured.get("keywords") or []) + (structured.get("expanded_terms") or []),
-        )
+    if hint and not any((r["congress"], r["type"], r["number"]) == (hint["congress"], hint["type"], int(hint["number"]))
+                        for r in candidates):
+        candidates.insert(0, {"package_id": f"BILLS-{hint['congress']}{hint['type']}{hint['number']}",
+                              "title": f"{hint['type'].upper()} {hint['number']}", "date_issued": "",
+                              "congress": hint["congress"], "type": hint["type"], "number": int(hint["number"])})
+    if len(candidates) > 20:
+        validated = await loop.run_in_executor(None, validate_results_batch, question, candidates, get_client(), 4)
     else:
-        target = structured.get("result_count", 5)
-        extra = (structured.get("keywords") or []) + (structured.get("expanded_terms") or [])
-        ranked = rank_by_relevance(merged, question, extra=extra)
-        # Feed the lexically strongest candidates to the validator so a
-        # recency-lucky unrelated bill never occupies a slot the real match needs.
-        candidates = ranked[: max(target * 3, 12)]
-        validated = await loop.run_in_executor(
-            None, validate_results, question, candidates, get_client()
-        )
-        raw_results = rank_by_relevance(validated, question, extra=extra)[:target]
-
-    log_search(
-        query=question,
-        query_type="legislation",
-        expanded_terms=expanded,
-        results_count=len(raw_results),
-        result_ids=[f"{r.get('type', '')}{r.get('number', '')}" for r in raw_results],
-        confidence=structured.get("confidence", 1.0),
-    )
-
-    log_action(
-        agent_name="api",
-        action="search",
-        input_data={"question": question},
-        output_data={"results_count": len(raw_results)},
-    )
-
-    if sc_key and raw_results:
-        await loop.run_in_executor(None, search_cache.store, sc_key, raw_results)
-
-    return {
-        "query_type": "legislation",
-        "confidence": structured.get("confidence", 1.0),
-        "ambiguity_reason": structured.get("ambiguity_reason"),
-        "query": structured,
-        "results": raw_results,
-        "cached": False,
-    }
-
-
-async def handle_named_entity_with_date(structured, question, loop):
-    named_entity = structured.get("named_entity") or question
-    congress_numbers = structured.get("congress_numbers", [119])
-
-    all_results = await loop.run_in_executor(None, search_by_title, named_entity, 3)
-
-    filtered = [r for r in all_results if r.get("congress") in congress_numbers]
-    final = filtered if filtered else all_results
-
-    validated = await loop.run_in_executor(
-        None, validate_results, question, final, get_client()
-    )
-    final = validated if validated else final
-
-    log_search(
-        query=question,
-        query_type="named_entity_with_date",
-        expanded_terms=[],
-        results_count=len(final),
-        result_ids=[f"{r.get('type', '')}{r.get('number', '')}" for r in final],
-        confidence=structured.get("confidence", 1.0),
-    )
-
-    return {
-        "query_type": "legislation",
-        "confidence": structured.get("confidence", 1.0),
-        "ambiguity_reason": structured.get("ambiguity_reason"),
-        "query": structured,
-        "results": final,
-    }
-
-
-async def handle_concept_with_date(structured, question, loop):
-    expanded = await loop.run_in_executor(
-        None,
-        expand_query,
-        structured.get("keywords", []),
-        structured.get("topic", ""),
-        get_client(),
-    )
-    structured["expanded_terms"] = expanded or []
-    structured["original_question"] = question
-
-    govinfo_results = await loop.run_in_executor(None, search_bills, structured)
-
-    raw_results = [r for r in govinfo_results if r.get("number") or r.get("law_number")][
-        : structured.get("result_count", 5)
-    ]
-
-    validated = await loop.run_in_executor(
-        None, validate_results, question, raw_results, get_client()
-    )
-    raw_results = validated if validated else raw_results
-
-    log_search(
-        query=question,
-        query_type="concept_with_date",
-        expanded_terms=expanded,
-        results_count=len(raw_results),
-        result_ids=[f"{r.get('type', '')}{r.get('number', '')}" for r in raw_results],
-        confidence=structured.get("confidence", 1.0),
-    )
-
-    return {
-        "query_type": "legislation",
-        "confidence": structured.get("confidence", 1.0),
-        "ambiguity_reason": structured.get("ambiguity_reason"),
-        "query": structured,
-        "results": raw_results,
-    }
-
-
-async def handle_law_search(structured, question, loop):
-    structured["original_question"] = question
-    structured["expanded_terms"] = structured.get("keywords", [])
-
-    govinfo_results = await loop.run_in_executor(None, search_bills, structured)
-
-    raw_results = [r for r in govinfo_results if r.get("number") or r.get("law_number")][
-        : structured.get("result_count", 5)
-    ]
-
-    log_search(
-        query=question,
-        query_type="enacted",
-        expanded_terms=structured.get("keywords", []),
-        results_count=len(raw_results),
-        result_ids=[f"{r.get('type', '')}{r.get('number', '')}" for r in raw_results],
-        confidence=structured.get("confidence", 1.0),
-    )
-
-    return {
-        "query_type": "legislation",
-        "confidence": structured.get("confidence", 1.0),
-        "ambiguity_reason": structured.get("ambiguity_reason"),
-        "query": structured,
-        "results": raw_results,
-    }
-
-
-async def handle_browse(structured, question, loop):
-    structured["expanded_terms"] = []
-    structured["keywords"] = []
-    structured["original_question"] = question
-
-    govinfo_results = await loop.run_in_executor(None, search_bills, structured)
-
-    raw_results = [r for r in govinfo_results if r.get("number") or r.get("law_number")][
-        : structured.get("result_count", 5)
-    ]
-
-    log_search(
-        query=question,
-        query_type="browse",
-        expanded_terms=[],
-        results_count=len(raw_results),
-        result_ids=[f"{r.get('type', '')}{r.get('number', '')}" for r in raw_results],
-        confidence=structured.get("confidence", 1.0),
-    )
-
-    return {
-        "query_type": "legislation",
-        "confidence": structured.get("confidence", 1.0),
-        "ambiguity_reason": structured.get("ambiguity_reason"),
-        "query": structured,
-        "results": raw_results,
-    }
+        validated = await loop.run_in_executor(None, validate_results, question, candidates, get_client())
+    extra = (structured.get("keywords") or []) + ([named] if named else [])
+    results = rank_by_relevance(validated, question, extra=extra)
+    if named:
+        # "Inflation Reduction Act" means the law, not the later bills that
+        # reuse its name: the law of that name goes first.
+        laws = await loop.run_in_executor(None, bill_index.laws_named, named)
+        keys = {(r["congress"], r["type"], r["number"]) for r in laws}
+        results = laws + [r for r in results if (r.get("congress"), r.get("type"), r.get("number")) not in keys]
+    results = results[:target]
+    return reply(results, note if results else " ".join(
+        x for x in (note, "No federal bills on this server matched that question.") if x))
 
 
 def _state_not_loaded(state_code):
@@ -1133,8 +722,8 @@ async def get_feed(request: Request, body: FeedRequest):
 
 # ── Search dispatcher helpers ──
 #
-# The routing decision itself is router_agent.structure_question, shared with
-# /ledger. What stays here turns that decision into a handler call. Each
+# The routing decision itself is router_agent.route, shared with /ledger and
+# /state/search. What stays here turns that decision into a handler call. Each
 # function does one thing so the /search endpoint can read top-to-bottom.
 
 
@@ -1177,31 +766,6 @@ def _off_topic_response(structured: dict, question: str) -> dict:
     }
 
 
-async def _dispatch_legislation_subtype(structured: dict, question: str, loop) -> dict:
-    """Route the *legislation* family by subtype. Caller has already handled
-    member, committee, specific_bill, off_topic, and state-jurisdiction."""
-    subtype = structured.get("query_subtype", "concept")
-    log_action(
-        agent_name="dispatcher",
-        action=subtype,
-        input_data={"question": question, "congress": structured.get("congress_numbers")},
-        output_data={},
-    )
-    if structured.get("full_history"):
-        return await handle_legislation_search(structured, question, loop)
-    if subtype == "named_entity":
-        return await handle_named_entity_search(structured, question, loop)
-    if subtype == "named_entity_with_date":
-        return await handle_named_entity_with_date(structured, question, loop)
-    if subtype == "concept_with_date":
-        return await handle_concept_with_date(structured, question, loop)
-    if subtype == "enacted" or structured.get("status") == "enacted":
-        return await handle_law_search(structured, question, loop)
-    if subtype == "browse":
-        return await handle_browse(structured, question, loop)
-    return await handle_legislation_search(structured, question, loop)
-
-
 async def _dispatch(structured: dict, body: "SearchRequest", question: str, loop) -> dict:
     """Route a fully-prepared structured query to the right handler. Caller is
     responsible for all transformations on `structured` first."""
@@ -1231,7 +795,7 @@ async def _dispatch(structured: dict, body: "SearchRequest", question: str, loop
     if query_type == "off_topic":
         return _off_topic_response(structured, question)
 
-    return await _dispatch_legislation_subtype(structured, question, loop)
+    return await handle_bill_search(structured, question, loop)
 
 
 @app.post("/search")
@@ -1242,10 +806,10 @@ async def search(request: Request, body: SearchRequest):
 
     try:
         loop = asyncio.get_event_loop()
-        structured = structure_question(
-            body.question, body.state_code, full_history=body.full_history,
+        structured = route(
+            body.question, body.state_code, plates=False, full_history=body.full_history,
             before_congress=body.before_congress, max_results=body.max_results,
-            fresh=body.fresh, get_client=get_client)
+            fresh=body.fresh, get_client=get_client)["structured"]
         return await _dispatch(structured, body, body.question, loop)
     except HTTPException:
         raise
@@ -1330,7 +894,7 @@ async def _ledger_member_and_search(structured, search_body, question, loop):
     async def run_legis():
         lstruct = dict(structured)
         lstruct["query_type"] = "legislation"
-        return await _dispatch_legislation_subtype(lstruct, question, loop)
+        return await handle_bill_search(lstruct, question, loop)
 
     member_out = None
     search_out = {"query_type": "legislation", "results": []}
@@ -1379,7 +943,17 @@ def _graph_plate(ask):
 @limiter.limit("20/minute")
 async def ledger_ask(request: Request, body: LedgerAsk):
     """Classify an ask, then stream plate → member → shelves so first paint is not blocked."""
-    classified = classify_question(body.question, body.state_code)
+    import graph
+    # The question's own state, not the reader's home: "housing bills" from a
+    # Virginian still means Congress unless the router says it is a state ask.
+    named = (extract_state(body.question) or "").upper() or None
+    search_state = named if named in graph.loaded_states() else None
+
+    def routed(allow_graph=True):
+        return route(body.question, search_state, home_state=body.state_code, allow_graph=allow_graph,
+                     max_results=body.max_results or 10, get_client=get_client)
+
+    classified = await asyncio.to_thread(routed)
     plate = classified.get("plate")
     if plate == "graph":
         answer = await asyncio.to_thread(_graph_plate, classified["ask"])
@@ -1388,7 +962,7 @@ async def ledger_ask(request: Request, body: LedgerAsk):
                                   "question": body.question, **answer}, {"section": "done"})
         # The graph parsed the shape but knows neither the person nor the
         # seat (or is not there at all): answer the way we did before.
-        classified = classify_question(body.question, body.state_code, allow_graph=False)
+        classified = await asyncio.to_thread(routed, False)
         plate = classified.get("plate")
     if plate in ("home", "watching"):
         return _ndjson_lines({"section": "plate", **classified}, {"section": "done"})
@@ -1410,25 +984,23 @@ async def ledger_ask(request: Request, body: LedgerAsk):
             "recent": (data or {}).get("recent") or [],
         }, {"section": "done"})
 
-    import graph
     loop = asyncio.get_event_loop()
     state_code = classified.get("state_code") or body.state_code
-    # The question's own state, not the reader's home: "housing bills" from a
-    # Virginian still means Congress unless the router says it is a state ask.
-    named = (extract_state(body.question) or "").upper() or None
     search_body = SearchRequest(
         question=body.question,
         max_results=body.max_results or 10,
-        state_code=named if named in graph.loaded_states() else None,
+        state_code=search_state,
     )
     search_out = {"query_type": "legislation", "results": []}
     member_out = None
     structured = {}
     searched = None     # the state whose bills were searched; None is Congress
     try:
-        structured = structure_question(
-            search_body.question, search_body.state_code,
-            max_results=search_body.max_results, get_client=get_client)
+        # route() is fail-open here: None means the router failed, and the
+        # page shows an empty ledger rather than a 500.
+        structured = classified.get("structured") or {}
+        if not structured:
+            raise RuntimeError("the router could not structure this question")
         state_ask = structured.get("jurisdiction") == "state"
         if state_ask:
             state_code = (structured.get("state_code") or named or body.state_code or "").upper() or None
@@ -1543,18 +1115,21 @@ async def ledger_ask(request: Request, body: LedgerAsk):
         headline = member_headline(member, sponsored)
         deck = "The bars are how far this member's recent bills got."
     elif committee:
-        # GovInfo committee hits carry no latest action, so a funnel would
-        # read "all introduced" and lie. Send none; the page shows the list.
+        # Every bill here left committee (it was reported), so a funnel of
+        # them says nothing about where bills stop. Send none; the page
+        # shows the list.
         funnel = []
         n = len(stories)
         headline = f"{committee.get('name') or 'This committee'}. {n} recent bill{'s' if n != 1 else ''}."
-        deck = "The newest bills this committee has handled. Committees are where most bills stop."
+        deck = (search_out.get("empty_reason") if not stories else None) or (
+            "The newest bills this committee reported that later had a recorded vote. "
+            "Committees are where most bills stop.")
     else:
         funnel = build_funnel(funnel_rows)
         # Name what was searched: a federal search that finds nothing is not
         # the reader's state having nothing.
         headline = fallback_headline(body.question, STATE_NAMES.get(searched) if searched else None, stories)
-        deck = ((searched and search_out.get("ambiguity_reason"))
+        deck = (((searched or search_out.get("empty_reason") == "before_index") and search_out.get("ambiguity_reason"))
                 or "Most bills never leave committee. Click a bar to read only that stage.")
 
     plate_payload = {
@@ -1916,35 +1491,18 @@ async def state_search(request: Request, body: StateSearchRequest):
     try:
         loop = asyncio.get_event_loop()
 
-        # 1. Fast-path: regex match a state bill ID with optional session anchor.
-        structured = fast_route_state(body.question, state_code)
-
-        # 2. LLM router for everything else. We force jurisdiction=state since
-        #    the caller already picked the state context.
-        if structured is None:
-            structured = await loop.run_in_executor(
-                None, route_query, body.question, get_client()
-            )
-            structured["jurisdiction"] = "state"
-            structured["state_code"] = state_code
-
-        # 3. If the router thinks the user actually meant a federal query while
-        #    sitting on a state context, surface that as a hint rather than a
-        #    forced state interpretation. The frontend renders this as a nudge.
-        suggested_jurisdiction = None
-        if (
-            structured.get("jurisdiction") == "federal"
-            and not structured.get("_fast_path")
-            and (structured.get("named_entity") or len(structured.get("keywords", [])) > 0)
-        ):
-            suggested_jurisdiction = "federal"
-
+        # The router: the state fast path (a bill ID with an optional
+        # session), then Haiku. The caller picked the state, so the question
+        # is a state one whatever the router thought. (A "switch to federal?"
+        # hint lived here; it was computed after this override and never
+        # fired, and nothing renders it, so it went on 2026-09-29.)
+        structured = await loop.run_in_executor(None, lambda: route(
+            body.question, state_code, plates=False, get_client=get_client)["structured"])
+        structured["jurisdiction"] = "state"
         structured["state_code"] = state_code
         structured["_bypass_search_cache"] = bool(getattr(body, "fresh", False))
 
         result = await handle_state_search(structured, body.question, loop)
-        if suggested_jurisdiction:
-            result["suggested_jurisdiction"] = suggested_jurisdiction
         return result
 
     except Exception as e:

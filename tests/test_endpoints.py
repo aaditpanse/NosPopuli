@@ -85,6 +85,22 @@ def test_health_is_free(app):
     assert r.status_code == 200
 
 
+def test_ledger_survives_a_router_failure(app, monkeypatch):
+    """router_agent.route is fail-open on /ledger: a model error leaves the
+    question unstructured and the page an empty ledger, not a 500."""
+    import json
+    from agents import router_agent
+    _api, client, _ = app
+
+    def down(*a, **k):
+        raise RuntimeError("model down")
+    monkeypatch.setattr(router_agent, "structure_question", down)
+    r = client.post("/ledger", json={"question": "voting rights bills"})
+    assert r.status_code == 200
+    plate = json.loads(r.text.splitlines()[0])
+    assert (plate["plate"], plate["stories"]) == ("ledger", [])
+
+
 def test_catch_all_does_not_mask_typos(app):
     """`GET /{full_path:path}` (api.py:3697) is registered last and answers any
     unmatched path with 200 HTML. Assert content-type, or a typo'd test URL
