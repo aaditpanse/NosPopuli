@@ -750,6 +750,130 @@ def sync_text(st, sid, session_=None, gap=None, limit=None, failing=None):
             "robots_disallowed": disallowed}
 
 
+# California's robots.txt disallows every leginfo page a version link names
+# (/faces/, since 2026-09-28 obeyed). Its Legislature publishes the same text
+# for bulk use: pubinfo_<odd year>.zip per two-year session (every version
+# as a CAML .lob; rebuilt weekly for the sitting one) and pubinfo_<Day>.zip,
+# each day's changes, kept for a week.
+PUBINFO = "https://downloads.leginfo.legislature.ca.gov/"
+_PUBINFO_ROW = re.compile(r"^`(\w+)`\t.*?\t(BILL_VERSION_TBL_\d+\.lob)\t", re.M)
+_CA_VERSION = re.compile(r"[?&]version=(\w+)")
+
+
+def pubinfo_versions(table):
+    """{version id: its .lob} from a BILL_VERSION_TBL.dat. Pure."""
+    return {m.group(1): m.group(2) for m in _PUBINFO_ROW.finditer(table.decode("utf-8", "replace"))}
+
+
+def caml_text(raw):
+    """A CAML bill's text: its title, the Legislative Counsel's digest and
+    the bill, without the rest of the metadata head (history, authors,
+    flags). None when nothing is left. Pure."""
+    head = re.search(rb"<caml:Description\b.*?</caml:Description>", raw, re.S)
+    if head:
+        keep = re.findall(rb"<caml:Title>.*?</caml:Title>|<caml:DigestText>.*?</caml:DigestText>", head.group(0), re.S)
+        raw = raw[:head.start()] + b"".join(keep) + raw[head.end():]
+    # Without its declaration the page parser takes it as the markup it is.
+    raw = re.sub(rb"^\s*<\?xml[^>]*\?>", b"", raw)
+    # CAML's blocks and spacing are its own elements, not HTML's: "SEC. 2."
+    # and "(a)(1)" would run into the words after them.
+    raw = re.sub(rb"(<caml:(?:Title|DigestText|Preamble|BillSection|ActionLine|LawSection)\b)", rb"\n\1", raw)
+    raw = re.sub(rb'</caml:Num>|<span class="\w*Space"\s*/>', lambda m: m.group(0) + b" ", raw)
+    return graph.html_text(raw) or None
+
+
+def pubinfo_zip(name, session_):
+    """Download one pubinfo zip to a temporary file under the state's text
+    root; the caller deletes it. The year files are 1 GB each and every
+    version in them is kept as its own file, so the zip is not kept."""
+    dest = graph.DATA_DIR / "raw" / "states" / "ca" / "text" / f".{name}.part"
+    with session_.get(PUBINFO + name, stream=True, timeout=(15, 120)) as r:
+        r.raise_for_status()
+        with open(dest, "wb") as fh:
+            for chunk in r.iter_content(1 << 20):
+                fh.write(chunk)
+    return dest
+
+
+def sync_text_pubinfo(sid, zips):
+    """California's text for one session from pubinfo zips (paths), not
+    leginfo's pages: each version link's `version=` id is a row in the zip's
+    BILL_VERSION_TBL. The CAML is kept as the version's file and its text
+    as the .txt.gz a PDF link is read from. A version is never replaced
+    once it is from pubinfo (a version id is one text); one fetched from
+    leginfo before robots.txt was obeyed is. Links with no version id (the
+    bill's own page) are left. Returns counts."""
+    import zipfile
+    bills = json.loads(graph.data_path("state_bills", state="ca", session=sid).read_text())["bills"]
+    root = text_root("ca", sid)
+    root.mkdir(parents=True, exist_ok=True)
+    manifest_path = root / "manifest.json"
+    manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
+    wanted = {}
+    for key, b in bills.items():
+        for v in b["versions"]:
+            link = pick_link(v["links"])
+            m = _CA_VERSION.search(link["url"]) if link else None
+            if m and manifest.get(stored_name(manifest, link), {}).get("source") != "pubinfo":
+                wanted[m.group(1)] = (stored_name(manifest, link), link, key, v["name"])
+    stored = empty = 0
+    try:
+        for path in zips:
+            with zipfile.ZipFile(path) as z:
+                lobs = {n.rsplit("/", 1)[-1]: n for n in z.namelist()}
+                table = next((n for b, n in lobs.items() if b.upper() == "BILL_VERSION_TBL.DAT"), None)
+                if not table:
+                    continue
+                for vid, lob in pubinfo_versions(z.read(table)).items():
+                    if vid not in wanted or lob not in lobs:
+                        continue
+                    name, link, key, vname = wanted.pop(vid)
+                    raw = z.read(lobs[lob])
+                    text = caml_text(raw)
+                    (root / (name + ".gz")).write_bytes(gzip.compress(raw))
+                    if text:
+                        (root / (name + ".txt.gz")).write_bytes(gzip.compress(text.encode()))
+                    manifest[name] = {"status": "ok", "url": link["url"], "bill": key, "version": vname,
+                                      "media_type": "application/xml", "source": "pubinfo", "bytes": len(raw),
+                                      "text": bool(text), "fetched": datetime.date.today().isoformat()}
+                    stored += 1
+                    empty += not text
+    finally:
+        manifest_path.write_text(json.dumps(manifest, sort_keys=True))
+    return {"state": "ca", "session": sid, "source": "pubinfo", "stored": stored, "no_text": empty,
+            "not_in_pubinfo": len(wanted)}
+
+
+def ca_text(sessions, latest=False):
+    """California's text: each session from its year's pubinfo zip, or with
+    `latest` from the last seven days' change files (a few MB). Prints a
+    line per session."""
+    import requests
+    s = requests.Session()
+    s.headers["User-Agent"] = _TEXT_UA
+    if latest:
+        names = [f"pubinfo_{d}.zip" for d in ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")]
+        groups = [(sessions, names)]
+    else:
+        by_year = {}
+        for sid in sessions:
+            by_year.setdefault(graph.session_key(sid, "ca")[0] // 2 * 2 + 1, []).append(sid)
+        groups = [(sids, [f"pubinfo_{y}.zip"]) for y, sids in sorted(by_year.items(), reverse=True)]
+    for sids, names in groups:
+        paths = []
+        try:
+            for n in names:
+                try:
+                    paths.append(pubinfo_zip(n, s))
+                except Exception as e:
+                    print(json.dumps({"state": "ca", "zip": n, "error": f"{type(e).__name__}: {e}"[:200]}), flush=True)
+            for sid in sids:
+                print(json.dumps(sync_text_pubinfo(sid, paths)), flush=True)
+        finally:
+            for p in paths:
+                p.unlink(missing_ok=True)
+
+
 def text_lock(st):
     """An open lock file holding this state's text, or None when another
     process holds it: the daily sync's --latest skips a state whose
@@ -818,15 +942,21 @@ if __name__ == "__main__":
                     print(json.dumps({"state": st, "skipped": "another process is fetching this state's text"}))
                     continue
                 failing = {}
-                for sid in text_sessions(st, latest=True):
-                    print(json.dumps(sync_text(st, sid, failing=failing)), flush=True)
+                if st == "ca":
+                    ca_text(text_sessions(st, latest=True), latest=True)
+                else:
+                    for sid in text_sessions(st, latest=True):
+                        print(json.dumps(sync_text(st, sid, failing=failing)), flush=True)
                 lock.close()
         else:
             st, sessions, failing = args[0], args[1:], {}
             lock = text_lock(st)
             if lock is None:
                 sys.exit(f"{st}: another process is fetching this state's text")
-            for sid in sessions or text_sessions(st):
-                print(json.dumps(sync_text(st, sid, failing=failing)), flush=True)
+            if st == "ca":
+                ca_text(sessions or text_sessions(st))
+            else:
+                for sid in sessions or text_sessions(st):
+                    print(json.dumps(sync_text(st, sid, failing=failing)), flush=True)
     else:
         print(__doc__)

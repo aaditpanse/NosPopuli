@@ -2314,6 +2314,37 @@ class OpenStatesTest(unittest.TestCase):
         self.assertEqual(fetched, ["https://site.example/text/bill2.html"])
         self.assertEqual((got["fetched"], got["robots_disallowed"]), (1, 1))
 
+    def test_california_text_comes_from_its_pubinfo_zip(self):
+        import zipfile
+        caml = (b'<?xml version="1.0" encoding="UTF-8"?><caml:MeasureDoc xmlns:caml="c">'
+                b'<caml:Description><caml:Id>20250AB199INT</caml:Id><caml:Title>An act</caml:Title>'
+                b'</caml:Description><caml:Bill><caml:BillSection><caml:Num>SECTION 1.</caml:Num><p>The people enact.</p>'
+                b'</caml:BillSection></caml:Bill></caml:MeasureDoc>')
+        table = (b"`20250AB199INT`\t`202520260AB1`\t99\t2024-12-02 00:00:00\t`Introduced`\tNULL\t`Housing.`\t"
+                 b"`Majority`\t`No`\t`No`\t`No`\tNULL\t`No`\t`No`\tBILL_VERSION_TBL_1.lob\t`Y`\t`LEG`\t2024-12-02\n")
+        pdf = "https://leginfo.legislature.ca.gov/faces/billPdf.xhtml?bill_id=202520260AB1&version="
+        versions = [{"name": "AB1", "links": [{"media_type": "text/html", "url": "http://leginfo/nav?bill_id=1"}]},
+                    {"name": "Introduced", "links": [{"media_type": "application/pdf", "url": pdf + "20250AB199INT"}]},
+                    {"name": "Amended", "links": [{"media_type": "application/pdf", "url": pdf + "20250AB198AMD"}]}]
+        self.assertEqual(self.o.pubinfo_versions(table), {"20250AB199INT": "BILL_VERSION_TBL_1.lob"})
+        self.assertEqual(self.o.caml_text(caml), "An act\nSECTION 1. The people enact.")
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(graph, "DATA_DIR", pathlib.Path(d)):
+            path = graph.data_path("state_bills", state="ca", session="20252026")
+            path.parent.mkdir(parents=True)
+            path.write_text(json.dumps({"bills": {"ab/1": {"versions": versions}}}))
+            zp = pathlib.Path(d) / "pubinfo_2025.zip"
+            with zipfile.ZipFile(zp, "w") as z:
+                z.writestr("BILL_VERSION_TBL.dat", table)
+                z.writestr("BILL_VERSION_TBL_1.lob", caml)
+            got = self.o.sync_text_pubinfo("20252026", [zp])
+            self.assertEqual((got["stored"], got["not_in_pubinfo"]), (1, 1))
+            # The bill page reads it as it reads a PDF's extracted text.
+            vs = graph.state_versions("ca", "20252026", {"versions": versions})
+            self.assertEqual([v["text"] for v in vs], [False, True, False])
+            self.assertEqual(graph.state_version_text("ca", "20252026", vs[1]), "An act\nSECTION 1. The people enact.")
+            # A second run leaves a pubinfo version alone.
+            self.assertEqual(self.o.sync_text_pubinfo("20252026", [zp])["stored"], 0)
+
     def test_dead_links_do_not_leave_a_host_that_is_up(self):
         import requests
 
