@@ -1218,129 +1218,6 @@
   },
   {
     "id": {
-      "bioguide": "G000359",
-      "thomas": "00452",
-      "lis": "S293",
-      "govtrack": 300047,
-      "opensecrets": "N00009975",
-      "votesmart": 21992,
-      "fec": [
-        "S0SC00149",
-        "H4SC03087"
-      ],
-      "cspan": 36782,
-      "wikipedia": "Lindsey Graham",
-      "house_history": 14015,
-      "ballotpedia": "Lindsey Graham",
-      "maplight": 569,
-      "icpsr": 29566,
-      "wikidata": "Q22212",
-      "google_entity_id": "kg:/m/01_pdg",
-      "pictorial": 13440
-    },
-    "name": {
-      "first": "Lindsey",
-      "middle": "O.",
-      "last": "Graham",
-      "official_full": "Lindsey Graham"
-    },
-    "bio": {
-      "birthday": "1955-07-09",
-      "gender": "M"
-    },
-    "terms": [
-      {
-        "type": "rep",
-        "start": "1995-01-04",
-        "end": "1997-01-03",
-        "state": "SC",
-        "district": 3,
-        "party": "Republican"
-      },
-      {
-        "type": "rep",
-        "start": "1997-01-07",
-        "end": "1999-01-03",
-        "state": "SC",
-        "district": 3,
-        "party": "Republican"
-      },
-      {
-        "type": "rep",
-        "start": "1999-01-06",
-        "end": "2001-01-03",
-        "state": "SC",
-        "district": 3,
-        "party": "Republican"
-      },
-      {
-        "type": "rep",
-        "start": "2001-01-03",
-        "end": "2003-01-03",
-        "state": "SC",
-        "district": 3,
-        "party": "Republican"
-      },
-      {
-        "type": "sen",
-        "start": "2003-01-07",
-        "end": "2009-01-03",
-        "state": "SC",
-        "class": 2,
-        "party": "Republican",
-        "url": "http://lgraham.senate.gov/"
-      },
-      {
-        "type": "sen",
-        "start": "2009-01-06",
-        "end": "2015-01-03",
-        "state": "SC",
-        "class": 2,
-        "party": "Republican",
-        "url": "http://www.lgraham.senate.gov",
-        "address": "290 Russell Senate Office Building Washington DC 20510",
-        "phone": "202-224-5972",
-        "fax": "202-224-3808",
-        "contact_form": "http://www.lgraham.senate.gov/public/index.cfm?FuseAction=Contact.EmailSenatorGraham",
-        "office": "290 Russell Senate Office Building",
-        "state_rank": "senior",
-        "rss_url": "http://www.lgraham.senate.gov/public/index.cfm?FuseAction=Rss.Feed"
-      },
-      {
-        "type": "sen",
-        "start": "2015-01-06",
-        "end": "2021-01-03",
-        "state": "SC",
-        "class": 2,
-        "party": "Republican",
-        "url": "https://www.lgraham.senate.gov/public",
-        "address": "290 Russell Senate Office Building Washington DC 20510",
-        "phone": "202-224-5972",
-        "fax": "202-224-3808",
-        "contact_form": "https://www.lgraham.senate.gov/public/index.cfm/e-mail-senator-graham",
-        "office": "290 Russell Senate Office Building",
-        "state_rank": "senior",
-        "rss_url": "http://www.lgraham.senate.gov/public/index.cfm?FuseAction=Rss.Feed"
-      },
-      {
-        "type": "sen",
-        "start": "2021-01-03",
-        "end": "2027-01-03",
-        "state": "SC",
-        "class": 2,
-        "state_rank": "senior",
-        "party": "Republican",
-        "url": "https://www.lgraham.senate.gov/public",
-        "rss_url": "http://www.lgraham.senate.gov/public/index.cfm?FuseAction=Rss.Feed",
-        "contact_form": "https://www.lgraham.senate.gov/public/index.cfm/e-mail-senator-graham",
-        "address": "211 Russell Senate Office Building Washington DC 20510",
-        "office": "211 Russell Senate Office Building",
-        "phone": "202-224-5972"
-      }
-    ]
-  },
-  {
-    "id": {
       "bioguide": "M000355",
       "thomas": "01395",
       "lis": "S174",
@@ -17978,7 +17855,7 @@
         "end": "2029-01-03",
         "state": "SC",
         "class": 3,
-        "state_rank": "junior",
+        "state_rank": "senior",
         "party": "Republican",
         "url": "https://www.scott.senate.gov",
         "rss_url": "http://www.scott.senate.gov/rss.xml",
@@ -24642,7 +24519,8 @@
       "votesmart": 117290,
       "wikipedia": "Andy Barr",
       "fec": [
-        "H0KY06104"
+        "H0KY06104",
+        "S6KY00286"
       ],
       "opensecrets": "N00031233",
       "ballotpedia": "Andy Barr",
@@ -26923,7 +26801,8 @@
       "votesmart": 33384,
       "wikipedia": "Robin Kelly",
       "fec": [
-        "H2IL02172"
+        "H2IL02172",
+        "S6IL00474"
       ],
       "opensecrets": "N00035215",
       "ballotpedia": "Robin Kelly",
@@ -28536,7 +28415,8 @@
     "id": {
       "bioguide": "C001103",
       "fec": [
-        "H4GA01039"
+        "H4GA01039",
+        "S6GA00374"
       ],
       "govtrack": 412622,
       "opensecrets": "N00035346",
@@ -28959,7 +28839,8 @@
     "id": {
       "bioguide": "M001196",
       "fec": [
-        "H4MA06090"
+        "H4MA06090",
+        "S6MA00296"
       ],
       "govtrack": 412632,
       "opensecrets": "N00035431",
@@ -32567,7 +32448,8 @@
       "google_entity_id": "kg:/g/11c5m7lxtk",
       "votesmart": 117519,
       "fec": [
-        "H6IL08147"
+        "H6IL08147",
+        "S6IL00482"
       ],
       "opensecrets": "N00033240",
       "maplight": 2213,
@@ -34252,7 +34134,8 @@
     "id": {
       "bioguide": "N000190",
       "fec": [
-        "H8SC05158"
+        "H8SC05158",
+        "S6SC04445"
       ],
       "govtrack": 412738,
       "opensecrets": "N00027783",
@@ -34855,7 +34738,8 @@
     "id": {
       "bioguide": "H001082",
       "fec": [
-        "H8OK01157"
+        "H8OK01157",
+        "S6OK04247"
       ],
       "govtrack": 412748,
       "wikipedia": "Kevin Hern",
@@ -35964,7 +35848,7 @@
     },
     "bio": {
       "gender": "M",
-      "birthday": "1973-07-19"
+      "birthday": "1962-03-09"
     },
     "terms": [
       {
@@ -36635,7 +36519,8 @@
     "id": {
       "bioguide": "S001215",
       "fec": [
-        "H8MI11254"
+        "H8MI11254",
+        "S6MI00426"
       ],
       "govtrack": 412786,
       "wikipedia": "Haley Stevens",
@@ -36788,7 +36673,8 @@
     "id": {
       "bioguide": "C001119",
       "fec": [
-        "H6MN02131"
+        "H6MN02131",
+        "S6MN00499"
       ],
       "govtrack": 412789,
       "opensecrets": "N00037039",
@@ -37092,7 +36978,8 @@
     "id": {
       "bioguide": "P000614",
       "fec": [
-        "H8NH01210"
+        "H8NH01210",
+        "S6NH00141"
       ],
       "govtrack": 412795,
       "wikipedia": "Chris Pappas (American politician)",
@@ -40180,7 +40067,8 @@
     "id": {
       "bioguide": "M001212",
       "fec": [
-        "H8AL02171"
+        "H8AL02171",
+        "S6AL00476"
       ],
       "opensecrets": "N00041295",
       "govtrack": 456800,
@@ -42989,7 +42877,8 @@
     "id": {
       "bioguide": "L000595",
       "fec": [
-        "H2LA05126"
+        "H2LA05126",
+        "S6LA00664"
       ],
       "opensecrets": "N00047972",
       "govtrack": 456859,
@@ -44608,7 +44497,8 @@
     "id": {
       "bioguide": "C001129",
       "fec": [
-        "H4GA10071"
+        "H4GA10071",
+        "S6GA00390"
       ],
       "govtrack": 456895,
       "opensecrets": "N00035370",
@@ -45123,7 +45013,8 @@
     "id": {
       "bioguide": "I000058",
       "fec": [
-        "H2MD04315"
+        "H2MD04315",
+        "H2MD04232"
       ],
       "govtrack": 456905,
       "opensecrets": "N00033749",
@@ -45227,7 +45118,8 @@
     "id": {
       "bioguide": "J000307",
       "fec": [
-        "H2MI10150"
+        "H2MI10150",
+        "S8MI00372"
       ],
       "govtrack": 456907,
       "opensecrets": "N00041550",
@@ -46464,7 +46356,8 @@
     "id": {
       "bioguide": "F000478",
       "fec": [
-        "H2SC07280"
+        "H2SC07280",
+        "S6SC04403"
       ],
       "govtrack": 456938,
       "opensecrets": "N00049165",
@@ -46619,7 +46512,8 @@
     "id": {
       "bioguide": "S001224",
       "fec": [
-        "H2TX03290"
+        "H2TX03290",
+        "H2TX00064"
       ],
       "govtrack": 456941,
       "opensecrets": "N00049337",
@@ -46773,7 +46667,8 @@
     "id": {
       "bioguide": "C001130",
       "fec": [
-        "H2TX30178"
+        "H2TX30178",
+        "S6TX00552"
       ],
       "govtrack": 456944,
       "opensecrets": "N00049840",
@@ -46876,7 +46771,8 @@
     "id": {
       "bioguide": "H001095",
       "fec": [
-        "H0TX07170"
+        "H0TX07170",
+        "S6TX00511"
       ],
       "govtrack": 456946,
       "opensecrets": "N00044362",
@@ -47135,7 +47031,8 @@
     "id": {
       "bioguide": "H001096",
       "fec": [
-        "H2WY00166"
+        "H2WY00166",
+        "S6WY00209"
       ],
       "govtrack": 456951,
       "opensecrets": "N00049197",
@@ -49150,7 +49047,8 @@
     "id": {
       "bioguide": "B001324",
       "fec": [
-        "H4MO01134"
+        "H4MO01134",
+        "S4MO00250"
       ],
       "govtrack": 456997,
       "opensecrets": "N00053042",
@@ -49650,7 +49548,8 @@
     "id": {
       "bioguide": "G000602",
       "fec": [
-        "H4NY04158"
+        "H4NY04158",
+        "H2NY04244"
       ],
       "govtrack": 457010,
       "opensecrets": "N00050425",
@@ -50835,9 +50734,10 @@
         "party": "Republican",
         "state_rank": "junior",
         "url": "https://www.armstrong.senate.gov",
-        "address": "G12 Dirksen Senate Office Building Washington DC 20510",
-        "office": "G12 Dirksen Senate Office Building",
-        "phone": "202-224-4721"
+        "address": "330 Hart Senate Office Building Washington DC 20510",
+        "office": "330 Hart Senate Office Building",
+        "phone": "202-224-4721",
+        "fax": "202-228-0380"
       }
     ]
   },
@@ -50890,7 +50790,8 @@
     },
     "name": {
       "first": "Analilia",
-      "last": "Mejia"
+      "last": "Mejia",
+      "official_full": "Analilia Mejia"
     },
     "bio": {
       "gender": "F",
@@ -50907,7 +50808,145 @@
         "address": "1427 Longworth House Office Building Washington DC 20515-3011",
         "office": "1427 Longworth House Office Building",
         "phone": "202-225-5034",
+        "fax": "202-225-3186",
         "url": "https://mejia.house.gov"
+      }
+    ]
+  },
+  {
+    "id": {
+      "bioguide": "G000607",
+      "fec": [
+        "H6CA01285"
+      ],
+      "govtrack": 457043
+    },
+    "name": {
+      "first": "James",
+      "last": "Gallagher",
+      "official_full": "James Gallagher"
+    },
+    "bio": {
+      "gender": "M",
+      "birthday": "1981-03-07"
+    },
+    "terms": [
+      {
+        "type": "rep",
+        "start": "2026-06-10",
+        "end": "2027-01-03",
+        "state": "CA",
+        "district": 1,
+        "party": "Republican",
+        "address": "408 Cannon House Office Building Washington DC 20515-0501",
+        "office": "408 Cannon House Office Building",
+        "phone": "202-225-3076",
+        "url": "https://gallagher.house.gov/"
+      }
+    ]
+  },
+  {
+    "id": {
+      "bioguide": "G000608",
+      "lis": "S441",
+      "govtrack": 457044,
+      "wikipedia": "Darline Graham Nordone",
+      "wikidata": "Q140537772"
+    },
+    "name": {
+      "first": "Darline",
+      "last": "Graham Nordone",
+      "official_full": "Darline Graham"
+    },
+    "bio": {
+      "gender": "F",
+      "birthday": "1964-06-12"
+    },
+    "terms": [
+      {
+        "type": "sen",
+        "start": "2026-07-14",
+        "end": "2027-01-03",
+        "how": "appointment",
+        "state": "SC",
+        "class": 2,
+        "state_rank": "junior",
+        "party": "Republican",
+        "address": "211 Russell Senate Office Building Washington DC 20510",
+        "office": "211 Russell Senate Office Building",
+        "phone": "202-224-5972",
+        "url": "https://www.dgraham.senate.gov"
+      }
+    ]
+  },
+  {
+    "id": {
+      "bioguide": "B001328",
+      "fec": [
+        "H6GA13062"
+      ],
+      "govtrack": 457045,
+      "wikipedia": "Everton Blair",
+      "wikidata": "Q141178872",
+      "ballotpedia": "Everton Blair Jr."
+    },
+    "name": {
+      "first": "Everton",
+      "last": "Blair",
+      "suffix": "Jr.",
+      "official_full": "Everton Blair Jr."
+    },
+    "bio": {
+      "gender": "M",
+      "birthday": "1992-04-23"
+    },
+    "terms": [
+      {
+        "type": "rep",
+        "start": "2026-09-01",
+        "end": "2027-01-03",
+        "how": "special-election",
+        "state": "GA",
+        "district": 13,
+        "party": "Democrat",
+        "address": "468 Cannon House Office Building Washington DC 20515-1013",
+        "office": "468 Cannon House Office Building",
+        "phone": "202-225-2939",
+        "url": "https://blair.house.gov/"
+      }
+    ]
+  },
+  {
+    "id": {
+      "bioguide": "W000832",
+      "fec": [
+        "H0CA15213"
+      ],
+      "govtrack": 457046,
+      "wikipedia": "Aisha Wahab",
+      "wikidata": "Q115794283",
+      "ballotpedia": "Aisha Wahab"
+    },
+    "name": {
+      "first": "Aisha",
+      "last": "Wahab"
+    },
+    "bio": {
+      "gender": "F",
+      "birthday": "1987-01-11"
+    },
+    "terms": [
+      {
+        "type": "rep",
+        "start": "2026-09-02",
+        "end": "2027-01-03",
+        "state": "CA",
+        "district": 14,
+        "party": "Democrat",
+        "address": "174 Cannon House Office Building Washington DC 20515-0514",
+        "office": "174 Cannon House Office Building",
+        "phone": "202-225-5065",
+        "url": "https://wahab.house.gov/"
       }
     ]
   }
