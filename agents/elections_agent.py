@@ -132,10 +132,10 @@ async def _search_elections_with_claude(state_name, state_code):
     try:
         anthropic_client = AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
         response = await anthropic_client.messages.create(
-            model="claude-sonnet-5",
-            # Sonnet 5 thinks before it answers, and one run of this call used
-            # 5,867 output tokens: 512 ended the call with no text. "direct"
-            # search: 7-69 s, where letting it script its own searches took
+            model="claude-sonnet-5-5",
+            # Sonnet thinks before it answers, and one run of this call (on
+            # Sonnet 5) used 5,867 output tokens: 512 ended the call with no
+            # text. "direct" search: 7-69 s, where letting it script its own searches took
             # 380 s for the same answer (2026-09-27).
             max_tokens=8192,
             tools=[{"type": "web_search_20260209", "name": "web_search", "allowed_callers": ["direct"]}],
@@ -506,7 +506,7 @@ async def _fetch_polling_with_claude(election_name, state_name, election_id):
     try:
         client = AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
         response = await client.messages.create(
-            model="claude-sonnet-5",
+            model="claude-sonnet-5-5",
             max_tokens=8192,      # room to think, as in _search_elections_with_claude
             tools=[{"type": "web_search_20260209", "name": "web_search", "allowed_callers": ["direct"]}],
             messages=[{"role": "user", "content": (

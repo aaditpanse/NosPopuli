@@ -592,7 +592,7 @@ no purple.
 ```
 Backend       Python · FastAPI · uvicorn · slowapi rate limiting
 Models        Haiku 4.5 — routing, expansion, validation, translation (most calls)
-              Sonnet 5  — web search: bill background, upcoming elections, polling
+              Sonnet 5.5 — web search: bill background, upcoming elections, polling
               Opus      — Foundry extractor synthesis only
 Search        Voyage 4 — voyage-4-large for documents (API), voyage-4-nano for
               questions (on the server CPU, requirements-embed.txt)
