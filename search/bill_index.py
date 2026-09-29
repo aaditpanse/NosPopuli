@@ -399,7 +399,9 @@ def search(question, congresses=None, limit=10, laws_only=False, jurisdiction=US
     from correspondence.db import _get_pool
     terms = fts_terms(question)
     vec = json.dumps(embed_query([question])[0])
-    where, args = " AND d.jurisdiction = %s", [jurisdiction]
+    # None is every jurisdiction at once: the eval's pool for "which states…"
+    # asks, which name no single state. No route passes it.
+    where, args = (" AND d.jurisdiction = %s", [jurisdiction]) if jurisdiction else ("", [])
     if sessions:
         where += " AND d.session = ANY(%s)"
         args.append(list(sessions))

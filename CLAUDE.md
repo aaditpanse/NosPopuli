@@ -144,8 +144,10 @@ surface: request → exact response JSON, committed under `tests/golden/`. This 
 only gate (`.github/workflows/tests.yml`). It cannot tell you an answer is *right*,
 only that it is unchanged — two fixtures pin a wrong answer deliberately.
 
-**Tier 2 — quality eval. Is search any good?** Costs money, opt-in, never in CI.
-`search_smoketest.py` is the seed. Not built yet.
+**Tier 2 — quality eval. Is search any good?** Costs money (cents), opt-in, never in
+CI. `scripts/search_eval.json` (218 labelled questions) with
+`scripts/search_smoketest.py --baseline/--judge/--score`; README has the commands and
+the baseline. A change to search must not lower the held-out scores.
 
 ### The loop
 

@@ -864,8 +864,32 @@ database: the pure-logic tests, plus 56 golden fixtures over the route surface �
 request → exact response JSON, captured once and committed under `tests/golden/`.
 
 **Tier 2 — quality eval.** Measures whether search is any *good*, not whether it
-changed. Costs money, opt-in, never in CI. Not built yet; `search_smoketest.py` is
-the seed.
+changed. Costs money (cents), opt-in, never in CI. `scripts/search_eval.json` holds 218
+questions, each labelled with its intent, the graph nodes it names and which bills
+answer it. The questions:
+- the 72 saved eval questions;
+- the 15 in the search log (the server was new);
+- the smoke cases;
+- 120 written for every intent the graph search answers.
+
+Haiku labelled them once; each row says who labelled it, and owner corrections change
+that to `owner`. One question in five is held out, scored and never tuned on.
+
+```bash
+python -m scripts.search_smoketest --baseline scripts/search_eval.json preds.json --base URL  # run a system
+python -m scripts.search_smoketest --judge scripts/search_eval.json preds.json   # rate what it found
+python -m scripts.search_smoketest --score scripts/search_eval.json preds.json   # the numbers
+```
+
+`--judge` rates every returned bill no label covers, so no system is scored only on the
+bills the first pool held. Baseline (2026-09-29, /ledger before the graph search;
+held-out, then all 218):
+
+| intent | entity links | recall@10 | nDCG@10 |
+|---|---|---|---|
+| 0.38 / 0.49 | 0.19 / 0.11 | 0.14 / 0.18 | 0.23 / 0.30 |
+
+Every phase of the graph search (Phases 1–6) must not lower the held-out numbers.
 
 ```bash
 pytest tests/ -q                     # Tier 1, the whole thing
@@ -979,8 +1003,8 @@ Then update the table below if the test guards something new.
 
 ### What's NOT covered (and why)
 
-- **Search *quality*** — nothing measures it. Tier 1 proves the answer didn't change,
-  not that it was ever right. That's Tier 2's job.
+- **Search *quality*** — Tier 2 measures it (218 labelled questions, above), but the
+  labels are mostly Haiku's, and a bill no pool held cannot count until `--judge` rates it.
 - **Routes without a fixture** — mostly the ones needing a seeded database, a real
   secret, or a per-route request body worth hand-writing. Auth-gated routes are pinned
   at their refusal contract only; a fabricated 200 would be worse than nothing.

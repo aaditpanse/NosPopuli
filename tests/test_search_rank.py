@@ -190,6 +190,83 @@ class LocalQueryTest(unittest.TestCase):
         self.assertEqual((rows, seen), ([], {}))
 
 
+class EvaluationTest(unittest.TestCase):
+    """scripts/search_smoketest's Tier 2 scoring: pure, so the numbers the
+    README reports can be trusted."""
+
+    def test_the_held_out_slice_is_stable_and_about_a_fifth(self):
+        from scripts.search_smoketest import eval_questions, held_out
+        rows = eval_questions("/nonexistent")
+        self.assertEqual(held_out("Tiktok  Ban"), held_out("tiktok ban"))
+        self.assertTrue(0.1 < sum(held_out(r["question"]) for r in rows) / len(rows) < 0.3)
+        self.assertEqual(len({r["question"].lower() for r in rows}), len(rows))
+
+    def test_a_row_names_its_graph_node(self):
+        from scripts.search_smoketest import bill_key
+        self.assertEqual(bill_key({"congress": 117, "type": "HR", "number": 5376}), "instrument/us/117/hr/5376")
+        self.assertEqual(bill_key({"state": "VA", "session": "2026", "type": "hb", "number": 1}),
+                         "instrument/va/2026/hb/1")
+        self.assertIsNone(bill_key({"title": "no bill"}))
+
+    def test_todays_answers_map_onto_the_intents(self):
+        from scripts.search_smoketest import INTENTS, intent_of
+        cases = [({"plate": "graph", "ask": "votes"}, "how_voted"), ({"plate": "graph", "ask": "org_lobbied"}, "organization"),
+                 ({"plate": "bill"}, "explain_law"), ({"plate": "uncharted"}, "local_place"),
+                 ({"plate": "ledger", "query_type": "member"}, "person_record"),
+                 ({"plate": "ledger", "query_type": "state_legislation"}, "find_bills"),
+                 ({"plate": "off_topic"}, "off_topic")]
+        for plate, want in cases:
+            self.assertEqual(intent_of(plate), want, plate)
+            self.assertIn(want, INTENTS)
+
+    def test_a_resumed_labelling_run_keeps_every_row(self):
+        import json
+        import tempfile
+        from unittest import mock
+        import scripts.search_smoketest as st
+
+        class Pool:
+            def connection(self):
+                return self
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *a):
+                return False
+
+            def cursor(self):
+                return self
+
+        qs = [{"question": q, "source": "x", "reader": None} for q in "abcd"]
+        with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as f:
+            json.dump([{"question": "a"}, {"question": "c"}, {"question": "d"}], f)
+        with mock.patch.object(st, "eval_questions", return_value=qs), \
+                mock.patch.object(st, "label_question", lambda c, cur, row: {**row, "intent": "x", "bills": {}}), \
+                mock.patch("correspondence.db._get_pool", return_value=Pool()), mock.patch("anthropic.Anthropic"):
+            st.build_labels(f.name)
+        self.assertEqual([r["question"] for r in json.load(open(f.name))], ["a", "b", "c", "d"])
+
+    def test_recall_and_ndcg(self):
+        from scripts.search_smoketest import ndcg_at, recall_at
+        self.assertEqual(recall_at(["a", "b", "c"], ["b", "z"]), 0.5)
+        self.assertIsNone(recall_at(["a"], []))
+        self.assertEqual(ndcg_at(["a", "b"], {"a": 2, "b": 1}), 1.0)
+        self.assertLess(ndcg_at(["b", "a"], {"a": 2, "b": 1}), 1.0)
+        self.assertEqual(ndcg_at(["x"], {"a": 2}), 0.0)
+
+    def test_the_score_reads_only_the_held_out_rows_by_default(self):
+        from scripts.search_smoketest import score_eval
+        labels = [{"question": "q1", "held_out": True, "intent": "find_bills",
+                   "entities": [{"node_id": "p1"}], "bills": {"a": "yes", "b": "partly", "c": "no"}},
+                  {"question": "q2", "held_out": False, "intent": "money", "entities": [], "bills": {}}]
+        preds = {"q1": {"intent": "find_bills", "entities": ["p1"], "bills": ["b", "a"]},
+                 "q2": {"intent": "find_bills", "entities": [], "bills": []}}
+        s = score_eval(labels, preds)
+        self.assertEqual((s["questions"], s["intent"], s["links"], s["recall@10"]), (1, (1.0, 1), (1.0, 1), (1.0, 1)))
+        self.assertEqual(score_eval(labels, preds, only_held_out=False)["intent"], (0.5, 2))
+
+
 class StateSearchDocTest(unittest.TestCase):
     """State bills in bill_doc (plan step 11): a jurisdiction on every row,
     and a result that is not a GovInfo package."""
