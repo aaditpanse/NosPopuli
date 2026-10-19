@@ -2,26 +2,31 @@
  "last_run": {
   "argv": "--due",
   "enrich": {
-   "meeting_digests.py": "done: 0 new, 267 total -> meeting-digests.json ($0.00)",
-   "summarize_items.py": "0 voted items need summaries (4452 already done)",
-   "upcoming.py": "done -> upcoming.json ($0.115)"
+   "meeting_digests.py": "done: 10 new, 277 total -> meeting-digests.json ($0.02)",
+   "summarize_items.py": "json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+   "upcoming.py": "done -> upcoming.json ($0.113)"
   },
   "host": "local",
   "results": {
    "chicago-bos": "ok",
-   "deepen:chicago-bos": "exhausted",
+   "deepen:chicago-bos": "stalled",
    "deepen:fairfax-bos": "done",
-   "deepen:newyork-bos": "exhausted",
+   "deepen:newyork-bos": "stalled",
    "deepen:princewilliam-bos": "done",
    "deepen:seattle-bos": "done",
    "deepen:stafford-bos": "done",
    "fairfax-bos": "ok",
-   "recertify:loudoun-bos": "38/323",
-   "recertify:princewilliam-bos": "342/738",
+   "la-primegov": "error: HTTP Error 403: Forbidden",
+   "loudoun-bos": "ok",
+   "newyork-bos": "drift-or-skipped",
+   "pittsburgh-legistar": "ok",
+   "princewilliam-bos": "ok",
+   "recertify:loudoun-bos": "44/344",
+   "recertify:princewilliam-bos": "357/767",
    "seattle-bos": "ok",
    "stafford-bos": "drift-or-skipped"
   },
-  "ts": "2026-09-29T11:41:40"
+  "ts": "2026-10-19T11:55:54"
  },
  "sources": {
   "chicago-bos": {
@@ -218,38 +223,6 @@
       },
       "unchanged": 397
      },
-     "first_ts": "2026-09-23T15:35:57",
-     "repeats": 1,
-     "stage": "refresh",
-     "ts": "2026-09-23T15:35:57",
-     "verdict": "ok"
-    },
-    {
-     "detail": {
-      "oldest": "2026-05-20",
-      "returned": 3,
-      "target": "2026-01-01",
-      "window": 13
-     },
-     "first_ts": "2026-09-23T15:38:51",
-     "repeats": 1,
-     "stage": "deepen",
-     "ts": "2026-09-23T15:38:51",
-     "verdict": "exhausted"
-    },
-    {
-     "detail": {
-      "added": 0,
-      "artifact": "extractors/chicago-bos/v1_attempt4.py",
-      "replaced": 0,
-      "row_counts": {
-       "agenda_items": 172,
-       "meetings": 3,
-       "members": 50,
-       "vote_events": 172
-      },
-      "unchanged": 397
-     },
      "first_ts": "2026-09-24T15:55:26",
      "repeats": 1,
      "stage": "refresh",
@@ -396,6 +369,36 @@
      "stage": "deepen",
      "ts": "2026-09-29T11:35:38",
      "verdict": "exhausted"
+    },
+    {
+     "detail": {
+      "added": 124,
+      "artifact": "extractors/chicago-bos/v1_attempt4.py",
+      "replaced": 0,
+      "row_counts": {
+       "agenda_items": 172,
+       "meetings": 4,
+       "members": 50,
+       "vote_events": 172
+      },
+      "unchanged": 274
+     },
+     "first_ts": "2026-10-19T11:33:10",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-10-19T11:33:10",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "error": "Traceback (most recent call last):\n  File \"/srv/nospopuli/app/foundry/sandbox2.py\", line 123, in <module>\n    main()\n  File \"/srv/nospopuli/app/foundry/sandbox2.py\", line 108, in main\n    cache = json.loads(cache_path.read_text()) if cache_path.exists() else {}\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "window": 15
+     },
+     "first_ts": "2026-10-19T11:40:31",
+     "repeats": 1,
+     "stage": "deepen",
+     "ts": "2026-10-19T11:40:31",
+     "verdict": "stalled"
     }
    ]
   },
@@ -545,10 +548,24 @@
       "unchanged": 349
      },
      "first_ts": "2026-09-22T15:38:45",
-     "repeats": 7,
+     "repeats": 8,
      "stage": "refresh",
-     "ts": "2026-09-29T11:34:13",
+     "ts": "2026-10-19T11:34:01",
      "verdict": "ok"
+    }
+   ]
+  },
+  "la-primegov": {
+   "events": [
+    {
+     "detail": {
+      "error": "HTTP Error 403: Forbidden"
+     },
+     "first_ts": "2026-10-19T11:34:01",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-10-19T11:34:01",
+     "verdict": "error"
     }
    ]
   },
@@ -602,24 +619,42 @@
      "stage": "recertify",
      "ts": "2026-09-29T11:37:19",
      "verdict": "ok"
+    },
+    {
+     "detail": {
+      "path": "curated",
+      "why": "meeting(s) ['2026-10-06', '2026-10-14'] have passed"
+     },
+     "first_ts": "2026-10-19T11:35:21",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-10-19T11:35:21",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "artifact": "extractors/loudoun-bos-oracle/v1_attempt1.py",
+      "by_check": {
+       "attendance_mismatch": 1,
+       "no_second_source": 16,
+       "vote_coverage": 20
+      },
+      "certified": 44,
+      "covered_meetings": 3,
+      "disputes": 37,
+      "store_meetings": 19,
+      "total": 344
+     },
+     "first_ts": "2026-10-19T11:45:46",
+     "repeats": 1,
+     "stage": "recertify",
+     "ts": "2026-10-19T11:45:46",
+     "verdict": "ok"
     }
    ]
   },
   "newyork-bos": {
    "events": [
-    {
-     "detail": {
-      "oldest": "2026-08-13",
-      "returned": 10,
-      "target": "2026-01-01",
-      "window": 45
-     },
-     "first_ts": "2026-09-20T11:56:09",
-     "repeats": 1,
-     "stage": "deepen",
-     "ts": "2026-09-20T11:56:09",
-     "verdict": "exhausted"
-    },
     {
      "detail": {
       "next": "Needs a vote-bearing source: the Council's published minutes PDFs, or the separate Socrata roll-call dataset if one exists.",
@@ -697,6 +732,49 @@
      "stage": "deepen",
      "ts": "2026-09-29T11:35:40",
      "verdict": "exhausted"
+    },
+    {
+     "detail": {
+      "artifact": "extractors/newyork-bos/v1_attempt13.py",
+      "findings": [
+       {
+        "check": "too_few_votes",
+        "msg": "only 5 vote events",
+        "ref": "run"
+       }
+      ]
+     },
+     "first_ts": "2026-10-19T11:36:14",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-10-19T11:36:14",
+     "verdict": "drift"
+    },
+    {
+     "detail": {
+      "error": "Traceback (most recent call last):\n  File \"/srv/nospopuli/app/foundry/sandbox2.py\", line 123, in <module>\n    main()\n  File \"/srv/nospopuli/app/foundry/sandbox2.py\", line 108, in main\n    cache = json.loads(cache_path.read_text()) if cache_path.exists() else {}\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "window": 52
+     },
+     "first_ts": "2026-10-19T11:40:31",
+     "repeats": 1,
+     "stage": "deepen",
+     "ts": "2026-10-19T11:40:31",
+     "verdict": "stalled"
+    }
+   ]
+  },
+  "pittsburgh-legistar": {
+   "events": [
+    {
+     "detail": {
+      "path": "curated",
+      "why": "newest stored meeting 2026-09-15 is stale"
+     },
+     "first_ts": "2026-10-19T11:38:47",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-10-19T11:38:47",
+     "verdict": "ok"
     }
    ]
   },
@@ -762,6 +840,46 @@
      "stage": "recertify",
      "ts": "2026-09-29T11:39:30",
      "verdict": "ok"
+    },
+    {
+     "detail": {
+      "added": 29,
+      "artifact": "extractors/princewilliam-bos/v1_attempt2.py",
+      "replaced": 44,
+      "row_counts": {
+       "agenda_items": 35,
+       "meetings": 3,
+       "members": 8,
+       "vote_events": 35
+      },
+      "unchanged": 8
+     },
+     "first_ts": "2026-10-19T11:38:59",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-10-19T11:38:59",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "artifact": "extractors/princewilliam-bos-oracle/v1_attempt2.py",
+      "by_check": {
+       "attendance_mismatch": 1,
+       "no_second_source": 11,
+       "vote_coverage": 47,
+       "vote_mismatch": 7
+      },
+      "certified": 357,
+      "covered_meetings": 18,
+      "disputes": 66,
+      "store_meetings": 29,
+      "total": 767
+     },
+     "first_ts": "2026-10-19T11:51:33",
+     "repeats": 1,
+     "stage": "recertify",
+     "ts": "2026-10-19T11:51:33",
+     "verdict": "ok"
     }
    ]
   },
@@ -797,6 +915,25 @@
      "repeats": 7,
      "stage": "refresh",
      "ts": "2026-09-29T11:35:19",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "added": 112,
+      "artifact": "extractors/seattle-bos/v1_attempt2.py",
+      "replaced": 9,
+      "row_counts": {
+       "agenda_items": 75,
+       "meetings": 3,
+       "members": 9,
+       "vote_events": 75
+      },
+      "unchanged": 41
+     },
+     "first_ts": "2026-10-19T11:40:19",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-10-19T11:40:19",
      "verdict": "ok"
     }
    ]
@@ -919,9 +1056,9 @@
       ]
      },
      "first_ts": "2026-09-22T15:39:32",
-     "repeats": 7,
+     "repeats": 8,
      "stage": "refresh",
-     "ts": "2026-09-29T11:35:38",
+     "ts": "2026-10-19T11:40:30",
      "verdict": "drift"
     }
    ]

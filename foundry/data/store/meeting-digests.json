@@ -3495,5 +3495,133 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "chicago-bos-2026-10-14": {
+  "digest": "The City Council passed 59 items in a largely ceremonial session, including eight zoning reclassifications across the city, two public alley vacations, three property resubdivisions, and 27 honorary street designations honoring community members and leaders. The council also approved 19 exemptions allowing various auto repair shops and other commercial businesses to use alley access without standard physical barriers, and called for hearings on the proposed Amtrak Midwest Maintenance Facility. Councilmember Scott was absent; all items passed 49-0.",
+  "notable": [
+   "Eight zoning map changes and three major resubdivisions approved with no opposition.",
+   "27 honorary street designations passed, recognizing diverse community figures from civil rights activists to local business owners.",
+   "19 commercial businesses granted exemptions from alley barrier requirements."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "chicago-bos-2026-09-29": {
+  "digest": "City Council approved the sale of Chicago Parking Meters LLC to Stonepeak Partners LP with a 46-3 vote, allowing a private equity firm to take over ownership of the city's metered parking system. Three aldermen opposed the deal: William E. Hall, Byron Sigcho-Lopez, and Jason C. Ervin.",
+  "notable": [
+   "Parking meter ownership transferred to Stonepeak Partners LP in a 46-3 vote with three aldermen dissenting",
+   "Significant private equity takeover of city parking infrastructure opposed by Hall, Sigcho-Lopez, and Ervin"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "loudoun-bos-2026-10-06": {
+  "digest": "The Board of Supervisors passed 20 items on October 6, 2026, mostly routine proclamations and resolutions recognizing community achievements and organizations\u2014including designations for Breast Cancer and Fire Prevention Awareness months, Eagle Scout commendations, and community group recognitions. Two supervisors were absent (Letourneau and Glass) and Briskman abstained on all votes. The board also adopted a resolution of intent to amend Chapter 654 of the county ordinances and directed staff to research funding sources for an unspecified initiative.",
+  "notable": [
+   "Juli Briskman abstained on every single item voted on; specific content of several Finance, Government Operations, Economic Development, and Transportation/Land Use Committee recommendations were incomplete in the record, obscuring what substantive decisions were actually made."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "pittsburgh-legistar-12107": {
+  "digest": "Pittsburgh City Council passed 20 resolutions in a routine meeting with unanimous 8-0 votes. Actions included authorizing service agreements with multiple vendors (Davey Resource Group, Racunas Law Group, KCI Technologies), approving supplemental funding for the 28th Street Bridge final design, issuing $85,000 in warrants, and accepting gifts to the city. No dissenting votes were recorded and no motions failed.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "pittsburgh-legistar-12099": {
+  "digest": "City Council unanimously passed nine resolutions on October 6, 2026. Key actions included extending the Acting Director of the Office of Management and Budget for 90 additional days through January 7, 2027; authorizing warrant payments to Jerald S. Foresman ($6,197) and Sage Melody Grodin ($3,726); and approving multiple license and service agreements for city departments. The council also adopted a sewage facilities plan revision for a Liberty Avenue property at no cost to the city. All votes passed 9\u20130 with no dissent or failed motions.",
+  "notable": [
+   "Acting OMB Director term extended 90 days to January 7, 2027",
+   "Two warrant payments totaling approximately $9,923 authorized",
+   "Multiple license agreements and sewage plan revision approved unanimously"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "pittsburgh-legistar-12093": {
+  "digest": "City Council passed 13 resolutions and one ordinance in a routine session with Councilmember Khari Mosley absent. Actions included extending the Acting Director of Innovation and Performance for 90 days, amending capital budget allocations and federal rescue plan funding, authorizing contracts for public safety leases and mobility infrastructure agreements, and designating the Allegheny Arsenal Officers Quarters as a historic site. One zoning ordinance rezoned parcels in an unspecified area. All items passed unanimously among the eight present councilmembers.",
+  "notable": [
+   "Allegheny Arsenal Officers Quarters designated as historic site",
+   "One zoning ordinance passed rezoning multiple parcels (details truncated in record)",
+   "Acting Director of Innovation and Performance extended for 90 additional days"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "pittsburgh-legistar-12085": {
+  "digest": "City Council passed 12 resolutions on September 22, 2026, with Councilmember Deborah L. Gross absent. The actions included approving three warrant payments totaling roughly $15,800 to Regina Stewart, James Matthews Jr., and Anthony Rollins; authorizing grant applications to the Redevelopment Authority; accepting gifts to the city; and approving property easements for temporary construction. All resolutions passed unanimously among the eight council members present with no dissenting votes or failed motions.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "princewilliam-bos-2026-10-06": {
+  "digest": "The Board of County Supervisors approved 11 items on October 6, 2026, with Supervisor Vega absent and Supervisor Angry absent for the consent agenda. Key decisions include awarding $200,000 in Foundation and Soil Management Program funding countywide, accepting a $4.2 million net revenue increase and $2.1 million net expenditure increase in the Department of Social Services, and amending a zoning map amendment for Noksonville Road in Brentsville to add additional parcels. All items passed unanimously among supervisors present.",
+  "notable": [
+   "$4.2M net revenue and $2.1M net expenditure increase approved for Department of Social Services",
+   "Zoning map amendment amended to include additional parcels on Noksonville Road in Brentsville"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-09-15": {
+  "digest": "The City Council held a routine session approving 22 board and commission appointments for terms through August 2027, confirmed Kelli Larsen as Director of the Office of Housing, and passed several ordinances including protections for diverse sexual orientations and relationship structures, domestic worker labor standards, and adjustments to two Business Improvement Area boundaries. The council also passed a resolution on gun violence reduction strategy (with 2 abstentions) and expressed opposition to a state parental rights initiative (with 2 absences), plus routine weekly claims appropriations. All substantive votes passed unanimously or near-unanimously with no failed motions.",
+  "notable": [
+   "Kelli Larsen appointed Director of the Office of Housing without dissent.",
+   "Gun violence reduction resolution passed 7\u20130 with 2 council members abstaining (Dionne Foster, Alexis Mercedes Rinck).",
+   "Initiative opposition resolution passed 7\u20130 with 2 members absent (Debora Juarez, Maritza Rivera)."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-08-18": {
+  "digest": "City Council approved 11 new and reappointed members to the Families, Education, Preschool, and Promise Levy Oversight Committee, plus appointments to the Ballard Avenue Landmark District Board, Landmarks Preservation Board, International Special Review District Board, and Community Involvement Commission. The council also passed resolutions and ordinances on municipal code accessibility compliance, historic preservation controls for the Wilde-Streatfield House and Burwell House, and payment of claims. Four council members\u2014Debora Juarez, Dionne Foster, Rob Saka, and Dan Strauss\u2014were absent; all 20 items passed 5-0 with those four absent.",
+  "notable": [
+   "11 members appointed or reappointed to education and levy oversight committee through 2027-2028",
+   "Historic preservation ordinances passed for Wilde-Streatfield House and Burwell House landmarks",
+   "Four council members absent from entire meeting (Juarez, Foster, Saka, Strauss)."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }

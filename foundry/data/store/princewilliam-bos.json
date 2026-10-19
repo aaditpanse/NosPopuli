@@ -567,9 +567,9 @@
     }
    },
    "certification": {
-    "status": "quarantined",
-    "method": null,
-    "note": "no second-source assertions for this meeting"
+    "status": "certified",
+    "method": "cross-source: primary extractor \u00d7 independent second-source document (Granicus MinutesViewer HTML ('Briefs') \u2014 an independently re)",
+    "note": null
    }
   },
   "princewilliam-bos-2025-12-16": {
@@ -871,6 +871,38 @@
     "Gordy": "present",
     "LaCroix": "present",
     "Vega": "present",
+    "Stewart": "present"
+   },
+   "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "no second-source assertions for this meeting"
+   }
+  },
+  "princewilliam-bos-2026-10-06": {
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "body": "Board of County Supervisors Meeting",
+   "date": "2026-10-06",
+   "attendance": {
+    "Jefferson": "present",
+    "Angry": "present",
+    "Bailey": "present",
+    "Boddye": "present",
+    "Gordy": "present",
+    "Vega": "absent",
+    "LaCroix": "present",
     "Stewart": "present"
    },
    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
@@ -5465,8 +5497,8 @@
     }
    },
    "certification": {
-    "status": "quarantined",
-    "method": null,
+    "status": "certified",
+    "method": "cross-source: primary extractor \u00d7 independent second-source document (Granicus MinutesViewer HTML ('Briefs') \u2014 an independently re)",
     "note": null
    }
   },
@@ -5488,8 +5520,8 @@
     }
    },
    "certification": {
-    "status": "quarantined",
-    "method": null,
+    "status": "certified",
+    "method": "cross-source: primary extractor \u00d7 independent second-source document (Granicus MinutesViewer HTML ('Briefs') \u2014 an independently re)",
     "note": null
    }
   },
@@ -5511,8 +5543,8 @@
     }
    },
    "certification": {
-    "status": "quarantined",
-    "method": null,
+    "status": "certified",
+    "method": "cross-source: primary extractor \u00d7 independent second-source document (Granicus MinutesViewer HTML ('Briefs') \u2014 an independently re)",
     "note": null
    }
   },
@@ -5534,8 +5566,8 @@
     }
    },
    "certification": {
-    "status": "quarantined",
-    "method": null,
+    "status": "certified",
+    "method": "cross-source: primary extractor \u00d7 independent second-source document (Granicus MinutesViewer HTML ('Briefs') \u2014 an independently re)",
     "note": null
    }
   },
@@ -5557,8 +5589,8 @@
     }
    },
    "certification": {
-    "status": "quarantined",
-    "method": null,
+    "status": "certified",
+    "method": "cross-source: primary extractor \u00d7 independent second-source document (Granicus MinutesViewer HTML ('Briefs') \u2014 an independently re)",
     "note": null
    }
   },
@@ -5649,8 +5681,8 @@
     }
    },
    "certification": {
-    "status": "quarantined",
-    "method": null,
+    "status": "certified",
+    "method": "cross-source: primary extractor \u00d7 independent second-source document (Granicus MinutesViewer HTML ('Briefs') \u2014 an independently re)",
     "note": null
    }
   },
@@ -5741,8 +5773,8 @@
     }
    },
    "certification": {
-    "status": "quarantined",
-    "method": null,
+    "status": "certified",
+    "method": "cross-source: primary extractor \u00d7 independent second-source document (Granicus MinutesViewer HTML ('Briefs') \u2014 an independently re)",
     "note": null
    }
   },
@@ -8487,7 +8519,7 @@
    "item_id": "princewilliam-bos-2026-09-22-item-4",
    "meeting_id": "princewilliam-bos-2026-09-22",
    "title": "4) Commendations and Proclamations",
-   "action": "Approve",
+   "action": "Approve Agenda Items",
    "result": "pass",
    "file_number": null,
    "provenance": {
@@ -8510,7 +8542,7 @@
    "item_id": "princewilliam-bos-2026-09-22-item-5",
    "meeting_id": "princewilliam-bos-2026-09-22",
    "title": "5) Consent Agenda",
-   "action": "Approve",
+   "action": "Approve Consent Agenda Items",
    "result": "pass",
    "file_number": null,
    "provenance": {
@@ -8533,7 +8565,7 @@
    "item_id": "princewilliam-bos-2026-09-22-item-7",
    "meeting_id": "princewilliam-bos-2026-09-22",
    "title": "7) Public Hearings - Including Consolidated Land Use",
-   "action": "Approve",
+   "action": "Approve Agenda Items",
    "result": "pass",
    "file_number": null,
    "provenance": {
@@ -8555,8 +8587,8 @@
   "princewilliam-bos-2026-09-22-item-9-A": {
    "item_id": "princewilliam-bos-2026-09-22-item-9-A",
    "meeting_id": "princewilliam-bos-2026-09-22",
-   "title": "9.A) Authorize a Closed Meeting",
-   "action": "Approve",
+   "title": "9.A) Authorize a Closed Meeting (#2)",
+   "action": "Authorize Closed Meeting",
    "result": "pass",
    "file_number": null,
    "provenance": {
@@ -8579,7 +8611,7 @@
    "item_id": "princewilliam-bos-2026-09-22-item-12-A",
    "meeting_id": "princewilliam-bos-2026-09-22",
    "title": "12.A) Certify the Closed Meeting",
-   "action": "Approve",
+   "action": "Approve Agenda Item",
    "result": "pass",
    "file_number": null,
    "provenance": {
@@ -8602,7 +8634,7 @@
    "item_id": "princewilliam-bos-2026-09-22-item-7-D",
    "meeting_id": "princewilliam-bos-2026-09-22",
    "title": "7.D) DPA 2026-00006, Zoning Text Amendment to the Data Center Opportunity Zone Overlay District, County Code Section 32-509.01 Et Seq., and any Other Related Sections of the Zoning Ordinance, Including Corresponding Data Center Opportunity Zone Overlay District Map Amendments - Countywide - Reza Ramyar, Planning - Mobility, Economic Growth, and Resiliency",
-   "action": "Approve",
+   "action": "Approve Agenda Item",
    "result": "pass",
    "file_number": null,
    "provenance": {
@@ -8624,8 +8656,8 @@
   "princewilliam-bos-2026-09-22-item-i7": {
    "item_id": "princewilliam-bos-2026-09-22-item-i7",
    "meeting_id": "princewilliam-bos-2026-09-22",
-   "title": "A Substitute Motion - 90 Days to 0 Days",
-   "action": "Approve",
+   "title": "Substitute Motion - Amend the Ordinance to Change 90 Days to 0 Days",
+   "action": "Amend the Ordinance from",
    "result": "fail",
    "file_number": null,
    "provenance": {
@@ -8671,7 +8703,7 @@
    "item_id": "princewilliam-bos-2026-09-22-item-10-A",
    "meeting_id": "princewilliam-bos-2026-09-22",
    "title": "10.A) Amend the Prince William County Procurement Regulations to be Consistent with Section 2.2-4300 of the Code of Virginia, Virginia Public Procurement Act, as Amended - Shana Terry, Procurement Services - Government Operations, Performance, and Innovation",
-   "action": "Approve",
+   "action": "Approve Agenda Item",
    "result": "pass",
    "file_number": null,
    "provenance": {
@@ -8716,8 +8748,8 @@
   "princewilliam-bos-2026-09-22-item-i11": {
    "item_id": "princewilliam-bos-2026-09-22-item-i11",
    "meeting_id": "princewilliam-bos-2026-09-22",
-   "title": "Action after CM #1",
-   "action": "Approve",
+   "title": "Authorize Public Hearing to Consider the Sale of Property at 9349 Hornbaker Road",
+   "action": "Authorize the Public Hearing",
    "result": "pass",
    "file_number": null,
    "provenance": {
@@ -8739,8 +8771,8 @@
   "princewilliam-bos-2026-09-22-item-i12": {
    "item_id": "princewilliam-bos-2026-09-22-item-i12",
    "meeting_id": "princewilliam-bos-2026-09-22",
-   "title": "Action After CM #2",
-   "action": "Approve",
+   "title": "Accept the Internal Audit Reports.",
+   "action": "Accept the Internal Audit Reports",
    "result": "pass",
    "file_number": null,
    "provenance": {
@@ -8762,8 +8794,8 @@
   "princewilliam-bos-2026-09-22-item-i13": {
    "item_id": "princewilliam-bos-2026-09-22-item-i13",
    "meeting_id": "princewilliam-bos-2026-09-22",
-   "title": "Action After CM #3",
-   "action": "Approve",
+   "title": "Appoint Duane Prophet as Director of Information Technology",
+   "action": "Approve the Appointment of Duane Prophet",
    "result": "pass",
    "file_number": null,
    "provenance": {
@@ -8786,7 +8818,7 @@
    "item_id": "princewilliam-bos-2026-09-22-item-11-F",
    "meeting_id": "princewilliam-bos-2026-09-22",
    "title": "11.F) Petition the Governor and Virginia Department of Environmental Quality for Inclusion of Mid-County and Western Prince William County in Regional Groundwater Studies and Future Groundwater Management Frameworks - Brentsville, Coles, Gainesville, Occoquan, and Potomac Magisterial Districts - Supervisor Boddye",
-   "action": "Approve",
+   "action": "Approve Agenda Item",
    "result": "pass",
    "file_number": null,
    "provenance": {
@@ -8809,7 +8841,7 @@
    "item_id": "princewilliam-bos-2026-09-22-item-11",
    "meeting_id": "princewilliam-bos-2026-09-22",
    "title": "11) Supervisors' Time",
-   "action": "Approve",
+   "action": "Approve Agenda Items",
    "result": "pass",
    "file_number": null,
    "provenance": {
@@ -8832,7 +8864,7 @@
    "item_id": "princewilliam-bos-2026-09-22-item-13-A",
    "meeting_id": "princewilliam-bos-2026-09-22",
    "title": "13.A) Special Use Permit #SUP2025-00009, Vint Hill Substation - Brentsville Magisterial District - Alex Vanegas, Planning - Mobility, Economic Growth, and Resiliency",
-   "action": "Deny",
+   "action": "Deny Special Use Permit",
    "result": "pass",
    "file_number": null,
    "provenance": {
@@ -8855,7 +8887,7 @@
    "item_id": "princewilliam-bos-2026-09-22-item-15-A",
    "meeting_id": "princewilliam-bos-2026-09-22",
    "title": "15.A) Adjourn the Meeting",
-   "action": "Approve",
+   "action": "Adjourn the Meeting at",
    "result": "pass",
    "file_number": null,
    "provenance": {
@@ -9040,6 +9072,328 @@
    "meeting_id": "princewilliam-bos-2026-09-01",
    "title": "8) Public Hearings - Including Consolidated Land Use Cases",
    "action": "Approve Agenda Items",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-item-5": {
+   "item_id": "princewilliam-bos-2026-10-06-item-5",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "title": "5) Approval of Minutes",
+   "action": "Approve Agenda Items",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-item-6": {
+   "item_id": "princewilliam-bos-2026-10-06-item-6",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "title": "6) Commendations and Proclamations",
+   "action": "Approve Agenda Items",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-item-7": {
+   "item_id": "princewilliam-bos-2026-10-06-item-7",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "title": "7) Consent Agenda",
+   "action": "Approve Consent Agenda Items",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-item-9-A": {
+   "item_id": "princewilliam-bos-2026-10-06-item-9-A",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "title": "9.A) Appoint Bobby Lin to the Joint Environmental Taskforce with the Prince William School Board",
+   "action": "Approve Agenda Item",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-item-10-A": {
+   "item_id": "princewilliam-bos-2026-10-06-item-10-A",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "title": "10.A) Authorize a Closed Meeting",
+   "action": "Approve Agenda Item",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-item-11-A": {
+   "item_id": "princewilliam-bos-2026-10-06-item-11-A",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "title": "11.A) Award $200,000 of Foundation and Soil Management Program Funding - Countywide - Ricky O'Connor, Development Services - Mobility, Economic Growth, and Resiliency",
+   "action": "Approve Agenda Item",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-item-11-B": {
+   "item_id": "princewilliam-bos-2026-10-06-item-11-B",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "title": "11.B) Amend Initiation of Zoning Map Amendment #DPA2027-00001, Nokesville Road to Add Additional Parcels - Brentsville Magisterial District - Supriya Chewle / David McGettigan, Planning - Mobility, Economic Growth, and Resiliency",
+   "action": "Approve Agenda Item",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-item-11-C": {
+   "item_id": "princewilliam-bos-2026-10-06-item-11-C",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "title": "11.C) Accept, Budget, and Appropriate Net Ongoing Revenue Increase of $4,167,019 and Ongoing Net Expenditure Increase of $2,094,622 in the Department of Social Services' Fiscal Year 2027 Budget to Reconcile the County's Budget to State and Federal Funding Allocations - Phyllis Jennings-Holt, Social Services - Health, Wellbeing, and Environmental Sustainability",
+   "action": "Approve Agenda Item",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-item-12-A": {
+   "item_id": "princewilliam-bos-2026-10-06-item-12-A",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "title": "12.A) Appoint Nicole Canole to the Industrial Development Authority - Supervisor LaCroix",
+   "action": "Approve Agenda Item",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-item-12-B": {
+   "item_id": "princewilliam-bos-2026-10-06-item-12-B",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "title": "12.B) Amend the Prince William Board of County Supervisors' 2026 Meeting Calendar to Remove the 7:00 p.m. Evening Session on October 20, 2026",
+   "action": "Approve Agenda Item",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-item-13-A": {
+   "item_id": "princewilliam-bos-2026-10-06-item-13-A",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "title": "13.A) Certify the Closed Meeting",
+   "action": "Approve Agenda Item",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-item-14": {
+   "item_id": "princewilliam-bos-2026-10-06-item-14",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "title": "14) Adjourn Meeting",
+   "action": "Adjourn the Meeting at",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-09-22-item-i5": {
+   "item_id": "princewilliam-bos-2026-09-22-item-i5",
+   "meeting_id": "princewilliam-bos-2026-09-22",
+   "title": "Authorize Closed Meeting #1",
+   "action": "Authorize a Closed Meeting",
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-09-22-item-i6": {
+   "item_id": "princewilliam-bos-2026-09-22-item-i6",
+   "meeting_id": "princewilliam-bos-2026-09-22",
+   "title": "Certify the Closed Meeting",
+   "action": "Certify Closed Meeting",
    "result": "pass",
    "file_number": null,
    "provenance": {
@@ -21348,9 +21702,13 @@
     }
    },
    "certification": {
-    "status": "quarantined",
-    "method": null,
-    "note": null
+    "status": "certified",
+    "method": "cross-source: primary extractor \u00d7 independent second-source document (Granicus MinutesViewer HTML ('Briefs') \u2014 an independently re)",
+    "note": null,
+    "evidence": {
+     "quote": "APPROVED:&nbsp;</strong> Approve - Minutes of December 2, 2025<br /><span style=\"text-decoration: underline;\">1: Bailey&nbsp; 2: Stewart</span> / Unanimous /<strong> ABSENT FROM VOTE:</strong> Boddye</p>  &nbsp; <br /><a style=\"text-decoration: underline;\" title=\"Attachment\" href=\"https://legistarwe",
+     "doc_url": "https://pwcgov.granicus.com/MinutesViewer.php?view_id=23&clip_id=3767"
+    }
    }
   },
   "princewilliam-bos-2026-01-13-vote-4-B": {
@@ -21409,9 +21767,13 @@
     }
    },
    "certification": {
-    "status": "quarantined",
-    "method": null,
-    "note": null
+    "status": "certified",
+    "method": "cross-source: primary extractor \u00d7 independent second-source document (Granicus MinutesViewer HTML ('Briefs') \u2014 an independently re)",
+    "note": null,
+    "evidence": {
+     "quote": "APPROVED:&nbsp;</strong> Elect - 2026 Vice Chair - Board of County Supervisors<br /><span style=\"text-decoration: underline;\">1: Franklin&nbsp; 2: Bailey</span> / <strong>AYES:</strong> Bailey, Boddye, Franklin, Gordy, Stewart, Vega / <strong>NAYS:</strong> Jefferson / <strong>ABSTAIN FROM VOTE:</st",
+     "doc_url": "https://pwcgov.granicus.com/MinutesViewer.php?view_id=23&clip_id=3767"
+    }
    }
   },
   "princewilliam-bos-2026-01-13-vote-4-C": {
@@ -21469,9 +21831,13 @@
     }
    },
    "certification": {
-    "status": "quarantined",
-    "method": null,
-    "note": null
+    "status": "certified",
+    "method": "cross-source: primary extractor \u00d7 independent second-source document (Granicus MinutesViewer HTML ('Briefs') \u2014 an independently re)",
+    "note": null,
+    "evidence": {
+     "quote": "APPROVED:&nbsp;</strong> Elect - 2026 Chair Pro-Tem - Board of County Supervisors<br /><span style=\"text-decoration: underline;\">1: Jefferson&nbsp; 2: Vega</span> / Unanimous /<strong> ABSTAIN FROM VOTE:</strong> Gordy</p>  &nbsp; <br /><a style=\"text-decoration: underline;\" title=\"Attachment\" href=",
+     "doc_url": "https://pwcgov.granicus.com/MinutesViewer.php?view_id=23&clip_id=3767"
+    }
    }
   },
   "princewilliam-bos-2026-01-13-vote-4-D": {
@@ -21528,9 +21894,13 @@
     }
    },
    "certification": {
-    "status": "quarantined",
-    "method": null,
-    "note": null
+    "status": "certified",
+    "method": "cross-source: primary extractor \u00d7 independent second-source document (Granicus MinutesViewer HTML ('Briefs') \u2014 an independently re)",
+    "note": null,
+    "evidence": {
+     "quote": "APPROVED:&nbsp;</strong> Adopt - Prince William Board of County Supervisors' 2026 Meeting Schedule<br /><span style=\"text-decoration: underline;\">1: Stewart&nbsp; 2: Boddye</span>&nbsp;/ Unanimous</p>  &nbsp; <br /><a style=\"text-decoration: underline;\" title=\"Attachment\" href=\"https://legistarweb-p",
+     "doc_url": "https://pwcgov.granicus.com/MinutesViewer.php?view_id=23&clip_id=3767"
+    }
    }
   },
   "princewilliam-bos-2026-01-13-vote-7-A": {
@@ -21587,9 +21957,13 @@
     }
    },
    "certification": {
-    "status": "quarantined",
-    "method": null,
-    "note": null
+    "status": "certified",
+    "method": "cross-source: primary extractor \u00d7 independent second-source document (Granicus MinutesViewer HTML ('Briefs') \u2014 an independently re)",
+    "note": null,
+    "evidence": {
+     "quote": "APPROVED:&nbsp;</strong> Authorize - Closed Meeting<br /><span style=\"text-decoration: underline;\">1: Angry&nbsp; 2: Bailey</span>&nbsp;/ Unanimous</p>  &nbsp; <br /><a style=\"text-decoration: underline;\" title=\"Attachment\" href=\"https://legistarweb-production.s3.amazonaws.com/uploads/attachment/pdf",
+     "doc_url": "https://pwcgov.granicus.com/MinutesViewer.php?view_id=23&clip_id=3767"
+    }
    }
   },
   "princewilliam-bos-2026-01-13-vote-i6": {
@@ -21707,7 +22081,7 @@
    "certification": {
     "status": "quarantined",
     "method": null,
-    "note": null
+    "note": "primary says ['pass'], second source says fail \u2014 \"FAILED:</strong>&nbsp; Reconsider Resolution Number 25-648, Listed as Item 5-J on the December 15, 2025, Agenda: Budget \""
    }
   },
   "princewilliam-bos-2026-01-13-vote-i8": {
@@ -21825,9 +22199,13 @@
     }
    },
    "certification": {
-    "status": "quarantined",
-    "method": null,
-    "note": null
+    "status": "certified",
+    "method": "cross-source: primary extractor \u00d7 independent second-source document (Granicus MinutesViewer HTML ('Briefs') \u2014 an independently re)",
+    "note": null,
+    "evidence": {
+     "quote": "APPROVED:&nbsp;</strong> Certify - Closed Meeting<br /><span style=\"text-decoration: underline;\">1: Bailey&nbsp; 2: Boddye</span> / Unanimous /<strong> ABSENT FROM VOTE</strong>: Franklin<br /><br /><strong>4:02 P.M.</strong>&nbsp; &nbsp; &nbsp;Adjourned Into Closed Meeting<br /><strong>5:10 P.M.&nb",
+     "doc_url": "https://pwcgov.granicus.com/MinutesViewer.php?view_id=23&clip_id=3767"
+    }
    }
   },
   "princewilliam-bos-2026-01-13-vote-i10": {
@@ -22065,9 +22443,13 @@
     }
    },
    "certification": {
-    "status": "quarantined",
-    "method": null,
-    "note": null
+    "status": "certified",
+    "method": "cross-source: primary extractor \u00d7 independent second-source document (Granicus MinutesViewer HTML ('Briefs') \u2014 an independently re)",
+    "note": null,
+    "evidence": {
+     "quote": "APPROVED:</strong>&nbsp; Adjourn Meeting on January 13, 2026, at 5:16 P.M.<br /><span style=\"text-decoration: underline;\">1: Gordy 2: Bailey</span> / Unanimous / <strong>ABSENT FROM VOTE:&nbsp; </strong>Franklin</p>  &nbsp; <br /><a style=\"text-decoration: underline;\" title=\"Attachment\" href=\"https:",
+     "doc_url": "https://pwcgov.granicus.com/MinutesViewer.php?view_id=23&clip_id=3767"
+    }
    }
   },
   "princewilliam-bos-2025-12-16-vote-i1": {
@@ -30495,6 +30877,844 @@
    "vote_id": "princewilliam-bos-2026-09-01-vote-8",
    "meeting_id": "princewilliam-bos-2026-09-01",
    "item_id": "princewilliam-bos-2026-09-01-item-8",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 8
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-vote-5": {
+   "vote_id": "princewilliam-bos-2026-10-06-vote-5",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "item_id": "princewilliam-bos-2026-10-06-item-5",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "absent"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 1
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-vote-6": {
+   "vote_id": "princewilliam-bos-2026-10-06-vote-6",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "item_id": "princewilliam-bos-2026-10-06-item-6",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "absent"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 1
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-vote-7": {
+   "vote_id": "princewilliam-bos-2026-10-06-vote-7",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "item_id": "princewilliam-bos-2026-10-06-item-7",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "absent"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "absent"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 6,
+    "absent": 2
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-vote-9-A": {
+   "vote_id": "princewilliam-bos-2026-10-06-vote-9-A",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "item_id": "princewilliam-bos-2026-10-06-item-9-A",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "absent"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 1
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-vote-10-A": {
+   "vote_id": "princewilliam-bos-2026-10-06-vote-10-A",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "item_id": "princewilliam-bos-2026-10-06-item-10-A",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "absent"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 1
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-vote-11-A": {
+   "vote_id": "princewilliam-bos-2026-10-06-vote-11-A",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "item_id": "princewilliam-bos-2026-10-06-item-11-A",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "absent"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 1
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-vote-11-B": {
+   "vote_id": "princewilliam-bos-2026-10-06-vote-11-B",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "item_id": "princewilliam-bos-2026-10-06-item-11-B",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "absent"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 1
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-vote-11-C": {
+   "vote_id": "princewilliam-bos-2026-10-06-vote-11-C",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "item_id": "princewilliam-bos-2026-10-06-item-11-C",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "absent"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 1
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-vote-12-A": {
+   "vote_id": "princewilliam-bos-2026-10-06-vote-12-A",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "item_id": "princewilliam-bos-2026-10-06-item-12-A",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "absent"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 1
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-vote-12-B": {
+   "vote_id": "princewilliam-bos-2026-10-06-vote-12-B",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "item_id": "princewilliam-bos-2026-10-06-item-12-B",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "absent"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 1
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-vote-13-A": {
+   "vote_id": "princewilliam-bos-2026-10-06-vote-13-A",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "item_id": "princewilliam-bos-2026-10-06-item-13-A",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "absent"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 1
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-10-06-vote-14": {
+   "vote_id": "princewilliam-bos-2026-10-06-vote-14",
+   "meeting_id": "princewilliam-bos-2026-10-06",
+   "item_id": "princewilliam-bos-2026-10-06-item-14",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "absent"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 7,
+    "absent": 1
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-09-22-vote-i5": {
+   "vote_id": "princewilliam-bos-2026-09-22-vote-i5",
+   "meeting_id": "princewilliam-bos-2026-09-22",
+   "item_id": "princewilliam-bos-2026-09-22-item-i5",
+   "positions": [
+    {
+     "member": "Jefferson",
+     "position": "aye"
+    },
+    {
+     "member": "Angry",
+     "position": "aye"
+    },
+    {
+     "member": "Bailey",
+     "position": "aye"
+    },
+    {
+     "member": "Boddye",
+     "position": "aye"
+    },
+    {
+     "member": "Gordy",
+     "position": "aye"
+    },
+    {
+     "member": "LaCroix",
+     "position": "aye"
+    },
+    {
+     "member": "Vega",
+     "position": "aye"
+    },
+    {
+     "member": "Stewart",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 8
+   },
+   "result": "pass",
+   "file_number": null,
+   "provenance": {
+    "source_id": "princewilliam-bos",
+    "extractor_version": "1",
+    "run_id": "princewilliam-bos-1",
+    "source_url": "https://pwcgov.granicus.com/core/Handlers/media/votelog.ashx?action=search&viewId=23&meetingBodyId=1",
+    "certification": {
+     "certified": true,
+     "method": "granicus-votelog-json"
+    }
+   },
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "princewilliam-bos-2026-09-22-vote-i6": {
+   "vote_id": "princewilliam-bos-2026-09-22-vote-i6",
+   "meeting_id": "princewilliam-bos-2026-09-22",
+   "item_id": "princewilliam-bos-2026-09-22-item-i6",
    "positions": [
     {
      "member": "Jefferson",
