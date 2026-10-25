@@ -455,6 +455,30 @@
     "method": null,
     "note": "no second-source assertions for this meeting"
    }
+  },
+  "loudoun-bos-2026-10-20": {
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "body": "Board of Supervisors",
+   "jurisdiction": "Loudoun County, VA",
+   "date": "2026-10-20",
+   "attendance": {
+    "Phyllis J. Randall": "present",
+    "Michael R. Turner": "present",
+    "Juli Briskman": "present",
+    "Sylvia Glass": "present",
+    "Caleb Kershner": "present",
+    "Matthew F. Letourneau": "present",
+    "Kristen Umstattd": "present",
+    "Laura TeKrony": "present",
+    "Koran Saines": "present"
+   },
+   "source_url": "https://lfportal.loudoun.gov/LFPortalinternet/docview.aspx?id=1976200&dbid=0",
+   "minutes_url": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "no second-source assertions for this meeting"
+   }
   }
  },
  "agenda_items": {},
@@ -18686,6 +18710,1406 @@
    "tally_consistent": true,
    "result": "pass",
    "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1975929/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m1": {
+   "vote_id": "loudoun-bos-2026-10-20-m1",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved that the following items be approved on consent: 7a, 7b, 7c, 7d, 7e, 7f, 11a, 11b, 11c, 11d, 11e, 11f, 11g, 11h, 11i, 14a, 14c, 14e, 14f, 14g, 14i, 14k, and 14m. ",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m2": {
+   "vote_id": "loudoun-bos-2026-10-20-m2",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved that the Board of Supervisors approve the proclamation to recognize October 20, 2026, as Inclusive Connections Day in Loudoun County, provided as Attachment 1 to the October 20, 2026, Board of Supervisors Business Meetin",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m3": {
+   "vote_id": "loudoun-bos-2026-10-20-m3",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved that the Board of Supervisors approve the proclamation to recognize October 2026 as Domestic Violence Awareness Month in Loudoun County, provided as Attachment 1 to the October 20, 2026, Board of Supervisors Business Mee",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m4": {
+   "vote_id": "loudoun-bos-2026-10-20-m4",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved that the Board of Supervisors approve the Proclamation to recognize October 2026 as Disability Employment Awareness Month in Loudoun County, provided as Attachment 1 to the October 20, 2026, Board of Supervisors Business",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m5": {
+   "vote_id": "loudoun-bos-2026-10-20-m5",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved that the Board of Supervisors approve the resolution to recognize and congratulate the Northern Virginia Branch of the Association for the Study of African American Life and History, provided as Attachment 1 to the Octob",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m6": {
+   "vote_id": "loudoun-bos-2026-10-20-m6",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved that the Board of Supervisors approve the Resolution to Recognize Micah Wollman on his accomplishment on being selected for the Joseph C. Gilliam Achievement Award, provided as Attachment 1 to the October 20, 2026, Board",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m7": {
+   "vote_id": "loudoun-bos-2026-10-20-m7",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved that the Board of Supervisors approve the proclamation to recognize October 21, 2026, as Support Your Local Chamber of Commerce Day in Loudoun County, Virginia, provided as Attachment 1 to the October 20, 2026, Board of ",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m8": {
+   "vote_id": "loudoun-bos-2026-10-20-m8",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved the recommendation of the Finance/Government Operations and Economic Development Committee that the Board of Supervisors authorize the Purchasing Agent to increase the award authority for the Overhead Door and Security G",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m9": {
+   "vote_id": "loudoun-bos-2026-10-20-m9",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved the recommendation of the Finance/Government Operations and Economic Development Committee that the Board of Supervisors authorize the Purchasing Agent to increase the award authority of the contract for Advanced Technol",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m10": {
+   "vote_id": "loudoun-bos-2026-10-20-m10",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved the recommendation of the Finance/Government Operations and Economic Development Committee that the Board of Supervisors authorize the Purchasing Agent to increase the award authority of the contract for Software Solutio",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m11": {
+   "vote_id": "loudoun-bos-2026-10-20-m11",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved the recommendation of the Finance/Government Operations and Economic Development Committee that the Board of Supervisors authorize the Purchasing Agent to award the contract for Program Management and Governance Support ",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m12": {
+   "vote_id": "loudoun-bos-2026-10-20-m12",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved the recommendation of the Finance/Government Operations and Economic Development Committee that the Board of Supervisors authorize the Purchasing Agent to renew task order contracts for Sidewalk and Trail Design Services",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m13": {
+   "vote_id": "loudoun-bos-2026-10-20-m13",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved the recommendation of the Finance/Government Operations and Economic Development Committee that the Board of Supervisors endorse the Loudoun Health Commission FY 2026 Annual Report, provided as Attachment 1 to the Octobe",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m14": {
+   "vote_id": "loudoun-bos-2026-10-20-m14",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved the recommendation of the Finance/Government Operations and Economic Development Committee that the Board of Supervisors direct staff to advertise a future public hearing to consider the new ordinance to the Codified Ord",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m15": {
+   "vote_id": "loudoun-bos-2026-10-20-m15",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved the recommendation of the Finance/Government Operations and Economic Development Committee that the Board of Supervisors forward the Amendments to the Fiscal Years 2023-2026 Annual Action Plans to the December 9, 2026, B",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m16": {
+   "vote_id": "loudoun-bos-2026-10-20-m16",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved that the Board of Supervisors confirm the following appointments with terms expiring as noted. (Consent Item) ",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m17": {
+   "vote_id": "loudoun-bos-2026-10-20-m17",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved that the Board of Supervisors approve the Administrative Items Report of October 20, 2026. (Consent Item) ",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m18": {
+   "vote_id": "loudoun-bos-2026-10-20-m18",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved that the Board of Supervisors adopt the Resolution of Intent to Amend the Loudoun County Facilities Standards Manual and the Loudoun County Land Subdivision and Development Ordinance provided as Attachment 1 to the Octob",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m19": {
+   "vote_id": "loudoun-bos-2026-10-20-m19",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved that the Board of Supervisors direct staff to pursue adoption of the remaining Chapters of the Virginia Property Maintenance Code, except for Section 103.4 (Rental inspections), and advertise the proposed amendments to C",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m20": {
+   "vote_id": "loudoun-bos-2026-10-20-m20",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved that the Board of Supervisors approve LEGI-2025-0026, Loudoun Panel Wiring Shop: SPEX-2025-0049 & SPEX-2025-0138, subject to the Conditions of Approval dated October 14, 2026, and based on the Findings for Approval, prov",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m21": {
+   "vote_id": "loudoun-bos-2026-10-20-m21",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved that the Board of Supervisors approve LEGI-2024-0008, Dulles South Community Park: SPEX-2024-0017 & SPEX-2026-0034, subject to the Conditions of Approval dated June 29, 2026, and based on the Findings for Approval, provi",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m22": {
+   "vote_id": "loudoun-bos-2026-10-20-m22",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved that the Board of Supervisors authorize that staff move forward with the proposed renaming of Mooreview Parkway to Ashburn Village Boulevard. Chair Randall further moved that the Board of Supervisors authorize the amendm",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "absent"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "aye"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "absent"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 2,
+    "aye": 7
+   },
+   "reported_tally": "7-0-2",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m23": {
+   "vote_id": "loudoun-bos-2026-10-20-m23",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Chair Randall moved to table the motion to the November 17, 2026, Board of Supervisors Business Meeting, during such time the Board will work collaboratively for the goal of receiving information about surveillance cameras from law enforcem",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "aye"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "absent"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "aye"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 1,
+    "aye": 8
+   },
+   "reported_tally": "7-1-1",
+   "tally_consistent": false,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m24": {
+   "vote_id": "loudoun-bos-2026-10-20-m24",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Supervisor Saines moved that the Board of Supervisors consider LEGI-2025- 0012, Golden Substation: SPEX-2025-0032, SPEX-2025-0033, & SPEX-2025- 0137 at the November 5, 2026, Board of Supervisors Business Meeting for action, rather than at t",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "aye"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "absent"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "aye"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 1,
+    "aye": 8
+   },
+   "reported_tally": "8-0-1",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": null
+   }
+  },
+  "loudoun-bos-2026-10-20-m25": {
+   "vote_id": "loudoun-bos-2026-10-20-m25",
+   "meeting_id": "loudoun-bos-2026-10-20",
+   "motion": "Vice Chair Turner moved that the Board of Supervisors recess this public meeting and enter into closed session pursuant to Section(s) 2.2-3711 (A)(8) and (A)(29) of Action Report October 20, 2026, Board of Supervisors Business Meeting Page ",
+   "positions": [
+    {
+     "member": "Caleb Kershner",
+     "position": "aye"
+    },
+    {
+     "member": "Juli Briskman",
+     "position": "absent"
+    },
+    {
+     "member": "Koran Saines",
+     "position": "aye"
+    },
+    {
+     "member": "Kristen Umstattd",
+     "position": "aye"
+    },
+    {
+     "member": "Laura TeKrony",
+     "position": "aye"
+    },
+    {
+     "member": "Matthew F. Letourneau",
+     "position": "aye"
+    },
+    {
+     "member": "Michael R. Turner",
+     "position": "aye"
+    },
+    {
+     "member": "Phyllis J. Randall",
+     "position": "aye"
+    },
+    {
+     "member": "Sylvia Glass",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "absent": 1,
+    "aye": 8
+   },
+   "reported_tally": "8-0-1",
+   "tally_consistent": true,
+   "result": "pass",
+   "source_document": "https://lfportal.loudoun.gov/LFPortalinternet/0/edoc/1976200/ActionReport.pdf",
    "certification": {
     "status": "quarantined",
     "method": null,

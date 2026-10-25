@@ -3623,5 +3623,98 @@
    "method": null,
    "note": "LLM comprehension aid; never certified"
   }
+ },
+ "loudoun-bos-2026-10-20": {
+  "digest": "The Board of Supervisors held a largely ceremonial meeting, passing 25 items unanimously including proclamations for Inclusive Connections Day, Domestic Violence Awareness Month, and Disability Employment Awareness Month, along with resolutions recognizing local achievements. The board also approved multiple capital projects including the Loudoun Panel Wiring Shop and Dulles South Community Park, authorized renaming Mooreview Parkway to Ashburn, and directed staff to pursue Virginia Property Maintenance Code adoption. Supervisors Caleb Kershner and Koran Saines were absent for most votes; one motion was tabled to November 17 for further Board work.",
+  "notable": [
+   "All 25 items passed unanimously with 7 votes (2 supervisors absent) or 8 votes (1 supervisor absent)\u2014no dissent or failed motions recorded.",
+   "Capital projects approved: Loudoun Panel Wiring Shop and Dulles South Community Park.",
+   "Mooreview Parkway renaming to Ashburn authorized to move forward."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-10-22": {
+  "digest": "The City Council passed seven bills on October 22, 2026, including measures to improve ballot access for incarcerated voters, approve rehabilitation housing in the Bronx, phase out the horse-drawn cab industry, expand tax benefits for nonprofits preserving affordable housing, and establish gender-based violence prevention coordination. Six councilmembers\u2014Ariola, Carr, Felder, Morano, Paladino, and Vernikov\u2014opposed at least one measure, with the horse-drawn cab bill and housing tax benefit bill drawing the strongest dissent (7 and 9 opposing votes respectively).",
+  "notable": [
+   "Horse-drawn cab industry wind-down passed 40\u20137, with notable opposition from Ariola, Carr, Felder, Gennaro, Paladino, and Riley.",
+   "Affordable housing nonprofit tax benefit bill passed 38\u20139, facing significant opposition on affordability and incentive concerns.",
+   "MHANY Cluster 2 housing rehabilitation in Bronx across three community districts approved unanimously among voting members."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-10-22-Committee-on-Housing-and-Buildings": {
+  "digest": "The Committee on Housing and Buildings passed a bill to allow certain not-for-profit organizations and joint ventures with not-for-profits to receive housing development certifications from the Department of Housing Preservation. The vote was 10-0 with one abstention from committee member Zhuang.",
+  "notable": [
+   "Bill passed to certify not-for-profit housing partnerships with Department of Housing Preservation",
+   "Committee member Zhuang abstained from the vote"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "newyork-bos-2026-10-22-Committee-on-Cultural-Affairs-Libraries-": {
+  "digest": "The Committee on Cultural Affairs, Libraries and International Relations unanimously declared October 2026 as Reggaeton Heritage Month, with all seven members voting in favor. This is a ceremonial designation with no direct budget or service implications for residents.",
+  "notable": [],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "pittsburgh-legistar-12116": {
+  "digest": "City Council unanimously approved 10 resolutions (all 9 aye) involving payment warrants, professional services agreements for public safety and public works projects, a reimbursement agreement with PennDOT for construction costs, and two sewage facilities plan revisions. Notable payments included $25,000 to Barbara Klein's legal counsel and $8,946.90 to PPW Industrial. No dissenting votes or failed motions occurred.",
+  "notable": [
+   "Unanimous approval of all 10 resolutions with no opposition",
+   "Payment warrant of $25,000 issued to Barbara Klein's legal counsel (Berger and Green, P.C.)",
+   "Two sewage facilities plan revisions adopted at no cost to the city"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "princewilliam-bos-2026-10-20": {
+  "digest": "The Board of County Supervisors unanimously approved its 2027 Legislative Agenda, adopted the Pathways 2035 Trails Master Plan to guide county recreation infrastructure, and removed an evening session from the November 17, 2026 meeting calendar. Routine business including consent agenda items, commendations, and public hearings also passed with no dissent recorded.",
+  "notable": [
+   "Pathways 2035 Trails Master Plan adopted\u2014guides long-term county trails and recreation development",
+   "All substantive motions passed unanimously with no recorded opposition",
+   "Two supervisors absent (Boddye and Gordy at various points); Gordy absent for most afternoon items"
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
+ },
+ "seattle-bos-2026-09-22": {
+  "digest": "The City Council unanimously passed routine appointments to three advisory boards (Green New Deal Oversight Board, Urban Forestry Commission, and Sweetened Beverage Tax Community Advisory Board), along with a new collective bargaining agreement with Seattle Parking Enforcement and the 2027-2028 budget address. The most contested item was an ordinance prohibiting algorithmic-based price discrimination by retailers, which passed 7-2 with Councilmembers Robert Kettle and Maritza Rivera opposed. The council also recognized Denny Blaine Park's historic significance to the LGBTQ+ community, approved a section of South King Street be named \"Bruce Lee Way,\" and authorized legal expenses for defending Mayor Katie Wilson in a recall proceeding.",
+  "notable": [
+   "Algorithmic price discrimination ordinance passed 7-2, with Kettle and Rivera voting no\u2014tighter margin than other items.",
+   "Council authorized city funds to defend Mayor Wilson against a recall charge.",
+   "All nine councilmembers unanimously approved budget address and six advisory board appointments."
+  ],
+  "derived_by": "claude-haiku-4-5",
+  "certification": {
+   "status": "machine-derived",
+   "method": null,
+   "note": "LLM comprehension aid; never certified"
+  }
  }
 }

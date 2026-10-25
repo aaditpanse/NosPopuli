@@ -289,7 +289,7 @@
     "Cruz, Ruth": "present",
     "Conway, William": "present",
     "Lawson, Bennett R.": "present",
-    "Clay, Angela": "absent",
+    "Clay, Angela": "present",
     "Manaa-Hoppenworth, Leni": "present",
     "Harris, Michelle A.": "present",
     "O'Shea, Matthew J.": "present",
@@ -4057,6 +4057,22 @@
    "file_number": null,
    "result": "pass",
    "source_file_number": "SO2026-0025407",
+   "source_url": "https://chicityclerkelms.chicago.gov/meeting/E9154AB7-96B7-F111-AAAC-001DD803894A",
+   "data_source_url": "https://api.chicityclerkelms.chicago.gov/meeting-agenda/E9154AB7-96B7-F111-AAAC-001DD803894A",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "chicago-bos-2026-09-29-o2026-0026270": {
+   "item_id": "chicago-bos-2026-09-29-o2026-0026270",
+   "meeting_id": "chicago-bos-2026-09-29",
+   "title": "Amendment of Municipal Code Chapter 2-8 by adding new Section 2-8-036 regarding ordinance requirements for issuance of bonds and other indebtedness including approval by three-fifths affirmative vote of alderpersons for ordinances authorizing debt issuance",
+   "action": "Passed",
+   "file_number": null,
+   "result": "pass",
+   "source_file_number": "O2026-0026270",
    "source_url": "https://chicityclerkelms.chicago.gov/meeting/E9154AB7-96B7-F111-AAAC-001DD803894A",
    "data_source_url": "https://api.chicityclerkelms.chicago.gov/meeting-agenda/E9154AB7-96B7-F111-AAAC-001DD803894A",
    "certification": {
@@ -55040,6 +55056,226 @@
    "result": "pass",
    "source_url": "https://chicityclerkelms.chicago.gov/meeting/E9154AB7-96B7-F111-AAAC-001DD803894A",
    "data_source_url": "https://api.chicityclerkelms.chicago.gov/meeting-agenda/E9154AB7-96B7-F111-AAAC-001DD803894A/matter/BEA1E2DD-5A54-F111-BEC6-001DD80B0E39/votes",
+   "certification": {
+    "status": "quarantined",
+    "method": null,
+    "note": "synthesized from agent-discovered profile; single-source, no oracle wired \u2014 ingested, never certifiable as-is"
+   }
+  },
+  "chicago-bos-2026-09-29-o2026-0026270-v": {
+   "vote_id": "chicago-bos-2026-09-29-o2026-0026270-v",
+   "item_id": "chicago-bos-2026-09-29-o2026-0026270",
+   "meeting_id": "chicago-bos-2026-09-29",
+   "positions": [
+    {
+     "member": "Lee, Nicole T.",
+     "position": "aye"
+    },
+    {
+     "member": "Coleman, Stephanie D.",
+     "position": "aye"
+    },
+    {
+     "member": "Dowell, Pat",
+     "position": "aye"
+    },
+    {
+     "member": "Lopez, Raymond A.",
+     "position": "aye"
+    },
+    {
+     "member": "Reilly, Brendan",
+     "position": "aye"
+    },
+    {
+     "member": "Robinson, Lamont J.",
+     "position": "no"
+    },
+    {
+     "member": "Yancy, Desmon C.",
+     "position": "aye"
+    },
+    {
+     "member": "Hall, William E.",
+     "position": "no"
+    },
+    {
+     "member": "Chico, Peter",
+     "position": "aye"
+    },
+    {
+     "member": "Ramirez, Julia M.",
+     "position": "no"
+    },
+    {
+     "member": "Gutierrez, Jeylu B.",
+     "position": "aye"
+    },
+    {
+     "member": "Mosley, Ronnie L.",
+     "position": "aye"
+    },
+    {
+     "member": "Fuentes, Jessica L.",
+     "position": "no"
+    },
+    {
+     "member": "Cruz, Ruth",
+     "position": "aye"
+    },
+    {
+     "member": "Conway, William",
+     "position": "aye"
+    },
+    {
+     "member": "Lawson, Bennett R.",
+     "position": "aye"
+    },
+    {
+     "member": "Clay, Angela",
+     "position": "no"
+    },
+    {
+     "member": "Manaa-Hoppenworth, Leni",
+     "position": "no"
+    },
+    {
+     "member": "Harris, Michelle A.",
+     "position": "aye"
+    },
+    {
+     "member": "O'Shea, Matthew J.",
+     "position": "aye"
+    },
+    {
+     "member": "Tabares, Silvana",
+     "position": "aye"
+    },
+    {
+     "member": "Taylor, Jeanette B.",
+     "position": "aye"
+    },
+    {
+     "member": "Sposato, Nicholas",
+     "position": "aye"
+    },
+    {
+     "member": "Beale, Anthony",
+     "position": "aye"
+    },
+    {
+     "member": "Moore, David H.",
+     "position": "no"
+    },
+    {
+     "member": "Sigcho-Lopez, Byron",
+     "position": "no"
+    },
+    {
+     "member": "Vasquez, Jr., Andre",
+     "position": "absent"
+    },
+    {
+     "member": "Napolitano, Anthony V.",
+     "position": "aye"
+    },
+    {
+     "member": "Gardiner, James M.",
+     "position": "aye"
+    },
+    {
+     "member": "Martin, Matthew J.",
+     "position": "no"
+    },
+    {
+     "member": "Rodriguez, Michael D.",
+     "position": "no"
+    },
+    {
+     "member": "Cardona, Jr., Felix",
+     "position": "aye"
+    },
+    {
+     "member": "Mitts, Emma",
+     "position": "aye"
+    },
+    {
+     "member": "Silverstein, Debra L.",
+     "position": "aye"
+    },
+    {
+     "member": "Villegas, Gilbert",
+     "position": "aye"
+    },
+    {
+     "member": "Hopkins, Brian",
+     "position": "aye"
+    },
+    {
+     "member": "Hadden, Maria E.",
+     "position": "no"
+    },
+    {
+     "member": "Mitchell, Gregory I.",
+     "position": "aye"
+    },
+    {
+     "member": "Quinn, Marty",
+     "position": "aye"
+    },
+    {
+     "member": "Curtis, Derrick G.",
+     "position": "aye"
+    },
+    {
+     "member": "Ervin, Jason C.",
+     "position": "no"
+    },
+    {
+     "member": "Taliaferro, Chris",
+     "position": "absent"
+    },
+    {
+     "member": "La Spata, Daniel",
+     "position": "absent"
+    },
+    {
+     "member": "Nugent, Samantha",
+     "position": "aye"
+    },
+    {
+     "member": "Waguespack, Scott",
+     "position": "aye"
+    },
+    {
+     "member": "Rodriguez Sanchez, Rossana",
+     "position": "no"
+    },
+    {
+     "member": "Scott, Monique L.",
+     "position": "aye"
+    },
+    {
+     "member": "Quezada, Anthony J.",
+     "position": "no"
+    },
+    {
+     "member": "Burnett, Walter R.",
+     "position": "no"
+    },
+    {
+     "member": "Knudsen, Timothy R.",
+     "position": "aye"
+    }
+   ],
+   "counts": {
+    "aye": 32,
+    "no": 15,
+    "absent": 3
+   },
+   "result": "pass",
+   "source_url": "https://chicityclerkelms.chicago.gov/meeting/E9154AB7-96B7-F111-AAAC-001DD803894A",
+   "data_source_url": "https://api.chicityclerkelms.chicago.gov/meeting-agenda/E9154AB7-96B7-F111-AAAC-001DD803894A/matter/E30B2A49-5F6A-F111-A823-001DD812B39C/votes",
    "certification": {
     "status": "quarantined",
     "method": null,

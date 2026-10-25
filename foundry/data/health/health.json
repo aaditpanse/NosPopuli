@@ -2,9 +2,9 @@
  "last_run": {
   "argv": "--due",
   "enrich": {
-   "meeting_digests.py": "done: 10 new, 277 total -> meeting-digests.json ($0.02)",
+   "meeting_digests.py": "done: 7 new, 284 total -> meeting-digests.json ($0.01)",
    "summarize_items.py": "json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
-   "upcoming.py": "done -> upcoming.json ($0.113)"
+   "upcoming.py": "done -> upcoming.json ($0.112)"
   },
   "host": "local",
   "results": {
@@ -18,15 +18,15 @@
    "fairfax-bos": "ok",
    "la-primegov": "error: HTTP Error 403: Forbidden",
    "loudoun-bos": "ok",
-   "newyork-bos": "drift-or-skipped",
+   "newyork-bos": "ok",
    "pittsburgh-legistar": "ok",
    "princewilliam-bos": "ok",
-   "recertify:loudoun-bos": "44/344",
-   "recertify:princewilliam-bos": "357/767",
+   "recertify:loudoun-bos": "44/370",
+   "recertify:princewilliam-bos": "400/794",
    "seattle-bos": "ok",
    "stafford-bos": "drift-or-skipped"
   },
-  "ts": "2026-10-19T11:55:54"
+  "ts": "2026-10-25T11:53:02"
  },
  "sources": {
   "chicago-bos": {
@@ -223,38 +223,6 @@
       },
       "unchanged": 397
      },
-     "first_ts": "2026-09-24T15:55:26",
-     "repeats": 1,
-     "stage": "refresh",
-     "ts": "2026-09-24T15:55:26",
-     "verdict": "ok"
-    },
-    {
-     "detail": {
-      "oldest": "2026-05-20",
-      "returned": 3,
-      "target": "2026-01-01",
-      "window": 13
-     },
-     "first_ts": "2026-09-24T15:59:15",
-     "repeats": 1,
-     "stage": "deepen",
-     "ts": "2026-09-24T15:59:15",
-     "verdict": "exhausted"
-    },
-    {
-     "detail": {
-      "added": 0,
-      "artifact": "extractors/chicago-bos/v1_attempt4.py",
-      "replaced": 0,
-      "row_counts": {
-       "agenda_items": 172,
-       "meetings": 3,
-       "members": 50,
-       "vote_events": 172
-      },
-      "unchanged": 397
-     },
      "first_ts": "2026-09-25T15:56:21",
      "repeats": 1,
      "stage": "refresh",
@@ -398,6 +366,36 @@
      "repeats": 1,
      "stage": "deepen",
      "ts": "2026-10-19T11:40:31",
+     "verdict": "stalled"
+    },
+    {
+     "detail": {
+      "added": 2,
+      "artifact": "extractors/chicago-bos/v1_attempt4.py",
+      "replaced": 1,
+      "row_counts": {
+       "agenda_items": 168,
+       "meetings": 4,
+       "members": 50,
+       "vote_events": 168
+      },
+      "unchanged": 387
+     },
+     "first_ts": "2026-10-25T11:32:54",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-10-25T11:32:54",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "error": "Traceback (most recent call last):\n  File \"/srv/nospopuli/app/foundry/sandbox2.py\", line 123, in <module>\n    main()\n  File \"/srv/nospopuli/app/foundry/sandbox2.py\", line 108, in main\n    cache = json.loads(cache_path.read_text()) if cache_path.exists() else {}\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "window": 15
+     },
+     "first_ts": "2026-10-25T11:37:42",
+     "repeats": 1,
+     "stage": "deepen",
+     "ts": "2026-10-25T11:37:42",
      "verdict": "stalled"
     }
    ]
@@ -548,9 +546,9 @@
       "unchanged": 349
      },
      "first_ts": "2026-09-22T15:38:45",
-     "repeats": 8,
+     "repeats": 9,
      "stage": "refresh",
-     "ts": "2026-10-19T11:34:01",
+     "ts": "2026-10-25T11:33:50",
      "verdict": "ok"
     }
    ]
@@ -562,9 +560,9 @@
       "error": "HTTP Error 403: Forbidden"
      },
      "first_ts": "2026-10-19T11:34:01",
-     "repeats": 1,
+     "repeats": 2,
      "stage": "refresh",
-     "ts": "2026-10-19T11:34:01",
+     "ts": "2026-10-25T11:33:50",
      "verdict": "error"
     }
    ]
@@ -650,6 +648,37 @@
      "stage": "recertify",
      "ts": "2026-10-19T11:45:46",
      "verdict": "ok"
+    },
+    {
+     "detail": {
+      "path": "curated",
+      "why": "meeting(s) ['2026-10-20'] have passed"
+     },
+     "first_ts": "2026-10-25T11:34:21",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-10-25T11:34:21",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "artifact": "extractors/loudoun-bos-oracle/v1_attempt1.py",
+      "by_check": {
+       "attendance_mismatch": 1,
+       "no_second_source": 17,
+       "vote_coverage": 20
+      },
+      "certified": 44,
+      "covered_meetings": 3,
+      "disputes": 38,
+      "store_meetings": 20,
+      "total": 370
+     },
+     "first_ts": "2026-10-25T11:42:20",
+     "repeats": 1,
+     "stage": "recertify",
+     "ts": "2026-10-25T11:42:20",
+     "verdict": "ok"
     }
    ]
   },
@@ -667,19 +696,6 @@
      "stage": "oracle",
      "ts": "2026-09-20T12:13:46",
      "verdict": "blocked"
-    },
-    {
-     "detail": {
-      "oldest": "2026-09-09",
-      "returned": 9,
-      "target": "2026-01-01",
-      "window": 45
-     },
-     "first_ts": "2026-09-22T15:41:10",
-     "repeats": 1,
-     "stage": "deepen",
-     "ts": "2026-09-22T15:41:10",
-     "verdict": "exhausted"
     },
     {
      "detail": {
@@ -760,6 +776,36 @@
      "stage": "deepen",
      "ts": "2026-10-19T11:40:31",
      "verdict": "stalled"
+    },
+    {
+     "detail": {
+      "added": 22,
+      "artifact": "extractors/newyork-bos/v1_attempt13.py",
+      "replaced": 50,
+      "row_counts": {
+       "agenda_items": 10,
+       "meetings": 3,
+       "members": 50,
+       "vote_events": 9
+      },
+      "unchanged": 0
+     },
+     "first_ts": "2026-10-25T11:34:44",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-10-25T11:34:44",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "error": "Traceback (most recent call last):\n  File \"/srv/nospopuli/app/foundry/sandbox2.py\", line 123, in <module>\n    main()\n  File \"/srv/nospopuli/app/foundry/sandbox2.py\", line 108, in main\n    cache = json.loads(cache_path.read_text()) if cache_path.exists() else {}\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "window": 55
+     },
+     "first_ts": "2026-10-25T11:37:42",
+     "repeats": 1,
+     "stage": "deepen",
+     "ts": "2026-10-25T11:37:42",
+     "verdict": "stalled"
     }
    ]
   },
@@ -774,6 +820,17 @@
      "repeats": 1,
      "stage": "refresh",
      "ts": "2026-10-19T11:38:47",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "path": "curated",
+      "why": "meeting(s) ['2026-10-20', '2026-10-20'] have passed"
+     },
+     "first_ts": "2026-10-25T11:35:22",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-10-25T11:35:22",
      "verdict": "ok"
     }
    ]
@@ -880,6 +937,46 @@
      "stage": "recertify",
      "ts": "2026-10-19T11:51:33",
      "verdict": "ok"
+    },
+    {
+     "detail": {
+      "added": 27,
+      "artifact": "extractors/princewilliam-bos/v1_attempt2.py",
+      "replaced": 60,
+      "row_counts": {
+       "agenda_items": 42,
+       "meetings": 3,
+       "members": 8,
+       "vote_events": 42
+      },
+      "unchanged": 8
+     },
+     "first_ts": "2026-10-25T11:36:00",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-10-25T11:36:00",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "artifact": "extractors/princewilliam-bos-oracle/v1_attempt2.py",
+      "by_check": {
+       "attendance_mismatch": 1,
+       "no_second_source": 11,
+       "vote_coverage": 50,
+       "vote_mismatch": 9
+      },
+      "certified": 400,
+      "covered_meetings": 19,
+      "disputes": 71,
+      "store_meetings": 30,
+      "total": 794
+     },
+     "first_ts": "2026-10-25T11:48:33",
+     "repeats": 1,
+     "stage": "recertify",
+     "ts": "2026-10-25T11:48:33",
+     "verdict": "ok"
     }
    ]
   },
@@ -934,6 +1031,25 @@
      "repeats": 1,
      "stage": "refresh",
      "ts": "2026-10-19T11:40:19",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "added": 54,
+      "artifact": "extractors/seattle-bos/v1_attempt2.py",
+      "replaced": 9,
+      "row_counts": {
+       "agenda_items": 82,
+       "meetings": 3,
+       "members": 9,
+       "vote_events": 81
+      },
+      "unchanged": 112
+     },
+     "first_ts": "2026-10-25T11:37:30",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-10-25T11:37:30",
      "verdict": "ok"
     }
    ]
@@ -1056,9 +1172,9 @@
       ]
      },
      "first_ts": "2026-09-22T15:39:32",
-     "repeats": 8,
+     "repeats": 9,
      "stage": "refresh",
-     "ts": "2026-10-19T11:40:30",
+     "ts": "2026-10-25T11:37:42",
      "verdict": "drift"
     }
    ]
