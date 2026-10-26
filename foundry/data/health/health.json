@@ -2,13 +2,12 @@
  "last_run": {
   "argv": "--due",
   "enrich": {
-   "meeting_digests.py": "done: 7 new, 284 total -> meeting-digests.json ($0.01)",
+   "meeting_digests.py": "done: 0 new, 284 total -> meeting-digests.json ($0.00)",
    "summarize_items.py": "json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
-   "upcoming.py": "done -> upcoming.json ($0.112)"
+   "upcoming.py": "done -> upcoming.json ($0.114)"
   },
   "host": "local",
   "results": {
-   "chicago-bos": "ok",
    "deepen:chicago-bos": "stalled",
    "deepen:fairfax-bos": "done",
    "deepen:newyork-bos": "stalled",
@@ -17,16 +16,12 @@
    "deepen:stafford-bos": "done",
    "fairfax-bos": "ok",
    "la-primegov": "error: HTTP Error 403: Forbidden",
-   "loudoun-bos": "ok",
-   "newyork-bos": "ok",
-   "pittsburgh-legistar": "ok",
-   "princewilliam-bos": "ok",
    "recertify:loudoun-bos": "44/370",
    "recertify:princewilliam-bos": "400/794",
    "seattle-bos": "ok",
    "stafford-bos": "drift-or-skipped"
   },
-  "ts": "2026-10-25T11:53:02"
+  "ts": "2026-10-26T11:47:33"
  },
  "sources": {
   "chicago-bos": {
@@ -393,9 +388,9 @@
       "window": 15
      },
      "first_ts": "2026-10-25T11:37:42",
-     "repeats": 1,
+     "repeats": 2,
      "stage": "deepen",
-     "ts": "2026-10-25T11:37:42",
+     "ts": "2026-10-26T11:32:33",
      "verdict": "stalled"
     }
    ]
@@ -546,9 +541,9 @@
       "unchanged": 349
      },
      "first_ts": "2026-09-22T15:38:45",
-     "repeats": 9,
+     "repeats": 10,
      "stage": "refresh",
-     "ts": "2026-10-25T11:33:50",
+     "ts": "2026-10-26T11:30:46",
      "verdict": "ok"
     }
    ]
@@ -560,9 +555,9 @@
       "error": "HTTP Error 403: Forbidden"
      },
      "first_ts": "2026-10-19T11:34:01",
-     "repeats": 2,
+     "repeats": 3,
      "stage": "refresh",
-     "ts": "2026-10-25T11:33:50",
+     "ts": "2026-10-26T11:30:47",
      "verdict": "error"
     }
    ]
@@ -675,9 +670,9 @@
       "total": 370
      },
      "first_ts": "2026-10-25T11:42:20",
-     "repeats": 1,
+     "repeats": 2,
      "stage": "recertify",
-     "ts": "2026-10-25T11:42:20",
+     "ts": "2026-10-26T11:37:02",
      "verdict": "ok"
     }
    ]
@@ -802,9 +797,9 @@
       "window": 55
      },
      "first_ts": "2026-10-25T11:37:42",
-     "repeats": 1,
+     "repeats": 2,
      "stage": "deepen",
-     "ts": "2026-10-25T11:37:42",
+     "ts": "2026-10-26T11:32:33",
      "verdict": "stalled"
     }
    ]
@@ -973,9 +968,9 @@
       "total": 794
      },
      "first_ts": "2026-10-25T11:48:33",
-     "repeats": 1,
+     "repeats": 2,
      "stage": "recertify",
-     "ts": "2026-10-25T11:48:33",
+     "ts": "2026-10-26T11:43:33",
      "verdict": "ok"
     }
    ]
@@ -1050,6 +1045,25 @@
      "repeats": 1,
      "stage": "refresh",
      "ts": "2026-10-25T11:37:30",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "added": 0,
+      "artifact": "extractors/seattle-bos/v1_attempt2.py",
+      "replaced": 0,
+      "row_counts": {
+       "agenda_items": 82,
+       "meetings": 3,
+       "members": 9,
+       "vote_events": 81
+      },
+      "unchanged": 175
+     },
+     "first_ts": "2026-10-26T11:32:22",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-10-26T11:32:22",
      "verdict": "ok"
     }
    ]
@@ -1172,9 +1186,9 @@
       ]
      },
      "first_ts": "2026-09-22T15:39:32",
-     "repeats": 9,
+     "repeats": 10,
      "stage": "refresh",
-     "ts": "2026-10-25T11:37:42",
+     "ts": "2026-10-26T11:32:33",
      "verdict": "drift"
     }
    ]
