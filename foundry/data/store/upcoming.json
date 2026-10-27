@@ -39,36 +39,21 @@
    "time": "4:00 PM",
    "body": "Board of Supervisors Business Meeting"
   },
-  "checked": "2026-10-26",
+  "checked": "2026-10-27",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "pittsburgh-legistar": {
-  "upcoming": [
-   {
-    "date": "2026-10-27",
-    "time": "10:00 AM",
-    "body": "City Council"
-   },
-   {
-    "date": "2026-10-27",
-    "time": "10:01 AM",
-    "body": "City Council"
-   }
-  ],
-  "next": {
-   "date": "2026-10-27",
-   "time": "10:00 AM",
-   "body": "City Council"
-  },
-  "checked": "2026-10-26",
+  "upcoming": [],
+  "next": null,
+  "checked": "2026-10-27",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "princewilliam-bos": {
   "upcoming": [],
   "next": null,
-  "checked": "2026-10-26",
+  "checked": "2026-10-27",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -76,31 +61,26 @@
   "upcoming": [
    {
     "date": "2026-11-17",
-    "time": null,
+    "time": "9:30 a.m.",
     "body": "Fairfax County Board of Supervisors"
    },
    {
     "date": "2026-12-08",
-    "time": null,
+    "time": "9:30 a.m.",
     "body": "Fairfax County Board of Supervisors"
    }
   ],
   "next": {
    "date": "2026-11-17",
-   "time": null,
+   "time": "9:30 a.m.",
    "body": "Fairfax County Board of Supervisors"
   },
-  "checked": "2026-10-26",
+  "checked": "2026-10-27",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "stafford-bos": {
   "upcoming": [
-   {
-    "date": "2026-10-27",
-    "time": "17:00",
-    "body": "October 27, 2026 Board of Supervisors Meeting"
-   },
    {
     "date": "2026-11-05",
     "time": "17:00",
@@ -120,14 +100,19 @@
     "date": "2026-12-01",
     "time": "17:00",
     "body": "December 01, 2026 Board of Supervisors Meeting"
+   },
+   {
+    "date": "2026-12-15",
+    "time": "17:00",
+    "body": "December 15, 2026 Board of Supervisors Meeting"
    }
   ],
   "next": {
-   "date": "2026-10-27",
+   "date": "2026-11-05",
    "time": "17:00",
-   "body": "October 27, 2026 Board of Supervisors Meeting"
+   "body": "November 05, 2026 Board of Supervisors Meeting"
   },
-  "checked": "2026-10-26",
+  "checked": "2026-10-27",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -159,7 +144,7 @@
    "time": "1:30 PM",
    "body": "City Council Stated Meeting"
   },
-  "checked": "2026-10-26",
+  "checked": "2026-10-27",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -181,14 +166,14 @@
    "time": null,
    "body": "Board of Supervisors Meeting"
   },
-  "checked": "2026-10-26",
+  "checked": "2026-10-27",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "princewilliam-cip": {
   "upcoming": [],
   "next": null,
-  "checked": "2026-10-26",
+  "checked": "2026-10-27",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -197,27 +182,37 @@
    {
     "date": "2026-12-08",
     "time": "16:00",
-    "body": "City Council Meeting"
+    "body": "City Council meeting"
    },
    {
     "date": "2026-12-09",
     "time": "16:00",
-    "body": "City Council Meeting"
+    "body": "City Council meeting"
    }
   ],
   "next": {
    "date": "2026-12-08",
    "time": "16:00",
-   "body": "City Council Meeting"
+   "body": "City Council meeting"
   },
-  "checked": "2026-10-26",
+  "checked": "2026-10-27",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "seattle-bos": {
-  "upcoming": [],
-  "next": null,
-  "checked": "2026-10-26",
+  "upcoming": [
+   {
+    "date": "2026-11-03",
+    "time": "2:00 PM",
+    "body": "City Council"
+   }
+  ],
+  "next": {
+   "date": "2026-11-03",
+   "time": "2:00 PM",
+   "body": "City Council"
+  },
+  "checked": "2026-10-27",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -239,7 +234,7 @@
    "time": "16:00",
    "body": "City Council meeting"
   },
-  "checked": "2026-10-26",
+  "checked": "2026-10-27",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  }
