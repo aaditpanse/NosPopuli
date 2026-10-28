@@ -4,7 +4,7 @@
   "enrich": {
    "meeting_digests.py": "done: 0 new, 284 total -> meeting-digests.json ($0.00)",
    "summarize_items.py": "json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
-   "upcoming.py": "done -> upcoming.json ($0.112)"
+   "upcoming.py": "done -> upcoming.json ($0.111)"
   },
   "host": "local",
   "results": {
@@ -21,7 +21,7 @@
    "seattle-bos": "ok",
    "stafford-bos": "drift-or-skipped"
   },
-  "ts": "2026-10-27T11:46:22"
+  "ts": "2026-10-28T11:46:49"
  },
  "sources": {
   "chicago-bos": {
@@ -388,9 +388,9 @@
       "window": 15
      },
      "first_ts": "2026-10-25T11:37:42",
-     "repeats": 3,
+     "repeats": 4,
      "stage": "deepen",
-     "ts": "2026-10-27T11:32:48",
+     "ts": "2026-10-28T11:32:40",
      "verdict": "stalled"
     }
    ]
@@ -541,9 +541,9 @@
       "unchanged": 349
      },
      "first_ts": "2026-09-22T15:38:45",
-     "repeats": 11,
+     "repeats": 12,
      "stage": "refresh",
-     "ts": "2026-10-27T11:30:49",
+     "ts": "2026-10-28T11:30:56",
      "verdict": "ok"
     }
    ]
@@ -555,9 +555,9 @@
       "error": "HTTP Error 403: Forbidden"
      },
      "first_ts": "2026-10-19T11:34:01",
-     "repeats": 4,
+     "repeats": 5,
      "stage": "refresh",
-     "ts": "2026-10-27T11:30:49",
+     "ts": "2026-10-28T11:30:57",
      "verdict": "error"
     }
    ]
@@ -670,9 +670,9 @@
       "total": 370
      },
      "first_ts": "2026-10-25T11:42:20",
-     "repeats": 3,
+     "repeats": 4,
      "stage": "recertify",
-     "ts": "2026-10-27T11:35:49",
+     "ts": "2026-10-28T11:38:25",
      "verdict": "ok"
     }
    ]
@@ -797,9 +797,9 @@
       "window": 55
      },
      "first_ts": "2026-10-25T11:37:42",
-     "repeats": 3,
+     "repeats": 4,
      "stage": "deepen",
-     "ts": "2026-10-27T11:32:48",
+     "ts": "2026-10-28T11:32:40",
      "verdict": "stalled"
     }
    ]
@@ -968,9 +968,9 @@
       "total": 794
      },
      "first_ts": "2026-10-25T11:48:33",
-     "repeats": 3,
+     "repeats": 4,
      "stage": "recertify",
-     "ts": "2026-10-27T11:42:43",
+     "ts": "2026-10-28T11:43:24",
      "verdict": "ok"
     }
    ]
@@ -1061,9 +1061,9 @@
       "unchanged": 175
      },
      "first_ts": "2026-10-26T11:32:22",
-     "repeats": 2,
+     "repeats": 3,
      "stage": "refresh",
-     "ts": "2026-10-27T11:32:36",
+     "ts": "2026-10-28T11:32:28",
      "verdict": "ok"
     }
    ]
@@ -1186,9 +1186,9 @@
       ]
      },
      "first_ts": "2026-09-22T15:39:32",
-     "repeats": 11,
+     "repeats": 12,
      "stage": "refresh",
-     "ts": "2026-10-27T11:32:48",
+     "ts": "2026-10-28T11:32:39",
      "verdict": "drift"
     }
    ]

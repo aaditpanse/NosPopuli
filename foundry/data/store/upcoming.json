@@ -39,21 +39,21 @@
    "time": "4:00 PM",
    "body": "Board of Supervisors Business Meeting"
   },
-  "checked": "2026-10-27",
+  "checked": "2026-10-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "pittsburgh-legistar": {
   "upcoming": [],
   "next": null,
-  "checked": "2026-10-27",
+  "checked": "2026-10-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "princewilliam-bos": {
   "upcoming": [],
   "next": null,
-  "checked": "2026-10-27",
+  "checked": "2026-10-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -75,7 +75,7 @@
    "time": "9:30 a.m.",
    "body": "Fairfax County Board of Supervisors"
   },
-  "checked": "2026-10-27",
+  "checked": "2026-10-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -112,7 +112,7 @@
    "time": "17:00",
    "body": "November 05, 2026 Board of Supervisors Meeting"
   },
-  "checked": "2026-10-27",
+  "checked": "2026-10-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -144,7 +144,7 @@
    "time": "1:30 PM",
    "body": "City Council Stated Meeting"
   },
-  "checked": "2026-10-27",
+  "checked": "2026-10-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -166,36 +166,41 @@
    "time": null,
    "body": "Board of Supervisors Meeting"
   },
-  "checked": "2026-10-27",
+  "checked": "2026-10-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "princewilliam-cip": {
   "upcoming": [],
   "next": null,
-  "checked": "2026-10-27",
+  "checked": "2026-10-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "chicago-bos": {
   "upcoming": [
    {
+    "date": "2026-11-02",
+    "time": "16:00",
+    "body": "City Council Special Meeting"
+   },
+   {
     "date": "2026-12-08",
     "time": "16:00",
-    "body": "City Council meeting"
+    "body": "City Council Meeting"
    },
    {
     "date": "2026-12-09",
     "time": "16:00",
-    "body": "City Council meeting"
+    "body": "City Council Meeting"
    }
   ],
   "next": {
-   "date": "2026-12-08",
+   "date": "2026-11-02",
    "time": "16:00",
-   "body": "City Council meeting"
+   "body": "City Council Special Meeting"
   },
-  "checked": "2026-10-27",
+  "checked": "2026-10-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -212,12 +217,17 @@
    "time": "2:00 PM",
    "body": "City Council"
   },
-  "checked": "2026-10-27",
+  "checked": "2026-10-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "chicago-cip": {
   "upcoming": [
+   {
+    "date": "2026-11-02",
+    "time": "16:00",
+    "body": "City Council meeting"
+   },
    {
     "date": "2026-12-08",
     "time": "16:00",
@@ -230,11 +240,11 @@
    }
   ],
   "next": {
-   "date": "2026-12-08",
+   "date": "2026-11-02",
    "time": "16:00",
    "body": "City Council meeting"
   },
-  "checked": "2026-10-27",
+  "checked": "2026-10-28",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  }
