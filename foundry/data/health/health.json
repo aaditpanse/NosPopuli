@@ -21,7 +21,7 @@
    "seattle-bos": "ok",
    "stafford-bos": "drift-or-skipped"
   },
-  "ts": "2026-10-28T11:46:49"
+  "ts": "2026-10-29T11:47:08"
  },
  "sources": {
   "chicago-bos": {
@@ -388,9 +388,9 @@
       "window": 15
      },
      "first_ts": "2026-10-25T11:37:42",
-     "repeats": 4,
+     "repeats": 5,
      "stage": "deepen",
-     "ts": "2026-10-28T11:32:40",
+     "ts": "2026-10-29T11:32:47",
      "verdict": "stalled"
     }
    ]
@@ -541,9 +541,9 @@
       "unchanged": 349
      },
      "first_ts": "2026-09-22T15:38:45",
-     "repeats": 12,
+     "repeats": 13,
      "stage": "refresh",
-     "ts": "2026-10-28T11:30:56",
+     "ts": "2026-10-29T11:30:51",
      "verdict": "ok"
     }
    ]
@@ -555,9 +555,9 @@
       "error": "HTTP Error 403: Forbidden"
      },
      "first_ts": "2026-10-19T11:34:01",
-     "repeats": 5,
+     "repeats": 6,
      "stage": "refresh",
-     "ts": "2026-10-28T11:30:57",
+     "ts": "2026-10-29T11:30:51",
      "verdict": "error"
     }
    ]
@@ -670,9 +670,9 @@
       "total": 370
      },
      "first_ts": "2026-10-25T11:42:20",
-     "repeats": 4,
+     "repeats": 5,
      "stage": "recertify",
-     "ts": "2026-10-28T11:38:25",
+     "ts": "2026-10-29T11:36:30",
      "verdict": "ok"
     }
    ]
@@ -797,9 +797,9 @@
       "window": 55
      },
      "first_ts": "2026-10-25T11:37:42",
-     "repeats": 4,
+     "repeats": 5,
      "stage": "deepen",
-     "ts": "2026-10-28T11:32:40",
+     "ts": "2026-10-29T11:32:47",
      "verdict": "stalled"
     }
    ]
@@ -968,9 +968,9 @@
       "total": 794
      },
      "first_ts": "2026-10-25T11:48:33",
-     "repeats": 4,
+     "repeats": 5,
      "stage": "recertify",
-     "ts": "2026-10-28T11:43:24",
+     "ts": "2026-10-29T11:43:18",
      "verdict": "ok"
     }
    ]
@@ -1064,6 +1064,25 @@
      "repeats": 3,
      "stage": "refresh",
      "ts": "2026-10-28T11:32:28",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "added": 0,
+      "artifact": "extractors/seattle-bos/v1_attempt2.py",
+      "replaced": 9,
+      "row_counts": {
+       "agenda_items": 75,
+       "meetings": 3,
+       "members": 9,
+       "vote_events": 75
+      },
+      "unchanged": 153
+     },
+     "first_ts": "2026-10-29T11:32:36",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-10-29T11:32:36",
      "verdict": "ok"
     }
    ]
@@ -1186,9 +1205,9 @@
       ]
      },
      "first_ts": "2026-09-22T15:39:32",
-     "repeats": 12,
+     "repeats": 13,
      "stage": "refresh",
-     "ts": "2026-10-28T11:32:39",
+     "ts": "2026-10-29T11:32:46",
      "verdict": "drift"
     }
    ]
