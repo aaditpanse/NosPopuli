@@ -4,7 +4,7 @@
   "enrich": {
    "meeting_digests.py": "done: 0 new, 284 total -> meeting-digests.json ($0.00)",
    "summarize_items.py": "json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
-   "upcoming.py": "done -> upcoming.json ($0.111)"
+   "upcoming.py": "done -> upcoming.json ($0.112)"
   },
   "host": "local",
   "results": {
@@ -21,7 +21,7 @@
    "seattle-bos": "ok",
    "stafford-bos": "drift-or-skipped"
   },
-  "ts": "2026-10-30T11:39:47"
+  "ts": "2026-10-31T11:40:24"
  },
  "sources": {
   "chicago-bos": {
@@ -388,9 +388,9 @@
       "window": 15
      },
      "first_ts": "2026-10-25T11:37:42",
-     "repeats": 6,
+     "repeats": 7,
      "stage": "deepen",
-     "ts": "2026-10-30T11:32:25",
+     "ts": "2026-10-31T11:32:34",
      "verdict": "stalled"
     }
    ]
@@ -541,9 +541,9 @@
       "unchanged": 349
      },
      "first_ts": "2026-09-22T15:38:45",
-     "repeats": 14,
+     "repeats": 15,
      "stage": "refresh",
-     "ts": "2026-10-30T11:30:51",
+     "ts": "2026-10-31T11:30:50",
      "verdict": "ok"
     }
    ]
@@ -555,9 +555,9 @@
       "error": "HTTP Error 403: Forbidden"
      },
      "first_ts": "2026-10-19T11:34:01",
-     "repeats": 7,
+     "repeats": 8,
      "stage": "refresh",
-     "ts": "2026-10-30T11:30:51",
+     "ts": "2026-10-31T11:30:50",
      "verdict": "error"
     }
    ]
@@ -670,9 +670,9 @@
       "total": 370
      },
      "first_ts": "2026-10-25T11:42:20",
-     "repeats": 6,
+     "repeats": 7,
      "stage": "recertify",
-     "ts": "2026-10-30T11:35:14",
+     "ts": "2026-10-31T11:35:05",
      "verdict": "ok"
     }
    ]
@@ -797,9 +797,9 @@
       "window": 55
      },
      "first_ts": "2026-10-25T11:37:42",
-     "repeats": 6,
+     "repeats": 7,
      "stage": "deepen",
-     "ts": "2026-10-30T11:32:25",
+     "ts": "2026-10-31T11:32:34",
      "verdict": "stalled"
     }
    ]
@@ -968,9 +968,9 @@
       "total": 794
      },
      "first_ts": "2026-10-25T11:48:33",
-     "repeats": 6,
+     "repeats": 7,
      "stage": "recertify",
-     "ts": "2026-10-30T11:37:37",
+     "ts": "2026-10-31T11:38:18",
      "verdict": "ok"
     }
    ]
@@ -989,25 +989,6 @@
      "stage": "oracle",
      "ts": "2026-09-20T12:13:46",
      "verdict": "blocked"
-    },
-    {
-     "detail": {
-      "added": 0,
-      "artifact": "extractors/seattle-bos/v1_attempt2.py",
-      "replaced": 0,
-      "row_counts": {
-       "agenda_items": 59,
-       "meetings": 3,
-       "members": 9,
-       "vote_events": 59
-      },
-      "unchanged": 130
-     },
-     "first_ts": "2026-09-22T15:39:22",
-     "repeats": 7,
-     "stage": "refresh",
-     "ts": "2026-09-29T11:35:19",
-     "verdict": "ok"
     },
     {
      "detail": {
@@ -1102,6 +1083,25 @@
      "repeats": 1,
      "stage": "refresh",
      "ts": "2026-10-30T11:32:13",
+     "verdict": "ok"
+    },
+    {
+     "detail": {
+      "added": 0,
+      "artifact": "extractors/seattle-bos/v1_attempt2.py",
+      "replaced": 0,
+      "row_counts": {
+       "agenda_items": 82,
+       "meetings": 3,
+       "members": 9,
+       "vote_events": 80
+      },
+      "unchanged": 174
+     },
+     "first_ts": "2026-10-31T11:32:23",
+     "repeats": 1,
+     "stage": "refresh",
+     "ts": "2026-10-31T11:32:23",
      "verdict": "ok"
     }
    ]
@@ -1224,9 +1224,9 @@
       ]
      },
      "first_ts": "2026-09-22T15:39:32",
-     "repeats": 14,
+     "repeats": 15,
      "stage": "refresh",
-     "ts": "2026-10-30T11:32:24",
+     "ts": "2026-10-31T11:32:34",
      "verdict": "drift"
     }
    ]

@@ -39,21 +39,36 @@
    "time": "4:00 PM",
    "body": "Board of Supervisors Business Meeting"
   },
-  "checked": "2026-10-30",
+  "checked": "2026-10-31",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "pittsburgh-legistar": {
-  "upcoming": [],
-  "next": null,
-  "checked": "2026-10-30",
+  "upcoming": [
+   {
+    "date": "2026-11-02",
+    "time": "10:00 AM",
+    "body": "City Council"
+   },
+   {
+    "date": "2026-11-02",
+    "time": "10:01 AM",
+    "body": "City Council"
+   }
+  ],
+  "next": {
+   "date": "2026-11-02",
+   "time": "10:00 AM",
+   "body": "City Council"
+  },
+  "checked": "2026-10-31",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "princewilliam-bos": {
   "upcoming": [],
   "next": null,
-  "checked": "2026-10-30",
+  "checked": "2026-10-31",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -62,20 +77,20 @@
    {
     "date": "2026-11-17",
     "time": "9:30 a.m.",
-    "body": "Full Board of Supervisors Meeting"
+    "body": "Fairfax County Board of Supervisors"
    },
    {
     "date": "2026-12-08",
     "time": "9:30 a.m.",
-    "body": "Full Board of Supervisors Meeting"
+    "body": "Fairfax County Board of Supervisors"
    }
   ],
   "next": {
    "date": "2026-11-17",
    "time": "9:30 a.m.",
-   "body": "Full Board of Supervisors Meeting"
+   "body": "Fairfax County Board of Supervisors"
   },
-  "checked": "2026-10-30",
+  "checked": "2026-10-31",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -112,7 +127,7 @@
    "time": "17:00",
    "body": "November 05, 2026 Board of Supervisors Meeting"
   },
-  "checked": "2026-10-30",
+  "checked": "2026-10-31",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -139,36 +154,21 @@
    "time": "1:30 PM",
    "body": "City Council Stated Meeting"
   },
-  "checked": "2026-10-30",
+  "checked": "2026-10-31",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "fairfax-cip": {
-  "upcoming": [
-   {
-    "date": "2026-11-17",
-    "time": null,
-    "body": "Full Board of Supervisors Meeting"
-   },
-   {
-    "date": "2026-12-08",
-    "time": null,
-    "body": "Full Board of Supervisors Meeting"
-   }
-  ],
-  "next": {
-   "date": "2026-11-17",
-   "time": null,
-   "body": "Full Board of Supervisors Meeting"
-  },
-  "checked": "2026-10-30",
+  "upcoming": [],
+  "next": null,
+  "checked": "2026-10-31",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "princewilliam-cip": {
   "upcoming": [],
   "next": null,
-  "checked": "2026-10-30",
+  "checked": "2026-10-31",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -195,14 +195,24 @@
    "time": "16:00",
    "body": "City Council Special Meeting"
   },
-  "checked": "2026-10-30",
+  "checked": "2026-10-31",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
  "seattle-bos": {
-  "upcoming": [],
-  "next": null,
-  "checked": "2026-10-30",
+  "upcoming": [
+   {
+    "date": "2026-11-03",
+    "time": "2:00 PM",
+    "body": "City Council"
+   }
+  ],
+  "next": {
+   "date": "2026-11-03",
+   "time": "2:00 PM",
+   "body": "City Council"
+  },
+  "checked": "2026-10-31",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  },
@@ -229,7 +239,7 @@
    "time": "16:00",
    "body": "City Council meeting"
   },
-  "checked": "2026-10-30",
+  "checked": "2026-10-31",
   "derived_by": "claude-haiku-4-5",
   "note": "machine-derived schedule lookup; advisory, never certified"
  }
